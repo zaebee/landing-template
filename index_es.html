@@ -1,118 +1,310 @@
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="A simple and modern landing page template for showcasing your business, services, or portfolio." name="description"/>
+<meta content="landing page, template, HTML, CSS, JavaScript, responsive, business, portfolio, services" name="keywords"/>
 <title data-i18n="document_title">My Landing Page</title>
 <link href="public/style.css" rel="stylesheet"/>
-<!-- Other head elements like favicons, etc., can be added here -->
 </head>
 <body>
 
 <header>
 <nav>
 <ul>
-<li><a data-i18n="nav_home" href="#home">Inicio</a></li>
+<li><a data-i18n="nav_home" href="#home">Home</a></li>
 <li><a data-i18n="nav_features" href="#features">Features</a></li>
 <li><a data-i18n="nav_portfolio" href="#portfolio">Portfolio</a></li>
-<li><a data-i18n="nav_contact" href="#contact">Contacto</a></li>
+<li><a data-i18n="nav_contact" href="#contact">Contact</a></li>
 </ul>
 </nav>
 </header>
 <main>
 <section id="hero">
-<h1 data-i18n="hero_title">Bienvenido a Nuestra Página de Destino</h1>
-<p data-i18n="hero_subtitle">Esta es una sección de héroe simple para llamar la atención.</p>
-<a class="cta-button" data-i18n="hero_cta" href="#contact">Aprende Más</a>
+<h1 data-i18n="hero_title">Welcome to Our Landing Page</h1>
+<p data-i18n="hero_subtitle">This is a simple hero section to grab attention.</p>
+<a class="cta-button" data-i18n="hero_cta" href="#contact">Learn More</a>
 </section>
 
 <section id="features">
-<h2 data-i18n="features_title">Nuestras Características</h2>
+<h2 data-i18n="features_title">Our Features</h2>
 <div class="features-container">
 <div class="feature-item">
-<h3>Característica Uno</h3>
-<p>Descripción de la característica uno.</p>
+<h3>Feature One</h3>
+<p>Description of feature one.</p>
 </div>
 <div class="feature-item">
-<h3>Característica Dos</h3>
-<p>Descripción de la característica dos.</p>
+<h3>Feature Two</h3>
+<p>Description of feature two.</p>
 </div>
 <div class="feature-item">
-<h3>Característica Tres</h3>
-<p>Descripción of la característica tres.</p>
+<h3>Feature Three</h3>
+<p>Description of feature three.</p>
+
 </div>
 </div>
 </section>
 
-<section id="testimonials">
-<h2 data-i18n="testimonials_title">Lo Que Dicen Nuestros Usuarios</h2>
-<div class="testimonials-container">
+<section class="testimonials">
+<h2 data-i18n="testimonials_title">What Our Users Say</h2>
+<div class="testimonial-list">
 <div class="testimonial-item">
-<img alt="Foto del Usuario 1" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"/>
-<p>Este es el mejor servicio que he usado. ¡Muy recomendado!</p>
-<h4>- Jane Doe</h4>
+<img alt="User 1 Photo" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"/>
+<p data-i18n="testimonial_one_text">This is the best service I have ever used. Highly recommended!</p>
+<h4 data-i18n="testimonial_one_author">- Jane Doe</h4>
 </div>
 <div class="testimonial-item">
-<img alt="Foto del Usuario 2" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"/>
-<p>Características increíbles y un soporte espectacular. Mi negocio ha crecido significativamente.</p>
-<h4>- John Smith</h4>
+<img alt="User 2 Photo" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"/>
+<p data-i18n="testimonial_two_text">Amazing features and incredible support. My business has grown significantly.</p>
+<h4 data-i18n="testimonial_two_author">- John Smith</h4>
 </div>
 <div class="testimonial-item">
-<img alt="Foto del Usuario 3" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"/>
-<p>Un cambio de juego para nuestro flujo de trabajo. Simple, efectivo y confiable.</p>
-<h4>- Alice Brown</h4>
+<img alt="User 3 Photo" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"/>
+<p data-i18n="testimonial_three_text">A game-changer for our workflow. Simple, effective, and reliable.</p>
+<h4 data-i18n="testimonial_three_author">- Alice Brown</h4>
 </div>
 </div>
 </section>
+
 
 <section id="portfolio">
-<h2 data-i18n="portfolio_title">Nuestro Trabajo</h2>
+<h2 data-i18n="portfolio_title">Our Work</h2>
 <div class="portfolio-container">
 <div class="portfolio-item">
 <img alt="Project Alpha" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="/>
-<h3>Proyecto Alfa</h3>
-<p>Descripción del Proyecto Alfa.</p>
+<h3>Project Alpha</h3>
+<p>Description for Project Alpha.</p>
 </div>
 <div class="portfolio-item">
 <img alt="Project Beta" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="/>
-<h3>Proyecto Beta</h3>
-<p>Descripción del Proyecto Beta.</p>
+<h3>Project Beta</h3>
+<p>Description for Project Beta.</p>
 </div>
 <div class="portfolio-item">
 <img alt="Project Gamma" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="/>
-<h3>Proyecto Gama</h3>
-<p>Descripción del Proyecto Gama.</p>
+<h3>Project Gamma</h3>
+<p>Description for Project Gamma.</p>
 </div>
 <div class="portfolio-item">
 <img alt="Project Delta" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="/>
-<h3>Proyecto Delta</h3>
-<p>Descripción del Proyecto Delta.</p>
+<h3>Project Delta</h3>
+<p>Description for Project Delta.</p>
 </div>
 </div>
 </section>
 
 <section id="blog">
-<h2 data-i18n="blog_title">Últimas Publicaciones</h2>
+<h2 data-i18n="blog_title">Latest Posts</h2>
 <div class="blog-container">
 <div class="blog-item">
-<h3>Título de la Publicación Alfa</h3>
-<p>Extracto de la publicación Alfa del blog...</p>
-<a class="read-more" href="#post1-link">Leer Publicación Alfa</a>
+<h3>Alpha Post Title</h3>
+<p>Excerpt for Alpha blog post...</p>
+<a class="read-more" href="#post1-link">Read Alpha Post</a>
 </div>
 <div class="blog-item">
-<h3>Título de la Publicación Beta</h3>
-<p>Extracto de la publicación Beta del blog...</p>
-<a class="read-more" href="#post2-link">Leer Publicación Beta</a>
+<h3>Beta Post Title</h3>
+<p>Excerpt for Beta blog post...</p>
+<a class="read-more" href="#post2-link">Read Beta Post</a>
 </div>
 <div class="blog-item">
-<h3>Título de la Publicación Gama</h3>
-<p>Extracto de la publicación Gama del blog...</p>
-<a class="read-more" href="#post3-link">Leer Publicación Gama</a>
+<h3>Gamma Post Title</h3>
+<p>Excerpt for Gamma blog post...</p>
+<a class="read-more" href="#post3-link">Read Gamma Post</a>
 </div>
 </div>
 </section>
 
 </main><footer>
 <p data-i18n="footer_copyright">© 2024 My Company. All rights reserved.</p>
-</footer>
+</footer><script>
+        // Dark Mode Toggle
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const body = document.body;
+        let currentTranslations = {};
+
+        async function generateNavigation() {
+            try {
+                const response = await fetch('public/config.json');
+                if (!response.ok) {
+                    console.error('Failed to load config.json:', response.statusText);
+                    return;
+                }
+                const config = await response.json();
+                const navItems = config.navigation;
+
+                if (navItems && Array.isArray(navItems)) {
+                    const navUl = document.querySelector('.nav-items ul');
+                    if (!navUl) {
+                        console.error('Navigation <ul> element not found.');
+                        return;
+                    }
+                    navUl.innerHTML = ''; // Clear existing items
+
+                    navItems.forEach(item => {
+                        const li = document.createElement('li');
+                        const a = document.createElement('a');
+                        a.setAttribute('data-i18n', item.label_i18n_key);
+                        a.href = item.href;
+                        // Set initial text content, which will be replaced by translation
+                        a.textContent = item.label_i18n_key;
+                        li.appendChild(a);
+                        navUl.appendChild(li);
+                    });
+                }
+            } catch (error) {
+                console.error('Error generating navigation:', error);
+            }
+        }
+
+        async function fetchTranslations(lang) {
+            try {
+                const response = await fetch(`public/locales/${lang}.json`);
+                if (!response.ok) {
+                    console.error(`Could not load ${lang}.json: ${response.statusText}`);
+                    return null;
+                }
+                return await response.json();
+            } catch (error) {
+                console.error(`Error fetching ${lang}.json:`, error);
+                return null;
+            }
+        }
+
+        function applyTranslations(translations) {
+            if (!translations) return;
+            currentTranslations = translations;
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[key] && element.id !== 'dark-mode-toggle') { // Don't translate the icon button
+                    element.textContent = translations[key];
+                }
+            });
+            // Update dark mode toggle icon and aria-label based on current language and mode
+            updateDarkModeButtonIcon();
+        }
+
+        function updateDarkModeButtonIcon() {
+            const isDarkMode = body.classList.contains('dark-mode');
+            if (isDarkMode) {
+                darkModeToggle.textContent = '☀️'; // Sun icon for switching to light mode
+                darkModeToggle.setAttribute('aria-label', currentTranslations['light_mode_toggle'] || 'Switch to Light Mode');
+            } else {
+                darkModeToggle.textContent = '🌙'; // Moon icon for switching to dark mode
+                darkModeToggle.setAttribute('aria-label', currentTranslations['dark_mode_toggle'] || 'Switch to Dark Mode');
+            }
+        }
+
+        async function setLanguage(lang) {
+            const translations = await fetchTranslations(lang);
+            if (translations) {
+                applyTranslations(translations);
+                localStorage.setItem('language', lang);
+                document.documentElement.lang = lang; // Update the lang attribute of the html tag
+
+                // Update active class on buttons
+                document.querySelectorAll('#language-switcher button').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.getAttribute('data-lang') === lang) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
+        }
+
+        // Dark Mode Toggle
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            body.classList.add('dark-mode');
+            // Text will be set after translations load
+        }
+
+        darkModeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                localStorage.setItem('darkMode', 'disabled');
+            }
+            updateDarkModeButtonIcon(); // Update button icon and aria-label on toggle
+        });
+
+        // Language Switcher
+        const languageSwitcher = document.getElementById('language-switcher');
+        if (languageSwitcher) {
+            languageSwitcher.addEventListener('click', (event) => {
+                const button = event.target.closest('button[data-lang]');
+                if (button) {
+                    const lang = button.getAttribute('data-lang');
+                    setLanguage(lang);
+                }
+            });
+        }
+
+        // Initial setup
+        async function initializeApp() {
+            await generateNavigation(); // Generate navigation first
+            const preferredLang = localStorage.getItem('language') || 'en';
+            await setLanguage(preferredLang); // Then set language (which applies translations)
+
+            // No need to initialize the old theme switcher here
+            // The dark mode toggle is already initialized by checking localStorage for 'darkMode'
+            // and its button text/icon will be set by updateDarkModeButtonText() called within setLanguage -> applyTranslations.
+        }
+
+        initializeApp();
+
+        // Hamburger Menu Toggle
+        const hamburgerMenu = document.querySelector('.hamburger-menu');
+        const navItems = document.querySelector('.nav-items');
+
+        if (hamburgerMenu && navItems) {
+            hamburgerMenu.addEventListener('click', () => {
+                navItems.classList.toggle('active');
+                const isExpanded = navItems.classList.contains('active');
+                hamburgerMenu.setAttribute('aria-expanded', isExpanded);
+            });
+        }
+
+        // Contact Form Validation
+        const contactForm = document.querySelector('.contact-form form');
+        if (contactForm) {
+            contactForm.addEventListener('submit', function (event) {
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const message = document.getElementById('message').value.trim();
+                let isValid = true;
+                let errors = [];
+
+                if (name === "") {
+                    isValid = false;
+                    errors.push("Name is required.");
+                    // You could add error display logic here, e.g., document.getElementById('name-error').textContent = "Name is required.";
+                }
+
+                if (email === "") {
+                    isValid = false;
+                    errors.push("Email is required.");
+                } else {
+                    // Basic email format validation
+                    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailPattern.test(email)) {
+                        isValid = false;
+                        errors.push("Please enter a valid email address.");
+                    }
+                }
+
+                if (message === "") {
+                    isValid = false;
+                    errors.push("Message is required.");
+                }
+
+                if (!isValid) {
+                    event.preventDefault(); // Prevent form submission
+                    alert("Please correct the following errors:\n\n" + errors.join("\n"));
+                    // For a better UX, display errors next to fields or in a dedicated error message area
+                }
+                // If isValid is true, the form will submit to Formspree
+            });
+        }
+    </script>
 </body>
 </html>

@@ -14,6 +14,7 @@ from google.protobuf.message import Message
 
 from generated.blog_post_pb2 import BlogPost
 from generated.feature_item_pb2 import FeatureItem
+from generated.hero_item_pb2 import HeroItem  # Added
 from generated.portfolio_item_pb2 import PortfolioItem
 from generated.testimonial_item_pb2 import TestimonialItem
 
@@ -117,6 +118,36 @@ def load_dynamic_data(data_file_path: str, message_type: Type[T]) -> List[T]:
     return []  # Ensure a list is always returned, even if empty due to other errors
 
 
+def load_single_item_dynamic_data(
+    data_file_path: str, message_type: Type[T]
+) -> T | None:
+    """
+    Loads dynamic data for a single item from a JSON file and parses it
+    into a protobuf message.
+    """
+    try:
+        with open(data_file_path, "r", encoding="utf-8") as f:
+            data: Dict[str, Any] = json.load(f)  # Expects a single JSON object
+            message: T = message_type()
+            json_format.ParseDict(data, message)
+            return message
+    except FileNotFoundError:
+        print(f"Warning: Data file {data_file_path} not found. Returning None.")
+        return None
+    except json.JSONDecodeError:
+        print(
+            f"Warning: Could not decode JSON from {data_file_path}. " "Returning None."
+        )
+        return None
+    except json_format.ParseError as e:
+        print(
+            f"Warning: Could not parse JSON into protobuf for {data_file_path}: {e}. "
+            "Returning None."
+        )
+        return None
+    return None
+
+
 def generate_portfolio_html(
     items: List[PortfolioItem], translations: Translations
 ) -> str:
@@ -178,6 +209,23 @@ def generate_features_html(items: List[FeatureItem], translations: Translations)
     return "\n".join(html_output)
 
 
+def generate_hero_html(item: HeroItem | None, translations: Translations) -> str:
+    """Generates HTML for the hero section."""
+    if not item:
+        return "<!-- Hero data not found -->"
+
+    title = translations.get(item.title_i18n_key, item.title_i18n_key)
+    subtitle = translations.get(item.subtitle_i18n_key, item.subtitle_i18n_key)
+    cta_text = translations.get(item.cta_text_i18n_key, item.cta_text_i18n_key)
+    # cta_link is taken directly from the HeroItem
+
+    return f"""
+    <h1>{title}</h1>
+    <p>{subtitle}</p>
+    <a href="{item.cta_link}" class="cta-button">{cta_text}</a>
+    """
+
+
 def generate_blog_html(posts: List[BlogPost], translations: Translations) -> str:
     """Generates HTML for blog posts."""
     html_output: List[str] = []
@@ -230,18 +278,35 @@ def main() -> None:
             "message_type": TestimonialItem,
             "generator": generate_testimonials_html,
             "placeholder": "{{testimonial_items}}",
+            "is_list": True,  # Indicates data is a list of items
+        },
+        "hero.html": {
+            "data_file": "data/hero_item.json",
+            "message_type": HeroItem,
+            "generator": generate_hero_html,
+            "placeholder": "{{hero_content}}",  # Correct placeholder
+            "is_list": False,  # Indicates data is a single item
         },
     }
 
     # Pre-load all dynamic data once
-    loaded_data_cache: Dict[str, List[Message]] = {}
+    loaded_data_cache: Dict[str, Union[List[Message], Message, None]] = (
+        {}
+    )  # Allow single Message or None
     for block_name, config_item in dynamic_data_loaders.items():
         data_file = config_item["data_file"]
         message_type = config_item["message_type"]
-        if (
-            data_file not in loaded_data_cache
-        ):  # Ensure data is loaded only once per file
-            loaded_data_cache[data_file] = load_dynamic_data(data_file, message_type)
+        is_list = config_item.get("is_list", True)  # Default to True if not specified
+
+        if data_file not in loaded_data_cache:
+            if is_list:
+                loaded_data_cache[data_file] = load_dynamic_data(
+                    data_file, message_type
+                )
+            else:
+                loaded_data_cache[data_file] = load_single_item_dynamic_data(
+                    data_file, message_type
+                )
 
     config: Dict[str, Any]
     try:

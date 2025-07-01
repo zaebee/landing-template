@@ -7,18 +7,21 @@ from unittest import mock
 
 from build import (
     generate_blog_html,
-    generate_features_html,  # Added
+    generate_features_html,
+    generate_hero_html,  # Added
     generate_portfolio_html,
-    generate_testimonials_html,  # Added
+    generate_testimonials_html,
     load_dynamic_data,
+    load_single_item_dynamic_data,  # Added
     load_translations,
     translate_html_content,
 )
 from build import main as build_main
 from generated.blog_post_pb2 import BlogPost
-from generated.feature_item_pb2 import FeatureItem  # Added
+from generated.feature_item_pb2 import FeatureItem
+from generated.hero_item_pb2 import HeroItem  # Added
 from generated.portfolio_item_pb2 import PortfolioItem
-from generated.testimonial_item_pb2 import TestimonialItem  # Added
+from generated.testimonial_item_pb2 import TestimonialItem
 
 project_root = os.path.dirname(os.path.abspath(__file__))
 if project_root not in sys.path:
@@ -115,6 +118,17 @@ class TestBuildScript(unittest.TestCase):
         ) as f:
             json.dump(self.testimonial_items_data, f)
 
+        self.hero_item_data = {  # Single item, not a list
+            "title_i18n_key": "hero_title_main",
+            "subtitle_i18n_key": "hero_subtitle_main",
+            "cta_text_i18n_key": "hero_cta_main",
+            "cta_link": "#gohere",
+        }
+        with open(
+            os.path.join(self.test_data_dir, "hero.json"), "w", encoding="utf-8"
+        ) as f:  # Corresponds to data/hero_item.json used in build.py
+            json.dump(self.hero_item_data, f)
+
         # Create a dummy index.html for main() to read
         self.dummy_index_content = """
         <!DOCTYPE html>
@@ -156,11 +170,13 @@ class TestBuildScript(unittest.TestCase):
         # Dummy block files
         os.makedirs("blocks", exist_ok=True)
         with open("blocks/hero.html", "w", encoding="utf-8") as f:
-            f.write("<div data-i18n='hero_title'>Hero Title</div>")
+            f.write(
+                '<section class="hero">{{hero_content}}</section>'
+            )  # Updated to match new hero block
         with open("blocks/features.html", "w", encoding="utf-8") as f:
-            f.write("<div>{{feature_items}}</div>")  # Added
+            f.write("<div>{{feature_items}}</div>")
         with open("blocks/testimonials.html", "w", encoding="utf-8") as f:
-            f.write("<div>{{testimonial_items}}</div>")  # Added
+            f.write("<div>{{testimonial_items}}</div>")
         with open("blocks/portfolio.html", "w", encoding="utf-8") as f:
             f.write("<div>{{portfolio_items}}</div>")
         with open("blocks/blog.html", "w", encoding="utf-8") as f:
@@ -310,6 +326,21 @@ class TestBuildScript(unittest.TestCase):
                 items[0].text_i18n_key, self.testimonial_items_data[0]["text_i18n_key"]
             )
 
+    def test_load_single_item_dynamic_data_hero(self):
+        """Test loading dynamic hero item data (single item)."""
+        item = load_single_item_dynamic_data(
+            os.path.join(self.test_data_dir, "hero.json"), HeroItem
+        )
+        self.assertIsNotNone(item)
+        if item:  # for type checking
+            self.assertIsInstance(item, HeroItem)
+            self.assertEqual(item.title_i18n_key, self.hero_item_data["title_i18n_key"])
+
+    def test_load_single_item_dynamic_data_not_found(self):
+        """Test loading single item from non-existent file."""
+        item = load_single_item_dynamic_data("non_existent_hero.json", HeroItem)
+        self.assertIsNone(item)
+
     def test_load_dynamic_data_blog(self):
         """Test loading dynamic blog data."""
         posts = load_dynamic_data(
@@ -435,62 +466,99 @@ class TestBuildScript(unittest.TestCase):
         html = generate_testimonials_html([], self.en_translations)
         self.assertEqual(html.strip(), "")
 
-    @mock.patch("build.load_translations")
-    @mock.patch("build.load_dynamic_data")
-    @mock.patch("build.translate_html_content")
-    # Mock all file opens
-    @mock.patch("builtins.open", new_callable=mock.mock_open)
-    def test_main_function_creates_files(
-        self, mock_file_open, mock_translate, mock_load_data, mock_load_trans
-    ):
-        """Test that main function attempts to create output files."""
-        # Setup mock return values
-        mock_load_trans.side_effect = [
-            {
-                "header_text": "EN Header",
-                "footer_text": "EN Footer",
-                "hero_title": "EN Hero",
-            },  # en translations
-            {
-                "header_text": "ES Header",
-                "footer_text": "ES Footer",
-                "hero_title": "ES Hero",
-            },  # es translations
-        ]
-        # Mock load_dynamic_data to return specific types
-        mock_portfolio_item = PortfolioItem(
-            title_i18n_key="p1",
-            desc_i18n_key="d1",
-            img_src="portfolio.jpg",
-            img_alt="alt",
+    def test_generate_hero_html(self):
+        """Test generation of hero HTML."""
+        item = HeroItem(
+            title_i18n_key="hero_title_key",
+            subtitle_i18n_key="hero_subtitle_key",
+            cta_text_i18n_key="hero_cta_key",
+            cta_link="#testlink",
         )
-        mock_blog_post = BlogPost(
-            title_i18n_key="b1",
-            excerpt_i18n_key="e1",
-            link="blog.html",
-            cta_i18n_key="c1",
-        )
-        mock_feature_item = FeatureItem(title_i18n_key="f1", desc_i18n_key="fd1")
-        mock_testimonial_item = TestimonialItem(
-            text_i18n_key="t1",
-            author_i18n_key="ta1",
-            img_src="testimonial.jpg",
-            img_alt_i18n_key="talt1",
+        translations = {
+            "hero_title_key": "Translated Hero Title",
+            "hero_subtitle_key": "Translated Hero Subtitle",
+            "hero_cta_key": "Translated CTA Text",
+        }
+        html = generate_hero_html(item, translations)
+        self.assertIn("<h1>Translated Hero Title</h1>", html)
+        self.assertIn("<p>Translated Hero Subtitle</p>", html)
+        self.assertIn(
+            '<a href="#testlink" class="cta-button">Translated CTA Text</a>', html
         )
 
-        # This side effect needs to map specific data file paths to their mock data
-        def load_data_side_effect(data_file_path, message_type):
+    def test_generate_hero_html_none_item(self):
+        """Test hero HTML generation when item is None."""
+        html = generate_hero_html(None, self.en_translations)
+        self.assertEqual(html.strip(), "<!-- Hero data not found -->")
+
+    @mock.patch("build.load_translations")
+    # Patch both data loading functions used in the main pre-loading loop
+    @mock.patch("build.load_dynamic_data")  # For list-based items
+    @mock.patch("build.load_single_item_dynamic_data")  # For single items like hero
+    @mock.patch("build.translate_html_content")
+    @mock.patch("builtins.open", new_callable=mock.mock_open)
+    def test_main_function_creates_files(
+        self,
+        mock_file_open,
+        mock_translate,
+        mock_load_single_item_data,  # Order matters for mock args
+        mock_load_list_data,
+        mock_load_trans,
+    ):
+        """Test that main function attempts to create output files."""
+        mock_load_trans.side_effect = [
+            self.en_translations,  # For EN
+            self.es_translations,  # For ES
+        ]
+
+        # Mock data items
+        mock_hero_item = HeroItem(
+            title_i18n_key="h_title",
+            subtitle_i18n_key="h_sub",
+            cta_text_i18n_key="h_cta",
+            cta_link="#hero",
+        )
+        mock_portfolio_item = PortfolioItem(
+            title_i18n_key="p_title",
+            desc_i18n_key="p_desc",
+            img_src="p.jpg",
+            img_alt="p_alt",
+        )
+        mock_blog_post = BlogPost(
+            title_i18n_key="b_title",
+            excerpt_i18n_key="b_excerpt",
+            link="b.html",
+            cta_i18n_key="b_cta",
+        )
+        mock_feature_item = FeatureItem(
+            title_i18n_key="f_title", desc_i18n_key="f_desc"
+        )
+        mock_testimonial_item = TestimonialItem(
+            text_i18n_key="t_text",
+            author_i18n_key="t_author",
+            img_src="t.jpg",
+            img_alt_i18n_key="t_alt",
+        )
+
+        def load_list_data_side_effect(data_file_path, message_type):
             if data_file_path == "data/portfolio_items.json":
                 return [mock_portfolio_item]
-            elif data_file_path == "data/blog_posts.json":
+            if data_file_path == "data/blog_posts.json":
                 return [mock_blog_post]
-            elif data_file_path == "data/feature_items.json":
+            if data_file_path == "data/feature_items.json":
                 return [mock_feature_item]
-            elif data_file_path == "data/testimonial_items.json":
+            if data_file_path == "data/testimonial_items.json":
                 return [mock_testimonial_item]
             return []
 
-        mock_load_data.side_effect = load_data_side_effect
+        mock_load_list_data.side_effect = load_list_data_side_effect
+
+        def load_single_item_data_side_effect(data_file_path, message_type):
+            if data_file_path == "data/hero_item.json":
+                return mock_hero_item
+            return None
+
+        mock_load_single_item_data.side_effect = load_single_item_data_side_effect
 
         mock_translate.side_effect = (
             lambda content, trans: content
