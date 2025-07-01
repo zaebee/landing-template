@@ -1,6 +1,6 @@
 # landing-template
 
-Template web site with landing page to track telegram bot user source.
+Template website with landing page to track telegram bot user source.
 
 ## Structure
 
@@ -19,6 +19,7 @@ This will execute the `build.py` script, which reads `config.json` and assembles
 ## Customizing Blocks
 
 -   **Add a new block**:
+
     1.  Create a new HTML file in the `blocks/` directory (e.g., `my-new-block.html`).
     2.  Add the desired HTML content to this file.
     3.  Include the filename in the `blocks` array in `config.json` at the desired position.
