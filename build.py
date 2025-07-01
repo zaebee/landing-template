@@ -13,10 +13,10 @@ from google.protobuf import json_format
 from google.protobuf.message import Message
 
 from generated.blog_post_pb2 import BlogPost
-from generated.portfolio_item_pb2 import PortfolioItem
 from generated.feature_item_pb2 import FeatureItem
+from generated.hero_item_pb2 import HeroItem  # Added
+from generated.portfolio_item_pb2 import PortfolioItem
 from generated.testimonial_item_pb2 import TestimonialItem
-from generated.hero_item_pb2 import HeroItem # Added
 
 # Ensure the project root (and thus 'generated' directory) is in the Python path
 project_root = os.path.dirname(os.path.abspath(__file__))
@@ -128,7 +128,7 @@ def load_single_item_dynamic_data(
     try:
         with open(data_file_path, "r", encoding="utf-8") as f:
             data: Dict[str, Any] = json.load(f)  # Expects a single JSON object
-            message = message_type()
+            message: T = message_type()
             json_format.ParseDict(data, message)
             return message
     except FileNotFoundError:
@@ -191,9 +191,7 @@ def generate_testimonials_html(
     return "\n".join(html_output)
 
 
-def generate_features_html(
-    items: List[FeatureItem], translations: Translations
-) -> str:
+def generate_features_html(items: List[FeatureItem], translations: Translations) -> str:
     """Generates HTML for feature items."""
     html_output: List[str] = []
     for item in items:
@@ -210,6 +208,7 @@ def generate_features_html(
         )
     return "\n".join(html_output)
 
+
 def generate_hero_html(item: HeroItem | None, translations: Translations) -> str:
     """Generates HTML for the hero section."""
     if not item:
@@ -225,6 +224,7 @@ def generate_hero_html(item: HeroItem | None, translations: Translations) -> str
     <p>{subtitle}</p>
     <a href="{item.cta_link}" class="cta-button">{cta_text}</a>
     """
+
 
 def generate_blog_html(posts: List[BlogPost], translations: Translations) -> str:
     """Generates HTML for blog posts."""
@@ -278,30 +278,35 @@ def main() -> None:
             "message_type": TestimonialItem,
             "generator": generate_testimonials_html,
             "placeholder": "{{testimonial_items}}",
-            "is_list": True, # Indicates data is a list of items
+            "is_list": True,  # Indicates data is a list of items
         },
         "hero.html": {
             "data_file": "data/hero_item.json",
             "message_type": HeroItem,
             "generator": generate_hero_html,
-            "placeholder": "{{hero_content}}", # Correct placeholder
-            "is_list": False, # Indicates data is a single item
+            "placeholder": "{{hero_content}}",  # Correct placeholder
+            "is_list": False,  # Indicates data is a single item
         },
     }
 
     # Pre-load all dynamic data once
-    loaded_data_cache: Dict[str, Union[List[Message], Message, None]] = {} # Allow single Message or None
+    loaded_data_cache: Dict[str, Union[List[Message], Message, None]] = (
+        {}
+    )  # Allow single Message or None
     for block_name, config_item in dynamic_data_loaders.items():
         data_file = config_item["data_file"]
         message_type = config_item["message_type"]
-        is_list = config_item.get("is_list", True) # Default to True if not specified
+        is_list = config_item.get("is_list", True)  # Default to True if not specified
 
         if data_file not in loaded_data_cache:
             if is_list:
-                loaded_data_cache[data_file] = load_dynamic_data(data_file, message_type)
+                loaded_data_cache[data_file] = load_dynamic_data(
+                    data_file, message_type
+                )
             else:
-                loaded_data_cache[data_file] = load_single_item_dynamic_data(data_file, message_type)
-
+                loaded_data_cache[data_file] = load_single_item_dynamic_data(
+                    data_file, message_type
+                )
 
     config: Dict[str, Any]
     try:
@@ -432,7 +437,9 @@ def main() -> None:
                         # or that the types are compatible enough.
                         # A more robust solution might involve type checking here or ensuring
                         # generators are flexible.
-                        data_items = loaded_data_cache.get(loader_config["data_file"], [])
+                        data_items = loaded_data_cache.get(
+                            loader_config["data_file"], []
+                        )
 
                         # Ensure the data passed to the generator is correctly typed.
                         # This step is crucial if generators expect specific protobuf types.
