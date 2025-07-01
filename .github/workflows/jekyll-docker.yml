@@ -30,7 +30,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run generate-proto to generate PROTO files
-        run: mkdir -p generated && python -m grpc_tools.protoc -I./proto --python_out=./generated --pyi_out=./generated ./proto/*.proto && touch generated/__init__.py"
+        run: mkdir -p generated && python -m grpc_tools.protoc -I./proto --python_out=./generated --pyi_out=./generated ./proto/*.proto && touch generated/__init__.py
 
       - name: Run build.py to generate HTML files
         run: python build.py
