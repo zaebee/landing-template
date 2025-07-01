@@ -43,7 +43,7 @@ def get_attribute_value_as_str(element: Tag, attr_name: str) -> str:
 def load_translations(lang: str) -> Translations:
     """Loads translation strings for a given language."""
     try:
-        with open(f"locales/{lang}.json", "r", encoding="utf-8") as f:
+        with open(f"public/locales/{lang}.json", "r", encoding="utf-8") as f:
             translations: Translations = json.load(f)
             return translations
     except FileNotFoundError:
@@ -163,7 +163,7 @@ def main() -> None:
 
     config: Dict[str, Any]
     try:
-        with open("config.json", "r", encoding="utf-8") as f:
+        with open("public/config.json", "r", encoding="utf-8") as f:
             config = json.load(f)
     except FileNotFoundError:
         print("Error: config.json not found. Exiting.")
