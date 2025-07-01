@@ -162,40 +162,40 @@ def main() -> None:
     supported_langs: List[str] = ["en", "es"]
     default_lang: str = "en"
 
+    # Read the main configuration file
     config: Dict[str, Any]
-    try:
-        with open("public/config.json", "r", encoding="utf-8") as f:
-            config = json.load(f)
-    except FileNotFoundError:
-        print("Error: config.json not found. Exiting.")
-        sys.exit(1)  # Exit if config is essential
-    except json.JSONDecodeError:
-        print("Error: Could not decode JSON from config.json. Exiting.")
-        sys.exit(1)  # Exit if config is essential
+    with open("public/config.json", "r", encoding="utf-8") as f:
+        config = json.load(f)
 
-    portfolio_data_untyped: List[Message] = load_dynamic_data(
-        "data/portfolio_items.json", PortfolioItem
-    )
-    portfolio_data: List[PortfolioItem] = [
-        item for item in portfolio_data_untyped if isinstance(item, PortfolioItem)
-    ]
+    # Load dynamic data using protobuf
+    dynamic_data_loaders: Dict[str, Dict[str, Any]] = {
+        "portfolio.html": {
+            "loader": load_dynamic_data,
+            "args": ["data/portfolio_items.json", PortfolioItem],
+            "generator": generate_portfolio_html,
+            "placeholder": "{{portfolio_items}}",
+        },
+        "blog.html": {
+            "loader": load_dynamic_data,
+            "args": ["data/blog_posts.json", BlogPost],
+            "generator": generate_blog_html,
+            "placeholder": "{{blog_posts}}",
+        },
+    }
 
-    blog_data_untyped: List[Message] = load_dynamic_data(
-        "data/blog_posts.json", BlogPost
-    )
-    blog_data: List[BlogPost] = [
-        item for item in blog_data_untyped if isinstance(item, BlogPost)
-    ]
+    loaded_dynamic_data = {}
+    # Use a different variable name here to avoid shadowing the main 'config' object
+    for block_name, data_loader_config in dynamic_data_loaders.items():
+        loaded_dynamic_data[block_name] = data_loader_config["loader"](
+            *data_loader_config["args"]
+        )
 
-    base_content: str
-    try:
-        with open("index.html", "r", encoding="utf-8") as f:
-            base_content = f.read()
-    except FileNotFoundError:
-        print("Error: Base index.html not found. Exiting.")
-        sys.exit(1)  # Exit if base template is essential
-
-    base_soup: BeautifulSoup = BeautifulSoup(base_content, "html.parser")
+    # Read the base index.html structure (header and footer)
+    # We use the existing index.html as a template for the overall page structure
+    # but will replace its content with translated blocks.
+    with open("index.html", "r", encoding="utf-8") as f:
+        base_content = f.read()
+        base_soup = BeautifulSoup(base_content, "html.parser")
 
     header_content: str = ""
     body_tag = base_soup.body
@@ -267,20 +267,26 @@ def main() -> None:
                     block_template_content: str = f.read()
                     block_content_with_data: str
 
-                    if block_file == "portfolio.html":
-                        portfolio_html: str = generate_portfolio_html(
-                            portfolio_data, translations
-                        )
-                        block_content_with_data = block_template_content.replace(
-                            "{{portfolio_items}}", portfolio_html
-                        )
-                    elif block_file == "blog.html":
-                        blog_html: str = generate_blog_html(blog_data, translations)
-                        block_content_with_data = block_template_content.replace(
-                            "{{blog_posts}}", blog_html
-                        )
-                    else:
-                        block_content_with_data = block_template_content
+                    # Inject dynamic content before translation
+                    block_content_with_data = block_template_content
+                    if block_file in dynamic_data_loaders:
+                        data_config = dynamic_data_loaders[block_file]
+                        placeholder = data_config["placeholder"]
+                        if placeholder in block_template_content:
+                            items = loaded_dynamic_data[block_file]
+                            generated_html = data_config["generator"](
+                                items, translations
+                            )
+                            block_content_with_data = block_template_content.replace(
+                                placeholder, generated_html
+                            )
+                        else:
+                            print(
+                                f"Warning: Placeholder '{placeholder}' not found "
+                                f"in {block_file}"
+                            )
+                    # No 'else' needed here as block_content_with_data is
+                    # already block_template_content
 
                     translated_block_content: str = translate_html_content(
                         block_content_with_data, translations
