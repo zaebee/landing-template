@@ -25,11 +25,7 @@
             </button>
             <div class="nav-items">
                 <ul>
-                    <li><a data-i18n="nav_home" href="#">Home</a></li>
-                    <li><a data-i18n="nav_about" href="#">About</a></li>
-                    <li><a data-i18n="nav_services" href="#">Services</a></li>
-                    <li><a data-i18n="nav_blog" href="#">Blog</a></li>
-                    <li><a data-i18n="nav_contact" href="#">Contact</a></li>
+                    <!-- Navigation items will be dynamically injected here -->
                 </ul>
                 <button data-i18n="dark_mode_toggle" id="dark-mode-toggle">Toggle Dark Mode</button>
                 <div id="language-switcher">
@@ -171,6 +167,40 @@
         const body = document.body;
         let currentTranslations = {};
 
+        async function generateNavigation() {
+            try {
+                const response = await fetch('config.json');
+                if (!response.ok) {
+                    console.error('Failed to load config.json:', response.statusText);
+                    return;
+                }
+                const config = await response.json();
+                const navItems = config.navigation;
+
+                if (navItems && Array.isArray(navItems)) {
+                    const navUl = document.querySelector('.nav-items ul');
+                    if (!navUl) {
+                        console.error('Navigation <ul> element not found.');
+                        return;
+                    }
+                    navUl.innerHTML = ''; // Clear existing items
+
+                    navItems.forEach(item => {
+                        const li = document.createElement('li');
+                        const a = document.createElement('a');
+                        a.setAttribute('data-i18n', item.label_i18n_key);
+                        a.href = item.href;
+                        // Set initial text content, which will be replaced by translation
+                        a.textContent = item.label_i18n_key;
+                        li.appendChild(a);
+                        navUl.appendChild(li);
+                    });
+                }
+            } catch (error) {
+                console.error('Error generating navigation:', error);
+            }
+        }
+
         async function fetchTranslations(lang) {
             try {
                 const response = await fetch(`locales/${lang}.json`);
@@ -251,9 +281,21 @@
             });
         }
 
-        // Initial language load
-        const preferredLang = localStorage.getItem('language') || 'en';
-        setLanguage(preferredLang);
+        // Initial setup
+        async function initializeApp() {
+            await generateNavigation(); // Generate navigation first
+            const preferredLang = localStorage.getItem('language') || 'en';
+            await setLanguage(preferredLang); // Then set language (which applies translations)
+
+            // Initialize theme switcher after navigation and language are set up
+            let initialTheme = localStorage.getItem('theme');
+            if (!initialTheme) {
+                initialTheme = body.classList.contains('dark-mode') ? 'dark' : 'light';
+            }
+            setTheme(initialTheme);
+        }
+
+        initializeApp();
 
 
         // Theme Switcher
