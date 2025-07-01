@@ -47,6 +47,14 @@ header nav {
     background-color: #e6e6e6;
 }
 
+/* Logo style */
+header .logo a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
 /* Navigation list styles */
 header ul {
     list-style: none;
@@ -65,14 +73,6 @@ header ul li a {
 
 header ul li a:hover {
     text-decoration: underline;
-}
-
-/* Logo style */
-header .logo a {
-    color: #fff;
-    text-decoration: none;
-    font-size: 1.5rem;
-    font-weight: bold;
 }
 
 /* Main Content Area */
