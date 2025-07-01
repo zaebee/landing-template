@@ -6,7 +6,7 @@
     "build": "python build.py",
     "lint:py": "ruff check . && mypy .",
     "lint:py:fix": "ruff check . --fix && mypy .",
-    "generate-proto": "python -m grpc_tools.protoc -I./proto --python_out=./generated --pyi_out=./generated ./proto/*.proto"
+    "generate-proto": "python -m grpc_tools.protoc -I./proto --python_out=./generated --pyi_out=./generated ./proto/blog_post.proto ./proto/portfolio_item.proto"
   },
   "keywords": [],
   "author": "",

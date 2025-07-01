@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package website_builder;
+
+message HeroItem {
+  string title_i18n_key = 1;
+  string subtitle_i18n_key = 2;
+  string cta_text_i18n_key = 3;
+  string cta_link = 4; // Assuming the link itself is not localized but comes from data
+}
