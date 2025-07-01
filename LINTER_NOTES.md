@@ -20,3 +20,28 @@ This document outlines known linting issues that are best addressed by configuri
   - A `.jscpd.json` configuration file might be respected by Super-Linter if placed in the repository root, allowing for more granular control over exclusions and thresholds.
 
 Addressing these issues via linter configuration will lead to a cleaner CI output without compromising the modular structure of the HTML blocks.
+
+---
+
+## CSS Linting (Stylelint)
+
+CSS files (`.css`) are linted using [Stylelint](https://stylelint.io/).
+
+- **Configuration**:
+    - Stylelint is configured in `.stylelintrc.json`.
+- **Running Linters**:
+    - `npm run lint:css` - Runs Stylelint to check CSS files.
+    - `npm run lint:css:fix` - Runs Stylelint and attempts to automatically fix issues.
+
+## Python Linting (Ruff & MyPy)
+
+Python code (`.py` files) is linted using [Ruff](https://beta.ruff.rs/docs/) for formatting and general code quality (style, errors, etc.) and [MyPy](http://mypy-lang.org/) for static type checking.
+
+- **Configuration**:
+    - Ruff is configured in `pyproject.toml` under the `[tool.ruff]` and `[tool.ruff.lint]` sections.
+    - MyPy is configured in `pyproject.toml` under the `[tool.mypy]` section.
+    - Development dependencies, including `ruff` and `mypy`, are listed in `requirements-dev.txt`. Install them using `pip install -r requirements-dev.txt`.
+
+- **Running Linters**:
+    - `npm run lint:py` - Runs both Ruff and MyPy to check Python files.
+    - `npm run lint:py:fix` - Runs Ruff with auto-fixing enabled, followed by MyPy.

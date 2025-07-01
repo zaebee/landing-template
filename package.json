@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Template web site with landing page to track telegram bot user source.",
   "scripts": {
-    "build": "python build.py"
+    "build": "python build.py",
+    "lint:py": "ruff check . && mypy .",
+    "lint:py:fix": "ruff check . --fix && mypy ."
   },
   "keywords": [],
   "author": "",
