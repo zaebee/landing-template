@@ -27,14 +27,10 @@
                 <ul>
                     <!-- Navigation items will be dynamically injected here -->
                 </ul>
-                <button data-i18n="dark_mode_toggle" id="dark-mode-toggle">Toggle Dark Mode</button>
+                <button id="dark-mode-toggle" aria-label="Switch to Dark Mode">🌙</button>
                 <div id="language-switcher">
                     <button data-lang="en">EN</button>
                     <button data-lang="es">ES</button>
-                </div>
-                <div id="theme-switcher">
-                    <button data-i18n="theme_light_button" data-theme="light">Light Theme</button>
-                    <button data-i18n="theme_dark_button" data-theme="dark">Dark Theme</button>
                 </div>
             </div>
         </nav>
@@ -220,19 +216,22 @@
             currentTranslations = translations;
             document.querySelectorAll('[data-i18n]').forEach(element => {
                 const key = element.getAttribute('data-i18n');
-                if (translations[key]) {
+                if (translations[key] && element.id !== 'dark-mode-toggle') { // Don't translate the icon button
                     element.textContent = translations[key];
                 }
             });
-            // Update dark mode toggle text based on current language and mode
-            updateDarkModeButtonText();
+            // Update dark mode toggle icon and aria-label based on current language and mode
+            updateDarkModeButtonIcon();
         }
 
-        function updateDarkModeButtonText() {
-            if (body.classList.contains('dark-mode')) {
-                darkModeToggle.textContent = currentTranslations['light_mode_toggle'] || 'Toggle Light Mode';
+        function updateDarkModeButtonIcon() {
+            const isDarkMode = body.classList.contains('dark-mode');
+            if (isDarkMode) {
+                darkModeToggle.textContent = '☀️'; // Sun icon for switching to light mode
+                darkModeToggle.setAttribute('aria-label', currentTranslations['light_mode_toggle'] || 'Switch to Light Mode');
             } else {
-                darkModeToggle.textContent = currentTranslations['dark_mode_toggle'] || 'Toggle Dark Mode';
+                darkModeToggle.textContent = '🌙'; // Moon icon for switching to dark mode
+                darkModeToggle.setAttribute('aria-label', currentTranslations['dark_mode_toggle'] || 'Switch to Dark Mode');
             }
         }
 
@@ -266,7 +265,7 @@
             } else {
                 localStorage.setItem('darkMode', 'disabled');
             }
-            updateDarkModeButtonText(); // Update button text on toggle
+            updateDarkModeButtonIcon(); // Update button icon and aria-label on toggle
         });
 
         // Language Switcher
@@ -287,78 +286,12 @@
             const preferredLang = localStorage.getItem('language') || 'en';
             await setLanguage(preferredLang); // Then set language (which applies translations)
 
-            // Initialize theme switcher after navigation and language are set up
-            let initialTheme = localStorage.getItem('theme');
-            if (!initialTheme) {
-                initialTheme = body.classList.contains('dark-mode') ? 'dark' : 'light';
-            }
-            setTheme(initialTheme);
+            // No need to initialize the old theme switcher here
+            // The dark mode toggle is already initialized by checking localStorage for 'darkMode'
+            // and its button text/icon will be set by updateDarkModeButtonText() called within setLanguage -> applyTranslations.
         }
 
         initializeApp();
-
-
-        // Theme Switcher
-        const themeSwitcher = document.getElementById('theme-switcher');
-        const lightThemeCss = document.getElementById('theme-style-light'); // Assuming you might add these later
-        const darkThemeCss = document.getElementById('theme-style-dark');   // Assuming you might add these later
-
-        function setTheme(themeName) {
-            localStorage.setItem('theme', themeName);
-            body.classList.remove('light-theme', 'dark-theme', 'os-theme'); // Remove any existing theme class
-            // For now, 'light' and 'dark' themes are primarily controlled by body.dark-mode
-            // This function will set the active button and localStorage
-
-            // Update active class on buttons
-            document.querySelectorAll('#theme-switcher button').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.getAttribute('data-theme') === themeName) {
-                    btn.classList.add('active');
-                }
-            });
-
-            // Logic for applying actual theme styles (e.g., linking/unlinking stylesheets or changing body class)
-            // This part might need to be coordinated with how style_light.css and style_dark.css are intended to be used.
-            // For this task, we'll focus on the button state and assume dark mode toggle handles the primary visual switch.
-            // If 'style_light.css' and 'style_dark.css' are meant to be switched, that logic would go here.
-            // For example:
-            if (themeName === 'light') {
-                 // If using separate stylesheets:
-                 // if (lightThemeCss) lightThemeCss.disabled = false;
-                 // if (darkThemeCss) darkThemeCss.disabled = true;
-                 // If using body classes for themes beyond simple dark/light:
-                 // body.classList.add('light-theme');
-                 // Or, if it should just reflect the dark mode toggle:
-                if (body.classList.contains('dark-mode')) {
-                    darkModeToggle.click(); // Simulate click to toggle to light
-                }
-            } else if (themeName === 'dark') {
-                // if (lightThemeCss) lightThemeCss.disabled = true;
-                // if (darkThemeCss) darkThemeCss.disabled = false;
-                // body.classList.add('dark-theme');
-                if (!body.classList.contains('dark-mode')) {
-                    darkModeToggle.click(); // Simulate click to toggle to dark
-                }
-            }
-            // Add 'os-theme' or other specific theme logic if needed
-        }
-
-        if (themeSwitcher) {
-            themeSwitcher.addEventListener('click', (event) => {
-                const button = event.target.closest('button[data-theme]');
-                if (button) {
-                    const theme = button.getAttribute('data-theme');
-                    setTheme(theme);
-                }
-            });
-        }
-
-        // Initial theme load - align with dark mode preference initially
-        let initialTheme = localStorage.getItem('theme');
-        if (!initialTheme) {
-            initialTheme = body.classList.contains('dark-mode') ? 'dark' : 'light';
-        }
-        setTheme(initialTheme);
 
         // Hamburger Menu Toggle
         const hamburgerMenu = document.querySelector('.hamburger-menu');
