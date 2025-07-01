@@ -1,13 +1,13 @@
 syntax = "proto3";
 
-package project;
+package website_content.v1;
 
-option go_package = "example.com/project/proto"; // Example Go package option
+import "common.proto";
+
+option go_package = "example.com/website_content/v1;website_content_v1";
 
 message PortfolioItem {
   string id = 1;
-  string img_src = 2;
-  string img_alt = 3;
-  string title_i18n_key = 4;
-  string desc_i18n_key = 5;
+  Image image = 2;
+  TitledBlock details = 3;
 }

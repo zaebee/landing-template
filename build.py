@@ -154,12 +154,18 @@ def generate_portfolio_html(
     """Generates HTML for portfolio items."""
     html_output: List[str] = []
     for item in items:
-        title: str = translations.get(item.title_i18n_key, item.title_i18n_key)
-        description: str = translations.get(item.desc_i18n_key, item.desc_i18n_key)
+        # PortfolioItem: id, image (Image), details (TitledBlock)
+        # Image: src, alt_text (I18nString)
+        # TitledBlock: title (I18nString), description (I18nString)
+        # I18nString: key
+        title: str = translations.get(item.details.title.key, item.details.title.key)
+        description: str = translations.get(item.details.description.key, item.details.description.key)
+        alt_text: str = translations.get(item.image.alt_text.key, "Portfolio image") # Default alt
+
         html_output.append(
             f"""
         <div class="portfolio-item">
-            <img src="{item.img_src}" alt="{item.img_alt}">
+            <img src="{item.image.src}" alt="{alt_text}">
             <h3>{title}</h3>
             <p>{description}</p>
         </div>
@@ -174,15 +180,16 @@ def generate_testimonials_html(
     """Generates HTML for testimonial items."""
     html_output: List[str] = []
     for item in items:
-        text: str = translations.get(item.text_i18n_key, item.text_i18n_key)
-        author: str = translations.get(item.author_i18n_key, item.author_i18n_key)
+        # TestimonialItem: text (I18nString), author (I18nString), author_image (Image)
+        text: str = translations.get(item.text.key, item.text.key)
+        author: str = translations.get(item.author.key, item.author.key)
         img_alt: str = translations.get(
-            item.img_alt_i18n_key, "User photo"
+            item.author_image.alt_text.key, "User photo"
         )  # Default alt text
         html_output.append(
             f"""
         <div class="testimonial-item">
-            <img src="{item.img_src}" alt="{img_alt}">
+            <img src="{item.author_image.src}" alt="{img_alt}">
             <p>{text}</p>
             <h4>{author}</h4>
         </div>
@@ -195,9 +202,10 @@ def generate_features_html(items: List[FeatureItem], translations: Translations)
     """Generates HTML for feature items."""
     html_output: List[str] = []
     for item in items:
-        title: str = translations.get(item.title_i18n_key, item.title_i18n_key)
-        description: str = translations.get(item.desc_i18n_key, item.desc_i18n_key)
-        # Note: If FeatureItem had icon_class or img_src, they would be used here.
+        # FeatureItem: content (TitledBlock)
+        # TitledBlock: title (I18nString), description (I18nString)
+        title: str = translations.get(item.content.title.key, item.content.title.key)
+        description: str = translations.get(item.content.description.key, item.content.description.key)
         html_output.append(
             f"""
         <div class="feature-item">
@@ -214,15 +222,16 @@ def generate_hero_html(item: HeroItem | None, translations: Translations) -> str
     if not item:
         return "<!-- Hero data not found -->"
 
-    title = translations.get(item.title_i18n_key, item.title_i18n_key)
-    subtitle = translations.get(item.subtitle_i18n_key, item.subtitle_i18n_key)
-    cta_text = translations.get(item.cta_text_i18n_key, item.cta_text_i18n_key)
-    # cta_link is taken directly from the HeroItem
+    # HeroItem: title (I18nString), subtitle (I18nString), cta (CTA)
+    # CTA: text (I18nString), link (string)
+    title = translations.get(item.title.key, item.title.key)
+    subtitle = translations.get(item.subtitle.key, item.subtitle.key)
+    cta_text = translations.get(item.cta.text.key, item.cta.text.key)
 
     return f"""
     <h1>{title}</h1>
     <p>{subtitle}</p>
-    <a href="{item.cta_link}" class="cta-button">{cta_text}</a>
+    <a href="{item.cta.link}" class="cta-button">{cta_text}</a>
     """
 
 
@@ -230,15 +239,16 @@ def generate_blog_html(posts: List[BlogPost], translations: Translations) -> str
     """Generates HTML for blog posts."""
     html_output: List[str] = []
     for post in posts:
-        title: str = translations.get(post.title_i18n_key, post.title_i18n_key)
-        excerpt: str = translations.get(post.excerpt_i18n_key, post.excerpt_i18n_key)
-        cta: str = translations.get(post.cta_i18n_key, post.cta_i18n_key)
+        # BlogPost: id, title (I18nString), excerpt (I18nString), cta (CTA)
+        title: str = translations.get(post.title.key, post.title.key)
+        excerpt: str = translations.get(post.excerpt.key, post.excerpt.key)
+        cta_text: str = translations.get(post.cta.text.key, post.cta.text.key)
         html_output.append(
             f"""
         <div class="blog-item">
             <h3>{title}</h3>
             <p>{excerpt}</p>
-            <a href="{post.link}" class="read-more">{cta}</a>
+            <a href="{post.cta.link}" class="read-more">{cta_text}</a>
         </div>
         """
         )

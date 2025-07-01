@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package website_content.v1;
+
+option go_package = "example.com/website_content/v1;website_content_v1";
+
+// Message for a string that is an internationalization key.
+message I18nString {
+  string key = 1;
+}
+
+// Message for image elements.
+message Image {
+  string src = 1;           // Image source URL or path
+  I18nString alt_text = 2;  // Alt text for accessibility, using an i18n key
+}
+
+// Message for Call to Action elements.
+message CTA {
+  I18nString text = 1; // CTA button text, using an i18n key
+  string link = 2;     // URL the CTA links to
+}
+
+// Message for a block of content with a title and description.
+// Useful for features, sections, etc.
+message TitledBlock {
+  I18nString title = 1;
+  I18nString description = 2;
+}
