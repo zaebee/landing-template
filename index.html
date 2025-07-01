@@ -2,13 +2,13 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="A simple and modern landing page template for showcasing your business, services, or portfolio.">
-    <meta name="keywords"
-        content="landing page, template, HTML, CSS, JavaScript, responsive, business, portfolio, services">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="A simple and modern landing page template for showcasing your business, services, or portfolio."
+        name="description" />
+    <meta content="landing page, template, HTML, CSS, JavaScript, responsive, business, portfolio, services"
+        name="keywords" />
     <title>Simple Landing Page</title>
-    <link rel="stylesheet" href="style.css">
+    <link href="style.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -65,7 +65,7 @@
 
         <section class="contact-form">
             <h2 data-i18n="contact_title">Contact Us</h2>
-            <form action="https://formspree.io/f/xgvyddyg" method="post">
+            <form action="https://formspree.io/f/xgvyddyg" method="POST">
                 <label data-i18n="contact_name_label" for="name">Name:</label>
                 <input id="name" name="name" required="" type="text" />
                 <label data-i18n="contact_email_label" for="email">Email:</label>
@@ -80,19 +80,22 @@
             <h2 data-i18n="testimonials_title">What Our Users Say</h2>
             <div class="testimonial-list">
                 <div class="testimonial-item">
-                    <img alt="User 1 Photo" src="https://via.placeholder.com/80" />
+                    <img alt="User 1 Photo"
+                        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+" />
                     <p data-i18n="testimonial_one_text">This is the best service I have ever used. Highly recommended!
                     </p>
                     <h4 data-i18n="testimonial_one_author">- Jane Doe</h4>
                 </div>
                 <div class="testimonial-item">
-                    <img alt="User 2 Photo" src="https://via.placeholder.com/80" />
+                    <img alt="User 2 Photo"
+                        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+" />
                     <p data-i18n="testimonial_two_text">Amazing features and incredible support. My business has grown
                         significantly.</p>
                     <h4 data-i18n="testimonial_two_author">- John Smith</h4>
                 </div>
                 <div class="testimonial-item">
-                    <img alt="User 3 Photo" src="https://via.placeholder.com/80" />
+                    <img alt="User 3 Photo"
+                        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+" />
                     <p data-i18n="testimonial_three_text">A game-changer for our workflow. Simple, effective, and
                         reliable.</p>
                     <h4 data-i18n="testimonial_three_author">- Alice Brown</h4>
@@ -101,27 +104,32 @@
         </section>
 
         <section class="portfolio">
-            <h2>Our Work</h2>
+            <h2 data-i18n="portfolio_title">Our Work</h2>
             <div class="portfolio-grid">
+                <!-- Portfolio items will be dynamically injected here by build.py -->
                 <div class="portfolio-item">
-                    <img src="https://via.placeholder.com/300x200?text=Project+1" alt="Project 1">
-                    <h3>Project One</h3>
-                    <p>A brief description of project one.</p>
+                    <img alt="Project Alpha"
+                        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg==" />
+                    <h3>Project Alpha</h3>
+                    <p>Description for Project Alpha.</p>
                 </div>
                 <div class="portfolio-item">
-                    <img src="https://via.placeholder.com/300x200?text=Project+2" alt="Project 2">
-                    <h3>Project Two</h3>
-                    <p>A brief description of project two.</p>
+                    <img alt="Project Beta"
+                        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg==" />
+                    <h3>Project Beta</h3>
+                    <p>Description for Project Beta.</p>
                 </div>
                 <div class="portfolio-item">
-                    <img src="https://via.placeholder.com/300x200?text=Project+3" alt="Project 3">
-                    <h3>Project Three</h3>
-                    <p>A brief description of project three.</p>
+                    <img alt="Project Gamma"
+                        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg==" />
+                    <h3>Project Gamma</h3>
+                    <p>Description for Project Gamma.</p>
                 </div>
                 <div class="portfolio-item">
-                    <img src="https://via.placeholder.com/300x200?text=Project+4" alt="Project 4">
-                    <h3>Project Four</h3>
-                    <p>A brief description of project four.</p>
+                    <img alt="Project Delta"
+                        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg==" />
+                    <h3>Project Delta</h3>
+                    <p>Description for Project Delta.</p>
                 </div>
             </div>
         </section>
