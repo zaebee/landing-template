@@ -6,16 +6,16 @@ import json
 import os
 import sys
 
-# Ensure the project root (and thus 'generated' directory) is in the Python path
-project_root = os.path.dirname(os.path.abspath(__file__))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
-
 from bs4 import BeautifulSoup
 from google.protobuf import json_format
 
 from generated.blog_post_pb2 import BlogPost
 from generated.portfolio_item_pb2 import PortfolioItem
+
+# Ensure the project root (and thus 'generated' directory) is in the Python path
+project_root = os.path.dirname(os.path.abspath(__file__))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 
 
 def load_translations(lang):
@@ -27,24 +27,28 @@ def load_translations(lang):
         print(f"Warning: Translation file for '{lang}' not found. Using default text.")
         return {}
 
+
 def translate_html_content(html_content, translations):
     """Translates data-i18n tagged elements in HTML content."""
     if not translations:
         return html_content
 
-    soup = BeautifulSoup(html_content, 'html.parser')
+    soup = BeautifulSoup(html_content, "html.parser")
     for element in soup.find_all(attrs={"data-i18n": True}):
         key = element["data-i18n"]
         if key in translations:
             element.string = translations[key]
-        elif ("{{" not in element.decode_contents() and
-              "}}" not in element.decode_contents()):  # Avoid replacing placeholders
+        elif (
+            "{{" not in element.decode_contents()
+            and "}}" not in element.decode_contents()
+        ):  # Avoid replacing placeholders
             print(
                 f"Warning: Translation key '{key}' not found in translations for "
                 f"current language. Element: <{element.name} "
                 f"data-i18n='{key}'>...</{element.name}>"
             )
     return str(soup)
+
 
 def load_dynamic_data(data_file_path, message_type):
     """
@@ -76,20 +80,24 @@ def load_dynamic_data(data_file_path, message_type):
         )
         return []
 
+
 def generate_portfolio_html(items: list[PortfolioItem], translations):
     """Generates HTML for portfolio items."""
     html_output = []
     for item in items:
         title = translations.get(item.title_i18n_key, item.title_i18n_key)
         description = translations.get(item.desc_i18n_key, item.desc_i18n_key)
-        html_output.append(f"""
+        html_output.append(
+            f"""
         <div class="portfolio-item">
             <img src="{item.img_src}" alt="{item.img_alt}">
             <h3>{title}</h3>
             <p>{description}</p>
         </div>
-        """)
+        """
+        )
     return "\n".join(html_output)
+
 
 def generate_blog_html(posts: list[BlogPost], translations):
     """Generates HTML for blog posts."""
@@ -98,14 +106,17 @@ def generate_blog_html(posts: list[BlogPost], translations):
         title = translations.get(post.title_i18n_key, post.title_i18n_key)
         excerpt = translations.get(post.excerpt_i18n_key, post.excerpt_i18n_key)
         cta = translations.get(post.cta_i18n_key, post.cta_i18n_key)
-        html_output.append(f"""
+        html_output.append(
+            f"""
         <div class="blog-item">
             <h3>{title}</h3>
             <p>{excerpt}</p>
             <a href="{post.link}" class="read-more">{cta}</a>
         </div>
-        """)
+        """
+        )
     return "\n".join(html_output)
+
 
 def main():
     """
@@ -129,23 +140,22 @@ def main():
     # but will replace its content with translated blocks.
     with open("index.html", "r", encoding="utf-8") as f:
         base_content = f.read()
-        base_soup = BeautifulSoup(base_content, 'html.parser')
+        base_soup = BeautifulSoup(base_content, "html.parser")
 
         # Extract header (everything before <main>)
         header_content = ""
-        for element in base_soup.body.find('main').previous_siblings:
+        for element in base_soup.body.find("main").previous_siblings:
             header_content += str(element)
 
         # Extract footer (everything after </main>)
         footer_content = ""
-        for element in base_soup.body.find('main').find_next_siblings():
+        for element in base_soup.body.find("main").find_next_siblings():
             footer_content += str(element)
 
         # Get the outer HTML structure including <html>, <head>, and opening <body> tag
         # and closing </body>, </html> tags
         html_start = str(base_soup.find("html")).split("<body>")[0] + "<body>\n"
         html_end = "\n</body>\n</html>"
-
 
     for lang in supported_langs:
         print(f"Processing language: {lang}")
@@ -195,14 +205,14 @@ def main():
 
         # Translate navigation and other header elements
         # that are part of the main index.html template
-        translated_header_soup = BeautifulSoup(header_content, 'html.parser')
+        translated_header_soup = BeautifulSoup(header_content, "html.parser")
         for element in translated_header_soup.find_all(attrs={"data-i18n": True}):
             key = element["data-i18n"]
             if key in translations:
                 element.string = translations[key]
 
         # Translate footer elements
-        translated_footer_soup = BeautifulSoup(footer_content, 'html.parser')
+        translated_footer_soup = BeautifulSoup(footer_content, "html.parser")
         for element in translated_footer_soup.find_all(attrs={"data-i18n": True}):
             key = element["data-i18n"]
             if key in translations:
@@ -211,29 +221,29 @@ def main():
         # Construct the final HTML for the current language
         # Ensure the html tag has the correct lang attribute
         # Remove "<body>\n" from html_start for parsing just the head part
-        final_html_soup = BeautifulSoup(html_start[:-7], 'html.parser')
-        final_html_soup.html['lang'] = lang
+        final_html_soup = BeautifulSoup(html_start[:-7], "html.parser")
+        final_html_soup.html["lang"] = lang
 
         # Reconstruct the start of the HTML document correctly
         html_head_part = str(final_html_soup).split("</head>")[0]
         final_html_start = f"{html_head_part}</head>\n<body>\n"
 
-
         output_filename = f"index_{lang}.html"
         if lang == default_lang:
-            output_filename = "index.html" # The default language saves as index.html
+            output_filename = "index.html"  # The default language saves as index.html
 
         print(f"Writing {output_filename}")
         with open(output_filename, "w", encoding="utf-8") as f:
-            f.write(final_html_start) # html, head, opening body
-            f.write(str(translated_header_soup)) # header content (nav, etc.)
+            f.write(final_html_start)  # html, head, opening body
+            f.write(str(translated_header_soup))  # header content (nav, etc.)
             f.write("<main>\n")
-            f.write(assembled_main_content) # assembled and translated blocks
+            f.write(assembled_main_content)  # assembled and translated blocks
             f.write("\n</main>")
-            f.write(str(translated_footer_soup)) # footer content
-            f.write(html_end) # closing body, html
+            f.write(str(translated_footer_soup))  # footer content
+            f.write(html_end)  # closing body, html
 
     print("Build process complete.")
+
 
 if __name__ == "__main__":
     main()
