@@ -1,0 +1,313 @@
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Simple Landing Page</title>
+<link href="style.css" rel="stylesheet"/>
+<link disabled="" href="style_light.css" id="theme-style-light" rel="stylesheet"/>
+<link disabled="" href="style_dark.css" id="theme-style-dark" rel="stylesheet"/>
+</head>
+<body>
+
+<header>
+<nav>
+<div class="logo">
+<a href="#">Logo</a>
+</div>
+<div class="nav-items">
+<ul>
+<li><a data-i18n="nav_home" href="#">Inicio</a></li>
+<li><a data-i18n="nav_about" href="#">Acerca de</a></li>
+<li><a data-i18n="nav_services" href="#">Servicios</a></li>
+<li><a data-i18n="nav_blog" href="#">Blog</a></li>
+<li><a data-i18n="nav_contact" href="#">Contacto</a></li>
+</ul>
+<button data-i18n="dark_mode_toggle" id="dark-mode-toggle">Alternar Modo Oscuro</button>
+<div id="language-switcher">
+<button data-lang="en">EN</button>
+<button data-lang="es">ES</button>
+</div>
+<div id="theme-switcher">
+<button data-i18n="theme_light_button" data-theme="light">Tema Claro</button>
+<button data-i18n="theme_dark_button" data-theme="dark">Tema Oscuro</button>
+</div>
+</div>
+</nav>
+</header>
+<main>
+<section class="hero">
+<h1 data-i18n="hero_title">Bienvenido a Nuestra Página de Destino</h1>
+<p data-i18n="hero_subtitle">Esta es una sección de héroe simple para llamar la atención.</p>
+<a class="cta-button" data-i18n="hero_cta" href="#">Aprende Más</a>
+</section>
+
+<section class="features">
+<h2 data-i18n="features_title">Nuestras Características</h2>
+<div class="feature-list">
+<div class="feature-item">
+<h3 data-i18n="feature_one_title">Característica Uno</h3>
+<p data-i18n="feature_one_desc">Descripción de la característica uno.</p>
+</div>
+<div class="feature-item">
+<h3 data-i18n="feature_two_title">Característica Dos</h3>
+<p data-i18n="feature_two_desc">Descripción de la característica dos.</p>
+</div>
+<div class="feature-item">
+<h3 data-i18n="feature_three_title">Característica Tres</h3>
+<p data-i18n="feature_three_desc">Descripción of la característica tres.</p>
+</div>
+</div>
+</section>
+
+<section class="contact-form">
+<h2 data-i18n="contact_title">Contáctanos</h2>
+<form action="https://formspree.io/f/xgvyddyg" method="POST">
+<label data-i18n="contact_name_label" for="name">Nombre:</label>
+<input id="name" name="name" required="" type="text"/>
+<label data-i18n="contact_email_label" for="email">Correo Electrónico:</label>
+<input id="email" name="email" required="" type="email"/>
+<label data-i18n="contact_message_label" for="message">Mensaje:</label>
+<textarea id="message" name="message" required="" rows="4"></textarea>
+<button data-i18n="contact_send_button" type="submit">Enviar Mensaje</button>
+</form>
+</section>
+
+<section class="testimonials">
+<h2 data-i18n="testimonials_title">Lo Que Dicen Nuestros Usuarios</h2>
+<div class="testimonial-list">
+<div class="testimonial-item">
+<img alt="User 1 Photo" src="https://via.placeholder.com/80"/>
+<p data-i18n="testimonial_one_text">Este es el mejor servicio que he usado. ¡Muy recomendado!</p>
+<h4 data-i18n="testimonial_one_author">- Jane Doe</h4>
+</div>
+<div class="testimonial-item">
+<img alt="User 2 Photo" src="https://via.placeholder.com/80"/>
+<p data-i18n="testimonial_two_text">Características increíbles y un soporte espectacular. Mi negocio ha crecido significativamente.</p>
+<h4 data-i18n="testimonial_two_author">- John Smith</h4>
+</div>
+<div class="testimonial-item">
+<img alt="User 3 Photo" src="https://via.placeholder.com/80"/>
+<p data-i18n="testimonial_three_text">Un cambio de juego para nuestro flujo de trabajo. Simple, efectivo y confiable.</p>
+<h4 data-i18n="testimonial_three_author">- Alice Brown</h4>
+</div>
+</div>
+</section>
+
+<section class="portfolio">
+<h2 data-i18n="portfolio_title">Nuestro Trabajo</h2>
+<div class="portfolio-grid">
+<!-- Portfolio items will be dynamically injected here by build.py -->
+<div class="portfolio-item">
+<img alt="Project Alpha" src="https://via.placeholder.com/300x200?text=Project+Alpha"/>
+<h3>Proyecto Alfa</h3>
+<p>Descripción del Proyecto Alfa.</p>
+</div>
+<div class="portfolio-item">
+<img alt="Project Beta" src="https://via.placeholder.com/300x200?text=Project+Beta"/>
+<h3>Proyecto Beta</h3>
+<p>Descripción del Proyecto Beta.</p>
+</div>
+<div class="portfolio-item">
+<img alt="Project Gamma" src="https://via.placeholder.com/300x200?text=Project+Gamma"/>
+<h3>Proyecto Gama</h3>
+<p>Descripción del Proyecto Gama.</p>
+</div>
+<div class="portfolio-item">
+<img alt="Project Delta" src="https://via.placeholder.com/300x200?text=Project+Delta"/>
+<h3>Proyecto Delta</h3>
+<p>Descripción del Proyecto Delta.</p>
+</div>
+</div>
+</section>
+
+<section class="blog">
+<h2 data-i18n="blog_title">Últimas Publicaciones</h2>
+<div class="blog-list">
+<!-- Blog posts will be dynamically injected here by build.py -->
+<div class="blog-item">
+<h3>Título de la Publicación Alfa</h3>
+<p>Extracto de la publicación Alfa del blog...</p>
+<a class="read-more" href="#post1-link">Leer Publicación Alfa</a>
+</div>
+<div class="blog-item">
+<h3>Título de la Publicación Beta</h3>
+<p>Extracto de la publicación Beta del blog...</p>
+<a class="read-more" href="#post2-link">Leer Publicación Beta</a>
+</div>
+<div class="blog-item">
+<h3>Título de la Publicación Gama</h3>
+<p>Extracto de la publicación Gama del blog...</p>
+<a class="read-more" href="#post3-link">Leer Publicación Gama</a>
+</div>
+</div>
+</section>
+
+</main><footer>
+<p data-i18n="footer_text">&amp;copy; 2023 Página de Destino Simple. Todos los derechos reservados.</p>
+</footer><script>
+        // Dark Mode Toggle
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const body = document.body;
+        let currentTranslations = {};
+
+        async function fetchTranslations(lang) {
+            try {
+                const response = await fetch(`locales/${lang}.json`);
+                if (!response.ok) {
+                    console.error(`Could not load ${lang}.json: ${response.statusText}`);
+                    return null;
+                }
+                return await response.json();
+            } catch (error) {
+                console.error(`Error fetching ${lang}.json:`, error);
+                return null;
+            }
+        }
+
+        function applyTranslations(translations) {
+            if (!translations) return;
+            currentTranslations = translations;
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[key]) {
+                    element.textContent = translations[key];
+                }
+            });
+            // Update dark mode toggle text based on current language and mode
+            updateDarkModeButtonText();
+        }
+
+        function updateDarkModeButtonText() {
+            if (body.classList.contains('dark-mode')) {
+                darkModeToggle.textContent = currentTranslations['light_mode_toggle'] || 'Toggle Light Mode';
+            } else {
+                darkModeToggle.textContent = currentTranslations['dark_mode_toggle'] || 'Toggle Dark Mode';
+            }
+        }
+
+        async function setLanguage(lang) {
+            const translations = await fetchTranslations(lang);
+            if (translations) {
+                applyTranslations(translations);
+                localStorage.setItem('language', lang);
+                document.documentElement.lang = lang; // Update the lang attribute of the html tag
+            }
+        }
+
+        // Dark Mode Toggle
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            body.classList.add('dark-mode');
+            // Text will be set after translations load
+        }
+
+        darkModeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                localStorage.setItem('darkMode', 'disabled');
+            }
+            updateDarkModeButtonText(); // Update button text on toggle
+        });
+
+        // Language Switcher
+        const languageSwitcher = document.getElementById('language-switcher');
+        if (languageSwitcher) {
+            languageSwitcher.addEventListener('click', (event) => {
+                if (event.target.tagName === 'BUTTON') {
+                    const lang = event.target.getAttribute('data-lang');
+                    if (lang) {
+                        setLanguage(lang);
+                    }
+                }
+            });
+        }
+
+        // Initial language load
+        const preferredLang = localStorage.getItem('language') || 'en';
+        setLanguage(preferredLang);
+
+
+        // Theme Switcher
+        const themeSwitcher = document.getElementById('theme-switcher');
+        const lightThemeCss = document.getElementById('theme-style-light');
+        const darkThemeCss = document.getElementById('theme-style-dark');
+
+        function setTheme(themeName) {
+            localStorage.setItem('theme', themeName);
+            body.classList.remove('light-theme', 'dark-theme'); // Remove any existing theme class
+
+            if (themeName === 'light') {
+                body.classList.add('light-theme');
+                if(lightThemeCss) lightThemeCss.disabled = false;
+                if(darkThemeCss) darkThemeCss.disabled = true;
+            } else if (themeName === 'dark') {
+                body.classList.add('dark-theme');
+                if(lightThemeCss) lightThemeCss.disabled = true;
+                if(darkThemeCss) darkThemeCss.disabled = false;
+            } else { // Default or no theme
+                 if(lightThemeCss) lightThemeCss.disabled = true;
+                 if(darkThemeCss) darkThemeCss.disabled = true;
+            }
+        }
+
+        if (themeSwitcher) {
+            themeSwitcher.addEventListener('click', (event) => {
+                if (event.target.tagName === 'BUTTON') {
+                    const theme = event.target.getAttribute('data-theme');
+                    if (theme) {
+                        setTheme(theme);
+                    }
+                }
+            });
+        }
+
+        // Initial theme load
+        const preferredTheme = localStorage.getItem('theme') || 'light'; // Default to light
+        setTheme(preferredTheme);
+
+
+        // Contact Form Validation
+        const contactForm = document.querySelector('.contact-form form');
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(event) {
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const message = document.getElementById('message').value.trim();
+                let isValid = true;
+                let errors = [];
+
+                if (name === "") {
+                    isValid = false;
+                    errors.push("Name is required.");
+                    // You could add error display logic here, e.g., document.getElementById('name-error').textContent = "Name is required.";
+                }
+
+                if (email === "") {
+                    isValid = false;
+                    errors.push("Email is required.");
+                } else {
+                    // Basic email format validation
+                    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailPattern.test(email)) {
+                        isValid = false;
+                        errors.push("Please enter a valid email address.");
+                    }
+                }
+
+                if (message === "") {
+                    isValid = false;
+                    errors.push("Message is required.");
+                }
+
+                if (!isValid) {
+                    event.preventDefault(); // Prevent form submission
+                    alert("Please correct the following errors:\n\n" + errors.join("\n"));
+                    // For a better UX, display errors next to fields or in a dedicated error message area
+                }
+                // If isValid is true, the form will submit to Formspree
+            });
+        }
+    </script>
+</body>
+</html>
