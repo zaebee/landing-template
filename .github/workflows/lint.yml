@@ -18,18 +18,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Lint HTML
-        uses: anmol098/w3c-html-validator@v1.1.1
-        with:
-          directory: '.' # Directory containing HTML files
-          exclude_files: '' # Comma-separated list of files to exclude
-          exclude_patterns: '' # Comma-separated list of glob patterns to exclude
-
-      - name: Lint CSS
-        uses: yokturmak/stylelint-action@v1.0.2
-        with:
-          files: '**/*.css' # Glob pattern for CSS files
-          config: | # Optional: inline stylelint config
-            {
-              "extends": "stylelint-config-standard"
-            }
+      - name: Super-Linter
+        uses: github/super-linter@v6 # Updated to v6
+        env:
+          # HTML and CSS linting are enabled by default.
+          # Stylelint will use .stylelintrc.json
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
