@@ -3,9 +3,9 @@ import grpc
 from concurrent import futures
 import time
 
-import discover_pb2
-import discover_pb2_grpc
-from main import Discover  # Import the Discover servicer from main.py
+from . import discover_pb2
+from . import discover_pb2_grpc
+from .main import Discover  # Import the Discover servicer from main.py
 
 _TEST_PORT = 50052  # Use a different port for testing
 

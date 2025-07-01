@@ -32,17 +32,17 @@ pip install -r requirements.txt
 
 ## Generating Protobuf Code
 
-If you modify the `proto/discover.proto` file, you will need to regenerate the Python gRPC code. Use the following command from the project root directory:
+If you modify the `discover_service/proto/discover.proto` file, you will need to regenerate the Python gRPC code. Use the following command from the project root directory:
 
 ```bash
-python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. proto/discover.proto
+python -m grpc_tools.protoc -I. --python_out=discover_service --grpc_python_out=discover_service discover_service/proto/discover.proto
 ```
-This will generate `discover_pb2.py` and `discover_pb2_grpc.py` in the project root.
+This will generate `discover_service/discover_pb2.py` and `discover_service/discover_pb2_grpc.py`.
 
-**Important:** After generating the code, you might need to manually update the import statement in `discover_pb2_grpc.py`.
+**Important:** After generating the code, you will need to manually update the import statement in `discover_service/discover_pb2_grpc.py`.
 Change:
-`from proto import discover_pb2 as proto_dot_discover__pb2`
+`import discover_pb2 as discover__pb2` (or similar, depending on how protoc structures it based on the new paths)
 To:
-`import discover_pb2 as proto_dot_discover__pb2`
+`from . import discover_pb2 as discover__pb2`
 
-This is because the generator assumes the `.proto` file is in the same directory as the output, or that the output directory is added to `PYTHONPATH` in a way that `proto.discover_pb2` is resolvable. For simplicity in this project, we place the generated files in the root and adjust the import.
+This ensures that the generated gRPC servicer file correctly imports its sibling `discover_pb2.py` file within the `discover_service` package.

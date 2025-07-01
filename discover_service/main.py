@@ -2,8 +2,8 @@ import grpc
 import time
 from concurrent import futures
 
-import discover_pb2
-import discover_pb2_grpc
+from . import discover_pb2
+from . import discover_pb2_grpc
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
