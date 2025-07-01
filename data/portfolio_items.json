@@ -1,30 +1,46 @@
 [
   {
     "id": "project1",
-    "img_src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg==",
-    "img_alt": "Project Alpha",
-    "title_i18n_key": "project_alpha_title",
-    "desc_i18n_key": "project_alpha_desc"
+    "image": {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg==",
+      "alt_text": { "key": "project_alpha_alt" }
+    },
+    "details": {
+      "title": { "key": "project_alpha_title" },
+      "description": { "key": "project_alpha_desc" }
+    }
   },
   {
     "id": "project2",
-    "img_src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg==",
-    "img_alt": "Project Beta",
-    "title_i18n_key": "project_beta_title",
-    "desc_i18n_key": "project_beta_desc"
+    "image": {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg==",
+      "alt_text": { "key": "project_beta_alt" }
+    },
+    "details": {
+      "title": { "key": "project_beta_title" },
+      "description": { "key": "project_beta_desc" }
+    }
   },
   {
     "id": "project3",
-    "img_src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg==",
-    "img_alt": "Project Gamma",
-    "title_i18n_key": "project_gamma_title",
-    "desc_i18n_key": "project_gamma_desc"
+    "image": {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg==",
+      "alt_text": { "key": "project_gamma_alt" }
+    },
+    "details": {
+      "title": { "key": "project_gamma_title" },
+      "description": { "key": "project_gamma_desc" }
+    }
   },
   {
     "id": "project4",
-    "img_src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg==",
-    "img_alt": "Project Delta",
-    "title_i18n_key": "project_delta_title",
-    "desc_i18n_key": "project_delta_desc"
+    "image": {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg==",
+      "alt_text": { "key": "project_delta_alt" }
+    },
+    "details": {
+      "title": { "key": "project_delta_title" },
+      "description": { "key": "project_delta_desc" }
+    }
   }
 ]

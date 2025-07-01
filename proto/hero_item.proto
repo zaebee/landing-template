@@ -1,10 +1,13 @@
 syntax = "proto3";
 
-package website_builder;
+package website_content.v1;
+
+import "common.proto";
+
+option go_package = "example.com/website_content/v1;website_content_v1";
 
 message HeroItem {
-  string title_i18n_key = 1;
-  string subtitle_i18n_key = 2;
-  string cta_text_i18n_key = 3;
-  string cta_link = 4; // Assuming the link itself is not localized but comes from data
+  I18nString title = 1;
+  I18nString subtitle = 2;
+  CTA cta = 3;
 }
