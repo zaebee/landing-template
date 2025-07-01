@@ -56,6 +56,11 @@ warn_unused_configs = true
 ignore_missing_imports = true # For libraries that might not have stubs, like bs4 initially
 exclude = ["generated/", "venv/", ".venv/"] # Exclude generated files and virtual envs
 
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
+]
+
 # If bs4 continues to cause issues even with ignore_missing_imports,
 # you might need to specify per-module settings or install stubs if available.
 # [[tool.mypy.overrides]]
