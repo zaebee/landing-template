@@ -47,13 +47,7 @@ header nav {
     background-color: #e6e6e6;
 }
 
-header .logo a {
-    color: #fff;
-    text-decoration: none;
-    font-size: 1.5rem;
-    font-weight: bold;
-}
-
+/* Navigation list styles */
 header ul {
     list-style: none;
     padding: 0;
@@ -71,6 +65,14 @@ header ul li a {
 
 header ul li a:hover {
     text-decoration: underline;
+}
+
+/* Logo style */
+header .logo a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
 }
 
 /* Main Content Area */
@@ -208,6 +210,160 @@ main {
     background: #218838;
 }
 
+/* Testimonials Section */
+.testimonials {
+    padding: 2rem;
+    text-align: center;
+    background-color: #f9f9f9; /* Light background for the section */
+}
+
+.testimonials h2 {
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    color: #333;
+}
+
+.testimonial-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 20px;
+    max-width: 1100px;
+    margin: auto;
+}
+
+.testimonial-item {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
+    flex-basis: calc(33.333% - 40px); /* Adjust for gap */
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.testimonial-item img {
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    border: 3px solid #007bff;
+}
+
+.testimonial-item p {
+    font-style: italic;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+.testimonial-item h4 {
+    margin-top: 0;
+    color: #333;
+    font-weight: bold;
+}
+
+/* Portfolio Section */
+.portfolio {
+    padding: 2rem;
+    text-align: center;
+    background-color: #fff; /* Light background for the section */
+}
+
+.portfolio h2 {
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    color: #333;
+}
+
+.portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    max-width: 1100px;
+    margin: auto;
+}
+
+.portfolio-item {
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
+    overflow: hidden; /* Ensures image corners are rounded if image is direct child */
+    text-align: left;
+}
+
+.portfolio-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-bottom: 1px solid #eee; /* Optional: adds a line between img and text */
+}
+
+.portfolio-item h3 {
+    margin: 1rem 1rem 0.5rem;
+    color: #007bff;
+}
+
+.portfolio-item p {
+    margin: 0 1rem 1rem;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+/* Blog Section */
+.blog {
+    padding: 2rem;
+    text-align: center;
+    background-color: #e9ecef; /* Similar to contact form for consistency */
+}
+
+.blog h2 {
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    color: #333;
+}
+
+.blog-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 20px;
+    max-width: 1100px;
+    margin: auto;
+}
+
+.blog-item {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
+    flex-basis: calc(33.333% - 40px); /* Adjust for gap */
+    box-sizing: border-box;
+    text-align: left;
+}
+
+.blog-item h3 {
+    margin-top: 0;
+    color: #007bff;
+}
+
+.blog-item p {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+.read-more {
+    display: inline-block;
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.read-more:hover {
+    text-decoration: underline;
+}
+
 /* Footer */
 footer {
     background: #333;
@@ -217,7 +373,7 @@ footer {
     margin-top: 20px; /* Ensure space above footer if content is short */
 }
 
-/* Dark Mode Styles */
+/* === Dark Mode Overrides === */
 body.dark-mode {
     background-color: #121212;
     color: #e0e0e0;
@@ -228,8 +384,8 @@ body.dark-mode header {
     color: #e0e0e0;
 }
 
-body.dark-mode header .logo a,
-body.dark-mode header ul li a {
+body.dark-mode header ul li a,
+body.dark-mode header .logo a {
     color: #e0e0e0;
 }
 
@@ -305,59 +461,6 @@ body.dark-mode #dark-mode-toggle:hover {
     background-color: #444;
 }
 
-/* Testimonials Section */
-.testimonials {
-    padding: 2rem;
-    text-align: center;
-    background-color: #f9f9f9; /* Light background for the section */
-}
-
-.testimonials h2 {
-    margin-bottom: 2rem;
-    font-size: 2rem;
-    color: #333;
-}
-
-.testimonial-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    gap: 20px;
-    max-width: 1100px;
-    margin: auto;
-}
-
-.testimonial-item {
-    background: #fff;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
-    flex-basis: calc(33.333% - 40px); /* Adjust for gap */
-    box-sizing: border-box;
-    text-align: center;
-}
-
-.testimonial-item img {
-    border-radius: 50%;
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    margin-bottom: 1rem;
-    border: 3px solid #007bff;
-}
-
-.testimonial-item p {
-    font-style: italic;
-    color: #555;
-    margin-bottom: 1rem;
-}
-
-.testimonial-item h4 {
-    margin-top: 0;
-    color: #333;
-    font-weight: bold;
-}
-
 /* Dark Mode for Testimonials */
 body.dark-mode .testimonials {
     background-color: #1f1f1f; /* Dark background for the section in dark mode */
@@ -384,53 +487,6 @@ body.dark-mode .testimonial-item h4 {
     color: #e0e0e0;
 }
 
-/* Portfolio Section */
-.portfolio {
-    padding: 2rem;
-    text-align: center;
-    background-color: #fff; /* Light background for the section */
-}
-
-.portfolio h2 {
-    margin-bottom: 2rem;
-    font-size: 2rem;
-    color: #333;
-}
-
-.portfolio-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-    max-width: 1100px;
-    margin: auto;
-}
-
-.portfolio-item {
-    background: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
-    overflow: hidden; /* Ensures image corners are rounded if image is direct child */
-    text-align: left;
-}
-
-.portfolio-item img {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-bottom: 1px solid #eee; /* Optional: adds a line between img and text */
-}
-
-.portfolio-item h3 {
-    margin: 1rem 1rem 0.5rem;
-    color: #007bff;
-}
-
-.portfolio-item p {
-    margin: 0 1rem 1rem;
-    color: #555;
-    font-size: 0.9rem;
-}
-
 /* Dark Mode for Portfolio */
 body.dark-mode .portfolio {
     background-color: #2a2a2a; /* Dark background for the section */
@@ -455,60 +511,6 @@ body.dark-mode .portfolio-item h3 {
 
 body.dark-mode .portfolio-item p {
     color: #bbb; /* Lighter text for dark mode */
-}
-
-/* Blog Section */
-.blog {
-    padding: 2rem;
-    text-align: center;
-    background-color: #e9ecef; /* Similar to contact form for consistency */
-}
-
-.blog h2 {
-    margin-bottom: 2rem;
-    font-size: 2rem;
-    color: #333;
-}
-
-.blog-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    gap: 20px;
-    max-width: 1100px;
-    margin: auto;
-}
-
-.blog-item {
-    background: #fff;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
-    flex-basis: calc(33.333% - 40px); /* Adjust for gap */
-    box-sizing: border-box;
-    text-align: left;
-}
-
-.blog-item h3 {
-    margin-top: 0;
-    color: #007bff;
-}
-
-.blog-item p {
-    font-size: 0.9rem;
-    color: #555;
-    margin-bottom: 1rem;
-}
-
-.read-more {
-    display: inline-block;
-    color: #007bff;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.read-more:hover {
-    text-decoration: underline;
 }
 
 /* Dark Mode for Blog Section */
