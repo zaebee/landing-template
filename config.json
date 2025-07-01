@@ -1,0 +1,10 @@
+{
+  "blocks": [
+    "hero.html",
+    "features.html",
+    "contact-form.html",
+    "testimonials.html",
+    "portfolio.html",
+    "blog.html"
+  ]
+}

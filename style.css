@@ -33,7 +33,7 @@ header nav {
     align-items: center;
 }
 
-#darkModeToggle {
+#dark-mode-toggle {
     margin-left: 20px;
     padding: 8px 12px;
     background-color: #fff;
@@ -43,10 +43,11 @@ header nav {
     cursor: pointer;
 }
 
-#darkModeToggle:hover {
+#dark-mode-toggle:hover {
     background-color: #e6e6e6;
 }
 
+/* Logo style */
 header .logo a {
     color: #fff;
     text-decoration: none;
@@ -54,6 +55,7 @@ header .logo a {
     font-weight: bold;
 }
 
+/* Navigation list styles */
 header ul {
     list-style: none;
     padding: 0;
@@ -137,7 +139,7 @@ main {
     background: #f9f9f9;
     padding: 1.5rem;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
     flex-basis: calc(33.333% - 40px); /* Adjust for gap */
     box-sizing: border-box;
     text-align: left;
@@ -166,7 +168,7 @@ main {
     background: #fff;
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
 }
 
 .contact-form label {
@@ -208,103 +210,6 @@ main {
     background: #218838;
 }
 
-/* Footer */
-footer {
-    background: #333;
-    color: #fff;
-    text-align: center;
-    padding: 1rem 0;
-    margin-top: 20px; /* Ensure space above footer if content is short */
-}
-
-/* Dark Mode Styles */
-body.dark-mode {
-    background-color: #121212;
-    color: #e0e0e0;
-}
-
-body.dark-mode header {
-    background: #1f1f1f;
-    color: #e0e0e0;
-}
-
-body.dark-mode header .logo a,
-body.dark-mode header ul li a {
-    color: #e0e0e0;
-}
-
-body.dark-mode .hero {
-    background: #0056b3; /* Darker blue */
-    color: #e0e0e0;
-}
-
-body.dark-mode .cta-button {
-    background: #e0e0e0;
-    color: #121212;
-}
-
-body.dark-mode .cta-button:hover {
-    background-color: #cccccc;
-    color: #000;
-}
-
-body.dark-mode .features {
-    background-color: #1f1f1f;
-}
-
-body.dark-mode .feature-item {
-    background: #2a2a2a;
-    box-shadow: 0 2px 5px rgba(255,255,255,0.1);
-}
-
-body.dark-mode .feature-item h3 {
-    color: #00aaff; /* Lighter blue for dark mode */
-}
-
-body.dark-mode .contact-form {
-    background-color: #2a2a2a;
-}
-
-body.dark-mode .contact-form form {
-    background: #1f1f1f;
-    box-shadow: 0 2px 5px rgba(255,255,255,0.1);
-}
-
-body.dark-mode .contact-form label {
-    color: #e0e0e0;
-}
-
-body.dark-mode .contact-form input[type="text"],
-body.dark-mode .contact-form input[type="email"],
-body.dark-mode .contact-form textarea {
-    background-color: #333;
-    color: #e0e0e0;
-    border: 1px solid #555;
-}
-
-body.dark-mode .contact-form button[type="submit"] {
-    background: #1a73e8; /* Google blue */
-}
-
-body.dark-mode .contact-form button[type="submit"]:hover {
-    background: #1558b0;
-}
-
-body.dark-mode footer {
-    background: #1f1f1f;
-    color: #e0e0e0;
-}
-
-body.dark-mode #darkModeToggle {
-    background-color: #333;
-    color: #e0e0e0;
-    border: 1px solid #555;
-}
-
-body.dark-mode #darkModeToggle:hover {
-    background-color: #444;
-}
-
 /* Testimonials Section */
 .testimonials {
     padding: 2rem;
@@ -331,7 +236,7 @@ body.dark-mode #darkModeToggle:hover {
     background: #fff;
     padding: 1.5rem;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
     flex-basis: calc(33.333% - 40px); /* Adjust for gap */
     box-sizing: border-box;
     text-align: center;
@@ -358,32 +263,6 @@ body.dark-mode #darkModeToggle:hover {
     font-weight: bold;
 }
 
-/* Dark Mode for Testimonials */
-body.dark-mode .testimonials {
-    background-color: #1f1f1f; /* Dark background for the section in dark mode */
-}
-
-body.dark-mode .testimonials h2 {
-    color: #e0e0e0;
-}
-
-body.dark-mode .testimonial-item {
-    background: #2a2a2a; /* Darker item background */
-    box-shadow: 0 2px 5px rgba(255,255,255,0.1);
-}
-
-body.dark-mode .testimonial-item img {
-    border-color: #00aaff; /* Lighter blue border for dark mode */
-}
-
-body.dark-mode .testimonial-item p {
-    color: #bbb; /* Lighter text for dark mode */
-}
-
-body.dark-mode .testimonial-item h4 {
-    color: #e0e0e0;
-}
-
 /* Portfolio Section */
 .portfolio {
     padding: 2rem;
@@ -408,7 +287,7 @@ body.dark-mode .testimonial-item h4 {
 .portfolio-item {
     background: #f9f9f9;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
     overflow: hidden; /* Ensures image corners are rounded if image is direct child */
     text-align: left;
 }
@@ -421,40 +300,14 @@ body.dark-mode .testimonial-item h4 {
 }
 
 .portfolio-item h3 {
-    margin: 1rem 1rem 0.5rem 1rem;
+    margin: 1rem 1rem 0.5rem;
     color: #007bff;
 }
 
 .portfolio-item p {
-    margin: 0 1rem 1rem 1rem;
+    margin: 0 1rem 1rem;
     color: #555;
     font-size: 0.9rem;
-}
-
-/* Dark Mode for Portfolio */
-body.dark-mode .portfolio {
-    background-color: #2a2a2a; /* Dark background for the section */
-}
-
-body.dark-mode .portfolio h2 {
-    color: #e0e0e0;
-}
-
-body.dark-mode .portfolio-item {
-    background: #1f1f1f; /* Darker item background */
-    box-shadow: 0 2px 5px rgba(255,255,255,0.05);
-}
-
-body.dark-mode .portfolio-item img {
-    border-bottom: 1px solid #333;
-}
-
-body.dark-mode .portfolio-item h3 {
-    color: #00aaff; /* Lighter blue for dark mode */
-}
-
-body.dark-mode .portfolio-item p {
-    color: #bbb; /* Lighter text for dark mode */
 }
 
 /* Blog Section */
@@ -483,7 +336,7 @@ body.dark-mode .portfolio-item p {
     background: #fff;
     padding: 1.5rem;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
     flex-basis: calc(33.333% - 40px); /* Adjust for gap */
     box-sizing: border-box;
     text-align: left;
@@ -511,6 +364,155 @@ body.dark-mode .portfolio-item p {
     text-decoration: underline;
 }
 
+/* Footer */
+footer {
+    background: #333;
+    color: #fff;
+    text-align: center;
+    padding: 1rem 0;
+    margin-top: 20px; /* Ensure space above footer if content is short */
+}
+
+/* === Dark Mode Overrides === */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+body.dark-mode header {
+    background: #1f1f1f;
+    color: #e0e0e0;
+}
+
+body.dark-mode header ul li a,
+body.dark-mode header .logo a {
+    color: #e0e0e0;
+}
+
+body.dark-mode .hero {
+    background: #0056b3; /* Darker blue */
+    color: #e0e0e0;
+}
+
+body.dark-mode .cta-button {
+    background: #e0e0e0;
+    color: #121212;
+}
+
+body.dark-mode .cta-button:hover {
+    background-color: #ccc;
+    color: #000;
+}
+
+body.dark-mode .features {
+    background-color: #1f1f1f;
+}
+
+body.dark-mode .feature-item {
+    background: #2a2a2a;
+    box-shadow: 0 2px 5px rgb(255 255 255 / 10%);
+}
+
+body.dark-mode .feature-item h3 {
+    color: #0af; /* Lighter blue for dark mode */
+}
+
+body.dark-mode .contact-form {
+    background-color: #2a2a2a;
+}
+
+body.dark-mode .contact-form form {
+    background: #1f1f1f;
+    box-shadow: 0 2px 5px rgb(255 255 255 / 10%);
+}
+
+body.dark-mode .contact-form label {
+    color: #e0e0e0;
+}
+
+body.dark-mode .contact-form input[type="text"],
+body.dark-mode .contact-form input[type="email"],
+body.dark-mode .contact-form textarea {
+    background-color: #333;
+    color: #e0e0e0;
+    border: 1px solid #555;
+}
+
+body.dark-mode .contact-form button[type="submit"] {
+    background: #1a73e8; /* Google blue */
+}
+
+body.dark-mode .contact-form button[type="submit"]:hover {
+    background: #1558b0;
+}
+
+body.dark-mode footer {
+    background: #1f1f1f;
+    color: #e0e0e0;
+}
+
+body.dark-mode #dark-mode-toggle {
+    background-color: #333;
+    color: #e0e0e0;
+    border: 1px solid #555;
+}
+
+body.dark-mode #dark-mode-toggle:hover {
+    background-color: #444;
+}
+
+/* Dark Mode for Testimonials */
+body.dark-mode .testimonials {
+    background-color: #1f1f1f; /* Dark background for the section in dark mode */
+}
+
+body.dark-mode .testimonials h2 {
+    color: #e0e0e0;
+}
+
+body.dark-mode .testimonial-item {
+    background: #2a2a2a; /* Darker item background */
+    box-shadow: 0 2px 5px rgb(255 255 255 / 10%);
+}
+
+body.dark-mode .testimonial-item img {
+    border-color: #0af; /* Lighter blue border for dark mode */
+}
+
+body.dark-mode .testimonial-item p {
+    color: #bbb; /* Lighter text for dark mode */
+}
+
+body.dark-mode .testimonial-item h4 {
+    color: #e0e0e0;
+}
+
+/* Dark Mode for Portfolio */
+body.dark-mode .portfolio {
+    background-color: #2a2a2a; /* Dark background for the section */
+}
+
+body.dark-mode .portfolio h2 {
+    color: #e0e0e0;
+}
+
+body.dark-mode .portfolio-item {
+    background: #1f1f1f; /* Darker item background */
+    box-shadow: 0 2px 5px rgb(255 255 255 / 5%);
+}
+
+body.dark-mode .portfolio-item img {
+    border-bottom: 1px solid #333;
+}
+
+body.dark-mode .portfolio-item h3 {
+    color: #0af; /* Lighter blue for dark mode */
+}
+
+body.dark-mode .portfolio-item p {
+    color: #bbb; /* Lighter text for dark mode */
+}
+
 /* Dark Mode for Blog Section */
 body.dark-mode .blog {
     background-color: #2a2a2a; /* Dark background for the section */
@@ -522,11 +524,11 @@ body.dark-mode .blog h2 {
 
 body.dark-mode .blog-item {
     background: #1f1f1f; /* Darker item background */
-    box-shadow: 0 2px 5px rgba(255,255,255,0.05);
+    box-shadow: 0 2px 5px rgb(255 255 255 / 5%);
 }
 
 body.dark-mode .blog-item h3 {
-    color: #00aaff; /* Lighter blue for dark mode */
+    color: #0af; /* Lighter blue for dark mode */
 }
 
 body.dark-mode .blog-item p {
@@ -534,12 +536,11 @@ body.dark-mode .blog-item p {
 }
 
 body.dark-mode .read-more {
-    color: #00aaff;
+    color: #0af;
 }
 
-
 /* Responsive Adjustments */
-@media (max-width: 768px) {
+@media (width <= 768px) {
     header nav {
         flex-direction: column;
     }
@@ -561,7 +562,7 @@ body.dark-mode .read-more {
         margin: 5px 0;
     }
 
-    #darkModeToggle {
+    #dark-mode-toggle {
         margin-top: 10px; /* Add some space above the toggle button */
     }
 
