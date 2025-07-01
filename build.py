@@ -3,6 +3,13 @@ Builds the index.html file from configured blocks for multiple languages.
 """
 
 import json
+import os
+import sys
+
+# Ensure the project root (and thus 'generated' directory) is in the Python path
+project_root = os.path.dirname(os.path.abspath(__file__))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 
 from bs4 import BeautifulSoup
 from google.protobuf import json_format

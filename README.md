@@ -10,15 +10,38 @@ in `config.json`.
 
 ## Building `index.html`
 
-To build or update `index.html` after making changes to the blocks or
-`config.json`, run the following command:
+The `build.py` script uses Protocol Buffers for managing data structures related to blog posts and portfolio items. Therefore, you need to generate the Python stubs from the `.proto` definitions before running the build.
 
-```bash
-npm run build
-```
+**Prerequisites:**
 
-This will execute the `build.py` script, which reads `config.json` and
-assembles the blocks into `index.html`.
+1.  Ensure you have Python and Node.js installed.
+2.  Install Python dependencies:
+    ```bash
+    pip install -r requirements.txt
+    # For linting and type checking, also install dev dependencies:
+    pip install -r requirements-dev.txt
+    ```
+    *(Note: `requirements.txt` will need to be created or updated if it doesn't include `grpcio-tools` and `protobuf`)*
+
+**Steps to Build:**
+
+1.  **Generate Protobuf Stubs (if not already done or if `.proto` files changed):**
+    The generated Python files are expected in a `generated/` directory at the project root.
+    ```bash
+    # Ensure the proto directory and files exist (e.g., proto/blog_post.proto)
+    mkdir -p generated
+    python -m grpc_tools.protoc -I./proto --python_out=./generated --pyi_out=./generated ./proto/blog_post.proto ./proto/portfolio_item.proto
+
+    # Create an __init__.py file to make 'generated' a package
+    touch generated/__init__.py
+    ```
+
+2.  **Run the Build Command:**
+    To build or update `index.html` and language-specific versions (e.g., `index_es.html`) after making changes to blocks, `config.json`, or data:
+    ```bash
+    npm run build
+    ```
+    This executes `python build.py`, which reads `config.json`, loads data (using the generated Protobuf stubs), assembles HTML blocks, applies translations, and writes the final `index.html` files.
 
 ## Customizing Blocks
 
