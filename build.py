@@ -1,6 +1,7 @@
 """
 Builds the index.html file from configured blocks.
 """
+
 import json
 
 
