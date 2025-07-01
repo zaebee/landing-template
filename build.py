@@ -207,6 +207,43 @@ def main() -> None:
     supported_langs: List[str] = ["en", "es"]
     default_lang: str = "en"
 
+    # Define the dynamic data loaders configuration
+    dynamic_data_loaders: Dict[str, Dict[str, Any]] = {
+        "portfolio.html": {
+            "data_file": "data/portfolio_items.json",
+            "message_type": PortfolioItem,
+            "generator": generate_portfolio_html,
+            "placeholder": "{{portfolio_items}}",
+        },
+        "blog.html": {
+            "data_file": "data/blog_posts.json",
+            "message_type": BlogPost,
+            "generator": generate_blog_html,
+            "placeholder": "{{blog_posts}}",
+        },
+        "features.html": {
+            "data_file": "data/feature_items.json",
+            "message_type": FeatureItem,
+            "generator": generate_features_html,
+            "placeholder": "{{feature_items}}",
+        },
+        "testimonials.html": {
+            "data_file": "data/testimonial_items.json",
+            "message_type": TestimonialItem,
+            "generator": generate_testimonials_html,
+            "placeholder": "{{testimonial_items}}",
+        },
+    }
+
+    # Pre-load all dynamic data once
+    loaded_data_cache: Dict[str, List[Message]] = {}
+    for block_name, config_item in dynamic_data_loaders.items():
+        data_file = config_item["data_file"]
+        message_type = config_item["message_type"]
+        if data_file not in loaded_data_cache: # Ensure data is loaded only once per file
+            loaded_data_cache[data_file] = load_dynamic_data(data_file, message_type)
+
+
     config: Dict[str, Any]
     try:
         with open("public/config.json", "r", encoding="utf-8") as f:
@@ -242,11 +279,8 @@ def main() -> None:
     testimonial_data_untyped: List[Message] = load_dynamic_data(
         "data/testimonial_items.json", TestimonialItem
     )
-    testimonial_data: List[TestimonialItem] = [
-        item
-        for item in testimonial_data_untyped
-        if isinstance(item, TestimonialItem)
-    ]
+    # The individual data lists (portfolio_data, blog_data, etc.) are no longer needed here,
+    # as data will be fetched from loaded_data_cache within the loop.
 
     base_content: str
     try:
@@ -328,33 +362,33 @@ def main() -> None:
                     block_template_content: str = f.read()
                     block_content_with_data: str
 
-                    if block_file == "portfolio.html":
-                        portfolio_html: str = generate_portfolio_html(
-                            portfolio_data, translations
+                    if block_file in dynamic_data_loaders:
+                        loader_config = dynamic_data_loaders[block_file]
+                        # Fetch pre-loaded data from cache
+                        # Ensure items are correctly typed for the generator function
+                        # The list from loaded_data_cache might be List[Message],
+                        # so we filter/cast if necessary or ensure generators accept List[Message]
+                        # and handle type checking internally if strict typing is desired.
+                        # For simplicity, we'll assume generators can handle List[Message]
+                        # or that the types are compatible enough.
+                        # A more robust solution might involve type checking here or ensuring
+                        # generators are flexible.
+                        data_items = loaded_data_cache.get(loader_config["data_file"], [])
+
+                        # Ensure the data passed to the generator is correctly typed.
+                        # This step is crucial if generators expect specific protobuf types.
+                        # Example: typed_data_items = [item for item in data_items if isinstance(item, loader_config["message_type"])]
+                        # However, load_dynamic_data already returns List[T] where T is the message_type.
+                        # So, data_items from loaded_data_cache should already be correctly typed.
+
+                        generated_html: str = loader_config["generator"](
+                            data_items, translations  # Pass the correctly typed list
                         )
                         block_content_with_data = block_template_content.replace(
-                            "{{portfolio_items}}", portfolio_html
-                        )
-                    elif block_file == "blog.html":
-                        blog_html: str = generate_blog_html(blog_data, translations)
-                        block_content_with_data = block_template_content.replace(
-                            "{{blog_posts}}", blog_html
-                        )
-                    elif block_file == "features.html":
-                        features_html: str = generate_features_html(
-                            feature_data, translations
-                        )
-                        block_content_with_data = block_template_content.replace(
-                            "{{feature_items}}", features_html
-                        )
-                    elif block_file == "testimonials.html":
-                        testimonials_html: str = generate_testimonials_html(
-                            testimonial_data, translations
-                        )
-                        block_content_with_data = block_template_content.replace(
-                            "{{testimonial_items}}", testimonials_html
+                            loader_config["placeholder"], generated_html
                         )
                     else:
+                        # Static block, no dynamic data injection needed beyond i18n
                         block_content_with_data = block_template_content
 
                     translated_block_content: str = translate_html_content(

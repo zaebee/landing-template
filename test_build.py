@@ -135,21 +135,39 @@ class TestBuildScript(unittest.TestCase):
 
         # Dummy config.json
         self.dummy_config = {
-            "blocks": ["hero.html", "portfolio.html", "blog.html"],
+            "blocks": [
+                "hero.html",
+                "features.html",
+                "testimonials.html",
+                "portfolio.html",
+                "blog.html",
+            ],
             "supported_langs": ["en", "es"],
             "default_lang": "en",
         }
+        # This config.json is for the test's setup, build.py reads public/config.json
         with open("config.json", "w", encoding="utf-8") as f:
             json.dump(self.dummy_config, f)
+
+        # Ensure public/config.json is also created for build.py if it's not mocked perfectly
+        os.makedirs("public", exist_ok=True)
+        with open("public/config.json", "w", encoding="utf-8") as f:
+             json.dump(self.dummy_config, f)
+
 
         # Dummy block files
         os.makedirs("blocks", exist_ok=True)
         with open("blocks/hero.html", "w", encoding="utf-8") as f:
             f.write("<div data-i18n='hero_title'>Hero Title</div>")
+        with open("blocks/features.html", "w", encoding="utf-8") as f:
+            f.write("<div>{{feature_items}}</div>") # Added
+        with open("blocks/testimonials.html", "w", encoding="utf-8") as f:
+            f.write("<div>{{testimonial_items}}</div>") # Added
         with open("blocks/portfolio.html", "w", encoding="utf-8") as f:
             f.write("<div>{{portfolio_items}}</div>")
         with open("blocks/blog.html", "w", encoding="utf-8") as f:
             f.write("<div>{{blog_posts}}</div>")
+
 
     def tearDown(self):
         """Clean up test environment."""
@@ -455,12 +473,26 @@ class TestBuildScript(unittest.TestCase):
             link="blog.html",
             cta_i18n_key="c1",
         )
+        mock_feature_item = FeatureItem(
+            title_i18n_key="f1", desc_i18n_key="fd1"
+        )
+        mock_testimonial_item = TestimonialItem(
+            text_i18n_key="t1",
+            author_i18n_key="ta1",
+            img_src="testimonial.jpg",
+            img_alt_i18n_key="talt1",
+        )
 
-        def load_data_side_effect(path, message_type):
-            if message_type == PortfolioItem:
+        # This side effect needs to map specific data file paths to their mock data
+        def load_data_side_effect(data_file_path, message_type):
+            if data_file_path == "data/portfolio_items.json":
                 return [mock_portfolio_item]
-            if message_type == BlogPost:
+            elif data_file_path == "data/blog_posts.json":
                 return [mock_blog_post]
+            elif data_file_path == "data/feature_items.json":
+                return [mock_feature_item]
+            elif data_file_path == "data/testimonial_items.json":
+                return [mock_testimonial_item]
             return []
 
         mock_load_data.side_effect = load_data_side_effect
@@ -483,22 +515,28 @@ class TestBuildScript(unittest.TestCase):
             # Mock for the test's own setup of 'config.json' if it's different
             # For this test, we primarily care about what build_main reads.
             if filename == "config.json" and args[0] == "r" and "public/" not in filename:
-                 # This case might not be strictly needed if build_main only reads public/config.json
-                 # but can be kept for safety or if other parts of the test read it directly.
                 return mock.mock_open(
                     read_data=json.dumps(self.dummy_config)
                 ).return_value
 
             if filename.startswith("blocks/") and args[0] == "r":
-                if "hero" in filename:
+                if "hero.html" == os.path.basename(filename):
                     return mock.mock_open(
                         read_data="<div data-i18n='hero_title'>Hero</div>"
                     ).return_value
-                if "portfolio" in filename:
+                if "features.html" == os.path.basename(filename):
+                    return mock.mock_open(
+                        read_data="<div>{{feature_items}}</div>"
+                    ).return_value
+                if "testimonials.html" == os.path.basename(filename):
+                    return mock.mock_open(
+                        read_data="<div>{{testimonial_items}}</div>"
+                    ).return_value
+                if "portfolio.html" == os.path.basename(filename):
                     return mock.mock_open(
                         read_data="<div>{{portfolio_items}}</div>"
                     ).return_value
-                if "blog" in filename:
+                if "blog.html" == os.path.basename(filename):
                     return mock.mock_open(
                         read_data="<div>{{blog_posts}}</div>"
                     ).return_value
