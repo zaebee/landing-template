@@ -14,6 +14,8 @@ from google.protobuf.message import Message
 
 from generated.blog_post_pb2 import BlogPost
 from generated.portfolio_item_pb2 import PortfolioItem
+from generated.feature_item_pb2 import FeatureItem
+from generated.testimonial_item_pb2 import TestimonialItem
 
 # Ensure the project root (and thus 'generated' directory) is in the Python path
 project_root = os.path.dirname(os.path.abspath(__file__))
@@ -135,6 +137,49 @@ def generate_portfolio_html(
     return "\n".join(html_output)
 
 
+def generate_testimonials_html(
+    items: List[TestimonialItem], translations: Translations
+) -> str:
+    """Generates HTML for testimonial items."""
+    html_output: List[str] = []
+    for item in items:
+        text: str = translations.get(item.text_i18n_key, item.text_i18n_key)
+        author: str = translations.get(item.author_i18n_key, item.author_i18n_key)
+        img_alt: str = translations.get(
+            item.img_alt_i18n_key, "User photo"
+        )  # Default alt text
+        html_output.append(
+            f"""
+        <div class="testimonial-item">
+            <img src="{item.img_src}" alt="{img_alt}">
+            <p>{text}</p>
+            <h4>{author}</h4>
+        </div>
+        """
+        )
+    return "\n".join(html_output)
+
+
+def generate_features_html(
+    items: List[FeatureItem], translations: Translations
+) -> str:
+    """Generates HTML for feature items."""
+    html_output: List[str] = []
+    for item in items:
+        title: str = translations.get(item.title_i18n_key, item.title_i18n_key)
+        description: str = translations.get(item.desc_i18n_key, item.desc_i18n_key)
+        # Note: If FeatureItem had icon_class or img_src, they would be used here.
+        html_output.append(
+            f"""
+        <div class="feature-item">
+            <h3>{title}</h3>
+            <p>{description}</p>
+        </div>
+        """
+        )
+    return "\n".join(html_output)
+
+
 def generate_blog_html(posts: List[BlogPost], translations: Translations) -> str:
     """Generates HTML for blog posts."""
     html_output: List[str] = []
@@ -185,6 +230,22 @@ def main() -> None:
     )
     blog_data: List[BlogPost] = [
         item for item in blog_data_untyped if isinstance(item, BlogPost)
+    ]
+
+    feature_data_untyped: List[Message] = load_dynamic_data(
+        "data/feature_items.json", FeatureItem
+    )
+    feature_data: List[FeatureItem] = [
+        item for item in feature_data_untyped if isinstance(item, FeatureItem)
+    ]
+
+    testimonial_data_untyped: List[Message] = load_dynamic_data(
+        "data/testimonial_items.json", TestimonialItem
+    )
+    testimonial_data: List[TestimonialItem] = [
+        item
+        for item in testimonial_data_untyped
+        if isinstance(item, TestimonialItem)
     ]
 
     base_content: str
@@ -278,6 +339,20 @@ def main() -> None:
                         blog_html: str = generate_blog_html(blog_data, translations)
                         block_content_with_data = block_template_content.replace(
                             "{{blog_posts}}", blog_html
+                        )
+                    elif block_file == "features.html":
+                        features_html: str = generate_features_html(
+                            feature_data, translations
+                        )
+                        block_content_with_data = block_template_content.replace(
+                            "{{feature_items}}", features_html
+                        )
+                    elif block_file == "testimonials.html":
+                        testimonials_html: str = generate_testimonials_html(
+                            testimonial_data, translations
+                        )
+                        block_content_with_data = block_template_content.replace(
+                            "{{testimonial_items}}", testimonials_html
                         )
                     else:
                         block_content_with_data = block_template_content

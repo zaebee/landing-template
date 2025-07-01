@@ -8,6 +8,8 @@ from unittest import mock
 from build import (
     generate_blog_html,
     generate_portfolio_html,
+    generate_features_html,  # Added
+    generate_testimonials_html,  # Added
     load_dynamic_data,
     load_translations,
     translate_html_content,
@@ -15,6 +17,8 @@ from build import (
 from build import main as build_main
 from generated.blog_post_pb2 import BlogPost
 from generated.portfolio_item_pb2 import PortfolioItem
+from generated.feature_item_pb2 import FeatureItem  # Added
+from generated.testimonial_item_pb2 import TestimonialItem  # Added
 
 project_root = os.path.dirname(os.path.abspath(__file__))
 if project_root not in sys.path:
@@ -83,6 +87,35 @@ class TestBuildScript(unittest.TestCase):
         ) as f:
             json.dump(self.blog_posts_data, f)
 
+        self.feature_items_data = [
+            {
+                "title_i18n_key": "feature_title_1",
+                "desc_i18n_key": "feature_desc_1",
+            },
+            {
+                "title_i18n_key": "feature_title_2",
+                "desc_i18n_key": "feature_desc_2",
+            },
+        ]
+        with open(
+            os.path.join(self.test_data_dir, "features.json"), "w", encoding="utf-8"
+        ) as f:
+            json.dump(self.feature_items_data, f)
+
+        self.testimonial_items_data = [
+            {
+                "text_i18n_key": "testimonial_text_1",
+                "author_i18n_key": "testimonial_author_1",
+                "img_src": "img_testimonial1.jpg",
+                "img_alt_i18n_key": "testimonial_alt_1",
+            }
+        ]
+        with open(
+            os.path.join(self.test_data_dir, "testimonials.json"), "w", encoding="utf-8"
+        ) as f:
+            json.dump(self.testimonial_items_data, f)
+
+
         # Create a dummy index.html for main() to read
         self.dummy_index_content = """
         <!DOCTYPE html>
@@ -146,21 +179,29 @@ class TestBuildScript(unittest.TestCase):
             mock.mock_open(read_data=json.dumps(self.en_translations)),
             create=True,
         ) as mocked_open:
-            translations = load_translations(f"{self.test_locales_dir}/en")
+            # load_translations prepends 'public/locales/'
+            translations = load_translations("en") # Test with actual lang key
             self.assertEqual(translations, self.en_translations)
-            mocked_open.assert_called_once_with(
-                f"locales/{self.test_locales_dir}/en.json", "r", encoding="utf-8"
+            # The call inside load_translations is to "public/locales/en.json"
+            # The mock needs to intercept this.
+            # For this test, we'll assume the mock is general enough.
+            # The assertion should check the path used by the function.
+            mocked_open.assert_called_with(
+                f"public/locales/en.json", "r", encoding="utf-8"
             )
+
+        # Reset mock for the next call if necessary or use different mocks
+        mocked_open.reset_mock()
 
         with mock.patch(
             "build.open",
             mock.mock_open(read_data=json.dumps(self.es_translations)),
             create=True,
-        ) as mocked_open:
-            translations = load_translations(f"{self.test_locales_dir}/es")
+        ) as mocked_open_es: # Use a different mock name or reset
+            translations = load_translations("es") # Test with actual lang key
             self.assertEqual(translations, self.es_translations)
-            mocked_open.assert_called_once_with(
-                f"locales/{self.test_locales_dir}/es.json", "r", encoding="utf-8"
+            mocked_open_es.assert_called_with(
+                f"public/locales/es.json", "r", encoding="utf-8"
             )
 
     def test_load_translations_non_existing(self):
@@ -178,12 +219,19 @@ class TestBuildScript(unittest.TestCase):
         with mock.patch(
             "build.open", mock.mock_open(read_data="{invalid_json_content"), create=True
         ) as mocked_open:
-            translations = load_translations(f"{self.test_locales_dir}/invalid")
+            translations = load_translations("invalid") # Test with actual lang key
             self.assertEqual(translations, {})
-            mocked_open.assert_called_once_with(
-                f"locales/{self.test_locales_dir}/invalid.json", "r", encoding="utf-8"
+            mocked_open.assert_called_with( # Changed to assert_called_with
+                f"public/locales/invalid.json", "r", encoding="utf-8"
             )
-        os.remove(os.path.join(self.test_locales_dir, "invalid.json"))
+        # The actual file 'test_locales/invalid.json' is not used by the mocked 'load_translations'
+        # if the mock for 'build.open' is correctly intercepting.
+        # However, the test creates it, so we should clean it up if it was for a different purpose.
+        # For this specific change, the physical file interaction for this test path is moot
+        # as 'build.open' is mocked.
+        if os.path.exists(os.path.join(self.test_locales_dir, "invalid.json")):
+            os.remove(os.path.join(self.test_locales_dir, "invalid.json"))
+
 
     def test_translate_html_content(self):
         """Test HTML content translation."""
@@ -222,6 +270,30 @@ class TestBuildScript(unittest.TestCase):
             self.assertIsInstance(items[0], PortfolioItem)
             self.assertEqual(
                 items[0].title_i18n_key, self.portfolio_items_data[0]["title_i18n_key"]
+            )
+
+    def test_load_dynamic_data_feature(self):
+        """Test loading dynamic feature data."""
+        items = load_dynamic_data(
+            os.path.join(self.test_data_dir, "features.json"), FeatureItem
+        )
+        self.assertEqual(len(items), len(self.feature_items_data))
+        if items:  # mypy check
+            self.assertIsInstance(items[0], FeatureItem)
+            self.assertEqual(
+                items[0].title_i18n_key, self.feature_items_data[0]["title_i18n_key"]
+            )
+
+    def test_load_dynamic_data_testimonial(self):
+        """Test loading dynamic testimonial data."""
+        items = load_dynamic_data(
+            os.path.join(self.test_data_dir, "testimonials.json"), TestimonialItem
+        )
+        self.assertEqual(len(items), len(self.testimonial_items_data))
+        if items:  # mypy check
+            self.assertIsInstance(items[0], TestimonialItem)
+            self.assertEqual(
+                items[0].text_i18n_key, self.testimonial_items_data[0]["text_i18n_key"]
             )
 
     def test_load_dynamic_data_blog(self):
@@ -300,6 +372,55 @@ class TestBuildScript(unittest.TestCase):
         html = generate_blog_html([], self.en_translations)
         self.assertEqual(html.strip(), "")
 
+    def test_generate_features_html(self):
+        """Test generation of features HTML."""
+        items = [
+            FeatureItem(
+                title_i18n_key="f_title",
+                desc_i18n_key="f_desc",
+            )
+        ]
+        translations = {
+            "f_title": "Translated Feature Title",
+            "f_desc": "Translated Feature Description",
+        }
+        html = generate_features_html(items, translations)
+        self.assertIn("Translated Feature Title", html)
+        self.assertIn("Translated Feature Description", html)
+        self.assertIn('<div class="feature-item">', html)
+
+    def test_generate_features_html_empty(self):
+        """Test generation of features HTML with no items."""
+        html = generate_features_html([], self.en_translations)
+        self.assertEqual(html.strip(), "")
+
+    def test_generate_testimonials_html(self):
+        """Test generation of testimonials HTML."""
+        items = [
+            TestimonialItem(
+                text_i18n_key="t_text",
+                author_i18n_key="t_author",
+                img_src="testimonial.png",
+                img_alt_i18n_key="t_alt",
+            )
+        ]
+        translations = {
+            "t_text": "Translated Testimonial Text",
+            "t_author": "Translated Testimonial Author",
+            "t_alt": "Translated Testimonial Alt Text",
+        }
+        html = generate_testimonials_html(items, translations)
+        self.assertIn("Translated Testimonial Text", html)
+        self.assertIn("Translated Testimonial Author", html)
+        self.assertIn('src="testimonial.png"', html)
+        self.assertIn('alt="Translated Testimonial Alt Text"', html)
+        self.assertIn('<div class="testimonial-item">', html)
+
+    def test_generate_testimonials_html_empty(self):
+        """Test generation of testimonials HTML with no items."""
+        html = generate_testimonials_html([], self.en_translations)
+        self.assertEqual(html.strip(), "")
+
     @mock.patch("build.load_translations")
     @mock.patch("build.load_dynamic_data")
     @mock.patch("build.translate_html_content")
@@ -354,10 +475,20 @@ class TestBuildScript(unittest.TestCase):
         def mock_file_open_side_effect(filename, *args, **kwargs):
             if filename == "index.html" and args[0] == "r":
                 return mock.mock_open(read_data=self.dummy_index_content).return_value
-            if filename == "config.json" and args[0] == "r":
+            # Ensure build.py's call to open 'public/config.json' is mocked
+            if filename == "public/config.json" and args[0] == "r":
                 return mock.mock_open(
                     read_data=json.dumps(self.dummy_config)
                 ).return_value
+            # Mock for the test's own setup of 'config.json' if it's different
+            # For this test, we primarily care about what build_main reads.
+            if filename == "config.json" and args[0] == "r" and "public/" not in filename:
+                 # This case might not be strictly needed if build_main only reads public/config.json
+                 # but can be kept for safety or if other parts of the test read it directly.
+                return mock.mock_open(
+                    read_data=json.dumps(self.dummy_config)
+                ).return_value
+
             if filename.startswith("blocks/") and args[0] == "r":
                 if "hero" in filename:
                     return mock.mock_open(

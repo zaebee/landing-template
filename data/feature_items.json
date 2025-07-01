@@ -1,0 +1,14 @@
+[
+  {
+    "title_i18n_key": "feature_one_title",
+    "desc_i18n_key": "feature_one_desc"
+  },
+  {
+    "title_i18n_key": "feature_two_title",
+    "desc_i18n_key": "feature_two_desc"
+  },
+  {
+    "title_i18n_key": "feature_three_title",
+    "desc_i18n_key": "feature_three_desc"
+  }
+]

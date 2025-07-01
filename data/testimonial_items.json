@@ -1,0 +1,20 @@
+[
+  {
+    "text_i18n_key": "testimonial_one_text",
+    "author_i18n_key": "testimonial_one_author",
+    "img_src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+",
+    "img_alt_i18n_key": "testimonial_one_alt"
+  },
+  {
+    "text_i18n_key": "testimonial_two_text",
+    "author_i18n_key": "testimonial_two_author",
+    "img_src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+",
+    "img_alt_i18n_key": "testimonial_two_alt"
+  },
+  {
+    "text_i18n_key": "testimonial_three_text",
+    "author_i18n_key": "testimonial_three_author",
+    "img_src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+",
+    "img_alt_i18n_key": "testimonial_three_alt"
+  }
+]
