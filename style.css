@@ -457,6 +457,86 @@ body.dark-mode .portfolio-item p {
     color: #bbb; /* Lighter text for dark mode */
 }
 
+/* Blog Section */
+.blog {
+    padding: 2rem;
+    text-align: center;
+    background-color: #e9ecef; /* Similar to contact form for consistency */
+}
+
+.blog h2 {
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    color: #333;
+}
+
+.blog-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 20px;
+    max-width: 1100px;
+    margin: auto;
+}
+
+.blog-item {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    flex-basis: calc(33.333% - 40px); /* Adjust for gap */
+    box-sizing: border-box;
+    text-align: left;
+}
+
+.blog-item h3 {
+    margin-top: 0;
+    color: #007bff;
+}
+
+.blog-item p {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+.read-more {
+    display: inline-block;
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.read-more:hover {
+    text-decoration: underline;
+}
+
+/* Dark Mode for Blog Section */
+body.dark-mode .blog {
+    background-color: #2a2a2a; /* Dark background for the section */
+}
+
+body.dark-mode .blog h2 {
+    color: #e0e0e0;
+}
+
+body.dark-mode .blog-item {
+    background: #1f1f1f; /* Darker item background */
+    box-shadow: 0 2px 5px rgba(255,255,255,0.05);
+}
+
+body.dark-mode .blog-item h3 {
+    color: #00aaff; /* Lighter blue for dark mode */
+}
+
+body.dark-mode .blog-item p {
+    color: #bbb; /* Lighter text for dark mode */
+}
+
+body.dark-mode .read-more {
+    color: #00aaff;
+}
+
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
@@ -486,18 +566,21 @@ body.dark-mode .portfolio-item p {
     }
 
     .feature-list,
-    .testimonial-list {
+    .testimonial-list,
+    .blog-list {
         flex-direction: column;
     }
 
     .feature-item,
-    .testimonial-item {
+    .testimonial-item,
+    .blog-item {
         flex-basis: 100%; /* Full width on smaller screens */
         margin-bottom: 20px;
     }
 
     .feature-item:last-child,
-    .testimonial-item:last-child {
+    .testimonial-item:last-child,
+    .blog-item:last-child {
         margin-bottom: 0;
     }
 }
