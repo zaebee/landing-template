@@ -28,6 +28,25 @@ header nav {
     padding: 0 20px;
 }
 
+.nav-items {
+    display: flex;
+    align-items: center;
+}
+
+#darkModeToggle {
+    margin-left: 20px;
+    padding: 8px 12px;
+    background-color: #fff;
+    color: #333;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#darkModeToggle:hover {
+    background-color: #e6e6e6;
+}
+
 header .logo a {
     color: #fff;
     text-decoration: none;
@@ -198,32 +217,287 @@ footer {
     margin-top: 20px; /* Ensure space above footer if content is short */
 }
 
+/* Dark Mode Styles */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+body.dark-mode header {
+    background: #1f1f1f;
+    color: #e0e0e0;
+}
+
+body.dark-mode header .logo a,
+body.dark-mode header ul li a {
+    color: #e0e0e0;
+}
+
+body.dark-mode .hero {
+    background: #0056b3; /* Darker blue */
+    color: #e0e0e0;
+}
+
+body.dark-mode .cta-button {
+    background: #e0e0e0;
+    color: #121212;
+}
+
+body.dark-mode .cta-button:hover {
+    background-color: #cccccc;
+    color: #000;
+}
+
+body.dark-mode .features {
+    background-color: #1f1f1f;
+}
+
+body.dark-mode .feature-item {
+    background: #2a2a2a;
+    box-shadow: 0 2px 5px rgba(255,255,255,0.1);
+}
+
+body.dark-mode .feature-item h3 {
+    color: #00aaff; /* Lighter blue for dark mode */
+}
+
+body.dark-mode .contact-form {
+    background-color: #2a2a2a;
+}
+
+body.dark-mode .contact-form form {
+    background: #1f1f1f;
+    box-shadow: 0 2px 5px rgba(255,255,255,0.1);
+}
+
+body.dark-mode .contact-form label {
+    color: #e0e0e0;
+}
+
+body.dark-mode .contact-form input[type="text"],
+body.dark-mode .contact-form input[type="email"],
+body.dark-mode .contact-form textarea {
+    background-color: #333;
+    color: #e0e0e0;
+    border: 1px solid #555;
+}
+
+body.dark-mode .contact-form button[type="submit"] {
+    background: #1a73e8; /* Google blue */
+}
+
+body.dark-mode .contact-form button[type="submit"]:hover {
+    background: #1558b0;
+}
+
+body.dark-mode footer {
+    background: #1f1f1f;
+    color: #e0e0e0;
+}
+
+body.dark-mode #darkModeToggle {
+    background-color: #333;
+    color: #e0e0e0;
+    border: 1px solid #555;
+}
+
+body.dark-mode #darkModeToggle:hover {
+    background-color: #444;
+}
+
+/* Testimonials Section */
+.testimonials {
+    padding: 2rem;
+    text-align: center;
+    background-color: #f9f9f9; /* Light background for the section */
+}
+
+.testimonials h2 {
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    color: #333;
+}
+
+.testimonial-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 20px;
+    max-width: 1100px;
+    margin: auto;
+}
+
+.testimonial-item {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    flex-basis: calc(33.333% - 40px); /* Adjust for gap */
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.testimonial-item img {
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    border: 3px solid #007bff;
+}
+
+.testimonial-item p {
+    font-style: italic;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+.testimonial-item h4 {
+    margin-top: 0;
+    color: #333;
+    font-weight: bold;
+}
+
+/* Dark Mode for Testimonials */
+body.dark-mode .testimonials {
+    background-color: #1f1f1f; /* Dark background for the section in dark mode */
+}
+
+body.dark-mode .testimonials h2 {
+    color: #e0e0e0;
+}
+
+body.dark-mode .testimonial-item {
+    background: #2a2a2a; /* Darker item background */
+    box-shadow: 0 2px 5px rgba(255,255,255,0.1);
+}
+
+body.dark-mode .testimonial-item img {
+    border-color: #00aaff; /* Lighter blue border for dark mode */
+}
+
+body.dark-mode .testimonial-item p {
+    color: #bbb; /* Lighter text for dark mode */
+}
+
+body.dark-mode .testimonial-item h4 {
+    color: #e0e0e0;
+}
+
+/* Portfolio Section */
+.portfolio {
+    padding: 2rem;
+    text-align: center;
+    background-color: #fff; /* Light background for the section */
+}
+
+.portfolio h2 {
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    color: #333;
+}
+
+.portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    max-width: 1100px;
+    margin: auto;
+}
+
+.portfolio-item {
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    overflow: hidden; /* Ensures image corners are rounded if image is direct child */
+    text-align: left;
+}
+
+.portfolio-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-bottom: 1px solid #eee; /* Optional: adds a line between img and text */
+}
+
+.portfolio-item h3 {
+    margin: 1rem 1rem 0.5rem 1rem;
+    color: #007bff;
+}
+
+.portfolio-item p {
+    margin: 0 1rem 1rem 1rem;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+/* Dark Mode for Portfolio */
+body.dark-mode .portfolio {
+    background-color: #2a2a2a; /* Dark background for the section */
+}
+
+body.dark-mode .portfolio h2 {
+    color: #e0e0e0;
+}
+
+body.dark-mode .portfolio-item {
+    background: #1f1f1f; /* Darker item background */
+    box-shadow: 0 2px 5px rgba(255,255,255,0.05);
+}
+
+body.dark-mode .portfolio-item img {
+    border-bottom: 1px solid #333;
+}
+
+body.dark-mode .portfolio-item h3 {
+    color: #00aaff; /* Lighter blue for dark mode */
+}
+
+body.dark-mode .portfolio-item p {
+    color: #bbb; /* Lighter text for dark mode */
+}
+
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     header nav {
         flex-direction: column;
     }
 
+    .nav-items {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
     header ul {
         margin-top: 1rem;
         flex-direction: column;
         align-items: center;
+        width: 100%;
     }
 
     header ul li {
         margin: 5px 0;
     }
 
-    .feature-list {
+    #darkModeToggle {
+        margin-top: 10px; /* Add some space above the toggle button */
+    }
+
+    .feature-list,
+    .testimonial-list {
         flex-direction: column;
     }
 
-    .feature-item {
+    .feature-item,
+    .testimonial-item {
         flex-basis: 100%; /* Full width on smaller screens */
         margin-bottom: 20px;
     }
 
-    .feature-item:last-child {
+    .feature-item:last-child,
+    .testimonial-item:last-child {
         margin-bottom: 0;
     }
 }
