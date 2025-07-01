@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package project;
+
+option go_package = "example.com/project/proto"; // Example Go package option
+
+message BlogPost {
+  string id = 1;
+  string title_i18n_key = 2;
+  string excerpt_i18n_key = 3;
+  string cta_i18n_key = 4;
+  string link = 5;
+}

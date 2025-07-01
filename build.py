@@ -5,6 +5,9 @@ Builds the index.html file from configured blocks for multiple languages.
 import json
 import os
 from bs4 import BeautifulSoup
+from google.protobuf import json_format
+from generated.blog_post_pb2 import BlogPost
+from generated.portfolio_item_pb2 import PortfolioItem
 
 def load_translations(lang):
     """Loads translation strings for a given language."""
@@ -29,45 +32,54 @@ def translate_html_content(html_content, translations):
             print(f"Warning: Translation key '{key}' not found in translations for current language. Element: <{element.name} data-i18n='{key}'>...</{element.name}>")
     return str(soup)
 
-def load_dynamic_data(data_file_path):
-    """Loads dynamic data from a JSON file."""
+def load_dynamic_data(data_file_path, message_type):
+    """Loads dynamic data from a JSON file and parses it into a list of protobuf messages."""
+    items = []
     try:
         with open(data_file_path, "r", encoding="utf-8") as f:
-            return json.load(f)
+            data = json.load(f)
+            for item_json in data:
+                message = message_type()
+                json_format.ParseDict(item_json, message)
+                items.append(message)
+            return items
     except FileNotFoundError:
         print(f"Warning: Data file {data_file_path} not found. Returning empty list.")
         return []
     except json.JSONDecodeError:
         print(f"Warning: Could not decode JSON from {data_file_path}. Returning empty list.")
         return []
+    except json_format.ParseError as e:
+        print(f"Warning: Could not parse JSON into protobuf for {data_file_path}: {e}. Returning empty list.")
+        return []
 
-def generate_portfolio_html(items, translations):
+def generate_portfolio_html(items: list[PortfolioItem], translations):
     """Generates HTML for portfolio items."""
     html_output = []
     for item in items:
-        title = translations.get(item["title_i18n_key"], item["title_i18n_key"])
-        description = translations.get(item["desc_i18n_key"], item["desc_i18n_key"])
+        title = translations.get(item.title_i18n_key, item.title_i18n_key)
+        description = translations.get(item.desc_i18n_key, item.desc_i18n_key)
         html_output.append(f"""
         <div class="portfolio-item">
-            <img src="{item['img_src']}" alt="{item['img_alt']}">
+            <img src="{item.img_src}" alt="{item.img_alt}">
             <h3>{title}</h3>
             <p>{description}</p>
         </div>
         """)
     return "\n".join(html_output)
 
-def generate_blog_html(posts, translations):
+def generate_blog_html(posts: list[BlogPost], translations):
     """Generates HTML for blog posts."""
     html_output = []
     for post in posts:
-        title = translations.get(post["title_i18n_key"], post["title_i18n_key"])
-        excerpt = translations.get(post["excerpt_i18n_key"], post["excerpt_i18n_key"])
-        cta = translations.get(post["cta_i18n_key"], post["cta_i18n_key"])
+        title = translations.get(post.title_i18n_key, post.title_i18n_key)
+        excerpt = translations.get(post.excerpt_i18n_key, post.excerpt_i18n_key)
+        cta = translations.get(post.cta_i18n_key, post.cta_i18n_key)
         html_output.append(f"""
         <div class="blog-item">
             <h3>{title}</h3>
             <p>{excerpt}</p>
-            <a href="{post['link']}" class="read-more">{cta}</a>
+            <a href="{post.link}" class="read-more">{cta}</a>
         </div>
         """)
     return "\n".join(html_output)
@@ -82,9 +94,9 @@ def main():
     with open("config.json", "r", encoding="utf-8") as f:
         config = json.load(f)
 
-    # Load dynamic data
-    portfolio_data = load_dynamic_data("data/portfolio_items.json")
-    blog_data = load_dynamic_data("data/blog_posts.json")
+    # Load dynamic data using protobuf
+    portfolio_data = load_dynamic_data("data/portfolio_items.json", PortfolioItem)
+    blog_data = load_dynamic_data("data/blog_posts.json", BlogPost)
 
     # Read the base index.html structure (header and footer)
     # We use the existing index.html as a template for the overall page structure

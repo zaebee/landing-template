@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package project;
+
+option go_package = "example.com/project/proto"; // Example Go package option
+
+message PortfolioItem {
+  string id = 1;
+  string img_src = 2;
+  string img_alt = 3;
+  string title_i18n_key = 4;
+  string desc_i18n_key = 5;
+}
