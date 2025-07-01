@@ -1,59 +1,48 @@
-# landing-template
+# gRPC Discover Service
 
-Template website with landing page to track telegram bot user source.
+This project implements a simple gRPC service called "Discover".
 
-## Structure
+## Running the gRPC Server
 
-The `index.html` is built dynamically from HTML blocks located in the
-`blocks/` directory. The order and inclusion of these blocks are defined
-in `config.json`.
+To run the gRPC server, execute the following command in your terminal:
 
-## Building `index.html`
+```bash
+python main.py
+```
 
-The `build.py` script uses Protocol Buffers for managing data structures related to blog posts and portfolio items. Therefore, you need to generate the Python stubs from the `.proto` definitions before running the build.
+The server will start and listen on port 50051.
 
-**Prerequisites:**
+## Running Tests
 
-1.  Ensure you have Python and Node.js installed.
-2.  Install Python dependencies:
-    ```bash
-    pip install -r requirements.txt
-    # For linting and type checking, also install dev dependencies:
-    pip install -r requirements-dev.txt
-    ```
-    *(Note: `requirements.txt` will need to be created or updated if it doesn't include `grpcio-tools` and `protobuf`)*
+To run the tests for the gRPC server, execute the following command in your terminal:
 
-**Steps to Build:**
+```bash
+python -m unittest test_main.py
+```
 
-1.  **Generate Protobuf Stubs (if not already done or if `.proto` files changed):**
-    Run the following command to generate the necessary Python files from the `.proto` definitions into the `generated/` directory:
-    ```bash
-    npm run generate-proto
-    ```
-    This script handles directory creation, invokes the Protocol Buffer compiler (`protoc`), and ensures the `generated` directory is treated as a Python package.
+This will run all the test cases defined in `test_main.py`.
 
-2.  **Run the Build Command:**
-    To build or update `index.html` and language-specific versions (e.g., `index_es.html`) after making changes to blocks, `config.json`, or data:
-    ```bash
-    npm run build
-    ```
-    This executes `python build.py`, which reads `config.json`, loads data (using the generated Protobuf stubs), assembles HTML blocks, applies translations, and writes the final `index.html` files.
+## Dependencies
 
-## Customizing Blocks
+Make sure you have the necessary dependencies installed. You can install them using pip:
 
-- **Add a new block**:
+```bash
+pip install -r requirements.txt
+```
 
-    1. Create a new HTML file in the `blocks/` directory (e.g., `my-new-block.html`).
-    2. Add the desired HTML content to this file.
-    3. Include the filename in the `blocks` array in `config.json` at the desired position.
+## Generating Protobuf Code
 
-- **Remove a block**:
+If you modify the `proto/discover.proto` file, you will need to regenerate the Python gRPC code. Use the following command from the project root directory:
 
-    1. Remove the block's filename from the `blocks` array in `config.json`.
+```bash
+python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. proto/discover.proto
+```
+This will generate `discover_pb2.py` and `discover_pb2_grpc.py` in the project root.
 
-- **Reorder blocks**:
+**Important:** After generating the code, you might need to manually update the import statement in `discover_pb2_grpc.py`.
+Change:
+`from proto import discover_pb2 as proto_dot_discover__pb2`
+To:
+`import discover_pb2 as proto_dot_discover__pb2`
 
-    1. Change the order of filenames in the `blocks` array in `config.json`.
-
-After any changes to `blocks/` or `config.json`, remember to run
-`npm run build` to regenerate `index.html`.
+This is because the generator assumes the `.proto` file is in the same directory as the output, or that the output directory is added to `PYTHONPATH` in a way that `proto.discover_pb2` is resolvable. For simplicity in this project, we place the generated files in the root and adjust the import.
