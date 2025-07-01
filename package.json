@@ -1,0 +1,11 @@
+{
+  "name": "landing-template",
+  "version": "1.0.0",
+  "description": "Template web site with landing page to track telegram bot user source.",
+  "scripts": {
+    "build": "python build.py"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
