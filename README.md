@@ -26,15 +26,11 @@ The `build.py` script uses Protocol Buffers for managing data structures related
 **Steps to Build:**
 
 1.  **Generate Protobuf Stubs (if not already done or if `.proto` files changed):**
-    The generated Python files are expected in a `generated/` directory at the project root.
+    Run the following command to generate the necessary Python files from the `.proto` definitions into the `generated/` directory:
     ```bash
-    # Ensure the proto directory and files exist (e.g., proto/blog_post.proto)
-    mkdir -p generated
-    python -m grpc_tools.protoc -I./proto --python_out=./generated --pyi_out=./generated ./proto/blog_post.proto ./proto/portfolio_item.proto
-
-    # Create an __init__.py file to make 'generated' a package
-    touch generated/__init__.py
+    npm run generate-proto
     ```
+    This script handles directory creation, invokes the Protocol Buffer compiler (`protoc`), and ensures the `generated` directory is treated as a Python package.
 
 2.  **Run the Build Command:**
     To build or update `index.html` and language-specific versions (e.g., `index_es.html`) after making changes to blocks, `config.json`, or data:
