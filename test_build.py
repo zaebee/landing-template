@@ -7,8 +7,8 @@ from unittest import mock
 
 from build import (
     generate_blog_html,
-    generate_portfolio_html,
     generate_features_html,  # Added
+    generate_portfolio_html,
     generate_testimonials_html,  # Added
     load_dynamic_data,
     load_translations,
@@ -16,8 +16,8 @@ from build import (
 )
 from build import main as build_main
 from generated.blog_post_pb2 import BlogPost
-from generated.portfolio_item_pb2 import PortfolioItem
 from generated.feature_item_pb2 import FeatureItem  # Added
+from generated.portfolio_item_pb2 import PortfolioItem
 from generated.testimonial_item_pb2 import TestimonialItem  # Added
 
 project_root = os.path.dirname(os.path.abspath(__file__))
@@ -115,7 +115,6 @@ class TestBuildScript(unittest.TestCase):
         ) as f:
             json.dump(self.testimonial_items_data, f)
 
-
         # Create a dummy index.html for main() to read
         self.dummy_index_content = """
         <!DOCTYPE html>
@@ -152,22 +151,20 @@ class TestBuildScript(unittest.TestCase):
         # Ensure public/config.json is also created for build.py if it's not mocked perfectly
         os.makedirs("public", exist_ok=True)
         with open("public/config.json", "w", encoding="utf-8") as f:
-             json.dump(self.dummy_config, f)
-
+            json.dump(self.dummy_config, f)
 
         # Dummy block files
         os.makedirs("blocks", exist_ok=True)
         with open("blocks/hero.html", "w", encoding="utf-8") as f:
             f.write("<div data-i18n='hero_title'>Hero Title</div>")
         with open("blocks/features.html", "w", encoding="utf-8") as f:
-            f.write("<div>{{feature_items}}</div>") # Added
+            f.write("<div>{{feature_items}}</div>")  # Added
         with open("blocks/testimonials.html", "w", encoding="utf-8") as f:
-            f.write("<div>{{testimonial_items}}</div>") # Added
+            f.write("<div>{{testimonial_items}}</div>")  # Added
         with open("blocks/portfolio.html", "w", encoding="utf-8") as f:
             f.write("<div>{{portfolio_items}}</div>")
         with open("blocks/blog.html", "w", encoding="utf-8") as f:
             f.write("<div>{{blog_posts}}</div>")
-
 
     def tearDown(self):
         """Clean up test environment."""
@@ -198,14 +195,14 @@ class TestBuildScript(unittest.TestCase):
             create=True,
         ) as mocked_open:
             # load_translations prepends 'public/locales/'
-            translations = load_translations("en") # Test with actual lang key
+            translations = load_translations("en")  # Test with actual lang key
             self.assertEqual(translations, self.en_translations)
             # The call inside load_translations is to "public/locales/en.json"
             # The mock needs to intercept this.
             # For this test, we'll assume the mock is general enough.
             # The assertion should check the path used by the function.
             mocked_open.assert_called_with(
-                f"public/locales/en.json", "r", encoding="utf-8"
+                "public/locales/en.json", "r", encoding="utf-8"
             )
 
         # Reset mock for the next call if necessary or use different mocks
@@ -215,11 +212,11 @@ class TestBuildScript(unittest.TestCase):
             "build.open",
             mock.mock_open(read_data=json.dumps(self.es_translations)),
             create=True,
-        ) as mocked_open_es: # Use a different mock name or reset
-            translations = load_translations("es") # Test with actual lang key
+        ) as mocked_open_es:  # Use a different mock name or reset
+            translations = load_translations("es")  # Test with actual lang key
             self.assertEqual(translations, self.es_translations)
             mocked_open_es.assert_called_with(
-                f"public/locales/es.json", "r", encoding="utf-8"
+                "public/locales/es.json", "r", encoding="utf-8"
             )
 
     def test_load_translations_non_existing(self):
@@ -237,10 +234,10 @@ class TestBuildScript(unittest.TestCase):
         with mock.patch(
             "build.open", mock.mock_open(read_data="{invalid_json_content"), create=True
         ) as mocked_open:
-            translations = load_translations("invalid") # Test with actual lang key
+            translations = load_translations("invalid")  # Test with actual lang key
             self.assertEqual(translations, {})
-            mocked_open.assert_called_with( # Changed to assert_called_with
-                f"public/locales/invalid.json", "r", encoding="utf-8"
+            mocked_open.assert_called_with(  # Changed to assert_called_with
+                "public/locales/invalid.json", "r", encoding="utf-8"
             )
         # The actual file 'test_locales/invalid.json' is not used by the mocked 'load_translations'
         # if the mock for 'build.open' is correctly intercepting.
@@ -249,7 +246,6 @@ class TestBuildScript(unittest.TestCase):
         # as 'build.open' is mocked.
         if os.path.exists(os.path.join(self.test_locales_dir, "invalid.json")):
             os.remove(os.path.join(self.test_locales_dir, "invalid.json"))
-
 
     def test_translate_html_content(self):
         """Test HTML content translation."""
@@ -442,7 +438,8 @@ class TestBuildScript(unittest.TestCase):
     @mock.patch("build.load_translations")
     @mock.patch("build.load_dynamic_data")
     @mock.patch("build.translate_html_content")
-    @mock.patch("builtins.open", new_callable=mock.mock_open)  # Mock all file opens
+    # Mock all file opens
+    @mock.patch("builtins.open", new_callable=mock.mock_open)
     def test_main_function_creates_files(
         self, mock_file_open, mock_translate, mock_load_data, mock_load_trans
     ):
@@ -473,9 +470,7 @@ class TestBuildScript(unittest.TestCase):
             link="blog.html",
             cta_i18n_key="c1",
         )
-        mock_feature_item = FeatureItem(
-            title_i18n_key="f1", desc_i18n_key="fd1"
-        )
+        mock_feature_item = FeatureItem(title_i18n_key="f1", desc_i18n_key="fd1")
         mock_testimonial_item = TestimonialItem(
             text_i18n_key="t1",
             author_i18n_key="ta1",
@@ -514,7 +509,11 @@ class TestBuildScript(unittest.TestCase):
                 ).return_value
             # Mock for the test's own setup of 'config.json' if it's different
             # For this test, we primarily care about what build_main reads.
-            if filename == "config.json" and args[0] == "r" and "public/" not in filename:
+            if (
+                filename == "config.json"
+                and args[0] == "r"
+                and "public/" not in filename
+            ):
                 return mock.mock_open(
                     read_data=json.dumps(self.dummy_config)
                 ).return_value

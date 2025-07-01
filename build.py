@@ -13,8 +13,8 @@ from google.protobuf import json_format
 from google.protobuf.message import Message
 
 from generated.blog_post_pb2 import BlogPost
-from generated.portfolio_item_pb2 import PortfolioItem
 from generated.feature_item_pb2 import FeatureItem
+from generated.portfolio_item_pb2 import PortfolioItem
 from generated.testimonial_item_pb2 import TestimonialItem
 
 # Ensure the project root (and thus 'generated' directory) is in the Python path
@@ -160,9 +160,7 @@ def generate_testimonials_html(
     return "\n".join(html_output)
 
 
-def generate_features_html(
-    items: List[FeatureItem], translations: Translations
-) -> str:
+def generate_features_html(items: List[FeatureItem], translations: Translations) -> str:
     """Generates HTML for feature items."""
     html_output: List[str] = []
     for item in items:
@@ -240,9 +238,10 @@ def main() -> None:
     for block_name, config_item in dynamic_data_loaders.items():
         data_file = config_item["data_file"]
         message_type = config_item["message_type"]
-        if data_file not in loaded_data_cache: # Ensure data is loaded only once per file
+        if (
+            data_file not in loaded_data_cache
+        ):  # Ensure data is loaded only once per file
             loaded_data_cache[data_file] = load_dynamic_data(data_file, message_type)
-
 
     config: Dict[str, Any]
     try:
@@ -373,7 +372,9 @@ def main() -> None:
                         # or that the types are compatible enough.
                         # A more robust solution might involve type checking here or ensuring
                         # generators are flexible.
-                        data_items = loaded_data_cache.get(loader_config["data_file"], [])
+                        data_items = loaded_data_cache.get(
+                            loader_config["data_file"], []
+                        )
 
                         # Ensure the data passed to the generator is correctly typed.
                         # This step is crucial if generators expect specific protobuf types.
