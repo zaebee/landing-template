@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# MyPy
+.mypy_cache/
+
+# Ruff
+.ruff_cache/
+
+# Pytest
+.pytest_cache/
+
+# Protobuf generated files
+generated/
+
+# Node / NPM
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+# package-lock.json # Usually committed, but can be ignored if auto-generated and build is deterministic. Recommended to commit.
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Build output
+dist/
+build/
+*.egg-info/
+*.egg
+
+# IDE / Editor specific
+.vscode/
+.idea/
+*.swp
+*.swo

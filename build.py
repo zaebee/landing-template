@@ -4,7 +4,19 @@ Builds the index.html file from configured blocks for multiple languages.
 
 import json
 import os
+import sys
+
+# Ensure the project root (and thus 'generated' directory) is in the Python path
+project_root = os.path.dirname(os.path.abspath(__file__))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
 from bs4 import BeautifulSoup
+from google.protobuf import json_format
+
+from generated.blog_post_pb2 import BlogPost
+from generated.portfolio_item_pb2 import PortfolioItem
+
 
 def load_translations(lang):
     """Loads translation strings for a given language."""
@@ -25,55 +37,81 @@ def translate_html_content(html_content, translations):
         key = element["data-i18n"]
         if key in translations:
             element.string = translations[key]
-        elif "{{" not in element.decode_contents() and "}}" not in element.decode_contents(): # Avoid replacing placeholders
-            print(f"Warning: Translation key '{key}' not found in translations for current language. Element: <{element.name} data-i18n='{key}'>...</{element.name}>")
+        elif ("{{" not in element.decode_contents() and
+              "}}" not in element.decode_contents()):  # Avoid replacing placeholders
+            print(
+                f"Warning: Translation key '{key}' not found in translations for "
+                f"current language. Element: <{element.name} "
+                f"data-i18n='{key}'>...</{element.name}>"
+            )
     return str(soup)
 
-def load_dynamic_data(data_file_path):
-    """Loads dynamic data from a JSON file."""
+def load_dynamic_data(data_file_path, message_type):
+    """
+    Loads dynamic data from a JSON file and parses it into a list of protobuf
+    messages.
+    """
+    items = []
     try:
         with open(data_file_path, "r", encoding="utf-8") as f:
-            return json.load(f)
+            data = json.load(f)
+            for item_json in data:
+                message = message_type()
+                json_format.ParseDict(item_json, message)
+                items.append(message)
+            return items
     except FileNotFoundError:
         print(f"Warning: Data file {data_file_path} not found. Returning empty list.")
         return []
     except json.JSONDecodeError:
-        print(f"Warning: Could not decode JSON from {data_file_path}. Returning empty list.")
+        print(
+            f"Warning: Could not decode JSON from {data_file_path}. "
+            "Returning empty list."
+        )
+        return []
+    except json_format.ParseError as e:
+        print(
+            f"Warning: Could not parse JSON into protobuf for {data_file_path}: {e}. "
+            "Returning empty list."
+        )
         return []
 
-def generate_portfolio_html(items, translations):
+def generate_portfolio_html(items: list[PortfolioItem], translations):
     """Generates HTML for portfolio items."""
     html_output = []
     for item in items:
-        title = translations.get(item["title_i18n_key"], item["title_i18n_key"])
-        description = translations.get(item["desc_i18n_key"], item["desc_i18n_key"])
+        title = translations.get(item.title_i18n_key, item.title_i18n_key)
+        description = translations.get(item.desc_i18n_key, item.desc_i18n_key)
         html_output.append(f"""
         <div class="portfolio-item">
-            <img src="{item['img_src']}" alt="{item['img_alt']}">
+            <img src="{item.img_src}" alt="{item.img_alt}">
             <h3>{title}</h3>
             <p>{description}</p>
         </div>
         """)
     return "\n".join(html_output)
 
-def generate_blog_html(posts, translations):
+def generate_blog_html(posts: list[BlogPost], translations):
     """Generates HTML for blog posts."""
     html_output = []
     for post in posts:
-        title = translations.get(post["title_i18n_key"], post["title_i18n_key"])
-        excerpt = translations.get(post["excerpt_i18n_key"], post["excerpt_i18n_key"])
-        cta = translations.get(post["cta_i18n_key"], post["cta_i18n_key"])
+        title = translations.get(post.title_i18n_key, post.title_i18n_key)
+        excerpt = translations.get(post.excerpt_i18n_key, post.excerpt_i18n_key)
+        cta = translations.get(post.cta_i18n_key, post.cta_i18n_key)
         html_output.append(f"""
         <div class="blog-item">
             <h3>{title}</h3>
             <p>{excerpt}</p>
-            <a href="{post['link']}" class="read-more">{cta}</a>
+            <a href="{post.link}" class="read-more">{cta}</a>
         </div>
         """)
     return "\n".join(html_output)
 
 def main():
-    """Reads config, assembles blocks, translates, and writes new index_<lang>.html files."""
+    """
+    Reads config, assembles blocks, translates, and writes new index_<lang>.html
+    files.
+    """
     # Define supported languages (could also be read from a config file)
     supported_langs = ["en", "es"]
     default_lang = "en"
@@ -82,9 +120,9 @@ def main():
     with open("config.json", "r", encoding="utf-8") as f:
         config = json.load(f)
 
-    # Load dynamic data
-    portfolio_data = load_dynamic_data("data/portfolio_items.json")
-    blog_data = load_dynamic_data("data/blog_posts.json")
+    # Load dynamic data using protobuf
+    portfolio_data = load_dynamic_data("data/portfolio_items.json", PortfolioItem)
+    blog_data = load_dynamic_data("data/blog_posts.json", BlogPost)
 
     # Read the base index.html structure (header and footer)
     # We use the existing index.html as a template for the overall page structure
@@ -122,16 +160,24 @@ def main():
 
                     # Inject dynamic content before translation
                     if block_file == "portfolio.html":
-                        portfolio_html = generate_portfolio_html(portfolio_data, translations)
-                        block_content_with_data = block_template_content.replace("{{portfolio_items}}", portfolio_html)
+                        portfolio_html = generate_portfolio_html(
+                            portfolio_data, translations
+                        )
+                        block_content_with_data = block_template_content.replace(
+                            "{{portfolio_items}}", portfolio_html
+                        )
                     elif block_file == "blog.html":
                         blog_html = generate_blog_html(blog_data, translations)
-                        block_content_with_data = block_template_content.replace("{{blog_posts}}", blog_html)
+                        block_content_with_data = block_template_content.replace(
+                            "{{blog_posts}}", blog_html
+                        )
                     else:
                         block_content_with_data = block_template_content
 
                     # Blocks are translated individually after dynamic data injection
-                    translated_block_content = translate_html_content(block_content_with_data, translations)
+                    translated_block_content = translate_html_content(
+                        block_content_with_data, translations
+                    )
                     blocks_html_parts.append(translated_block_content)
             except FileNotFoundError:
                 print(f"Warning: Block file {block_file} not found. Skipping.")
@@ -147,7 +193,8 @@ def main():
         # The header and footer parts are taken from the original index.html,
         # and then translated. The main content is built from translated blocks.
 
-        # Translate navigation and other header elements that are part of the main index.html template
+        # Translate navigation and other header elements
+        # that are part of the main index.html template
         translated_header_soup = BeautifulSoup(header_content, 'html.parser')
         for element in translated_header_soup.find_all(attrs={"data-i18n": True}):
             key = element["data-i18n"]
@@ -163,10 +210,13 @@ def main():
 
         # Construct the final HTML for the current language
         # Ensure the html tag has the correct lang attribute
-        final_html_soup = BeautifulSoup(html_start[:-7], 'html.parser') # Remove "<body>\n"
+        # Remove "<body>\n" from html_start for parsing just the head part
+        final_html_soup = BeautifulSoup(html_start[:-7], 'html.parser')
         final_html_soup.html['lang'] = lang
 
-        final_html_start = str(final_html_soup).split("</head>")[0] + "</head>\n<body>\n"
+        # Reconstruct the start of the HTML document correctly
+        html_head_part = str(final_html_soup).split("</head>")[0]
+        final_html_start = f"{html_head_part}</head>\n<body>\n"
 
 
         output_filename = f"index_{lang}.html"

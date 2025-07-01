@@ -14,22 +14,19 @@
 <div class="logo">
 <a href="#">Logo</a>
 </div>
+<button aria-expanded="false" aria-label="Toggle menu" class="hamburger-menu">
+<span class="hamburger-bar"></span>
+<span class="hamburger-bar"></span>
+<span class="hamburger-bar"></span>
+</button>
 <div class="nav-items">
 <ul>
-<li><a data-i18n="nav_home" href="#">Inicio</a></li>
-<li><a data-i18n="nav_about" href="#">Acerca de</a></li>
-<li><a data-i18n="nav_services" href="#">Servicios</a></li>
-<li><a data-i18n="nav_blog" href="#">Blog</a></li>
-<li><a data-i18n="nav_contact" href="#">Contacto</a></li>
+<!-- Navigation items will be dynamically injected here -->
 </ul>
-<button data-i18n="dark_mode_toggle" id="dark-mode-toggle">Alternar Modo Oscuro</button>
+<button aria-label="Switch to Dark Mode" id="dark-mode-toggle">🌙</button>
 <div id="language-switcher">
 <button data-lang="en">EN</button>
 <button data-lang="es">ES</button>
-</div>
-<div id="theme-switcher">
-<button data-i18n="theme_light_button" data-theme="light">Tema Claro</button>
-<button data-i18n="theme_dark_button" data-theme="dark">Tema Oscuro</button>
 </div>
 </div>
 </nav>
@@ -150,6 +147,40 @@
         const body = document.body;
         let currentTranslations = {};
 
+        async function generateNavigation() {
+            try {
+                const response = await fetch('config.json');
+                if (!response.ok) {
+                    console.error('Failed to load config.json:', response.statusText);
+                    return;
+                }
+                const config = await response.json();
+                const navItems = config.navigation;
+
+                if (navItems && Array.isArray(navItems)) {
+                    const navUl = document.querySelector('.nav-items ul');
+                    if (!navUl) {
+                        console.error('Navigation <ul> element not found.');
+                        return;
+                    }
+                    navUl.innerHTML = ''; // Clear existing items
+
+                    navItems.forEach(item => {
+                        const li = document.createElement('li');
+                        const a = document.createElement('a');
+                        a.setAttribute('data-i18n', item.label_i18n_key);
+                        a.href = item.href;
+                        // Set initial text content, which will be replaced by translation
+                        a.textContent = item.label_i18n_key;
+                        li.appendChild(a);
+                        navUl.appendChild(li);
+                    });
+                }
+            } catch (error) {
+                console.error('Error generating navigation:', error);
+            }
+        }
+
         async function fetchTranslations(lang) {
             try {
                 const response = await fetch(`locales/${lang}.json`);
@@ -169,19 +200,22 @@
             currentTranslations = translations;
             document.querySelectorAll('[data-i18n]').forEach(element => {
                 const key = element.getAttribute('data-i18n');
-                if (translations[key]) {
+                if (translations[key] && element.id !== 'dark-mode-toggle') { // Don't translate the icon button
                     element.textContent = translations[key];
                 }
             });
-            // Update dark mode toggle text based on current language and mode
-            updateDarkModeButtonText();
+            // Update dark mode toggle icon and aria-label based on current language and mode
+            updateDarkModeButtonIcon();
         }
 
-        function updateDarkModeButtonText() {
-            if (body.classList.contains('dark-mode')) {
-                darkModeToggle.textContent = currentTranslations['light_mode_toggle'] || 'Toggle Light Mode';
+        function updateDarkModeButtonIcon() {
+            const isDarkMode = body.classList.contains('dark-mode');
+            if (isDarkMode) {
+                darkModeToggle.textContent = '☀️'; // Sun icon for switching to light mode
+                darkModeToggle.setAttribute('aria-label', currentTranslations['light_mode_toggle'] || 'Switch to Light Mode');
             } else {
-                darkModeToggle.textContent = currentTranslations['dark_mode_toggle'] || 'Toggle Dark Mode';
+                darkModeToggle.textContent = '🌙'; // Moon icon for switching to dark mode
+                darkModeToggle.setAttribute('aria-label', currentTranslations['dark_mode_toggle'] || 'Switch to Dark Mode');
             }
         }
 
@@ -191,6 +225,14 @@
                 applyTranslations(translations);
                 localStorage.setItem('language', lang);
                 document.documentElement.lang = lang; // Update the lang attribute of the html tag
+
+                // Update active class on buttons
+                document.querySelectorAll('#language-switcher button').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.getAttribute('data-lang') === lang) {
+                        btn.classList.add('active');
+                    }
+                });
             }
         }
 
@@ -207,65 +249,45 @@
             } else {
                 localStorage.setItem('darkMode', 'disabled');
             }
-            updateDarkModeButtonText(); // Update button text on toggle
+            updateDarkModeButtonIcon(); // Update button icon and aria-label on toggle
         });
 
         // Language Switcher
         const languageSwitcher = document.getElementById('language-switcher');
         if (languageSwitcher) {
             languageSwitcher.addEventListener('click', (event) => {
-                if (event.target.tagName === 'BUTTON') {
-                    const lang = event.target.getAttribute('data-lang');
-                    if (lang) {
-                        setLanguage(lang);
-                    }
+                const button = event.target.closest('button[data-lang]');
+                if (button) {
+                    const lang = button.getAttribute('data-lang');
+                    setLanguage(lang);
                 }
             });
         }
 
-        // Initial language load
-        const preferredLang = localStorage.getItem('language') || 'en';
-        setLanguage(preferredLang);
+        // Initial setup
+        async function initializeApp() {
+            await generateNavigation(); // Generate navigation first
+            const preferredLang = localStorage.getItem('language') || 'en';
+            await setLanguage(preferredLang); // Then set language (which applies translations)
 
-
-        // Theme Switcher
-        const themeSwitcher = document.getElementById('theme-switcher');
-        const lightThemeCss = document.getElementById('theme-style-light');
-        const darkThemeCss = document.getElementById('theme-style-dark');
-
-        function setTheme(themeName) {
-            localStorage.setItem('theme', themeName);
-            body.classList.remove('light-theme', 'dark-theme'); // Remove any existing theme class
-
-            if (themeName === 'light') {
-                body.classList.add('light-theme');
-                if (lightThemeCss) lightThemeCss.disabled = false;
-                if (darkThemeCss) darkThemeCss.disabled = true;
-            } else if (themeName === 'dark') {
-                body.classList.add('dark-theme');
-                if (lightThemeCss) lightThemeCss.disabled = true;
-                if (darkThemeCss) darkThemeCss.disabled = false;
-            } else { // Default or no theme
-                if (lightThemeCss) lightThemeCss.disabled = true;
-                if (darkThemeCss) darkThemeCss.disabled = true;
-            }
+            // No need to initialize the old theme switcher here
+            // The dark mode toggle is already initialized by checking localStorage for 'darkMode'
+            // and its button text/icon will be set by updateDarkModeButtonText() called within setLanguage -> applyTranslations.
         }
 
-        if (themeSwitcher) {
-            themeSwitcher.addEventListener('click', (event) => {
-                if (event.target.tagName === 'BUTTON') {
-                    const theme = event.target.getAttribute('data-theme');
-                    if (theme) {
-                        setTheme(theme);
-                    }
-                }
+        initializeApp();
+
+        // Hamburger Menu Toggle
+        const hamburgerMenu = document.querySelector('.hamburger-menu');
+        const navItems = document.querySelector('.nav-items');
+
+        if (hamburgerMenu && navItems) {
+            hamburgerMenu.addEventListener('click', () => {
+                navItems.classList.toggle('active');
+                const isExpanded = navItems.classList.contains('active');
+                hamburgerMenu.setAttribute('aria-expanded', isExpanded);
             });
         }
-
-        // Initial theme load
-        const preferredTheme = localStorage.getItem('theme') || 'light'; // Default to light
-        setTheme(preferredTheme);
-
 
         // Contact Form Validation
         const contactForm = document.querySelector('.contact-form form');
