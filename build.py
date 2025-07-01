@@ -13,7 +13,10 @@ from google.protobuf import json_format
 from google.protobuf.message import Message
 
 from generated.blog_post_pb2 import BlogPost
+from generated.feature_item_pb2 import FeatureItem
+from generated.hero_item_pb2 import HeroItem  # Added
 from generated.portfolio_item_pb2 import PortfolioItem
+from generated.testimonial_item_pb2 import TestimonialItem
 
 # Ensure the project root (and thus 'generated' directory) is in the Python path
 project_root = os.path.dirname(os.path.abspath(__file__))
@@ -115,6 +118,36 @@ def load_dynamic_data(data_file_path: str, message_type: Type[T]) -> List[T]:
     return []  # Ensure a list is always returned, even if empty due to other errors
 
 
+def load_single_item_dynamic_data(
+    data_file_path: str, message_type: Type[T]
+) -> T | None:
+    """
+    Loads dynamic data for a single item from a JSON file and parses it
+    into a protobuf message.
+    """
+    try:
+        with open(data_file_path, "r", encoding="utf-8") as f:
+            data: Dict[str, Any] = json.load(f)  # Expects a single JSON object
+            message: T = message_type()
+            json_format.ParseDict(data, message)
+            return message
+    except FileNotFoundError:
+        print(f"Warning: Data file {data_file_path} not found. Returning None.")
+        return None
+    except json.JSONDecodeError:
+        print(
+            f"Warning: Could not decode JSON from {data_file_path}. " "Returning None."
+        )
+        return None
+    except json_format.ParseError as e:
+        print(
+            f"Warning: Could not parse JSON into protobuf for {data_file_path}: {e}. "
+            "Returning None."
+        )
+        return None
+    return None
+
+
 def generate_portfolio_html(
     items: List[PortfolioItem], translations: Translations
 ) -> str:
@@ -133,6 +166,64 @@ def generate_portfolio_html(
         """
         )
     return "\n".join(html_output)
+
+
+def generate_testimonials_html(
+    items: List[TestimonialItem], translations: Translations
+) -> str:
+    """Generates HTML for testimonial items."""
+    html_output: List[str] = []
+    for item in items:
+        text: str = translations.get(item.text_i18n_key, item.text_i18n_key)
+        author: str = translations.get(item.author_i18n_key, item.author_i18n_key)
+        img_alt: str = translations.get(
+            item.img_alt_i18n_key, "User photo"
+        )  # Default alt text
+        html_output.append(
+            f"""
+        <div class="testimonial-item">
+            <img src="{item.img_src}" alt="{img_alt}">
+            <p>{text}</p>
+            <h4>{author}</h4>
+        </div>
+        """
+        )
+    return "\n".join(html_output)
+
+
+def generate_features_html(items: List[FeatureItem], translations: Translations) -> str:
+    """Generates HTML for feature items."""
+    html_output: List[str] = []
+    for item in items:
+        title: str = translations.get(item.title_i18n_key, item.title_i18n_key)
+        description: str = translations.get(item.desc_i18n_key, item.desc_i18n_key)
+        # Note: If FeatureItem had icon_class or img_src, they would be used here.
+        html_output.append(
+            f"""
+        <div class="feature-item">
+            <h3>{title}</h3>
+            <p>{description}</p>
+        </div>
+        """
+        )
+    return "\n".join(html_output)
+
+
+def generate_hero_html(item: HeroItem | None, translations: Translations) -> str:
+    """Generates HTML for the hero section."""
+    if not item:
+        return "<!-- Hero data not found -->"
+
+    title = translations.get(item.title_i18n_key, item.title_i18n_key)
+    subtitle = translations.get(item.subtitle_i18n_key, item.subtitle_i18n_key)
+    cta_text = translations.get(item.cta_text_i18n_key, item.cta_text_i18n_key)
+    # cta_link is taken directly from the HeroItem
+
+    return f"""
+    <h1>{title}</h1>
+    <p>{subtitle}</p>
+    <a href="{item.cta_link}" class="cta-button">{cta_text}</a>
+    """
 
 
 def generate_blog_html(posts: List[BlogPost], translations: Translations) -> str:
@@ -162,40 +253,109 @@ def main() -> None:
     supported_langs: List[str] = ["en", "es"]
     default_lang: str = "en"
 
-    # Read the main configuration file
-    config: Dict[str, Any]
-    with open("public/config.json", "r", encoding="utf-8") as f:
-        config = json.load(f)
-
-    # Load dynamic data using protobuf
+    # Define the dynamic data loaders configuration
     dynamic_data_loaders: Dict[str, Dict[str, Any]] = {
         "portfolio.html": {
-            "loader": load_dynamic_data,
-            "args": ["data/portfolio_items.json", PortfolioItem],
+            "data_file": "data/portfolio_items.json",
+            "message_type": PortfolioItem,
             "generator": generate_portfolio_html,
             "placeholder": "{{portfolio_items}}",
         },
         "blog.html": {
-            "loader": load_dynamic_data,
-            "args": ["data/blog_posts.json", BlogPost],
+            "data_file": "data/blog_posts.json",
+            "message_type": BlogPost,
             "generator": generate_blog_html,
             "placeholder": "{{blog_posts}}",
         },
+        "features.html": {
+            "data_file": "data/feature_items.json",
+            "message_type": FeatureItem,
+            "generator": generate_features_html,
+            "placeholder": "{{feature_items}}",
+        },
+        "testimonials.html": {
+            "data_file": "data/testimonial_items.json",
+            "message_type": TestimonialItem,
+            "generator": generate_testimonials_html,
+            "placeholder": "{{testimonial_items}}",
+            "is_list": True,  # Indicates data is a list of items
+        },
+        "hero.html": {
+            "data_file": "data/hero_item.json",
+            "message_type": HeroItem,
+            "generator": generate_hero_html,
+            "placeholder": "{{hero_content}}",  # Correct placeholder
+            "is_list": False,  # Indicates data is a single item
+        },
     }
 
-    loaded_dynamic_data = {}
-    # Use a different variable name here to avoid shadowing the main 'config' object
-    for block_name, data_loader_config in dynamic_data_loaders.items():
-        loaded_dynamic_data[block_name] = data_loader_config["loader"](
-            *data_loader_config["args"]
-        )
+    # Pre-load all dynamic data once
+    loaded_data_cache: Dict[str, Union[List[Message], Message, None]] = (
+        {}
+    )  # Allow single Message or None
+    # TODO: use `block_name, config_item` to put into dynamic place.
+    for _, config_item in dynamic_data_loaders.items():
+        data_file = config_item["data_file"]
+        message_type = config_item["message_type"]
+        is_list = config_item.get("is_list", True)  # Default to True if not specified
 
-    # Read the base index.html structure (header and footer)
-    # We use the existing index.html as a template for the overall page structure
-    # but will replace its content with translated blocks.
-    with open("index.html", "r", encoding="utf-8") as f:
-        base_content = f.read()
-        base_soup = BeautifulSoup(base_content, "html.parser")
+        if data_file not in loaded_data_cache:
+            if is_list:
+                loaded_data_cache[data_file] = load_dynamic_data(
+                    data_file, message_type
+                )
+            else:
+                loaded_data_cache[data_file] = load_single_item_dynamic_data(
+                    data_file, message_type
+                )
+
+    config: Dict[str, Any]
+    try:
+        with open("public/config.json", "r", encoding="utf-8") as f:
+            config = json.load(f)
+    except FileNotFoundError:
+        print("Error: config.json not found. Exiting.")
+        sys.exit(1)  # Exit if config is essential
+    except json.JSONDecodeError:
+        print("Error: Could not decode JSON from config.json. Exiting.")
+        sys.exit(1)  # Exit if config is essential
+
+    portfolio_data_untyped: List[Message] = load_dynamic_data(
+        "data/portfolio_items.json", PortfolioItem
+    )
+    portfolio_data: List[PortfolioItem] = [
+        item for item in portfolio_data_untyped if isinstance(item, PortfolioItem)
+    ]
+
+    blog_data_untyped: List[Message] = load_dynamic_data(
+        "data/blog_posts.json", BlogPost
+    )
+    blog_data: List[BlogPost] = [
+        item for item in blog_data_untyped if isinstance(item, BlogPost)
+    ]
+
+    feature_data_untyped: List[Message] = load_dynamic_data(
+        "data/feature_items.json", FeatureItem
+    )
+    feature_data: List[FeatureItem] = [
+        item for item in feature_data_untyped if isinstance(item, FeatureItem)
+    ]
+
+    testimonial_data_untyped: List[Message] = load_dynamic_data(
+        "data/testimonial_items.json", TestimonialItem
+    )
+    # The individual data lists (portfolio_data, blog_data, etc.) are no longer needed here,
+    # as data will be fetched from loaded_data_cache within the loop.
+
+    base_content: str
+    try:
+        with open("index.html", "r", encoding="utf-8") as f:
+            base_content = f.read()
+    except FileNotFoundError:
+        print("Error: Base index.html not found. Exiting.")
+        sys.exit(1)  # Exit if base template is essential
+
+    base_soup: BeautifulSoup = BeautifulSoup(base_content, "html.parser")
 
     header_content: str = ""
     body_tag = base_soup.body
@@ -267,26 +427,36 @@ def main() -> None:
                     block_template_content: str = f.read()
                     block_content_with_data: str
 
-                    # Inject dynamic content before translation
-                    block_content_with_data = block_template_content
                     if block_file in dynamic_data_loaders:
-                        data_config = dynamic_data_loaders[block_file]
-                        placeholder = data_config["placeholder"]
-                        if placeholder in block_template_content:
-                            items = loaded_dynamic_data[block_file]
-                            generated_html = data_config["generator"](
-                                items, translations
-                            )
-                            block_content_with_data = block_template_content.replace(
-                                placeholder, generated_html
-                            )
-                        else:
-                            print(
-                                f"Warning: Placeholder '{placeholder}' not found "
-                                f"in {block_file}"
-                            )
-                    # No 'else' needed here as block_content_with_data is
-                    # already block_template_content
+                        loader_config = dynamic_data_loaders[block_file]
+                        # Fetch pre-loaded data from cache
+                        # Ensure items are correctly typed for the generator function
+                        # The list from loaded_data_cache might be List[Message],
+                        # so we filter/cast if necessary or ensure generators accept List[Message]
+                        # and handle type checking internally if strict typing is desired.
+                        # For simplicity, we'll assume generators can handle List[Message]
+                        # or that the types are compatible enough.
+                        # A more robust solution might involve type checking here or ensuring
+                        # generators are flexible.
+                        data_items = loaded_data_cache.get(
+                            loader_config["data_file"], []
+                        )
+
+                        # Ensure the data passed to the generator is correctly typed.
+                        # This step is crucial if generators expect specific protobuf types.
+                        # Example: typed_data_items = [item for item in data_items if isinstance(item, loader_config["message_type"])]
+                        # However, load_dynamic_data already returns List[T] where T is the message_type.
+                        # So, data_items from loaded_data_cache should already be correctly typed.
+
+                        generated_html: str = loader_config["generator"](
+                            data_items, translations  # Pass the correctly typed list
+                        )
+                        block_content_with_data = block_template_content.replace(
+                            loader_config["placeholder"], generated_html
+                        )
+                    else:
+                        # Static block, no dynamic data injection needed beyond i18n
+                        block_content_with_data = block_template_content
 
                     translated_block_content: str = translate_html_content(
                         block_content_with_data, translations
