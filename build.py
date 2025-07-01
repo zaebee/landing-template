@@ -293,7 +293,8 @@ def main() -> None:
     loaded_data_cache: Dict[str, Union[List[Message], Message, None]] = (
         {}
     )  # Allow single Message or None
-    for block_name, config_item in dynamic_data_loaders.items():
+    # TODO: use `block_name, config_item` to put into dynamic place.
+    for _, config_item in dynamic_data_loaders.items():
         data_file = config_item["data_file"]
         message_type = config_item["message_type"]
         is_list = config_item.get("is_list", True)  # Default to True if not specified
