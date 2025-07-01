@@ -51,7 +51,8 @@ def load_translations(lang: str) -> Translations:
         return {}
     except json.JSONDecodeError:
         print(
-            f"Warning: Could not decode JSON from locales/{lang}.json. Using default text."
+            f"Warning: Could not decode JSON from locales/{lang}.json. "
+            "Using default text."
         )
         return {}
 
@@ -205,11 +206,13 @@ def main() -> None:
                 header_content += str(element)
         else:
             print(
-                "Warning: <main> tag not found in base index.html. Header might be incomplete."
+                "Warning: <main> tag not found in base index.html. "
+                "Header might be incomplete."
             )
     else:
         print(
-            "Warning: <body> tag not found in base index.html. Header might be empty."
+            "Warning: <body> tag not found in base index.html. "
+            "Header might be empty."
         )
 
     footer_content: str = ""
@@ -220,11 +223,13 @@ def main() -> None:
                 footer_content += str(element)
         else:
             print(
-                "Warning: <main> tag not found in base index.html. Footer might be incomplete."
+                "Warning: <main> tag not found in base index.html. "
+                "Footer might be incomplete."
             )
     else:
         print(
-            "Warning: <body> tag not found in base index.html. Footer might be empty."
+            "Warning: <body> tag not found in base index.html. "
+            "Footer might be empty."
         )
 
     html_tag = base_soup.find("html")
@@ -237,7 +242,11 @@ def main() -> None:
             html_start = html_parts[0] + "\n<body>\n"
     else:
         print("Warning: <html> tag not found. Using default HTML structure.")
-        html_start = '<!DOCTYPE html>\n<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Page</title></head><body>\n'
+        html_start = (
+            '<!DOCTYPE html>\n<html><head><meta charset="UTF-8">'
+            '<meta name="viewport" content="width=device-width, '
+            'initial-scale=1.0"><title>Page</title></head><body>\n'
+        )
     html_end: str = "\n</body>\n</html>"
 
     for lang in supported_langs:
@@ -248,7 +257,8 @@ def main() -> None:
         for block_file_any in config.get("blocks", []):
             if not isinstance(block_file_any, str):
                 print(
-                    f"Warning: Invalid block file entry in config: {block_file_any}. Skipping."
+                    f"Warning: Invalid block file entry in config: {block_file_any}. "
+                    "Skipping."
                 )
                 continue
             block_file: str = block_file_any
@@ -324,7 +334,8 @@ def main() -> None:
                 current_html_start = str(temp_soup)  # Use the whole soup string
         else:
             # Fallback if no <html> tag in current_html_start (e.g. it's just a doctype)
-            # Attempt to inject lang into <html> tag if present, otherwise prepend new html tag
+            # Attempt to inject lang into <html> tag if present, otherwise prepend
+            # new html tag
             if "<html" in current_html_start.lower():
                 current_html_start = current_html_start.lower().replace(
                     "<html", f'<html lang="{lang}"', 1

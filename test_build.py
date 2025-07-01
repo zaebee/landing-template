@@ -5,12 +5,6 @@ import sys
 import unittest
 from unittest import mock
 
-# Ensure the project root (and thus 'generated' directory and 'build.py') is in the Python path
-project_root = os.path.dirname(os.path.abspath(__file__))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
-
-# pylint: disable=import-error, wrong-import-position
 from build import (
     generate_blog_html,
     generate_portfolio_html,
@@ -22,7 +16,9 @@ from build import main as build_main
 from generated.blog_post_pb2 import BlogPost
 from generated.portfolio_item_pb2 import PortfolioItem
 
-# pylint: enable=import-error, wrong-import-position
+project_root = os.path.dirname(os.path.abspath(__file__))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 
 
 class TestBuildScript(unittest.TestCase):
@@ -191,7 +187,10 @@ class TestBuildScript(unittest.TestCase):
 
     def test_translate_html_content(self):
         """Test HTML content translation."""
-        html_content = '<p data-i18n="greeting">Original Greeting</p><p data-i18n="farewell">Original Farewell</p>'
+        html_content = (
+            '<p data-i18n="greeting">Original Greeting</p>'
+            '<p data-i18n="farewell">Original Farewell</p>'
+        )
         translated_html = translate_html_content(html_content, self.en_translations)
         self.assertIn(self.en_translations["greeting"], translated_html)
         self.assertIn(self.en_translations["farewell"], translated_html)
@@ -350,7 +349,8 @@ class TestBuildScript(unittest.TestCase):
         )  # Simple pass-through
 
         # Mock the reading of index.html, config.json, and block files
-        # This is a simplified approach; a more robust mock would differentiate by filename
+        # This is a simplified approach; a more robust mock would differentiate
+        # by filename
         def mock_file_open_side_effect(filename, *args, **kwargs):
             if filename == "index.html" and args[0] == "r":
                 return mock.mock_open(read_data=self.dummy_index_content).return_value
@@ -383,7 +383,7 @@ class TestBuildScript(unittest.TestCase):
 
         # Check that files for each language were attempted to be written
         # We check for 'index.html' (default lang 'en') and 'index_es.html'
-        expected_calls = [
+        _ = [
             mock.call("index.html", "w", encoding="utf-8"),
             mock.call("index_es.html", "w", encoding="utf-8"),
         ]
@@ -391,7 +391,7 @@ class TestBuildScript(unittest.TestCase):
         # Check if the specific write calls were made.
         # This is tricky because many other read calls are also made by 'open'.
         # We can iterate through the actual calls to mock_file_open.
-        write_calls = [
+        _ = [
             call
             for call in mock_file_open.call_args_list
             if call[1].get("mode") == "w" or (len(call[0]) > 1 and call[0][1] == "w")
@@ -399,13 +399,14 @@ class TestBuildScript(unittest.TestCase):
 
         # Assert that the expected write calls are present in the actual write calls
         # This is a more flexible check than assert_has_calls with any_order=True
-        # because other write calls might exist (e.g. if tests run in parallel or temp files are used)
+        # because other write calls might exist
+        # (e.g. if tests run in parallel or temp files)
 
         # For index.html (default lang)
         self.assertTrue(
             any(
                 cargs[0] == "index.html" and cargs[1] == "w"
-                for cargs, ckwargs in mock_file_open.call_args_list
+                for cargs, _ in mock_file_open.call_args_list
                 if cargs
             )
         )
