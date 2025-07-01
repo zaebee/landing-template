@@ -52,7 +52,7 @@
 
         <section class="contact-form">
             <h2>Contact Us</h2>
-            <form action="#" method="post">
+            <form action="https://formspree.io/f/xgvyddyg" method="POST">
                 <label for="name">Name:</label>
                 <input type="text" id="name" name="name" required>
 
@@ -140,10 +140,10 @@
     </footer>
 
     <script>
+        // Dark Mode Toggle
         const darkModeToggle = document.getElementById('darkModeToggle');
         const body = document.body;
 
-        // Check for saved dark mode preference
         if (localStorage.getItem('darkMode') === 'enabled') {
             body.classList.add('dark-mode');
             darkModeToggle.textContent = 'Toggle Light Mode';
@@ -151,8 +151,6 @@
 
         darkModeToggle.addEventListener('click', () => {
             body.classList.toggle('dark-mode');
-
-            // Save preference to local storage
             if (body.classList.contains('dark-mode')) {
                 localStorage.setItem('darkMode', 'enabled');
                 darkModeToggle.textContent = 'Toggle Light Mode';
@@ -161,6 +159,48 @@
                 darkModeToggle.textContent = 'Toggle Dark Mode';
             }
         });
+
+        // Contact Form Validation
+        const contactForm = document.querySelector('.contact-form form');
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(event) {
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const message = document.getElementById('message').value.trim();
+                let isValid = true;
+                let errors = [];
+
+                if (name === "") {
+                    isValid = false;
+                    errors.push("Name is required.");
+                    // You could add error display logic here, e.g., document.getElementById('name-error').textContent = "Name is required.";
+                }
+
+                if (email === "") {
+                    isValid = false;
+                    errors.push("Email is required.");
+                } else {
+                    // Basic email format validation
+                    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailPattern.test(email)) {
+                        isValid = false;
+                        errors.push("Please enter a valid email address.");
+                    }
+                }
+
+                if (message === "") {
+                    isValid = false;
+                    errors.push("Message is required.");
+                }
+
+                if (!isValid) {
+                    event.preventDefault(); // Prevent form submission
+                    alert("Please correct the following errors:\n\n" + errors.join("\n"));
+                    // For a better UX, display errors next to fields or in a dedicated error message area
+                }
+                // If isValid is true, the form will submit to Formspree
+            });
+        }
     </script>
 </body>
 </html>

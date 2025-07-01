@@ -19,11 +19,17 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Lint HTML
-        uses: super-linter/super-linter@v7.4.0 # x-release-please-version
-        env:
-          # To report GitHub Actions status checks
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: anmol098/w3c-html-validator@v1.1.1
         with:
           directory: '.' # Directory containing HTML files
           exclude_files: '' # Comma-separated list of files to exclude
           exclude_patterns: '' # Comma-separated list of glob patterns to exclude
+
+      - name: Lint CSS
+        uses: yokturmak/stylelint-action@v1.0.2
+        with:
+          files: '**/*.css' # Glob pattern for CSS files
+          config: | # Optional: inline stylelint config
+            {
+              "extends": "stylelint-config-standard"
+            }
