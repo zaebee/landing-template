@@ -5,7 +5,7 @@
 <meta content="A simple and modern landing page template for showcasing your business, services, or portfolio." name="description"/>
 <meta content="landing page, template, HTML, CSS, JavaScript, responsive, business, portfolio, services" name="keywords"/>
 <title>Simple Landing Page</title>
-<link href="style.css" rel="stylesheet"/>
+<link href="public/style.css" rel="stylesheet"/>
 </head>
 <body>
 
@@ -149,7 +149,7 @@
 
         async function generateNavigation() {
             try {
-                const response = await fetch('config.json');
+                const response = await fetch('public/config.json');
                 if (!response.ok) {
                     console.error('Failed to load config.json:', response.statusText);
                     return;
@@ -183,7 +183,7 @@
 
         async function fetchTranslations(lang) {
             try {
-                const response = await fetch(`locales/${lang}.json`);
+                const response = await fetch(`public/locales/${lang}.json`);
                 if (!response.ok) {
                     console.error(`Could not load ${lang}.json: ${response.statusText}`);
                     return null;

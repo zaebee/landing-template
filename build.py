@@ -21,7 +21,7 @@ if project_root not in sys.path:
 def load_translations(lang):
     """Loads translation strings for a given language."""
     try:
-        with open(f"locales/{lang}.json", "r", encoding="utf-8") as f:
+        with open(f"public/locales/{lang}.json", "r", encoding="utf-8") as f:
             return json.load(f)
     except FileNotFoundError:
         print(f"Warning: Translation file for '{lang}' not found. Using default text.")
@@ -128,7 +128,7 @@ def main():
     default_lang = "en"
 
     # Read the main configuration file
-    with open("config.json", "r", encoding="utf-8") as f:
+    with open("public/config.json", "r", encoding="utf-8") as f:
         config = json.load(f)
 
     # Load dynamic data using protobuf
