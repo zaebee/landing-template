@@ -18,6 +18,11 @@
             <div class="logo">
                 <a href="#">Logo</a>
             </div>
+            <button class="hamburger-menu" aria-label="Toggle menu" aria-expanded="false">
+                <span class="hamburger-bar"></span>
+                <span class="hamburger-bar"></span>
+                <span class="hamburger-bar"></span>
+            </button>
             <div class="nav-items">
                 <ul>
                     <li><a data-i18n="nav_home" href="#">Home</a></li>
@@ -313,6 +318,17 @@
         }
         setTheme(initialTheme);
 
+        // Hamburger Menu Toggle
+        const hamburgerMenu = document.querySelector('.hamburger-menu');
+        const navItems = document.querySelector('.nav-items');
+
+        if (hamburgerMenu && navItems) {
+            hamburgerMenu.addEventListener('click', () => {
+                navItems.classList.toggle('active');
+                const isExpanded = navItems.classList.contains('active');
+                hamburgerMenu.setAttribute('aria-expanded', isExpanded);
+            });
+        }
 
         // Contact Form Validation
         const contactForm = document.querySelector('.contact-form form');
