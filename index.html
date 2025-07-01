@@ -207,6 +207,14 @@
                 applyTranslations(translations);
                 localStorage.setItem('language', lang);
                 document.documentElement.lang = lang; // Update the lang attribute of the html tag
+
+                // Update active class on buttons
+                document.querySelectorAll('#language-switcher button').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.getAttribute('data-lang') === lang) {
+                        btn.classList.add('active');
+                    }
+                });
             }
         }
 
@@ -230,11 +238,10 @@
         const languageSwitcher = document.getElementById('language-switcher');
         if (languageSwitcher) {
             languageSwitcher.addEventListener('click', (event) => {
-                if (event.target.tagName === 'BUTTON') {
-                    const lang = event.target.getAttribute('data-lang');
-                    if (lang) {
-                        setLanguage(lang);
-                    }
+                const button = event.target.closest('button[data-lang]');
+                if (button) {
+                    const lang = button.getAttribute('data-lang');
+                    setLanguage(lang);
                 }
             });
         }
@@ -246,41 +253,65 @@
 
         // Theme Switcher
         const themeSwitcher = document.getElementById('theme-switcher');
-        const lightThemeCss = document.getElementById('theme-style-light');
-        const darkThemeCss = document.getElementById('theme-style-dark');
+        const lightThemeCss = document.getElementById('theme-style-light'); // Assuming you might add these later
+        const darkThemeCss = document.getElementById('theme-style-dark');   // Assuming you might add these later
 
         function setTheme(themeName) {
             localStorage.setItem('theme', themeName);
-            body.classList.remove('light-theme', 'dark-theme'); // Remove any existing theme class
+            body.classList.remove('light-theme', 'dark-theme', 'os-theme'); // Remove any existing theme class
+            // For now, 'light' and 'dark' themes are primarily controlled by body.dark-mode
+            // This function will set the active button and localStorage
 
+            // Update active class on buttons
+            document.querySelectorAll('#theme-switcher button').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-theme') === themeName) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Logic for applying actual theme styles (e.g., linking/unlinking stylesheets or changing body class)
+            // This part might need to be coordinated with how style_light.css and style_dark.css are intended to be used.
+            // For this task, we'll focus on the button state and assume dark mode toggle handles the primary visual switch.
+            // If 'style_light.css' and 'style_dark.css' are meant to be switched, that logic would go here.
+            // For example:
             if (themeName === 'light') {
-                body.classList.add('light-theme');
-                if (lightThemeCss) lightThemeCss.disabled = false;
-                if (darkThemeCss) darkThemeCss.disabled = true;
+                 // If using separate stylesheets:
+                 // if (lightThemeCss) lightThemeCss.disabled = false;
+                 // if (darkThemeCss) darkThemeCss.disabled = true;
+                 // If using body classes for themes beyond simple dark/light:
+                 // body.classList.add('light-theme');
+                 // Or, if it should just reflect the dark mode toggle:
+                if (body.classList.contains('dark-mode')) {
+                    darkModeToggle.click(); // Simulate click to toggle to light
+                }
             } else if (themeName === 'dark') {
-                body.classList.add('dark-theme');
-                if (lightThemeCss) lightThemeCss.disabled = true;
-                if (darkThemeCss) darkThemeCss.disabled = false;
-            } else { // Default or no theme
-                if (lightThemeCss) lightThemeCss.disabled = true;
-                if (darkThemeCss) darkThemeCss.disabled = true;
+                // if (lightThemeCss) lightThemeCss.disabled = true;
+                // if (darkThemeCss) darkThemeCss.disabled = false;
+                // body.classList.add('dark-theme');
+                if (!body.classList.contains('dark-mode')) {
+                    darkModeToggle.click(); // Simulate click to toggle to dark
+                }
             }
+            // Add 'os-theme' or other specific theme logic if needed
         }
 
         if (themeSwitcher) {
             themeSwitcher.addEventListener('click', (event) => {
-                if (event.target.tagName === 'BUTTON') {
-                    const theme = event.target.getAttribute('data-theme');
-                    if (theme) {
-                        setTheme(theme);
-                    }
+                const button = event.target.closest('button[data-theme]');
+                if (button) {
+                    const theme = button.getAttribute('data-theme');
+                    setTheme(theme);
                 }
             });
         }
 
-        // Initial theme load
-        const preferredTheme = localStorage.getItem('theme') || 'light'; // Default to light
-        setTheme(preferredTheme);
+        // Initial theme load - align with dark mode preference initially
+        let initialTheme = localStorage.getItem('theme');
+        if (!initialTheme) {
+            initialTheme = body.classList.contains('dark-mode') ? 'dark' : 'light';
+        }
+        setTheme(initialTheme);
 
 
         // Contact Form Validation

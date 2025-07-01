@@ -364,6 +364,72 @@ main {
     text-decoration: underline;
 }
 
+/* Language Switcher Styles */
+#language-switcher {
+    margin-left: 20px; /* Align with dark mode toggle */
+    display: flex;
+    align-items: center;
+}
+
+#language-switcher button {
+    padding: 8px 12px;
+    background-color: #fff;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 5px; /* Space between buttons */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#language-switcher button:first-child {
+    margin-left: 0;
+}
+
+#language-switcher button:hover {
+    background-color: #e6e6e6;
+}
+
+#language-switcher button.active { /* Style for the currently active language */
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+/* Theme Switcher Styles */
+#theme-switcher {
+    margin-left: 20px; /* Align with other switcher controls */
+    display: flex;
+    align-items: center;
+}
+
+#theme-switcher button {
+    padding: 8px 12px;
+    background-color: #fff;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 5px; /* Space between buttons */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#theme-switcher button:first-child {
+    margin-left: 0;
+}
+
+#theme-switcher button:hover {
+    background-color: #e6e6e6;
+}
+
+#theme-switcher button.active { /* Style for the currently active theme */
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
 /* Footer */
 footer {
     background: #333;
@@ -461,6 +527,40 @@ body.dark-mode #dark-mode-toggle:hover {
     background-color: #444;
 }
 
+/* Dark mode styles for language switcher */
+body.dark-mode #language-switcher button {
+    background-color: #333;
+    color: #e0e0e0;
+    border: 1px solid #555;
+}
+
+body.dark-mode #language-switcher button:hover {
+    background-color: #444;
+}
+
+body.dark-mode #language-switcher button.active {
+    background-color: #0af; /* Lighter blue for dark mode active */
+    color: #121212;
+    border-color: #0af;
+}
+
+/* Dark mode styles for theme switcher */
+body.dark-mode #theme-switcher button {
+    background-color: #333;
+    color: #e0e0e0;
+    border: 1px solid #555;
+}
+
+body.dark-mode #theme-switcher button:hover {
+    background-color: #444;
+}
+
+body.dark-mode #theme-switcher button.active {
+    background-color: #0af; /* Lighter blue for dark mode active */
+    color: #121212;
+    border-color: #0af;
+}
+
 /* Dark Mode for Testimonials */
 body.dark-mode .testimonials {
     background-color: #1f1f1f; /* Dark background for the section in dark mode */
@@ -543,27 +643,53 @@ body.dark-mode .read-more {
 @media (width <= 768px) {
     header nav {
         flex-direction: column;
+        align-items: center; /* Center the logo and nav-items container */
     }
 
     .nav-items {
         flex-direction: column;
-        align-items: center;
+        align-items: center; /* Center all items within nav-items */
         width: 100%;
+        margin-top: 1rem; /* Space between logo and nav items */
     }
 
     header ul {
-        margin-top: 1rem;
+        margin-top: 0; /* Reset margin as nav-items handles top margin */
+        margin-bottom: 10px; /* Space below nav links */
         flex-direction: column;
         align-items: center;
         width: 100%;
     }
 
     header ul li {
-        margin: 5px 0;
+        margin: 8px 0; /* Increased vertical margin for touch targets */
     }
 
     #dark-mode-toggle {
-        margin-top: 10px; /* Add some space above the toggle button */
+        margin-top: 10px; /* Space above the toggle */
+        margin-left: 0; /* Reset margin from desktop view */
+        width: auto; /* Allow button to size to content or specific width if desired */
+        padding: 10px 15px; /* Slightly larger for touch */
+    }
+
+    #language-switcher,
+    #theme-switcher {
+        margin-top: 15px; /* Space above the switchers */
+        margin-left: 0; /* Reset margin from desktop view */
+        flex-direction: row; /* Keep buttons in a row */
+        justify-content: center; /* Center buttons within the switcher */
+        width: 100%; /* Allow switcher to take width if buttons need to wrap (less likely here) */
+    }
+
+    #language-switcher button,
+    #theme-switcher button {
+        padding: 10px 15px; /* Slightly larger for touch */
+        margin: 0 5px; /* Adjust horizontal margin between buttons */
+    }
+
+    /* Adjust main content padding if header height changes significantly */
+    main {
+        padding-top: 10px; /* Adjust as needed based on final header height */
     }
 
     .feature-list,
