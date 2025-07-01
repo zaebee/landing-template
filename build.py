@@ -163,12 +163,12 @@ def main() -> None:
     default_lang: str = "en"
 
     # Read the main configuration file
+    config: Dict[str, Any]
     with open("public/config.json", "r", encoding="utf-8") as f:
         config = json.load(f)
 
     # Load dynamic data using protobuf
-    config: Dict[str, Any]
-    dynamic_data_loaders = {
+    dynamic_data_loaders: Dict[str, Dict[str, Any]] = {
         "portfolio.html": {
             "loader": load_dynamic_data,
             "args": ["data/portfolio_items.json", PortfolioItem],
@@ -186,7 +186,9 @@ def main() -> None:
     loaded_dynamic_data = {}
     # Use a different variable name here to avoid shadowing the main 'config' object
     for block_name, data_loader_config in dynamic_data_loaders.items():
-        loaded_dynamic_data[block_name] = data_loader_config["loader"](*data_loader_config["args"])
+        loaded_dynamic_data[block_name] = data_loader_config["loader"](
+            *data_loader_config["args"]
+        )
 
     # Read the base index.html structure (header and footer)
     # We use the existing index.html as a template for the overall page structure
@@ -272,13 +274,19 @@ def main() -> None:
                         placeholder = data_config["placeholder"]
                         if placeholder in block_template_content:
                             items = loaded_dynamic_data[block_file]
-                            generated_html = data_config["generator"](items, translations)
+                            generated_html = data_config["generator"](
+                                items, translations
+                            )
                             block_content_with_data = block_template_content.replace(
                                 placeholder, generated_html
                             )
                         else:
-                            print(f"Warning: Placeholder '{placeholder}' not found in {block_file}")
-                    # No 'else' needed here as block_content_with_data is already block_template_content
+                            print(
+                                f"Warning: Placeholder '{placeholder}' not found "
+                                f"in {block_file}"
+                            )
+                    # No 'else' needed here as block_content_with_data is
+                    # already block_template_content
 
                     translated_block_content: str = translate_html_content(
                         block_content_with_data, translations
