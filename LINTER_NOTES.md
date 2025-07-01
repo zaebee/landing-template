@@ -30,8 +30,8 @@ CSS files (`.css`) are linted using [Stylelint](https://stylelint.io/).
 - **Configuration**:
   - Stylelint is configured in `.stylelintrc.json`.
 - **Running Linters**:
-  - `npm run lint:css` - Runs Stylelint to check CSS files.
-  - `npm run lint:css:fix` - Runs Stylelint and attempts to automatically fix issues.
+  - `npm run lint:css` - Runs stylelint to check CSS files.
+  - `npm run lint:css:fix` - Runs stylelint and attempts to automatically fix issues.
 
 ## Python Linting (Ruff & MyPy)
 
@@ -44,4 +44,4 @@ Python code (`.py` files) is linted using [Ruff](https://beta.ruff.rs/docs/) for
 
 - **Running Linters**:
   - `npm run lint:py` - Runs both Ruff and MyPy to check Python files.
-  - `npm run lint:py:fix` - Runs Ruff with auto-fixing enabled, followed by MyPy.
+  - `npm run lint:py:fix` - Runs Ruff with autofixing enabled, followed by MyPy.
