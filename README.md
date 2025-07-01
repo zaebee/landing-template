@@ -14,29 +14,35 @@ The `build.py` script uses Protocol Buffers for managing data structures related
 
 **Prerequisites:**
 
-1.  Ensure you have Python and Node.js installed.
-2.  Install Python dependencies:
+1. Ensure you have Python and Node.js installed.
+2. Install Python dependencies:
+
     ```bash
     pip install -r requirements.txt
     # For linting and type checking, also install dev dependencies:
     pip install -r requirements-dev.txt
     ```
+
     *(Note: `requirements.txt` will need to be created or updated if it doesn't include `grpcio-tools` and `protobuf`)*
 
 **Steps to Build:**
 
-1.  **Generate Protobuf Stubs (if not already done or if `.proto` files changed):**
+1. **Generate Protobuf Stubs (if not already done or if `.proto` files changed):**
     Run the following command to generate the necessary Python files from the `.proto` definitions into the `generated/` directory:
+
     ```bash
     npm run generate-proto
     ```
+
     This script handles directory creation, invokes the Protocol Buffer compiler (`protoc`), and ensures the `generated` directory is treated as a Python package.
 
-2.  **Run the Build Command:**
+2. **Run the Build Command:**
     To build or update `index.html` and language-specific versions (e.g., `index_es.html`) after making changes to blocks, `config.json`, or data:
+
     ```bash
     npm run build
     ```
+
     This executes `python build.py`, which reads `config.json`, loads data (using the generated Protobuf stubs), assembles HTML blocks, applies translations, and writes the final `index.html` files.
 
 ## Customizing Blocks
