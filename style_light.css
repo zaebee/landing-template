@@ -1,0 +1,96 @@
+/* Light Theme specific styles (essentially the default theme) */
+/* This file can be kept minimal if style.css already defines the light theme */
+
+body.light-theme {
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+body.light-theme header {
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .logo a {
+    color: #007bff;
+}
+
+body.light-theme .nav-items ul li a {
+    color: #333;
+}
+
+body.light-theme .nav-items ul li a:hover {
+    color: #007bff;
+}
+
+body.light-theme #dark-mode-toggle,
+body.light-theme #theme-switcher button {
+    background-color: #007bff;
+    color: white;
+    border: 1px solid #007bff;
+}
+
+body.light-theme #dark-mode-toggle:hover,
+body.light-theme #theme-switcher button:hover {
+    background-color: #0056b3;
+}
+
+body.light-theme .hero {
+    background-color: #007bff;
+    color: white;
+    border-bottom: none;
+}
+body.light-theme .hero h1 {
+    color: white;
+}
+
+
+body.light-theme .cta-button {
+    background-color: #28a745;
+    color: white;
+}
+
+body.light-theme .cta-button:hover {
+    background-color: #1e7e34;
+}
+
+body.light-theme section {
+    background-color: #fff;
+    border: 1px solid #ddd;
+     box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+body.light-theme h2 {
+    color: #007bff;
+    border-bottom: 2px solid #007bff;
+}
+
+body.light-theme .feature-item,
+body.light-theme .testimonial-item,
+body.light-theme .portfolio-item,
+body.light-theme .blog-item {
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+}
+
+body.light-theme .contact-form input,
+body.light-theme .contact-form textarea {
+    background-color: #fff;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+body.light-theme .contact-form button {
+    background-color: #007bff;
+    color: white;
+}
+
+body.light-theme .contact-form button:hover {
+    background-color: #0056b3;
+}
+
+body.light-theme footer {
+    background-color: #333;
+    color: #f4f4f4;
+    border-top: 1px solid #222;
+}

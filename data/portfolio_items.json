@@ -1,0 +1,30 @@
+[
+  {
+    "id": "project1",
+    "img_src": "https://via.placeholder.com/300x200?text=Project+Alpha",
+    "img_alt": "Project Alpha",
+    "title_i18n_key": "project_alpha_title",
+    "desc_i18n_key": "project_alpha_desc"
+  },
+  {
+    "id": "project2",
+    "img_src": "https://via.placeholder.com/300x200?text=Project+Beta",
+    "img_alt": "Project Beta",
+    "title_i18n_key": "project_beta_title",
+    "desc_i18n_key": "project_beta_desc"
+  },
+  {
+    "id": "project3",
+    "img_src": "https://via.placeholder.com/300x200?text=Project+Gamma",
+    "img_alt": "Project Gamma",
+    "title_i18n_key": "project_gamma_title",
+    "desc_i18n_key": "project_gamma_desc"
+  },
+  {
+    "id": "project4",
+    "img_src": "https://via.placeholder.com/300x200?text=Project+Delta",
+    "img_alt": "Project Delta",
+    "title_i18n_key": "project_delta_title",
+    "desc_i18n_key": "project_delta_desc"
+  }
+]
