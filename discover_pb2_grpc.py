@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import greeter_pb2 as greeter__pb2
+import discover_pb2 as proto_dot_discover__pb2
 
 GRPC_GENERATED_VERSION = '1.73.1'
 GRPC_VERSION = grpc.__version__
@@ -18,15 +18,15 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in greeter_pb2_grpc.py depends on'
+        + f' but the generated code in proto/discover_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
     )
 
 
-class GreeterStub(object):
-    """The greeter service definition.
+class DiscoverStub(object):
+    """The discover service definition.
     """
 
     def __init__(self, channel):
@@ -36,41 +36,41 @@ class GreeterStub(object):
             channel: A grpc.Channel.
         """
         self.SayHello = channel.unary_unary(
-                '/greeter.Greeter/SayHello',
-                request_serializer=greeter__pb2.HelloRequest.SerializeToString,
-                response_deserializer=greeter__pb2.HelloReply.FromString,
+                '/discover.Discover/SayHello',
+                request_serializer=proto_dot_discover__pb2.HelloRequest.SerializeToString,
+                response_deserializer=proto_dot_discover__pb2.HelloReply.FromString,
                 _registered_method=True)
 
 
-class GreeterServicer(object):
-    """The greeter service definition.
+class DiscoverServicer(object):
+    """The discover service definition.
     """
 
     def SayHello(self, request, context):
-        """Sends a greeting
+        """Sends a discovery request
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
 
-def add_GreeterServicer_to_server(servicer, server):
+def add_DiscoverServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'SayHello': grpc.unary_unary_rpc_method_handler(
                     servicer.SayHello,
-                    request_deserializer=greeter__pb2.HelloRequest.FromString,
-                    response_serializer=greeter__pb2.HelloReply.SerializeToString,
+                    request_deserializer=proto_dot_discover__pb2.HelloRequest.FromString,
+                    response_serializer=proto_dot_discover__pb2.HelloReply.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'greeter.Greeter', rpc_method_handlers)
+            'discover.Discover', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('greeter.Greeter', rpc_method_handlers)
+    server.add_registered_method_handlers('discover.Discover', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class Greeter(object):
-    """The greeter service definition.
+class Discover(object):
+    """The discover service definition.
     """
 
     @staticmethod
@@ -87,9 +87,9 @@ class Greeter(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/greeter.Greeter/SayHello',
-            greeter__pb2.HelloRequest.SerializeToString,
-            greeter__pb2.HelloReply.FromString,
+            '/discover.Discover/SayHello',
+            proto_dot_discover__pb2.HelloRequest.SerializeToString,
+            proto_dot_discover__pb2.HelloReply.FromString,
             options,
             channel_credentials,
             insecure,
