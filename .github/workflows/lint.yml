@@ -5,15 +5,15 @@ permissions:
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
     paths:
-      - '**.html'
-      - '**.css'
+      - "**.html"
+      - "**.css"
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
     paths:
-      - '**.html'
-      - '**.css'
+      - "**.html"
+      - "**.css"
 
 jobs:
   lint:
