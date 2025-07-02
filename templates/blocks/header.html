@@ -1,0 +1,34 @@
+<header>
+  <nav>
+    <div class="logo">
+      <a href="#">Logo</a>
+    </div>
+    <button
+      aria-expanded="false"
+      aria-label="Toggle menu"
+      class="hamburger-menu"
+    >
+      <span class="hamburger-bar"></span>
+      <span class="hamburger-bar"></span>
+      <span class="hamburger-bar"></span>
+    </button>
+    <div class="nav-items">
+      <ul>
+        {% for item in navigation_items %}
+        <li>
+          <a href="{{ item.href }}" data-i18n="{{ item.label.key }}"
+            >{{ translations.get(item.label.key, item.label.key) }}</a
+          >
+        </li>
+        {% endfor %}
+      </ul>
+      <button aria-label="Switch to Dark Mode" id="dark-mode-toggle">
+        🌙
+      </button>
+      <div id="language-switcher">
+        <button data-lang="en">EN</button>
+        <button data-lang="es">ES</button>
+      </div>
+    </div>
+  </nav>
+</header>

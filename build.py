@@ -122,22 +122,11 @@ class BuildOrchestrator:
         # html_parts is no longer used directly in the same way
         _html_parts: tuple[str, str, str, str],  # Marked as unused
         dynamic_data_loaders_config: Dict[str, Dict[str, Any]],
-        static_header_html: str,
-        static_footer_html: str,
+        navigation_items: List[Dict[str, Any]],
     ) -> None:
         """Processes and builds the page for a single language."""
         print(f"Processing language: {lang}")
         translations = self.translation_provider.load_translations(lang)
-
-        # Translate static header and footer content
-        # These are passed to base.html, which might have its own i18n structure too.
-        # For content within these strings, direct translation is applied.
-        translated_header = self.translation_provider.translate_html_content(
-            static_header_html, translations
-        )
-        translated_footer = self.translation_provider.translate_html_content(
-            static_footer_html, translations
-        )
 
         self._generate_language_specific_config(lang, translations)
 
@@ -156,8 +145,7 @@ class BuildOrchestrator:
             translations=translations,
             html_parts=("", "", "", ""),  # Dummy value, DefaultPageBuilder ignores this
             main_content=assembled_main_content,
-            header_content=translated_header,  # Passed to Jinja context for base.html
-            footer_content=translated_footer,  # Passed to Jinja context for base.html
+            navigation_items=navigation_items,
             page_title=page_title,
         )
 
@@ -191,54 +179,19 @@ class BuildOrchestrator:
         os.makedirs("public/generated_configs", exist_ok=True)
 
         # base_html_path is no longer needed to extract parts by PageBuilder
-        # html_parts from page_builder.extract_base_html_parts is also not needed in the new way
-        # However, we need the static header and footer content.
-        # For this refactor, we'll define them as static strings.
-        # In a more complex app, these could come from separate files or Jinja includes.
-
-        # Manually define static header and footer content based on original index.html
-        # This is a simplified approach for the refactor.
-        # Ideally, these would be managed as separate small templates or includes if complex.
-        static_header_html = """
-    <header>
-      <nav>
-        <div class="logo">
-          <a href="#">Logo</a>
-        </div>
-        <button
-          aria-expanded="false"
-          aria-label="Toggle menu"
-          class="hamburger-menu"
-        >
-          <span class="hamburger-bar"></span>
-          <span class="hamburger-bar"></span>
-          <span class="hamburger-bar"></span>
-        </button>
-        <div class="nav-items">
-          <ul>
-            <!-- Navigation items will be dynamically injected here by client-side JS -->
-          </ul>
-          <button aria-label="Switch to Dark Mode" id="dark-mode-toggle">
-            🌙
-          </button>
-          <div id="language-switcher">
-            <button data-lang="en">EN</button>
-            <button data-lang="es">ES</button>
-          </div>
-        </div>
-      </nav>
-    </header>
-        """
-        static_footer_html = """
-    <footer>
-      <p data-i18n="footer_text">
-        &amp;copy; 2023 Simple Landing Page. All rights reserved.
-      </p>
-    </footer>
-        """
         # Dummy html_parts to satisfy the _process_language signature that still expects it
         # This parameter in _process_language should be removed or refactored further.
         dummy_html_parts = ("", "", "", "")
+
+        # Process navigation data into the format expected by the template
+        processed_nav_items = []
+        if self.nav_proto_data:
+            for item in self.nav_proto_data.items:
+                processed_nav_items.append({
+                    "label": {"key": item.label.key}, # Pass the key for translation in template
+                    "href": item.href,
+                    "animation_hint": item.animation_hint
+                })
 
         for lang in supported_langs:
             self._process_language(
@@ -246,8 +199,7 @@ class BuildOrchestrator:
                 default_lang=default_lang,
                 _html_parts=dummy_html_parts,  # Pass dummy value
                 dynamic_data_loaders_config=dynamic_data_loaders_config,
-                static_header_html=static_header_html,
-                static_footer_html=static_footer_html,
+                navigation_items=processed_nav_items,
             )
 
         print("Build process complete.")
