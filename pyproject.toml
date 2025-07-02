@@ -10,6 +10,7 @@ dependencies = [
     "grpcio",
     "grpcio-tools",
     "protobuf",
+    "Jinja2>=3.0.0",
 ]
 
 [tool.ruff.lint]

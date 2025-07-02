@@ -1,0 +1,18 @@
+<section class="blog" id="blog">
+  <h2 data-i18n="blog_title">
+    {{ translations.get('blog_title', 'Latest Posts') }}
+  </h2>
+  <div class="blog-list">
+    {% for post in items %}
+    <div class="blog-item" id="{{ post.id if post.id else '' }}">
+      <h3>{{ translations.get(post.title.key, post.title.key) }}</h3>
+      <p>{{ translations.get(post.excerpt.key, post.excerpt.key) }}</p>
+      <a href="{{ post.cta.uri }}" class="read-more"
+        >{{ translations.get(post.cta.text.key, post.cta.text.key) }}</a
+      >
+    </div>
+    {% else %}
+    <!-- No blog posts provided -->
+    {% endfor %}
+  </div>
+</section>
