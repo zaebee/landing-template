@@ -177,11 +177,15 @@ class SADSEngine {
         }
     }
 
-    _mapSadsPropertyToCss(sadsPropertyKey) {
-        const kebabCase = sadsPropertyKey.replace(/([A-Z])/g, g => `-${g[0].toLowerCase()}`);
+    _mapSadsPropertyToCss(sadsPropertyKey) { // sadsPropertyKey is like "Padding", "TextAlign", "BgColor", "FontSize" from dataset key processing
+        // 1. Make first letter lowercase: "padding", "textAlign", "bgColor", "fontSize"
+        let key = sadsPropertyKey.charAt(0).toLowerCase() + sadsPropertyKey.slice(1);
+        // 2. Convert camelCase to kebab-case: "padding", "text-align", "bg-color", "font-size"
+        let kebabKey = key.replace(/([A-Z])/g, g => `-${g[0].toLowerCase()}`);
 
-        // Prioritize direct mappings for clarity and correctness
-        const map = {
+        // Specific SADS attribute name to CSS property map
+        // Keys are the fully kebab-cased version derived from the SADS attribute stem
+        const propertyMap = {
             'bg-color': 'background-color',
             'text-color': 'color',
             'font-size': 'font-size',
@@ -217,9 +221,9 @@ class SADSEngine {
             // 'border': 'border', // For shorthand, if we decide to support it directly
             'layout-type': null, // Not a direct CSS prop, influences other interpretations or JS behavior potentially
         };
-        if (map.hasOwnProperty(kebabCase)) return map[kebabCase];
-        // console.warn(`SADS: Unmapped SADS property key '${sadsPropertyKey}' (kebab: ${kebabCase})`);
-        return kebabCase; // Fallback to direct kebab-case if not in map
+        if (propertyMap.hasOwnProperty(kebabKey)) return propertyMap[kebabKey];
+        // console.warn(`SADS: Unmapped SADS property key '${sadsPropertyKey}' (kebab: ${kebabKey})`);
+        return kebabKey; // Fallback: assumes kebabKey is a valid CSS property
     }
 
     _mapSemanticValueToActual(cssProperty, semanticValue) {
