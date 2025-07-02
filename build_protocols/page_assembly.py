@@ -7,7 +7,7 @@ main content, and language-specific attributes to form a complete HTML page.
 """
 
 import logging
-from typing import Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from jinja2 import Environment
 
@@ -66,11 +66,12 @@ class DefaultPageBuilder(PageBuilder):
         self,
         lang: str,
         translations: Translations,
-        html_parts: Tuple[str, str, str, str], # This argument is now less relevant
+        html_parts: Tuple[str, str, str, str],  # This argument is now less relevant
         main_content: str,
-        header_content: Optional[str] = None, # Can be passed to Jinja context
-        footer_content: Optional[str] = None, # Can be passed to Jinja context
-        page_title: Optional[str] = None, # Example of an additional context variable
+        navigation_items: Optional[
+            List[Dict[str, Any]]
+        ] = None,  # Processed navigation items
+        page_title: Optional[str] = None,
     ) -> str:
         """Assembles a full HTML page using a Jinja2 base template.
 
@@ -81,38 +82,22 @@ class DefaultPageBuilder(PageBuilder):
                         NOTE: Largely ignored due to Jinja2 templating.
             main_content: The HTML string for the main content of the page
                           (already rendered blocks).
-            header_content: Optional HTML content for the header block in base.html.
-            footer_content: Optional HTML content for the footer block in base.html.
+            navigation_items: Optional list of navigation item dictionaries for the header.
             page_title: Optional title for the page.
+
 
         Returns:
             The complete HTML string for the translated page.
         """
         base_template = self.jinja_env.get_template("base.html")
 
-        # Prepare context for the Jinja template
-        # The `base.html` template expects `lang`, `main_content`, etc.
-        # `translations` can also be passed if needed directly by the base template,
-        # though individual blocks should already be translated.
-        # `header_content` and `footer_content` can be passed to fill respective blocks
-        # in `base.html` if they are not hardcoded or built differently.
         context = {
             "lang": lang,
-            "title": page_title or translations.get("default_page_title", "Landing Page"),
-            "translations": translations, # Make translations available to base template
-            "main_content": main_content, # This is the aggregated HTML of all blocks
-            "header_content": header_content, # For {% block header_content %}
-            "footer_content": footer_content, # For {% block footer_content %}
+            "title": page_title
+            or translations.get("default_page_title", "Landing Page"),
+            "translations": translations,
+            "main_content": main_content,
+            "navigation_items": navigation_items or [],
             # Add any other variables your base.html might need
         }
-
-        # The translation_provider might still be useful if base.html itself has i18n tags
-        # that were not part of the pre-rendered header/footer content.
-        # However, if header/footer content are passed as pre-rendered strings,
-        # they should already be translated. The main_content is also pre-rendered.
-        # For now, we assume base.html primarily structures these parts.
-        # If base.html has its own `data-i18n` tags, they'd be handled by client-side JS.
-        # Server-side translation of base.html structure can be done by passing translations
-        # to its render context (as done above).
-
         return str(base_template.render(context))

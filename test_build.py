@@ -988,14 +988,23 @@ class TestBuildScript(unittest.TestCase):
         self.assertEqual(mock_assemble_page.call_count, 2)
         self.assertEqual(mock_generate_lang_config.call_count, 2)
 
-        num_langs = len(self.dummy_config["supported_langs"])
+        _ = len(self.dummy_config["supported_langs"])
 
-        expected_translate_calls = num_langs * 2
+        # Header and Footer are now Jinja includes and handle their own translations.
+        # translate_html_content is no longer called for them in _process_language.
+        # If other parts of the main flow were to use it, this would need adjustment.
+        # For now, assuming it's 0 for the parts previously covered by header/footer.
+        expected_translate_calls_for_header_footer = 0
+        # If translate_html_content is used elsewhere in the tested flow,
+        # this assertion needs to be more specific or the overall count adjusted.
+        # Based on the current refactoring, the direct calls from _process_language for
+        # header/footer strings are removed.
         self.assertEqual(
             mock_translate_content.call_count,
-            expected_translate_calls,
-            f"Expected {expected_translate_calls} calls to translate_html_content, "
-            f"got {mock_translate_content.call_count}",
+            expected_translate_calls_for_header_footer,
+            f"Expected {expected_translate_calls_for_header_footer} direct calls to "
+            f"translate_html_content from the main orchestrator loop "
+            f"(excluding calls within Jinja templates), got {mock_translate_content.call_count}",
         )
 
 

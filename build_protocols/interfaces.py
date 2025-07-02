@@ -202,8 +202,7 @@ class PageBuilder(Protocol):
         translations: Translations,
         html_parts: Tuple[str, str, str, str],
         main_content: str,
-        header_content: Optional[str] = None,
-        footer_content: Optional[str] = None,
+        navigation_items: Optional[List[Dict[str, Any]]] = None,
         page_title: Optional[str] = None,
     ) -> str:
         """Assembles a full HTML page using translated and generated content.
@@ -215,12 +214,7 @@ class PageBuilder(Protocol):
                         `extract_base_html_parts`).
             main_content: The main content area of the page, already processed
                           and translated.
-            header_content: Optional pre-translated HTML content for the header.
-                            If None, the header from `html_parts` might be used
-                            and translated.
-            footer_content: Optional pre-translated HTML content for the footer.
-                            If None, the footer from `html_parts` might be used
-                            and translated.
+            navigation_items: Optional list of navigation item dictionaries for the header.
 
         Returns:
             A string containing the complete HTML for the assembled page.

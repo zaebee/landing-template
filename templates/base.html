@@ -18,89 +18,16 @@
     {% block head_extra %}{% endblock head_extra %}
   </head>
   <body>
-    {% block header_content %}
-    <header>
-      <nav>
-        <div class="logo">
-          <a href="#">Logo</a>
-        </div>
-        <button
-          aria-expanded="false"
-          aria-label="Toggle menu"
-          class="hamburger-menu"
-        >
-          <span class="hamburger-bar"></span>
-          <span class="hamburger-bar"></span>
-          <span class="hamburger-bar"></span>
-        </button>
-        <div class="nav-items">
-          <ul>
-            <!-- Navigation items will be dynamically injected here by client-side JS -->
-          </ul>
-          <button aria-label="Switch to Dark Mode" id="dark-mode-toggle">
-            🌙
-          </button>
-          <div id="language-switcher">
-            <button data-lang="en">EN</button>
-            <button data-lang="es">ES</button>
-          </div>
-        </div>
-      </nav>
-    </header>
-    {% endblock header_content %}
+    {% include "blocks/header.html" %}
 
     <main>{{ main_content | safe }}</main>
 
-    {% block footer_content %}
-    <footer>
-      <p data-i18n="footer_text">
-        &amp;copy; 2023 Simple Landing Page. All rights reserved.
-      </p>
-    </footer>
-    {% endblock footer_content %} {% block scripts %}
+    {% include "blocks/footer.html" %} {% block scripts %}
     <script>
       // Dark Mode Toggle
       const darkModeToggle = document.getElementById("dark-mode-toggle");
       const body = document.body;
       let currentTranslations = {};
-
-      async function generateNavigation() {
-        const currentLang = document.documentElement.lang || "en";
-        const configPath = `public/generated_configs/config_${currentLang}.json`;
-
-        try {
-          const response = await fetch(configPath);
-          if (!response.ok) {
-            console.error(`Failed to load ${configPath}:`, response.statusText);
-            return;
-          }
-          const config = await response.json();
-          const navItems = config.navigation;
-
-          if (navItems && Array.isArray(navItems)) {
-            const navUl = document.querySelector(".nav-items ul");
-            if (!navUl) {
-              console.error("Navigation <ul> element not found.");
-              return;
-            }
-            navUl.innerHTML = "";
-
-            navItems.forEach((item) => {
-              const li = document.createElement("li");
-              const a = document.createElement("a");
-              a.textContent = item.label;
-              a.href = item.href;
-              if (item.label_i18n_key) {
-                a.setAttribute("data-i18n", item.label_i18n_key);
-              }
-              li.appendChild(a);
-              navUl.appendChild(li);
-            });
-          }
-        } catch (error) {
-          console.error("Error generating navigation:", error);
-        }
-      }
 
       async function fetchTranslations(lang) {
         try {
@@ -194,7 +121,6 @@
         const preferredLang = localStorage.getItem("language") || "en";
         document.documentElement.lang = preferredLang;
 
-        await generateNavigation();
         await setLanguage(preferredLang);
       }
 

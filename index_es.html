@@ -33,7 +33,27 @@
         </button>
         <div class="nav-items">
           <ul>
-            <!-- Navigation items will be dynamically injected here by client-side JS -->
+            <li>
+              <a href="#" data-i18n="nav_home">Inicio</a>
+            </li>
+
+            <li>
+              <a href="#features" data-i18n="nav_features">Características</a>
+            </li>
+
+            <li>
+              <a href="#testimonials" data-i18n="nav_testimonials"
+                >Testimonios</a
+              >
+            </li>
+
+            <li>
+              <a href="#portfolio" data-i18n="nav_portfolio">Portafolio</a>
+            </li>
+
+            <li>
+              <a href="#blog" data-i18n="nav_blog">Blog</a>
+            </li>
           </ul>
           <button aria-label="Switch to Dark Mode" id="dark-mode-toggle">
             🌙
@@ -183,50 +203,11 @@
         &amp;copy; 2023 Simple Landing Page. All rights reserved.
       </p>
     </footer>
-
     <script>
       // Dark Mode Toggle
       const darkModeToggle = document.getElementById("dark-mode-toggle");
       const body = document.body;
       let currentTranslations = {};
-
-      async function generateNavigation() {
-        const currentLang = document.documentElement.lang || "en";
-        const configPath = `public/generated_configs/config_${currentLang}.json`;
-
-        try {
-          const response = await fetch(configPath);
-          if (!response.ok) {
-            console.error(`Failed to load ${configPath}:`, response.statusText);
-            return;
-          }
-          const config = await response.json();
-          const navItems = config.navigation;
-
-          if (navItems && Array.isArray(navItems)) {
-            const navUl = document.querySelector(".nav-items ul");
-            if (!navUl) {
-              console.error("Navigation <ul> element not found.");
-              return;
-            }
-            navUl.innerHTML = "";
-
-            navItems.forEach((item) => {
-              const li = document.createElement("li");
-              const a = document.createElement("a");
-              a.textContent = item.label;
-              a.href = item.href;
-              if (item.label_i18n_key) {
-                a.setAttribute("data-i18n", item.label_i18n_key);
-              }
-              li.appendChild(a);
-              navUl.appendChild(li);
-            });
-          }
-        } catch (error) {
-          console.error("Error generating navigation:", error);
-        }
-      }
 
       async function fetchTranslations(lang) {
         try {
@@ -320,7 +301,6 @@
         const preferredLang = localStorage.getItem("language") || "en";
         document.documentElement.lang = preferredLang;
 
-        await generateNavigation();
         await setLanguage(preferredLang);
       }
 
