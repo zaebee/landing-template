@@ -75,14 +75,15 @@ class BuildOrchestrator:
         Args:
             app_config_manager: Manages loading and processing of application
                 configuration.
-            translation_provider: Provides translation services for text and
-                HTML content.
-            data_loader: Loads data from various sources (e.g., JSON files) into
-                protobuf messages.
-            data_cache: Caches loaded data to avoid redundant loading operations.
+            translation_provider: Provides translation services for text and HTML
+                content.
+            data_loader: Loads data from various sources (e.g., JSON files)
+                into protobuf messages.
+            data_cache: Caches loaded data to avoid redundant loading
+                operations.
             page_builder: Assembles the final HTML page from various parts.
-            html_generators: A dictionary mapping block names to their respective
-                HTML generator instances.
+            html_generators: A dictionary mapping block names to their
+                respective HTML generator instances.
         """
         self.app_config_manager = app_config_manager
         self.translation_provider = translation_provider
@@ -107,9 +108,11 @@ class BuildOrchestrator:
         # The DataLoader is generic (Message), but here we expect Navigation.
         # A type: ignore is used as the generic loader's signature doesn't
         # specifically guarantee Navigation without more complex generics.
-        self.nav_proto_data = self.data_loader.load_dynamic_single_item_data(
-            nav_data_file,
-            Navigation,  # type: ignore
+        self.nav_proto_data = (
+            self.data_loader.load_dynamic_single_item_data(
+                nav_data_file,
+                Navigation,  # type: ignore
+            )
         )
 
     def _process_language(
@@ -138,8 +141,10 @@ class BuildOrchestrator:
 
         self._generate_language_specific_config(lang, translations)
 
-        assembled_main_content = self._assemble_main_content_for_lang(
-            lang, translations, dynamic_data_loaders_config
+        assembled_main_content = (
+            self._assemble_main_content_for_lang(
+                lang, translations, dynamic_data_loaders_config
+            )
         )
 
         page_title = translations.get("page_title_default", "Simple Landing Page")
@@ -176,8 +181,12 @@ class BuildOrchestrator:
         )
         default_lang: str = self.app_config.get("default_lang", "en")
 
-        dynamic_data_loaders_config = self._get_dynamic_data_loaders_config()
-        self.data_cache.preload_data(dynamic_data_loaders_config, self.data_loader)
+        dynamic_data_loaders_config = (
+            self._get_dynamic_data_loaders_config()
+        )
+        self.data_cache.preload_data(
+            dynamic_data_loaders_config, self.data_loader
+        )
 
         os.makedirs("public/generated_configs", exist_ok=True)
 
@@ -306,15 +315,21 @@ class BuildOrchestrator:
 
         Raises:
             IOError: If there is an error writing the configuration file.
-                     (Note: Currently prints error instead of raising)
         """
-        lang_specific_config = self.app_config_manager.generate_language_config(
-            base_config=self.app_config,
-            nav_data=self.nav_proto_data,
-            translations=translations,
-            lang=lang,
+        # This method prints errors to stdout rather than raising an IOError
+        # directly to allow the build process to continue for other languages
+        # if one configuration file fails to write.
+        lang_specific_config = (
+            self.app_config_manager.generate_language_config(
+                base_config=self.app_config,
+                nav_data=self.nav_proto_data,
+                translations=translations,
+                lang=lang,
+            )
         )
-        generated_config_path = f"public/generated_configs/config_{lang}.json"
+        generated_config_path = (
+            f"public/generated_configs/config_{lang}.json"
+        )
         try:
             with open(generated_config_path, "w", encoding="utf-8") as config_file:
                 json.dump(
@@ -325,9 +340,10 @@ class BuildOrchestrator:
                 )
             print(f"Generated language-specific config: {generated_config_path}")
         except IOError as e:
-            # Consider logging this error instead of just printing for production apps
+            # Consider logging this error instead of just printing.
             print(
-                f"Error writing language-specific config {generated_config_path}: {e}"
+                f"Error writing language-specific config "
+                f"{generated_config_path}: {e}"
             )
 
     def _assemble_main_content_for_lang(
@@ -345,7 +361,8 @@ class BuildOrchestrator:
         Args:
             lang: The language code for which to assemble content.
             translations: The translation data for the current language.
-            data_loaders_config: Configuration for data loading for each block.
+            data_loaders_config: Configuration for data loading for each
+                block.
 
         Returns:
             A string containing the assembled and translated main HTML content.
@@ -489,8 +506,9 @@ class BuildOrchestrator:
 
         Raises:
             IOError: If there is an error writing the file.
-                     (Note: Currently prints error instead of raising)
         """
+        # This method prints errors to stdout rather than raising an IOError
+        # directly to allow the build process to continue if one file fails.
         print(f"Writing {filename}")
         try:
             with open(filename, "w", encoding="utf-8") as output_file:

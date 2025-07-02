@@ -138,6 +138,8 @@ class DefaultTranslationProvider(TranslationProvider):
 # of use or for backward compatibility with code that expects module-level functions.
 # Ideally, new code should instantiate and use DefaultTranslationProvider directly.
 
+# _default_provider is a module-level instance used by the convenience functions
+# below. It is intended to be stateless for these operations.
 _default_provider = DefaultTranslationProvider()
 
 load_translations = _default_provider.load_translations

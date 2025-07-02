@@ -687,7 +687,9 @@ class TestBuildScript(unittest.TestCase):
         mock_testimonial_item = TestimonialItem(text={"key": "ttk"})
         mock_hero_item = HeroItem(
             default_variation_id="v1",
-            variations=[HeroItemContent(variation_id="v1", title={"key": "htk"})],
+            variations=[
+                HeroItemContent(variation_id="v1", title={"key": "htk"})
+            ],
         )  # type: ignore
         mock_contact_config = ContactFormConfig(
             form_action_uri="/test_action",
@@ -714,11 +716,14 @@ class TestBuildScript(unittest.TestCase):
                 return mock_hero_item
             if "contact_form" in data_file_path:
                 return mock_contact_config
+            # Check basename as data_file_path might be absolute in tests
             if os.path.basename(data_file_path) == "navigation.json":
-                return mock_navigation_data  # Check basename
+                return mock_navigation_data
             return None
 
-        mock_load_single_item_data.side_effect = load_single_item_data_side_effect
+        mock_load_single_item_data.side_effect = (
+            load_single_item_data_side_effect
+        )
 
         mock_data_cache_preload.return_value = None
 
@@ -737,21 +742,34 @@ class TestBuildScript(unittest.TestCase):
                 return mock_contact_config
             return None
 
-        mock_data_cache_get_item.side_effect = data_cache_get_item_side_effect
+        mock_data_cache_get_item.side_effect = (
+            data_cache_get_item_side_effect
+        )
 
         mock_gen_portfolio_html.return_value = "<p>Portfolio Content</p>"
         mock_gen_blog_html.return_value = "<p>Blog Content</p>"
         mock_gen_features_html.return_value = "<p>Features Content</p>"
-        mock_gen_testimonials_html.return_value = "<p>Testimonials Content</p>"
+        mock_gen_testimonials_html.return_value = (
+            "<p>Testimonials Content</p>"
+        )
         mock_gen_hero_html.return_value = "<p>Hero Content</p>"
-        mock_gen_contact_html.return_value = 'data-form-id="contact-form-attrs"'
-        mock_generate_lang_config.return_value = {"lang": "test", "ui_strings": {}}
+        mock_gen_contact_html.return_value = (
+            'data-form-id="contact-form-attrs"'
+        )
+        mock_generate_lang_config.return_value = {
+            "lang": "test",
+            "ui_strings": {},
+        }
 
         header_match = re.search(
-            r"<header.*?>(.*?)<\/header>", self.dummy_index_content, re.DOTALL
+            r"<header.*?>(.*?)<\/header>",
+            self.dummy_index_content,
+            re.DOTALL,
         )
         footer_match = re.search(
-            r"<footer.*?>(.*?)<\/footer>", self.dummy_index_content, re.DOTALL
+            r"<footer.*?>(.*?)<\/footer>",
+            self.dummy_index_content,
+            re.DOTALL,
         )
         dummy_header_content = (
             header_match.group(0) if header_match else "<header></header>"
@@ -770,11 +788,14 @@ class TestBuildScript(unittest.TestCase):
             "<html><body>Assembled Page Content</body></html>"
         )
 
-        def mock_builtin_open_side_effect(filename, mode="r", *args, **kwargs):
-            # Normalize path for comparison
+        def mock_builtin_open_side_effect(
+            filename, mode="r", *args, **kwargs
+        ):
             normalized_filename = os.path.normpath(filename)
             if mode == "r":
-                if normalized_filename.startswith(os.path.join("blocks")):
+                if normalized_filename.startswith(
+                    os.path.join("blocks")
+                ):
                     block_name = os.path.basename(filename)
                     placeholder_map = {
                         "hero.html": "{{hero_content}}",
@@ -785,17 +806,20 @@ class TestBuildScript(unittest.TestCase):
                         "contact-form.html": "{{contact_form_attributes}}",
                     }
                     return mock.mock_open(
-                        read_data=f"<div>{placeholder_map.get(block_name, '')}</div>"
+                        read_data=(
+                            f"<div>{placeholder_map.get(block_name, '')}</div>"
+                        )
                     ).return_value
                 if normalized_filename == "index.html":
                     return mock.mock_open(
                         read_data=self.dummy_index_content
                     ).return_value
-                if normalized_filename == os.path.join("public", "config.json"):
+                if normalized_filename == os.path.join(
+                    "public", "config.json"
+                ):
                     return mock.mock_open(
                         read_data=json.dumps(self.dummy_config)
                     ).return_value
-                # Handle locale files from the mocked structure
                 if normalized_filename == os.path.normpath(
                     os.path.join("public", "locales", "en.json")
                 ):
@@ -808,34 +832,28 @@ class TestBuildScript(unittest.TestCase):
                     return mock.mock_open(
                         read_data=json.dumps(self.es_translations)
                     ).return_value
-                # Handle data files from the mocked structure
                 if normalized_filename == os.path.normpath(
                     os.path.join("data", "navigation.json")
                 ):
                     return mock.mock_open(
                         read_data=json.dumps({"items": []})
                     ).return_value
-
             elif mode == "w":
-                # For write mode, just return a MagicMock that can be "written" to.
-                # This mock allows the 'write' calls but doesn't interact with a real file system.
                 return mock.MagicMock()
-            # Fallback for any other unhandled read:
-            # This helps debug if a file path isn't caught by specific conditions above.
-            # print(f"Unhandled read in mock_open: {filename}")
-            return mock.mock_open(
-                read_data=""
-            ).return_value  # Default empty for unhandled reads
+            return mock.mock_open(read_data="").return_value
 
         mock_builtin_open.side_effect = mock_builtin_open_side_effect
 
         build_main()
 
-        # Normalize expected paths for assertion
         expected_paths = [
-            os.path.join("public", "generated_configs", "config_en.json"),
+            os.path.join(
+                "public", "generated_configs", "config_en.json"
+            ),
             "index.html",
-            os.path.join("public", "generated_configs", "config_es.json"),
+            os.path.join(
+                "public", "generated_configs", "config_es.json"
+            ),
             "index_es.html",
         ]
         expected_write_calls = [
@@ -844,12 +862,10 @@ class TestBuildScript(unittest.TestCase):
         ]
 
         actual_write_calls = [
-            c for c in mock_builtin_open.call_args_list if c.args[1] == "w"
+            c
+            for c in mock_builtin_open.call_args_list
+            if c.args[1] == "w"
         ]
-
-        # For debugging:
-        # print("Expected calls:", [str(c) for c in expected_write_calls])
-        # print("Actual calls:", [str(c) for c in actual_write_calls])
 
         self.assertEqual(
             len(actual_write_calls),
@@ -858,15 +874,19 @@ class TestBuildScript(unittest.TestCase):
         )
 
         for expected_call in expected_write_calls:
-            # Normalize args in actual calls before comparison
             normalized_actual_calls = [
-                mock.call(os.path.normpath(c.args[0]), *c.args[1:], **c.kwargs)
+                mock.call(
+                    os.path.normpath(c.args[0]), *c.args[1:], **c.kwargs
+                )
                 for c in actual_write_calls
             ]
             self.assertIn(
                 expected_call,
                 normalized_actual_calls,
-                f"Expected write call not found: {expected_call}\nActual write calls: {actual_write_calls}",
+                (
+                    f"Expected write call not found: {expected_call}\n"
+                    f"Actual write calls: {actual_write_calls}"
+                ),
             )
 
         mock_load_app_config.assert_called_once()
@@ -877,9 +897,16 @@ class TestBuildScript(unittest.TestCase):
         self.assertEqual(mock_generate_lang_config.call_count, 2)
 
         num_langs = len(self.dummy_config["supported_langs"])
-        num_blocks_in_config = len(self.dummy_config["blocks"])
-        expected_translate_calls = num_langs * (2 + num_blocks_in_config)
-        self.assertEqual(mock_translate_content.call_count, expected_translate_calls)
+        # Each lang processes: 1 header, 1 footer, and N blocks
+        num_blocks_in_config = len(
+            self.dummy_config.get("blocks", [])
+        )  # Use .get for safety
+        expected_translate_calls = num_langs * (
+            2 + num_blocks_in_config
+        )
+        self.assertEqual(
+            mock_translate_content.call_count, expected_translate_calls
+        )
 
 
 if __name__ == "__main__":
