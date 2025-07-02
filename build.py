@@ -292,8 +292,8 @@ def generate_contact_form_html(
     # These will be used by the client-side JavaScript
     return (
         f'data-form-action-url="{config.form_action_url}"\n'
-        f'    data-success-message="{translations.get(config.success_message_key, "Message sent!")}"\n' # noqa: E501
-        f'    data-error-message="{translations.get(config.error_message_key, "Error sending message.")}"' # noqa: E501
+        f'    data-success-message="{translations.get(config.success_message_key, "Message sent!")}"\n'  # noqa: E501
+        f'    data-error-message="{translations.get(config.error_message_key, "Error sending message.")}"'  # noqa: E501
     )
 
 
@@ -429,7 +429,7 @@ def extract_base_html_parts(
             'initial-scale=1.0"><title>Page</title></head><body>\n'
         )
 
-    html_end: str = "\n</body>\n</html>" # Standard closing tags
+    html_end: str = "\n</body>\n</html>"  # Standard closing tags
 
     return (
         html_start,
@@ -445,7 +445,7 @@ def main() -> None:
     files.
     """
     # Load main application configuration
-    app_config = load_app_config() # Uses default "public/config.json"
+    app_config = load_app_config()  # Uses default "public/config.json"
 
     supported_langs: List[str] = app_config.get("supported_langs", ["en", "es"])
     default_lang: str = app_config.get("default_lang", "en")
@@ -509,7 +509,6 @@ def main() -> None:
     # Create a directory for generated language-specific configs
     os.makedirs("public/generated_configs", exist_ok=True)
 
-
     # Extract parts from base index.html (or other configured base file)
     # Assuming base_html_file is 'index.html' by default as per original logic
     # html_parts is a tuple: (html_start, header_content, footer_content, html_end)
@@ -518,7 +517,7 @@ def main() -> None:
     for lang in supported_langs:
         process_language_build(
             lang=lang,
-            app_config=app_config, # Pass the loaded application config
+            app_config=app_config,  # Pass the loaded application config
             dynamic_data_cache=dynamic_data_cache,
             nav_proto_data=navigation_proto_data,
             html_parts=html_parts,
@@ -564,7 +563,7 @@ def generate_language_config(
     return lang_config
 
 
-def assemble_translated_page( # pylint: disable=too-many-locals
+def assemble_translated_page(  # pylint: disable=too-many-locals
     lang: str,
     translations: Translations,
     html_parts: Tuple[str, str, str, str],
@@ -619,7 +618,7 @@ def assemble_translated_page( # pylint: disable=too-many-locals
                 f'<html lang="{lang}"\\1>',
                 current_html_start,
                 count=1,
-                flags=re.IGNORECASE
+                flags=re.IGNORECASE,
             )
         else:  # Prepend if no html tag at all
             current_html_start = (
@@ -641,7 +640,7 @@ def assemble_translated_page( # pylint: disable=too-many-locals
 
 def process_language_build(
     lang: str,
-    app_config: Dict[str, Any], # Base application config
+    app_config: Dict[str, Any],  # Base application config
     dynamic_data_cache: Dict[str, Union[List[Message], Message, None]],
     nav_proto_data: Navigation | None,
     html_parts: Tuple[str, str, str, str],
@@ -692,7 +691,7 @@ def process_language_build(
                 if loader_config.get("is_list", True):
                     data_items_for_gen = data_items if data_items is not None else []
                 else:
-                    data_items_for_gen = data_items # Can be None for single items
+                    data_items_for_gen = data_items  # Can be None for single items
 
                 generated_html = loader_config["generator"](
                     data_items_for_gen, translations

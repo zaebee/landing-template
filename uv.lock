@@ -16,6 +16,29 @@ wheels = [
 ]
 
 [[package]]
+name = "clang-format"
+version = "20.1.7"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/a7/af/e138e1be1812ce0261ceaf5695e7d4299fa4d5085e1ed16e9157c4cda3ea/clang_format-20.1.7.tar.gz", hash = "sha256:2b0d76b9bf1f993bad33d2216b5fce4c407bc748fa31659ab7f51ca60df113c9", size = 11535 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/98/c7/d6b6b2f37e559cefc07426170368ddb5951753b7a831668666c5d91d6b79/clang_format-20.1.7-py2.py3-none-macosx_10_9_x86_64.whl", hash = "sha256:70a904719a1bd6653d77ddc6d7b40418845912a1a2a419b9116b819a6b619f8c", size = 1436729 },
+    { url = "https://files.pythonhosted.org/packages/a0/8c/ae7bc9122a2c7505506bba4aae9d9f38c01435b735a38c65985d30efc943/clang_format-20.1.7-py2.py3-none-macosx_11_0_arm64.whl", hash = "sha256:e5257e8188569e4e47fceb3ba3317b0b44dc5ab5046c8cc2d58c626430c747a6", size = 1410576 },
+    { url = "https://files.pythonhosted.org/packages/19/c1/6777ef4eafa63d35dda0cda2803e818d17a0a9fe3216837eab1f169afbee/clang_format-20.1.7-py2.py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:1dad1e6f9eb732b76046bf5810c6ee78b9e6cd6b3616cb75d9bde06ecd3222e6", size = 1794265 },
+    { url = "https://files.pythonhosted.org/packages/54/8f/33a426e3b61cff30e4d8d7173508da277ece67296428b7657da681c821d5/clang_format-20.1.7-py2.py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:b27ed7fe674e8a77461c8d5b117ed96021aa18233917b3fe54b95391e0b22d04", size = 1968022 },
+    { url = "https://files.pythonhosted.org/packages/da/1f/fc0fe12a27153370ca55490bedd29f11611b1a1336779472dec5f3d6af94/clang_format-20.1.7-py2.py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:bd144f093b4a3ac8a0f0d0ebb9b013974884d9da0627b9905949c6f3213aa850", size = 2724211 },
+    { url = "https://files.pythonhosted.org/packages/c0/fd/7d7462d307d8827de0b8b183b3b467643e14c61e880b5485e7aa80a11db7/clang_format-20.1.7-py2.py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:d79484ce2c8f621242046c4bb0aefd49445ec5c7bc3c404af97490289791b777", size = 1789853 },
+    { url = "https://files.pythonhosted.org/packages/8b/7f/55985595ffbf9bcec64ad36e9a0451cf8556ba0fb1a80781943de106cfa3/clang_format-20.1.7-py2.py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:99cbfb99dab836027498190f55e543bed51bae33ae6dc256861e7aa91368de98", size = 1801091 },
+    { url = "https://files.pythonhosted.org/packages/84/2e/04009020237243f8785188810ee33bc9ce0773e3ccba2599768381dac088/clang_format-20.1.7-py2.py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:4c05114a10efe85c11fde518fe0fadc2977ce4a997a26ceaac88521daee83bbd", size = 2774653 },
+    { url = "https://files.pythonhosted.org/packages/1c/22/8f98cf57f54a06ff3a08dd79fba25617a4495614b6458bc69e46e81caa96/clang_format-20.1.7-py2.py3-none-musllinux_1_2_i686.whl", hash = "sha256:9cd4d64dc0e34b23badad0ce3a235fb5c8ac63651d9f91d1c806356212cbca6c", size = 3100264 },
+    { url = "https://files.pythonhosted.org/packages/0b/93/b5dc2959423b203f8a8db35ff7f19a114c50df265728714dcaf90d779d4f/clang_format-20.1.7-py2.py3-none-musllinux_1_2_ppc64le.whl", hash = "sha256:11431cb437ed22be85744ea47b3a6801bc61de7ac4b775bf1cb89ee190c992d4", size = 3186502 },
+    { url = "https://files.pythonhosted.org/packages/da/a6/3ae4861b2fd3eba3b47d46e5c31b4dac0065a8048dc77825a85ac141e991/clang_format-20.1.7-py2.py3-none-musllinux_1_2_s390x.whl", hash = "sha256:29f5fe39e60579ca253d31c1122ce06a80716400ec7e5dc38833da80f88dbbd5", size = 3224655 },
+    { url = "https://files.pythonhosted.org/packages/64/df/8668d80685b0556fead8ecc9ff221574d9f2b4011a68da155c54acab6dc6/clang_format-20.1.7-py2.py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:6db0b7271af8cbc2656b3b6b31e4276d5c6b8ceafb1981760f4738cfbe0a9e43", size = 2881843 },
+    { url = "https://files.pythonhosted.org/packages/5c/e8/5f105c2195fe565b9b5203f533f6d727a73d98ef3b295e3f2f01ddf5d847/clang_format-20.1.7-py2.py3-none-win32.whl", hash = "sha256:7bd56bd0f519959488977dcddddba4e4fd07cba6225ed09ad658caa1f7286d1f", size = 1259337 },
+    { url = "https://files.pythonhosted.org/packages/31/0d/a3685e3287d3ff3676297da331d7a05110dee049c773af2d6a1f5c8df0b0/clang_format-20.1.7-py2.py3-none-win_amd64.whl", hash = "sha256:4a9b909b1a9eb0b91aae51fdeeeb013ce20f9079d2e0fa8b8381e97c268dc889", size = 1444266 },
+    { url = "https://files.pythonhosted.org/packages/88/93/5242ed23c0ec6b2e28509452b41c732789822c9e5aa4a899e406f9d15d64/clang_format-20.1.7-py2.py3-none-win_arm64.whl", hash = "sha256:d11c62d38b9144d30021b884b0f95e7270a6bcbf4f22bdd7dae94a531d82fbba", size = 1319591 },
+]
+
+[[package]]
 name = "colorama"
 version = "0.4.6"
 source = { registry = "https://pypi.org/simple" }
@@ -152,6 +175,7 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "beautifulsoup4" },
+    { name = "clang-format" },
     { name = "grpcio" },
     { name = "grpcio-tools" },
     { name = "protobuf" },
@@ -165,6 +189,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "beautifulsoup4", specifier = ">=4.13.4" },
+    { name = "clang-format", specifier = ">=20.1.7" },
     { name = "grpcio" },
     { name = "grpcio-tools" },
     { name = "protobuf" },
