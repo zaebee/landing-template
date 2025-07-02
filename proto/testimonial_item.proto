@@ -7,7 +7,7 @@ import "common.proto";
 option go_package = "example.com/website_content/v1;website_content_v1";
 
 message TestimonialItem {
-  I18nString text = 1;        // The testimonial quote itself
-  I18nString author = 2;      // The author of the testimonial
-  Image author_image = 3;     // Image of the author
+  I18nString text = 1;     // The testimonial quote itself
+  I18nString author = 2;   // The author of the testimonial
+  Image author_image = 3;  // Image of the author
 }

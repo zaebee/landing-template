@@ -173,7 +173,9 @@ class TestBuildScript(unittest.TestCase):
         </body>
         </html>
         """
-        with open("index.html", "w", encoding="utf-8") as f:  # Will be in self.test_root_dir
+        with open(
+            "index.html", "w", encoding="utf-8"
+        ) as f:  # Will be in self.test_root_dir
             f.write(self.dummy_index_content)
 
         # Dummy config.json (for build.py, which expects public/config.json)
@@ -196,19 +198,20 @@ class TestBuildScript(unittest.TestCase):
 
         # Create a root config.json as well if some tests directly expect it
         # (though build.py itself uses public/config.json)
-        with open("config.json", "w", encoding="utf-8") as f: # will be in self.test_root_dir
-             json.dump(self.dummy_config, f)
-
+        with open(
+            "config.json", "w", encoding="utf-8"
+        ) as f:  # will be in self.test_root_dir
+            json.dump(self.dummy_config, f)
 
         # Dummy block files (in self.test_root_dir/blocks/)
-        os.makedirs("blocks", exist_ok=True) # will be self.test_root_dir/blocks
+        os.makedirs("blocks", exist_ok=True)  # will be self.test_root_dir/blocks
         with open(os.path.join("blocks", "hero.html"), "w", encoding="utf-8") as f:
-            f.write(
-                '<section class="hero">{{hero_content}}</section>'
-            )
+            f.write('<section class="hero">{{hero_content}}</section>')
         with open(os.path.join("blocks", "features.html"), "w", encoding="utf-8") as f:
             f.write("<div>{{feature_items}}</div>")
-        with open(os.path.join("blocks", "testimonials.html"), "w", encoding="utf-8") as f:
+        with open(
+            os.path.join("blocks", "testimonials.html"), "w", encoding="utf-8"
+        ) as f:
             f.write("<div>{{testimonial_items}}</div>")
         with open(os.path.join("blocks", "portfolio.html"), "w", encoding="utf-8") as f:
             f.write("<div>{{portfolio_items}}</div>")
@@ -218,24 +221,8 @@ class TestBuildScript(unittest.TestCase):
     def tearDown(self):
         """Clean up test environment."""
         os.chdir(self.original_cwd)  # Restore original CWD
-        if hasattr(self, 'test_root_dir') and os.path.exists(self.test_root_dir):
-            shutil.rmtree(self.test_root_dir) # Remove the entire temporary directory
-
-        # The following cleanup is no longer needed as files were in test_root_dir
-        # if os.path.exists(self.test_locales_dir): # This was relative to test_root_dir
-        #     shutil.rmtree(self.test_locales_dir)
-        # if os.path.exists(self.test_data_dir): # This was relative to test_root_dir
-        #     shutil.rmtree(self.test_data_dir)
-        # if os.path.exists("blocks"): # This was relative to test_root_dir
-        #     shutil.rmtree("blocks")
-        #
-        # # Remove individual files created at root (now within test_root_dir)
-        # if os.path.exists("index.html"):
-        #     os.remove("index.html")
-        # if os.path.exists("index_es.html"): # This is an output file, also in test_root_dir
-        #     os.remove("index_es.html")
-        # if os.path.exists("config.json"): # This was relative to test_root_dir
-        #     os.remove("config.json")
+        if hasattr(self, "test_root_dir") and os.path.exists(self.test_root_dir):
+            shutil.rmtree(self.test_root_dir)  # Remove the entire temporary directory
 
     @mock.patch("build.project_root", ".")  # Ensure build.py uses test_locales
     def test_load_translations_existing(self):
@@ -402,7 +389,7 @@ class TestBuildScript(unittest.TestCase):
             f.write("[{'title': 'Test' }, {]")  # Invalid JSON
         items = load_dynamic_data(invalid_json_path, PortfolioItem)
         self.assertEqual(items, [])
-        # invalid_json_path is inside self.test_data_dir, which is in self.test_root_dir.
+        # invalid_json_path is inside self.test_data_dir.
         # It will be cleaned up by tearDown. No explicit os.remove needed.
 
     def test_generate_portfolio_html(self):
@@ -519,7 +506,6 @@ class TestBuildScript(unittest.TestCase):
         hero_item_instance = HeroItem()
         json_format.ParseDict(self.hero_item_data, hero_item_instance)
 
-
         translations = {
             "hero_title_main_v1": "Translated Hero Title V1",
             "hero_subtitle_main_v1": "Translated Hero Subtitle V1",
@@ -529,7 +515,7 @@ class TestBuildScript(unittest.TestCase):
             "hero_cta_main_v2": "Translated CTA Text V2",
         }
         # Mock random.choice to always pick the first variation for predictable testing
-        with mock.patch('random.choice', side_effect=lambda x: x[0]):
+        with mock.patch("random.choice", side_effect=lambda x: x[0]):
             html = generate_hero_html(hero_item_instance, translations)
 
         self.assertIn("<h1>Translated Hero Title V1</h1>", html)
@@ -538,7 +524,6 @@ class TestBuildScript(unittest.TestCase):
             '<a href="#gohere_v1" class="cta-button">Translated CTA Text V1</a>', html
         )
         self.assertIn("<!-- Selected variation: var1 -->", html)
-
 
     def test_generate_hero_html_none_item(self):
         """Test hero HTML generation when item is None."""
@@ -567,47 +552,69 @@ class TestBuildScript(unittest.TestCase):
 
         # Mock data items using the new structure
         mock_hero_item = HeroItem()
-        json_format.ParseDict({
-            "variations": [
-                {
-                    "variation_id": "v1",
-                    "title": {"key": "h_title"},
-                    "subtitle": {"key": "h_sub"},
-                    "cta": {"text": {"key": "h_cta"}, "link": "#hero"},
-                }
-            ],
-            "default_variation_id":"v1"
-        }, mock_hero_item)
+        json_format.ParseDict(
+            {
+                "variations": [
+                    {
+                        "variation_id": "v1",
+                        "title": {"key": "h_title"},
+                        "subtitle": {"key": "h_sub"},
+                        "cta": {"text": {"key": "h_cta"}, "link": "#hero"},
+                    }
+                ],
+                "default_variation_id": "v1",
+            },
+            mock_hero_item,
+        )
 
         mock_portfolio_item = PortfolioItem()
-        json_format.ParseDict({
-            "id":"p1",
-            "image":{"src": "p.jpg", "alt_text": {"key": "p_alt"}},
-            "details":{"title": {"key": "p_title"}, "description": {"key": "p_desc"}},
-        }, mock_portfolio_item)
+        json_format.ParseDict(
+            {
+                "id": "p1",
+                "image": {"src": "p.jpg", "alt_text": {"key": "p_alt"}},
+                "details": {
+                    "title": {"key": "p_title"},
+                    "description": {"key": "p_desc"},
+                },
+            },
+            mock_portfolio_item,
+        )
 
         mock_blog_post = BlogPost()
-        json_format.ParseDict({
-            "id": "b1",
-            "title": {"key": "b_title"},
-            "excerpt": {"key": "b_excerpt"},
-            "cta": {"text": {"key": "b_cta"}, "link": "b.html"},
-        }, mock_blog_post)
+        json_format.ParseDict(
+            {
+                "id": "b1",
+                "title": {"key": "b_title"},
+                "excerpt": {"key": "b_excerpt"},
+                "cta": {"text": {"key": "b_cta"}, "link": "b.html"},
+            },
+            mock_blog_post,
+        )
 
         mock_feature_item = FeatureItem()
-        json_format.ParseDict({
-            "content":{"title": {"key": "f_title"}, "description": {"key": "f_desc"}}
-        }, mock_feature_item)
+        json_format.ParseDict(
+            {
+                "content": {
+                    "title": {"key": "f_title"},
+                    "description": {"key": "f_desc"},
+                }
+            },
+            mock_feature_item,
+        )
 
         mock_testimonial_item = TestimonialItem()
-        json_format.ParseDict({
-            "text": {"key": "t_text"},
-            "author": {"key": "t_author"},
-            "author_image": {"src": "t.jpg", "alt_text": {"key": "t_alt"}},
-        }, mock_testimonial_item)
+        json_format.ParseDict(
+            {
+                "text": {"key": "t_text"},
+                "author": {"key": "t_author"},
+                "author_image": {"src": "t.jpg", "alt_text": {"key": "t_alt"}},
+            },
+            mock_testimonial_item,
+        )
 
-
-        def load_list_data_side_effect(data_file_path, message_type): # pylint: disable=unused-argument
+        def load_list_data_side_effect(
+            data_file_path, message_type
+        ):  # pylint: disable=unused-argument
             if "portfolio_items.json" in data_file_path:
                 return [mock_portfolio_item]
             if "blog_posts.json" in data_file_path:
@@ -620,13 +627,19 @@ class TestBuildScript(unittest.TestCase):
 
         mock_load_list_data.side_effect = load_list_data_side_effect
 
-        def load_single_item_data_side_effect(data_file_path, message_type): # pylint: disable=unused-argument
-            if "hero_item.json" in data_file_path: # Match actual path used in build.py
+        def load_single_item_data_side_effect(
+            data_file_path, message_type
+        ):  # pylint: disable=unused-argument
+            if "hero_item.json" in data_file_path:  # Match actual path used in build.py
                 return mock_hero_item
             # Add mock for navigation.json if it's loaded as a single item
-            if "navigation.json" in data_file_path:  # Assuming Navigation is loaded this way # noqa: E501
+            if (
+                "navigation.json" in data_file_path
+            ):  # Assuming Navigation is loaded this way # noqa: E501
                 # Return a dummy Navigation object or None as appropriate for the test
-                return Navigation()  # Return an empty Navigation object - import is at top # noqa: E501
+                return (
+                    Navigation()
+                )  # Return an empty Navigation object - import is at top # noqa: E501
             return None
 
         mock_load_single_item_data.side_effect = load_single_item_data_side_effect
