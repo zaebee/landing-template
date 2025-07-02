@@ -1,4 +1,8 @@
 /* General Body Styles */
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -93,11 +97,23 @@ header ul li {
 header ul li a {
     color: #fff;
     text-decoration: none;
+    padding: 5px 10px; /* Add some padding for better hover indication */
+    border-radius: 4px; /* Rounded corners for hover effect */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
 }
 
 header ul li a:hover {
-    text-decoration: underline;
+    background-color: #555; /* Darker background on hover */
+    color: #fff; /* Keep text color or change as needed */
+    text-decoration: none; /* Remove underline if hover has background */
 }
+
+/* Style for an 'active' navigation link - can be set by JavaScript if desired */
+header ul li a.active-nav-link {
+    background-color: #007bff; /* Example active color */
+    color: #fff;
+}
+
 
 /* Main Content Area */
 main {
@@ -445,6 +461,17 @@ body.dark-mode header ul li a,
 body.dark-mode header .logo a {
     color: #e0e0e0;
 }
+
+body.dark-mode header ul li a:hover {
+    background-color: #444; /* Slightly lighter gray for hover in dark mode */
+    color: #e0e0e0;
+}
+
+body.dark-mode header ul li a.active-nav-link {
+    background-color: #0af; /* Lighter blue for active link in dark mode */
+    color: #121212; /* Dark text on light blue background */
+}
+
 
 body.dark-mode .hero {
     background: #0056b3; /* Darker blue */

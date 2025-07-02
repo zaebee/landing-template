@@ -1,10 +1,36 @@
 """
 Builds the index.html file from configured blocks for multiple languages.
 """
-
-import json
-import os
 import sys
+import os
+
+# Ensure the project root (and thus 'generated' directory) is in the Python path
+project_root = os.path.dirname(os.path.abspath(__file__))
+generated_dir = os.path.join(project_root, "generated")
+
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+if generated_dir not in sys.path:
+    sys.path.insert(0, generated_dir) # Add generated to sys.path
+
+print(f"DEBUG (top): project_root: {project_root}")
+print(f"DEBUG (top): generated_dir: {generated_dir}")
+print(f"DEBUG (top): sys.path: {sys.path}")
+if os.path.exists(generated_dir):
+    print(f"DEBUG (top): Contents of generated_dir: {os.listdir(generated_dir)}")
+else:
+    print(f"DEBUG (top): generated_dir {generated_dir} does not exist.")
+"""
+# Removed debug prints from here:
+# print(f"DEBUG (top): project_root: {project_root}")
+# print(f"DEBUG (top): generated_dir: {generated_dir}")
+# print(f"DEBUG (top): sys.path: {sys.path}")
+# if os.path.exists(generated_dir):
+#     print(f"DEBUG (top): Contents of generated_dir: {os.listdir(generated_dir)}")
+# else:
+#     print(f"DEBUG (top): generated_dir {generated_dir} does not exist.")
+"""
+import json
 from typing import Any, Dict, List, Type, TypeVar, Union
 
 from bs4 import BeautifulSoup
@@ -12,17 +38,29 @@ from bs4.element import Tag  # Removed _RawAttributeValues
 from google.protobuf import json_format
 from google.protobuf.message import Message
 
+# This is where the error occurs
 from generated.blog_post_pb2 import BlogPost
 from generated.feature_item_pb2 import FeatureItem
-from generated.hero_item_pb2 import HeroItem
+from generated.hero_item_pb2 import HeroItem  # Added
+from generated.nav_item_pb2 import Navigation  # Added
 from generated.portfolio_item_pb2 import PortfolioItem
 from generated.testimonial_item_pb2 import TestimonialItem
 from generated.contact_form_config_pb2 import ContactFormConfig # Added
 
 # Ensure the project root (and thus 'generated' directory) is in the Python path
 project_root = os.path.dirname(os.path.abspath(__file__))
+generated_dir = os.path.join(project_root, "generated")
+
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
+if generated_dir not in sys.path:
+    sys.path.insert(0, generated_dir) # Add generated to sys.path
+
+print(f"DEBUG: project_root: {project_root}")
+print(f"DEBUG: generated_dir: {generated_dir}")
+print(f"DEBUG: sys.path: {sys.path}")
+import os
+print(f"DEBUG: Contents of generated_dir: {os.listdir(generated_dir)}")
 
 
 # Type aliases
@@ -294,6 +332,23 @@ def generate_blog_html(posts: List[BlogPost], translations: Translations) -> str
     return "\n".join(html_output)
 
 
+def generate_navigation_data_for_config(
+    nav_proto: Navigation | None, translations: Translations
+) -> List[Dict[str, str]]:
+    """
+    Generates a list of navigation item dictionaries for config.json
+    based on the Navigation proto and translations.
+    """
+    nav_items_for_config: List[Dict[str, str]] = []
+    if not nav_proto:
+        return nav_items_for_config
+
+    for item in nav_proto.items:
+        label: str = translations.get(item.label.key, item.label.key)
+        nav_items_for_config.append({"label_i18n_key": item.label.key, "label": label, "href": item.href})
+    return nav_items_for_config
+
+
 def main() -> None:
     """
     Reads config, assembles blocks, translates, and writes new index_<lang>.html
@@ -349,6 +404,31 @@ def main() -> None:
     loaded_data_cache: Dict[str, Union[List[Message], Message, None]] = (
         {}
     )  # Allow single Message or None
+
+    # Load navigation data first as it might be needed by config processing
+    # Assuming nav_data_file path will be added to config.json or hardcoded for now
+    # For now, let's assume a fixed path for navigation data
+    # and that it's loaded for each language variant if needed, or once if translations applied later
+    # The plan is to put navigation data into config.json, so we load it before processing languages.
+
+    raw_config: Dict[str, Any]
+    try:
+        with open("public/config.json", "r", encoding="utf-8") as f:
+            raw_config = json.load(f)
+    except FileNotFoundError:
+        print("Error: public/config.json not found. Exiting.")
+        sys.exit(1)
+    except json.JSONDecodeError:
+        print("Error: Could not decode JSON from public/config.json. Exiting.")
+        sys.exit(1)
+
+    # Load navigation proto data
+    # This assumes a single navigation.json for all languages, with labels being i18n keys
+    navigation_data_file_path = raw_config.get("navigation_data_file", "data/navigation.json")
+    navigation_proto_data: Navigation | None = load_single_item_dynamic_data(
+        navigation_data_file_path, Navigation
+    )
+
     # TODO: use `block_name, config_item` to put into dynamic place.
     for _, config_item in dynamic_data_loaders.items():
         data_file = config_item["data_file"]
@@ -365,8 +445,38 @@ def main() -> None:
                     data_file, message_type
                 )
 
-    config: Dict[str, Any]
+    # The main config object will be language-specific if navigation is injected per language
+    # For now, let's keep one main 'raw_config' and adapt it per language if necessary
+    # The objective is to have `build.py` generate the navigation array for `config.json`
+    # This means the `config.json` written to disk or used by JS should have this.
+    # Let's refine this: `build.py` will *not* rewrite `public/config.json`.
+    # Instead, it will make the navigation data available for the JavaScript running in `index.html`.
+    # The simplest way is to embed it as a JS variable or make `generateNavigation()` fetch a new file.
+    # Plan step 4. says "Modify `build.py` to populate the `navigation` array within `public/config.json`"
+    # This is tricky as `build.py` generates `index_LANG.html`.
+    # Let's assume `build.py` will create a *new* config file for each language, e.g. `public/config_en.json`
+    # which `index_en.html` will load.
+
+    # Original config loaded into raw_config
+    # We will create language-specific configs based on this raw_config
+    # and add the translated navigation items to them.
+
+    # The existing config structure in `public/config.json` will be used as a base.
+    # `build.py` will generate language-specific versions of this config if needed,
+    # or directly embed the navigation data if that's simpler.
+
+    # Let's stick to the plan of `build.py` making nav data available to the *existing* JS.
+    # The existing JS (`generateNavigation` in `index.html`) fetches `public/config.json`.
+    # So, `build.py` needs to create/update `public/config_en.json`, `public/config_es.json` etc.
+    # These files will be copies of the original `public/config.json` but with an added `navigation` array.
+
+    # Create a directory for generated language-specific configs if it doesn't exist
+    os.makedirs("public/generated_configs", exist_ok=True)
+
+
+    config: Dict[str, Any] # This will be used inside the loop for language-specific config
     try:
+        # This is the base config, will be augmented with navigation for each lang
         with open("public/config.json", "r", encoding="utf-8") as f:
             config = json.load(f)
     except FileNotFoundError:
@@ -469,8 +579,26 @@ def main() -> None:
         print(f"Processing language: {lang}")
         translations: Translations = load_translations(lang)
 
+        # Generate language-specific config with navigation
+        lang_config = raw_config.copy() # Start with a copy of the base config
+        lang_config["navigation"] = generate_navigation_data_for_config(navigation_proto_data, translations)
+
+        # Save the language-specific config
+        # The JS in index.html will need to be updated to load config_en.json instead of config.json
+        # Or, if we are generating index_en.html, index_es.html, we can change the script path in those files.
+        # Let's assume for now the script in the generated HTML will point to the correct lang-specific config.
+        generated_config_path = f"public/generated_configs/config_{lang}.json"
+        try:
+            with open(generated_config_path, "w", encoding="utf-8") as f_config:
+                json.dump(lang_config, f_config, indent=4, ensure_ascii=False)
+            print(f"Generated language-specific config: {generated_config_path}")
+        except IOError as e:
+            print(f"Error writing language-specific config {generated_config_path}: {e}")
+
+
         blocks_html_parts: List[str] = []
-        for block_file_any in config.get("blocks", []):
+        # Use raw_config here for block list, as lang_config is for JS side.
+        for block_file_any in raw_config.get("blocks", []):
             if not isinstance(block_file_any, str):
                 print(
                     f"Warning: Invalid block file entry in config: {block_file_any}. "
