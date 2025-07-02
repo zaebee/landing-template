@@ -14,9 +14,10 @@ from google.protobuf.message import Message
 
 from generated.blog_post_pb2 import BlogPost
 from generated.feature_item_pb2 import FeatureItem
-from generated.hero_item_pb2 import HeroItem  # Added
+from generated.hero_item_pb2 import HeroItem
 from generated.portfolio_item_pb2 import PortfolioItem
 from generated.testimonial_item_pb2 import TestimonialItem
+from generated.contact_form_config_pb2 import ContactFormConfig # Added
 
 # Ensure the project root (and thus 'generated' directory) is in the Python path
 project_root = os.path.dirname(os.path.abspath(__file__))
@@ -217,23 +218,61 @@ def generate_features_html(items: List[FeatureItem], translations: Translations)
     return "\n".join(html_output)
 
 
-def generate_hero_html(item: HeroItem | None, translations: Translations) -> str:
-    """Generates HTML for the hero section."""
-    if not item:
-        return "<!-- Hero data not found -->"
+import random # Added for A/B testing selection
 
-    # HeroItem: title (I18nString), subtitle (I18nString), cta (CTA)
-    # CTA: text (I18nString), link (string)
-    title = translations.get(item.title.key, item.title.key)
-    subtitle = translations.get(item.subtitle.key, item.subtitle.key)
-    cta_text = translations.get(item.cta.text.key, item.cta.text.key)
+def generate_hero_html(hero_data: HeroItem | None, translations: Translations) -> str:
+    """Generates HTML for the hero section, selecting a variation."""
+    if not hero_data or not hero_data.variations:
+        return "<!-- Hero data not found or no variations -->"
+
+    selected_variation = None
+    if hero_data.variations:
+        # Simple random selection for A/B testing.
+        # More sophisticated logic could be added here (e.g., based on build count, environment variable)
+        selected_variation = random.choice(hero_data.variations)
+
+    # Fallback to default if random selection somehow fails or if specific default is needed
+    if not selected_variation:
+        default_id = hero_data.default_variation_id
+        for var in hero_data.variations:
+            if var.variation_id == default_id:
+                selected_variation = var
+                break
+        if not selected_variation: # If default_id not found, pick first
+             selected_variation = hero_data.variations[0]
+
+
+    if not selected_variation: # Should not happen if variations exist
+        return "<!-- Could not select a hero variation -->"
+
+    # HeroItemContent: title (I18nString), subtitle (I18nString), cta (CTA)
+    title = translations.get(selected_variation.title.key, selected_variation.title.key)
+    subtitle = translations.get(selected_variation.subtitle.key, selected_variation.subtitle.key)
+    cta_text = translations.get(selected_variation.cta.text.key, selected_variation.cta.text.key)
 
     return f"""
     <h1>{title}</h1>
     <p>{subtitle}</p>
-    <a href="{item.cta.link}" class="cta-button">{cta_text}</a>
+    <a href="{selected_variation.cta.link}" class="cta-button">{cta_text}</a>
+    <!-- Selected variation: {selected_variation.variation_id} -->
     """
 
+
+def generate_contact_form_html(config: ContactFormConfig | None, translations: Translations) -> str:
+    """
+    Generates HTML for the contact form, including data attributes for AJAX submission.
+    The actual form fields are expected to be in the block template.
+    This function primarily injects configuration.
+    """
+    if not config:
+        return "<!-- Contact form configuration not found -->"
+
+    # These will be used by the client-side JavaScript
+    return f"""
+    data-form-action-url="{config.form_action_url}"
+    data-success-message="{translations.get(config.success_message_key, 'Message sent!')}"
+    data-error-message="{translations.get(config.error_message_key, 'Error sending message.')}"
+    """
 
 def generate_blog_html(posts: List[BlogPost], translations: Translations) -> str:
     """Generates HTML for blog posts."""
@@ -294,9 +333,16 @@ def main() -> None:
             "data_file": "data/hero_item.json",
             "message_type": HeroItem,
             "generator": generate_hero_html,
-            "placeholder": "{{hero_content}}",  # Correct placeholder
-            "is_list": False,  # Indicates data is a single item
+            "placeholder": "{{hero_content}}",
+            "is_list": False,
         },
+        "contact-form.html": {
+            "data_file": "data/contact_form_config.json",
+            "message_type": ContactFormConfig,
+            "generator": generate_contact_form_html,
+            "placeholder": "{{contact_form_attributes}}",
+            "is_list": False,
+        }
     }
 
     # Pre-load all dynamic data once

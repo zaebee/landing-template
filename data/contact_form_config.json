@@ -1,0 +1,5 @@
+{
+  "form_action_url": "https://formspree.io/f/xgvyddyg",
+  "success_message_key": "contact_form_success",
+  "error_message_key": "contact_form_error"
+}

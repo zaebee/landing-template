@@ -1,8 +1,23 @@
 {
-  "title": { "key": "hero_title" },
-  "subtitle": { "key": "hero_subtitle" },
-  "cta": {
-    "text": { "key": "hero_cta" },
-    "link": "#"
-  }
+  "variations": [
+    {
+      "variation_id": "hero_v1",
+      "title": { "key": "hero_title_v1" },
+      "subtitle": { "key": "hero_subtitle_v1" },
+      "cta": {
+        "text": { "key": "hero_cta_v1" },
+        "link": "#signup"
+      }
+    },
+    {
+      "variation_id": "hero_v2",
+      "title": { "key": "hero_title_v2" },
+      "subtitle": { "key": "hero_subtitle_v2" },
+      "cta": {
+        "text": { "key": "hero_cta_v2" },
+        "link": "#learnmore"
+      }
+    }
+  ],
+  "default_variation_id": "hero_v1"
 }

@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package website_content.v1;
+
+option go_package = "example.com/website_content/v1;website_content_v1";
+
+// Configuration for the contact form
+message ContactFormConfig {
+  string form_action_url = 1; // The URL where the form data will be submitted
+  string success_message_key = 2; // I18n key for the success message
+  string error_message_key = 3;   // I18n key for the error message
+}

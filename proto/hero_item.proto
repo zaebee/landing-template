@@ -6,8 +6,14 @@ import "common.proto";
 
 option go_package = "example.com/website_content/v1;website_content_v1";
 
-message HeroItem {
+message HeroItemContent {
   I18nString title = 1;
   I18nString subtitle = 2;
   CTA cta = 3;
+  string variation_id = 4; // Optional: to identify this variation
+}
+
+message HeroItem {
+  repeated HeroItemContent variations = 1;
+  string default_variation_id = 2; // ID of the variation to use if no selection logic
 }
