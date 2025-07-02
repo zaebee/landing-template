@@ -3,6 +3,9 @@ syntax = "proto3";
 package website_content.v1;
 
 option go_package = "example.com/website_content/v1;website_content_v1";
+option java_package = "com.website_content.v1";
+option java_multiple_files = true;
+option java_outer_classname = "CommonProto";
 
 // Message for a string that is an internationalization key.
 message I18nString {
@@ -18,7 +21,7 @@ message Image {
 // Message for Call to Action elements.
 message CTA {
   I18nString text = 1;  // CTA button text, using an i18n key
-  string link = 2;      // URL the CTA links to
+  string uri = 2;       // URI the CTA links to (e.g., a URL or an anchor)
 }
 
 // Message for a block of content with a title and description.

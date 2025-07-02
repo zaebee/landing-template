@@ -137,13 +137,13 @@ class TestBuildScript(unittest.TestCase):
                 "id": "b1",
                 "title": {"key": "blog_title_1"},
                 "excerpt": {"key": "blog_excerpt_1"},
-                "cta": {"text": {"key": "blog_cta_1"}, "link": "link1.html"},
+                "cta": {"text": {"key": "blog_cta_1"}, "uri": "link1.html"},
             },
             {
                 "id": "b2",
                 "title": {"key": "blog_title_2"},
                 "excerpt": {"key": "blog_excerpt_2"},
-                "cta": {"text": {"key": "blog_cta_2"}, "link": "link2.html"},
+                "cta": {"text": {"key": "blog_cta_2"}, "uri": "link2.html"},
             },
         ]
         with open(
@@ -191,13 +191,13 @@ class TestBuildScript(unittest.TestCase):
                     "variation_id": "var1",
                     "title": {"key": "hero_title_main_v1"},
                     "subtitle": {"key": "hero_subtitle_main_v1"},
-                    "cta": {"text": {"key": "hero_cta_main_v1"}, "link": "#gohere_v1"},
+                    "cta": {"text": {"key": "hero_cta_main_v1"}, "uri": "#gohere_v1"},
                 },
                 {
                     "variation_id": "var2",
                     "title": {"key": "hero_title_main_v2"},
                     "subtitle": {"key": "hero_subtitle_main_v2"},
-                    "cta": {"text": {"key": "hero_cta_main_v2"}, "link": "#gohere_v2"},
+                    "cta": {"text": {"key": "hero_cta_main_v2"}, "uri": "#gohere_v2"},
                 },
             ],
             "default_variation_id": "var1",
@@ -467,7 +467,7 @@ class TestBuildScript(unittest.TestCase):
                 id="b1",
                 title={"key": "b_title"},
                 excerpt={"key": "b_excerpt"},
-                cta={"text": {"key": "b_cta"}, "link": "link.html"},
+                cta={"text": {"key": "b_cta"}, "uri": "link.html"},
             )
         ]
         translations = {
