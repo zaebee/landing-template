@@ -951,12 +951,15 @@ class TestBuildScript(unittest.TestCase):
             "index.html",
             os.path.join("public", "generated_configs", "config_es.json"),
             "index_es.html",
-            os.path.join("public", "dist", "main.css"), # Added CSS bundle
-            os.path.join("public", "dist", "main.js"),   # Added JS bundle
+            os.path.join("public", "dist", "main.css"),
+            os.path.join("public", "dist", "main.js"),
         ]
+        # Convert relative paths to absolute paths based on the test's root directory
+        expected_absolute_paths = [os.path.join(self.test_root_dir, p) for p in expected_paths]
+
         expected_write_calls = [
-            mock.call(os.path.normpath(p), "w", encoding="utf-8")
-            for p in expected_paths
+            mock.call(os.path.normpath(p), "w", encoding="utf-8") # Now p is absolute
+            for p in expected_absolute_paths
         ]
 
         actual_write_calls = [

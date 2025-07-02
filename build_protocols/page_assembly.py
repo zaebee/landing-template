@@ -50,7 +50,7 @@ class DefaultPageBuilder(PageBuilder):
             List[Dict[str, Any]]
         ] = None,  # Processed navigation items
         page_title: Optional[str] = None,
-        app_config: Optional[Dict[str, Any]] = None,  # Added app_config
+        app_config: Optional[Dict[str, Any]] = None, # ADDED app_config HERE
     ) -> str:
         """Assembles a full HTML page using a Jinja2 base template.
 
@@ -76,7 +76,7 @@ class DefaultPageBuilder(PageBuilder):
             "translations": translations,
             "main_content": main_content,
             "navigation_items": navigation_items or [],
-            "app_config": app_config or {},  # Pass app_config to the template context
+            "app_config": app_config or {}, # Pass app_config to the template context
             # Add any other variables your base.html might need
         }
         return str(base_template.render(context))
