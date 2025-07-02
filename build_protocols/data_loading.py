@@ -226,6 +226,8 @@ class InMemoryDataCache(DataCache[T]):
 # Ideally, new code should instantiate and use JsonProtoDataLoader and
 # InMemoryDataCache directly for better testability and explicitness.
 
+# _default_loader is a module-level instance used by the convenience functions
+# below. It is intended to be stateless for these operations.
 _default_loader: JsonProtoDataLoader = JsonProtoDataLoader()
 
 load_dynamic_list_data = _default_loader.load_dynamic_list_data
