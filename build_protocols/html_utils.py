@@ -34,12 +34,19 @@ def create_element(
     if attributes:
         attrs_list = []
         for k, v in attributes.items():
-            if v is not None: # Only include attributes with actual values
+            if v is not None:  # Only include attributes with actual values
                 attrs_list.append(f'{escape_html(k)}="{escape_html(str(v))}"')
         if attrs_list:
-             attrs_str = " " + " ".join(attrs_list)
+            attrs_str = " " + " ".join(attrs_list)
 
-    if not content and tag_name.lower() in ["img", "br", "hr", "input", "meta", "link"]: # Self-closing tags
+    if not content and tag_name.lower() in [
+        "img",
+        "br",
+        "hr",
+        "input",
+        "meta",
+        "link",
+    ]:  # Self-closing tags
         return f"<{tag_name}{attrs_str}>"
     else:
         return f"<{tag_name}{attrs_str}>{content}</{tag_name}>"
@@ -64,6 +71,6 @@ def img(src: str, alt: str = "", attributes: Optional[Dict[str, str]] = None) ->
     # Remove alt if it's empty and not explicitly provided in attributes,
     # but always keep src.
     if not alt and "alt" not in (attributes or {}):
-        final_attrs["alt"] = "" # Ensure alt is present, even if empty, for validity.
+        final_attrs["alt"] = ""  # Ensure alt is present, even if empty, for validity.
 
     return create_element("img", attributes=final_attrs)

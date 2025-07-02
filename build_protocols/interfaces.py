@@ -10,10 +10,9 @@ contracts.
 
 from typing import Any, Dict, List, Optional, Protocol, Tuple, Type, TypeVar, Union
 
-from google.protobuf.message import Message
-
 # Import specific generated types used in protocols for clarity.
 from generated.nav_item_pb2 import Navigation as NavigationProto
+from google.protobuf.message import Message
 
 # --- Type Aliases and TypeVariables ---
 

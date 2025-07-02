@@ -83,9 +83,7 @@ class JsonProtoDataLoader(DataLoader[T]):
             with open(data_file_path, "r", encoding="utf-8") as f:
                 data_list_json = json.load(f)
                 if not isinstance(data_list_json, list):
-                    msg = (
-                        f"Data in '{data_file_path}' is not a list as expected."
-                    )
+                    msg = f"Data in '{data_file_path}' is not a list as expected."
                     logger.error(msg)
                     raise InvalidDataStructureError(msg)
                 for item_data in data_list_json:

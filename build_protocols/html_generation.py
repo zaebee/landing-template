@@ -11,9 +11,9 @@ Refactored to use `html_utils` for safer and more readable HTML construction.
 `ContactFormHtmlGenerator` now returns a dictionary of attributes.
 """
 
+import logging  # Added for ContactFormHtmlGenerator warning
 import random
-import logging # Added for ContactFormHtmlGenerator warning
-from typing import Dict, List, Optional, Union # Added Dict, Union
+from typing import Dict, List, Optional  # Added Dict, Union
 
 # Generated protobuf message types
 from generated.blog_post_pb2 import BlogPost
@@ -23,7 +23,7 @@ from generated.hero_item_pb2 import HeroItem, HeroItemContent
 from generated.portfolio_item_pb2 import PortfolioItem
 from generated.testimonial_item_pb2 import TestimonialItem
 
-from .html_utils import create_element, img, escape_html
+from .html_utils import create_element, escape_html, img
 from .interfaces import HtmlBlockGenerator, Translations
 
 logger = logging.getLogger(__name__)
@@ -55,13 +55,13 @@ class PortfolioHtmlGenerator(HtmlBlockGenerator):
             description_text: str = translations.get(
                 item.details.description.key, item.details.description.key
             )
-            alt_text: str = translations.get(
-                item.image.alt_text.key, "Portfolio image"
-            )
+            alt_text: str = translations.get(item.image.alt_text.key, "Portfolio image")
 
             image_html = img(src=item.image.src, alt=alt_text)
             title_html = create_element("h3", content=escape_html(title_text))
-            description_html = create_element("p", content=escape_html(description_text))
+            description_html = create_element(
+                "p", content=escape_html(description_text)
+            )
 
             div_attrs = {"class": "portfolio-item"}
             if item.id:
@@ -105,7 +105,9 @@ class TestimonialsHtmlGenerator(HtmlBlockGenerator):
 
             image_html = img(src=item.author_image.src, alt=img_alt_text)
             # Ensure quotes are handled correctly if they are part of the content
-            paragraph_html = create_element("p", content=f'"{escape_html(text_content)}"')
+            paragraph_html = create_element(
+                "p", content=f'"{escape_html(text_content)}"'
+            )
             author_html = create_element("h4", content=escape_html(author_name))
 
             html_output.append(
@@ -155,7 +157,9 @@ class FeaturesHtmlGenerator(HtmlBlockGenerator):
                 icon_html_content = item.icon.svg_content
 
             title_html = create_element("h3", content=escape_html(title_text))
-            description_html = create_element("p", content=escape_html(description_text))
+            description_html = create_element(
+                "p", content=escape_html(description_text)
+            )
 
             # Ensure icon_html_content is on its own line if present
             inner_content = f"\n{icon_html_content}\n" if icon_html_content else "\n"
@@ -230,46 +234,53 @@ class HeroHtmlGenerator(HtmlBlockGenerator):
 
 
 class ContactFormHtmlGenerator(HtmlBlockGenerator):
-    """Generates a dictionary of HTML attributes for a contact form."""
+    """Generates an HTML attribute string for a contact form."""
 
     def generate_html(
         self, data: Optional[ContactFormConfig], translations: Translations
-    ) -> Dict[str, str]: # Return type changed to reflect it always returns a dict
-        """Generates a dictionary of HTML attributes for the contact form.
+    ) -> str:
+        """Generates a string of HTML data attributes for the contact form.
 
-        This generator produces a dictionary of attributes that can be merged
-        into an existing <form> tag by the page assembly logic.
+        This generator is intended to produce attributes that can be merged
+        into an existing <form> tag in a template.
 
         Args:
             data: An optional ContactFormConfig protobuf message.
             translations: A dictionary containing translations.
 
         Returns:
-            A dictionary of HTML attributes for the form.
-            Returns an empty dictionary if configuration is not found,
-            and logs a warning.
+            A string of HTML attributes, or an HTML comment if configuration
+            is not found.
         """
         if not data:
             logger.warning(
-                "Contact form configuration not found. Returning empty attributes."
+                "Contact form configuration not found. Returning comment string."
             )
-            return {} # Return empty dict instead of comment string
+            return "<!-- Contact form configuration not found -->"
 
-        attrs: Dict[str, str] = {}
+        attrs_dict: Dict[str, str] = {}
         if data.form_action_uri:
-            attrs["action"] = data.form_action_uri
+            # Ensure value is not None before assigning
+            attrs_dict["action"] = data.form_action_uri or ""
 
-        # These data attributes are for client-side JavaScript to use.
-        # Ensure keys are valid for HTML attributes (usually data-* is fine)
-        attrs["data-form-action-url"] = data.form_action_uri
-        attrs["data-success-message"] = translations.get(
+        attrs_dict["data-form-action-url"] = data.form_action_uri or ""
+        attrs_dict["data-success-message"] = translations.get(
             data.success_message_key, "Message sent!"
         )
-        attrs["data-error-message"] = translations.get(
+        attrs_dict["data-error-message"] = translations.get(
             data.error_message_key, "Error sending message."
         )
-        attrs["method"] = "POST"  # Standard method for form submission
-        return attrs
+        attrs_dict["method"] = "POST"
+
+        attrs_list = []
+        for key, value in attrs_dict.items():
+            # Use html_utils.escape_html for attribute values for consistency,
+            # though protobuf strings are generally not expected to have HTML special chars.
+            # Keys are assumed to be safe.
+            if value is not None: # Ensure value is a string before escaping
+                escaped_value = escape_html(str(value))
+                attrs_list.append(f'{key}="{escaped_value}"')
+        return " ".join(attrs_list)
 
 
 class BlogHtmlGenerator(HtmlBlockGenerator):

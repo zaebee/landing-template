@@ -10,11 +10,10 @@ manipulation, reducing reliance on regex and string splitting.
 """
 
 import logging
-import re # Still used for doctype and minimal checks
 from typing import List, Optional, Tuple
 
 from bs4 import BeautifulSoup, Doctype
-from bs4.element import Tag, NavigableString
+from bs4.element import NavigableString, Tag
 
 from .interfaces import PageBuilder, TranslationProvider, Translations
 
@@ -60,7 +59,6 @@ class DefaultPageBuilder(PageBuilder):
                 break
         return ("<!DOCTYPE " + doctype_item + ">\n") if doctype_item else ""
 
-
     def _extract_header_footer_from_body(
         self, soup_body: Optional[Tag]
     ) -> Tuple[str, str]:
@@ -77,7 +75,9 @@ class DefaultPageBuilder(PageBuilder):
         footer_elements: List[str] = []
 
         if not soup_body:
-            logger.warning("<body> tag not found by BeautifulSoup. Header/footer content will be empty.")
+            logger.warning(
+                "<body> tag not found by BeautifulSoup. Header/footer content will be empty."
+            )
             return "", ""
 
         main_tag = soup_body.find("main")
@@ -89,7 +89,7 @@ class DefaultPageBuilder(PageBuilder):
             )
             for child in soup_body.children:
                 if isinstance(child, NavigableString) and not child.strip():
-                    continue # Skip empty strings
+                    continue  # Skip empty strings
                 header_elements.append(str(child))
             return "\n".join(header_elements), ""
 
@@ -97,7 +97,7 @@ class DefaultPageBuilder(PageBuilder):
         for sibling in main_tag.previous_siblings:
             if isinstance(sibling, NavigableString) and not sibling.strip():
                 continue
-            header_elements.insert(0, str(sibling)) # Prepend to maintain order
+            header_elements.insert(0, str(sibling))  # Prepend to maintain order
 
         # Content after <main> is footer content
         for sibling in main_tag.next_siblings:
@@ -123,10 +123,13 @@ class DefaultPageBuilder(PageBuilder):
         html_tag = soup.find("html")
         if not html_tag or not isinstance(html_tag, Tag):
             logger.warning("<html> tag not found. Using default HTML structure.")
-            default_head = ('<head><meta charset="UTF-8">'
-                           '<meta name="viewport" content="width=device-width, initial-scale=1.0">'
-                           '<title>Page</title></head>')
-            html_start = f'{doctype_str or "<!DOCTYPE html>\\n"}<html lang="{lang or "en"}">{default_head}<body>\n'
+            default_head = (
+                '<head><meta charset="UTF-8">'
+                '<meta name="viewport" content="width=device-width, initial-scale=1.0">'
+                "<title>Page</title></head>"
+            )
+            default_doctype_with_newline = "<!DOCTYPE html>\n"
+            html_start = f'{doctype_str or default_doctype_with_newline}<html lang="{lang or "en"}">{default_head}<body>\n'
             html_end = "\n</body>\n</html>"
             return html_start, html_end
 
@@ -134,7 +137,9 @@ class DefaultPageBuilder(PageBuilder):
             html_tag["lang"] = lang
 
         head_tag = html_tag.find("head")
-        head_content = str(head_tag) if head_tag else "<head></head>" # Ensure head exists
+        head_content = (
+            str(head_tag) if head_tag else "<head></head>"
+        )  # Ensure head exists
 
         # Create a temporary soup to get the opening <html> tag with attributes and head
         temp_soup = BeautifulSoup("", "html.parser")
@@ -166,18 +171,22 @@ class DefaultPageBuilder(PageBuilder):
 
         # Now html_tag string without its body's children but with body tag itself
         # This is tricky. Let's reconstruct more manually for clarity.
-        html_start_str = doctype_str + str(new_html_tag).replace("</html>","") + head_content + opening_body_tag + "\n"
-
+        html_start_str = (
+            doctype_str
+            + str(new_html_tag).replace("</html>", "")
+            + head_content
+            + opening_body_tag
+            + "\n"
+        )
 
         # Put children back if they were taken (though not strictly necessary for this func's output)
         if body_tag and original_body_children:
             for child in original_body_children:
                 body_tag.append(child)
 
-        html_end_str = "\n</body>\n</html>" # Standard closing
+        html_end_str = "\n</body>\n</html>"  # Standard closing
 
         return html_start_str, html_end_str
-
 
     def extract_base_html_parts(
         self, base_html_path: str = "index.html"
@@ -210,7 +219,7 @@ class DefaultPageBuilder(PageBuilder):
 
         try:
             soup = BeautifulSoup(base_content, "html.parser")
-        except Exception as e: # Catch potential BeautifulSoup parsing errors
+        except Exception as e:  # Catch potential BeautifulSoup parsing errors
             raise PageAssemblyError(
                 f"Error parsing base HTML file '{base_html_path}': {e}"
             ) from e
@@ -219,7 +228,9 @@ class DefaultPageBuilder(PageBuilder):
 
         # Build shell without lang initially. Lang will be set during page assembly.
         # This keeps extract_base_html_parts language-agnostic.
-        html_start_template, html_end_str = self._build_html_shell_parts(soup, doctype_str)
+        html_start_template, html_end_str = self._build_html_shell_parts(
+            soup, doctype_str
+        )
 
         header_content_str, footer_content_str = self._extract_header_footer_from_body(
             soup.body
@@ -237,8 +248,9 @@ class DefaultPageBuilder(PageBuilder):
         if soup_html_tag:
             soup_html_tag["lang"] = lang
         else:
-            logger.warning("Cannot set lang attribute: <html> tag not found in parsed soup.")
-
+            logger.warning(
+                "Cannot set lang attribute: <html> tag not found in parsed soup."
+            )
 
     def assemble_translated_page(
         self,
@@ -286,7 +298,28 @@ class DefaultPageBuilder(PageBuilder):
         )
 
         # Set the lang attribute on the <html> tag.
-        final_html_start = self._update_html_lang_attribute(html_start_original, lang)
+        # Corrected method call: _update_html_lang_attribute -> _set_html_lang_attribute (which works on soup)
+        # This part needs rethinking as _set_html_lang_attribute works on a soup object,
+        # and html_start_original is a string.
+        # We need to parse html_start_original, set lang, then stringify.
+
+        temp_soup = BeautifulSoup(html_start_original, "html.parser")
+        html_tag_in_start = temp_soup.find("html")
+        if html_tag_in_start:
+            self._set_html_lang_attribute(html_tag_in_start, lang)
+            # Reconstruct the html_start string from temp_soup
+            # This will include doctype if it was part of html_start_original
+            # and the modified html tag
+
+            # Need to handle doctype carefully. self._extract_doctype_str(temp_soup)
+            # plus the string of temp_soup.html
+            doctype_from_start_original = self._extract_doctype_str(temp_soup)
+            final_html_start = doctype_from_start_original + str(temp_soup.html) if temp_soup.html else html_start_original
+
+        else:
+            logger.warning(f"Could not find <html> tag in html_start_original to set lang='{lang}'. Using original.")
+            final_html_start = html_start_original
+
 
         # Assemble the full page.
         # Ensure <main> tags correctly wrap the main_content.
