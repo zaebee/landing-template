@@ -44,10 +44,10 @@
     </header>
     <main>
       <section class="hero">
-        <h1>hero_title_v2</h1>
-        <p>hero_subtitle_v2</p>
-        <a class="cta-button" href="#learnmore">hero_cta_v2</a>
-        <!-- Selected variation: hero_v2 -->
+        <h1>hero_title_v1</h1>
+        <p>hero_subtitle_v1</p>
+        <a class="cta-button" href="#signup">hero_cta_v1</a>
+        <!-- Selected variation: hero_v1 -->
       </section>
 
       <section
@@ -84,7 +84,7 @@
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
             />
             <p>
-              This is the best service I have ever used. Highly recommended!
+              "This is the best service I have ever used. Highly recommended!"
             </p>
             <h4>- Jane Doe</h4>
           </div>
@@ -94,8 +94,8 @@
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
             />
             <p>
-              Amazing features and incredible support. My business has grown
-              significantly.
+              "Amazing features and incredible support. My business has grown
+              significantly."
             </p>
             <h4>- John Smith</h4>
           </div>
@@ -105,7 +105,8 @@
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
             />
             <p>
-              A game-changer for our workflow. Simple, effective, and reliable.
+              "A game-changer for our workflow. Simple, effective, and
+              reliable."
             </p>
             <h4>- Alice Brown</h4>
           </div>
@@ -116,7 +117,7 @@
         <h2 data-i18n="portfolio_title">Our Work</h2>
         <div class="portfolio-grid">
           <!-- Portfolio items will be dynamically injected here by build.py -->
-          <div class="portfolio-item">
+          <div class="portfolio-item" id="project1">
             <img
               alt="Portfolio image"
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
@@ -124,7 +125,7 @@
             <h3>Project Alpha</h3>
             <p>Description for Project Alpha.</p>
           </div>
-          <div class="portfolio-item">
+          <div class="portfolio-item" id="project2">
             <img
               alt="Portfolio image"
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
@@ -132,7 +133,7 @@
             <h3>Project Beta</h3>
             <p>Description for Project Beta.</p>
           </div>
-          <div class="portfolio-item">
+          <div class="portfolio-item" id="project3">
             <img
               alt="Portfolio image"
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
@@ -140,7 +141,7 @@
             <h3>Project Gamma</h3>
             <p>Description for Project Gamma.</p>
           </div>
-          <div class="portfolio-item">
+          <div class="portfolio-item" id="project4">
             <img
               alt="Portfolio image"
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
@@ -155,17 +156,17 @@
         <h2 data-i18n="blog_title">Latest Posts</h2>
         <div class="blog-list">
           <!-- Blog posts will be dynamically injected here by build.py -->
-          <div class="blog-item">
+          <div class="blog-item" id="post1">
             <h3>Alpha Post Title</h3>
             <p>Excerpt for Alpha blog post...</p>
             <a class="read-more" href="#post1-link">Read Alpha Post</a>
           </div>
-          <div class="blog-item">
+          <div class="blog-item" id="post2">
             <h3>Beta Post Title</h3>
             <p>Excerpt for Beta blog post...</p>
             <a class="read-more" href="#post2-link">Read Beta Post</a>
           </div>
-          <div class="blog-item">
+          <div class="blog-item" id="post3">
             <h3>Gamma Post Title</h3>
             <p>Excerpt for Gamma blog post...</p>
             <a class="read-more" href="#post3-link">Read Gamma Post</a>
