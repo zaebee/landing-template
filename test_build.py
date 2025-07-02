@@ -16,26 +16,26 @@ if project_root_dir not in sys.path:
 if generated_dir not in sys.path:
     sys.path.insert(0, generated_dir)
 
-from google.protobuf import json_format
+from google.protobuf import json_format  # noqa: E402
 
-from build import (  # Grouped with other 'from build' imports
+from build import (  # noqa: E402
     generate_blog_html,
     generate_features_html,
-    generate_hero_html,  # Added
+    generate_hero_html,
     generate_portfolio_html,
     generate_testimonials_html,
     load_dynamic_data,
-    load_single_item_dynamic_data,  # Added
+    load_single_item_dynamic_data,
     load_translations,
     translate_html_content,
 )
-from build import main as build_main
-from generated.blog_post_pb2 import BlogPost
-from generated.feature_item_pb2 import FeatureItem
-from generated.hero_item_pb2 import HeroItem
-from generated.nav_item_pb2 import Navigation  # Moved to top
-from generated.portfolio_item_pb2 import PortfolioItem
-from generated.testimonial_item_pb2 import TestimonialItem
+from build import main as build_main  # noqa: E402
+from generated.blog_post_pb2 import BlogPost  # noqa: E402
+from generated.feature_item_pb2 import FeatureItem  # noqa: E402
+from generated.hero_item_pb2 import HeroItem  # noqa: E402
+from generated.nav_item_pb2 import Navigation  # noqa: E402
+from generated.portfolio_item_pb2 import PortfolioItem  # noqa: E402
+from generated.testimonial_item_pb2 import TestimonialItem  # noqa: E402
 
 
 class TestBuildScript(unittest.TestCase):
