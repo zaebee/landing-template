@@ -1,139 +1,183 @@
 <html lang="es">
-<head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content="A simple and modern landing page template for showcasing your business, services, or portfolio." name="description"/>
-<meta content="landing page, template, HTML, CSS, JavaScript, responsive, business, portfolio, services" name="keywords"/>
-<title>Simple Landing Page</title>
-<link href="public/style.css" rel="stylesheet"/>
-</head>
-<body>
-</body></html>
-<header>
-<nav>
-<div class="logo">
-<a href="#">Logo</a>
-</div>
-<button aria-expanded="false" aria-label="Toggle menu" class="hamburger-menu">
-<span class="hamburger-bar"></span>
-<span class="hamburger-bar"></span>
-<span class="hamburger-bar"></span>
-</button>
-<div class="nav-items">
-<ul>
-<!-- Navigation items will be dynamically injected here -->
-</ul>
-<button aria-label="Switch to Dark Mode" id="dark-mode-toggle">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta
+      content="A simple and modern landing page template for showcasing your business, services, or portfolio."
+      name="description"
+    />
+    <meta
+      content="landing page, template, HTML, CSS, JavaScript, responsive, business, portfolio, services"
+      name="keywords"
+    />
+    <title>Simple Landing Page</title>
+    <link href="public/style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <div class="logo">
+          <a href="#">Logo</a>
+        </div>
+        <button
+          aria-expanded="false"
+          aria-label="Toggle menu"
+          class="hamburger-menu"
+        >
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+        </button>
+        <div class="nav-items">
+          <ul>
+            <!-- Navigation items will be dynamically injected here -->
+          </ul>
+          <button aria-label="Switch to Dark Mode" id="dark-mode-toggle">
             🌙
           </button>
-<div id="language-switcher">
-<button data-lang="en">EN</button>
-<button data-lang="es">ES</button>
-</div>
-</div>
-</nav>
-</header>
-<main>
-<section class="hero">
-<h1>hero_title_v1</h1>
-<p>hero_subtitle_v1</p>
-<a class="cta-button" href="#signup">hero_cta_v1</a>
-<!-- Selected variation: hero_v1 -->
-</section>
+          <div id="language-switcher">
+            <button data-lang="en">EN</button>
+            <button data-lang="es">ES</button>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <section class="hero">
+        <h1>hero_title_v1</h1>
+        <p>hero_subtitle_v1</p>
+        <a class="cta-button" href="#signup">hero_cta_v1</a>
+        <!-- Selected variation: hero_v1 -->
+      </section>
 
-<section class="features" data-aos="fade-up" data-aos-delay="100" id="features">
-<h2 data-i18n="features_title">Nuestras Características</h2>
-<div class="feature-list">
-<!-- Feature items will be dynamically injected here by build.py -->
-<div class="feature-item">
-<h3>Característica Uno</h3>
-<p>Descripción de la característica uno.</p>
-</div>
-<div class="feature-item">
-<h3>Característica Dos</h3>
-<p>Descripción de la característica dos.</p>
-</div>
-<div class="feature-item">
-<h3>Característica Tres</h3>
-<p>Descripción of la característica tres.</p>
-</div>
-</div>
-</section>
+      <section
+        class="features"
+        data-aos="fade-up"
+        data-aos-delay="100"
+        id="features"
+      >
+        <h2 data-i18n="features_title">Nuestras Características</h2>
+        <div class="feature-list">
+          <!-- Feature items will be dynamically injected here by build.py -->
+          <div class="feature-item">
+            <h3>Característica Uno</h3>
+            <p>Descripción de la característica uno.</p>
+          </div>
+          <div class="feature-item">
+            <h3>Característica Dos</h3>
+            <p>Descripción de la característica dos.</p>
+          </div>
+          <div class="feature-item">
+            <h3>Característica Tres</h3>
+            <p>Descripción of la característica tres.</p>
+          </div>
+        </div>
+      </section>
 
-<section class="testimonials" id="testimonials">
-<h2 data-i18n="testimonials_title">Lo Que Dicen Nuestros Usuarios</h2>
-<div class="testimonial-list">
-<!-- Testimonial items will be dynamically injected here by build.py -->
-<div class="testimonial-item">
-<img alt="Foto del Usuario 1" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"/>
-<p>"Este es el mejor servicio que he usado. ¡Muy recomendado!"</p>
-<h4>- Jane Doe</h4>
-</div>
-<div class="testimonial-item">
-<img alt="Foto del Usuario 2" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"/>
-<p>"Características increíbles y un soporte espectacular. Mi negocio ha crecido significativamente."</p>
-<h4>- John Smith</h4>
-</div>
-<div class="testimonial-item">
-<img alt="Foto del Usuario 3" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"/>
-<p>"Un cambio de juego para nuestro flujo de trabajo. Simple, efectivo y confiable."</p>
-<h4>- Alice Brown</h4>
-</div>
-</div>
-</section>
+      <section class="testimonials" id="testimonials">
+        <h2 data-i18n="testimonials_title">Lo Que Dicen Nuestros Usuarios</h2>
+        <div class="testimonial-list">
+          <!-- Testimonial items will be dynamically injected here by build.py -->
+          <div class="testimonial-item">
+            <img
+              alt="Foto del Usuario 1"
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
+            />
+            <p>"Este es el mejor servicio que he usado. ¡Muy recomendado!"</p>
+            <h4>- Jane Doe</h4>
+          </div>
+          <div class="testimonial-item">
+            <img
+              alt="Foto del Usuario 2"
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
+            />
+            <p>
+              "Características increíbles y un soporte espectacular. Mi negocio
+              ha crecido significativamente."
+            </p>
+            <h4>- John Smith</h4>
+          </div>
+          <div class="testimonial-item">
+            <img
+              alt="Foto del Usuario 3"
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
+            />
+            <p>
+              "Un cambio de juego para nuestro flujo de trabajo. Simple,
+              efectivo y confiable."
+            </p>
+            <h4>- Alice Brown</h4>
+          </div>
+        </div>
+      </section>
 
-<section class="portfolio" id="portfolio">
-<h2 data-i18n="portfolio_title">Nuestro Trabajo</h2>
-<div class="portfolio-grid">
-<!-- Portfolio items will be dynamically injected here by build.py -->
-<div class="portfolio-item" id="project1">
-<img alt="Portfolio image" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="/>
-<h3>Proyecto Alfa</h3>
-<p>Descripción del Proyecto Alfa.</p>
-</div>
-<div class="portfolio-item" id="project2">
-<img alt="Portfolio image" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="/>
-<h3>Proyecto Beta</h3>
-<p>Descripción del Proyecto Beta.</p>
-</div>
-<div class="portfolio-item" id="project3">
-<img alt="Portfolio image" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="/>
-<h3>Proyecto Gama</h3>
-<p>Descripción del Proyecto Gama.</p>
-</div>
-<div class="portfolio-item" id="project4">
-<img alt="Portfolio image" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="/>
-<h3>Proyecto Delta</h3>
-<p>Descripción del Proyecto Delta.</p>
-</div>
-</div>
-</section>
+      <section class="portfolio" id="portfolio">
+        <h2 data-i18n="portfolio_title">Nuestro Trabajo</h2>
+        <div class="portfolio-grid">
+          <!-- Portfolio items will be dynamically injected here by build.py -->
+          <div class="portfolio-item" id="project1">
+            <img
+              alt="Portfolio image"
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
+            />
+            <h3>Proyecto Alfa</h3>
+            <p>Descripción del Proyecto Alfa.</p>
+          </div>
+          <div class="portfolio-item" id="project2">
+            <img
+              alt="Portfolio image"
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
+            />
+            <h3>Proyecto Beta</h3>
+            <p>Descripción del Proyecto Beta.</p>
+          </div>
+          <div class="portfolio-item" id="project3">
+            <img
+              alt="Portfolio image"
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
+            />
+            <h3>Proyecto Gama</h3>
+            <p>Descripción del Proyecto Gama.</p>
+          </div>
+          <div class="portfolio-item" id="project4">
+            <img
+              alt="Portfolio image"
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
+            />
+            <h3>Proyecto Delta</h3>
+            <p>Descripción del Proyecto Delta.</p>
+          </div>
+        </div>
+      </section>
 
-<section class="blog" id="blog">
-<h2 data-i18n="blog_title">Últimas Publicaciones</h2>
-<div class="blog-list">
-<!-- Blog posts will be dynamically injected here by build.py -->
-<div class="blog-item" id="post1">
-<h3>Título de la Publicación Alfa</h3>
-<p>Extracto de la publicación Alfa del blog...</p>
-<a class="read-more" href="#post1-link">Leer Publicación Alfa</a>
-</div>
-<div class="blog-item" id="post2">
-<h3>Título de la Publicación Beta</h3>
-<p>Extracto de la publicación Beta del blog...</p>
-<a class="read-more" href="#post2-link">Leer Publicación Beta</a>
-</div>
-<div class="blog-item" id="post3">
-<h3>Título de la Publicación Gama</h3>
-<p>Extracto de la publicación Gama del blog...</p>
-<a class="read-more" href="#post3-link">Leer Publicación Gama</a>
-</div>
-</div>
-</section>
-
-</main><footer>
-<p data-i18n="footer_text">&amp;copy; 2023 Página de Destino Simple. Todos los derechos reservados.</p>
-</footer><script>
+      <section class="blog" id="blog">
+        <h2 data-i18n="blog_title">Últimas Publicaciones</h2>
+        <div class="blog-list">
+          <!-- Blog posts will be dynamically injected here by build.py -->
+          <div class="blog-item" id="post1">
+            <h3>Título de la Publicación Alfa</h3>
+            <p>Extracto de la publicación Alfa del blog...</p>
+            <a class="read-more" href="#post1-link">Leer Publicación Alfa</a>
+          </div>
+          <div class="blog-item" id="post2">
+            <h3>Título de la Publicación Beta</h3>
+            <p>Extracto de la publicación Beta del blog...</p>
+            <a class="read-more" href="#post2-link">Leer Publicación Beta</a>
+          </div>
+          <div class="blog-item" id="post3">
+            <h3>Título de la Publicación Gama</h3>
+            <p>Extracto de la publicación Gama del blog...</p>
+            <a class="read-more" href="#post3-link">Leer Publicación Gama</a>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <p data-i18n="footer_text">
+        &amp;copy; 2023 Página de Destino Simple. Todos los derechos reservados.
+      </p>
+    </footer>
+    <script>
       // Dark Mode Toggle
       const darkModeToggle = document.getElementById("dark-mode-toggle");
       const body = document.body;
@@ -400,5 +444,5 @@
         });
       }
     </script>
-</body>
+  </body>
 </html>
