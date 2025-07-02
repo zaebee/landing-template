@@ -1,1 +1,15 @@
-{"blocks": ["hero.html", "features.html", "testimonials.html", "portfolio.html", "blog.html"], "supported_langs": ["en", "es"], "default_lang": "en"}
+{
+    "blocks": [
+        "hero.html",
+        "features.html",
+        "testimonials.html",
+        "portfolio.html",
+        "blog.html"
+    ],
+    "navigation_data_file": "data/navigation.json",
+    "supported_langs": [
+        "en",
+        "es"
+    ],
+    "default_lang": "en"
+}
