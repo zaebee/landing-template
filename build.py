@@ -380,8 +380,10 @@ def extract_base_html_parts(
         main_tag = body_tag.find("main")
         if main_tag and isinstance(main_tag, Tag):
             # Capture elements before <main> as header content
-            for element in main_tag.previous_siblings:
+            for element in main_tag.previous_siblings:  # Iterates in reverse document order
                 header_content_parts.append(str(element))
+            header_content_parts.reverse()  # Correct the order of header parts
+
             # Capture elements after <main> as footer content
             for element in main_tag.find_next_siblings():
                 footer_content_parts.append(str(element))
