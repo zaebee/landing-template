@@ -6,11 +6,14 @@ protocol for different kinds of data (e.g., portfolio items, testimonials,
 features, hero sections, contact forms, and blog posts). Each generator
 takes structured data (typically as protobuf messages) and translation data,
 and produces an HTML string representation for that block.
+
+Refactored to use `html_utils` for safer and more readable HTML construction.
+`ContactFormHtmlGenerator` now returns a dictionary of attributes.
 """
 
 import random
-import textwrap
-from typing import List, Optional
+import logging # Added for ContactFormHtmlGenerator warning
+from typing import Dict, List, Optional, Union # Added Dict, Union
 
 # Generated protobuf message types
 from generated.blog_post_pb2 import BlogPost
@@ -20,7 +23,10 @@ from generated.hero_item_pb2 import HeroItem, HeroItemContent
 from generated.portfolio_item_pb2 import PortfolioItem
 from generated.testimonial_item_pb2 import TestimonialItem
 
+from .html_utils import create_element, img, escape_html
 from .interfaces import HtmlBlockGenerator, Translations
+
+logger = logging.getLogger(__name__)
 
 
 class PortfolioHtmlGenerator(HtmlBlockGenerator):
@@ -43,22 +49,30 @@ class PortfolioHtmlGenerator(HtmlBlockGenerator):
             return ""
         html_output: List[str] = []
         for item in data:
-            title: str = translations.get(
+            title_text: str = translations.get(
                 item.details.title.key, item.details.title.key
             )
-            description: str = translations.get(
+            description_text: str = translations.get(
                 item.details.description.key, item.details.description.key
             )
-            alt_text: str = translations.get(item.image.alt_text.key, "Portfolio image")
+            alt_text: str = translations.get(
+                item.image.alt_text.key, "Portfolio image"
+            )
+
+            image_html = img(src=item.image.src, alt=alt_text)
+            title_html = create_element("h3", content=escape_html(title_text))
+            description_html = create_element("p", content=escape_html(description_text))
+
+            div_attrs = {"class": "portfolio-item"}
+            if item.id:
+                div_attrs["id"] = item.id
 
             html_output.append(
-                textwrap.dedent(f"""\
-                    <div class="portfolio-item" id="{item.id if item.id else ""}">
-                        <img src="{item.image.src}" alt="{alt_text}">
-                        <h3>{title}</h3>
-                        <p>{description}</p>
-                    </div>
-                """)
+                create_element(
+                    "div",
+                    content=f"\n{image_html}\n{title_html}\n{description_html}\n",
+                    attributes=div_attrs,
+                )
             )
         return "\n".join(html_output)
 
@@ -83,19 +97,23 @@ class TestimonialsHtmlGenerator(HtmlBlockGenerator):
             return ""
         html_output: List[str] = []
         for item in data:
-            text: str = translations.get(item.text.key, item.text.key)
-            author: str = translations.get(item.author.key, item.author.key)
-            img_alt: str = translations.get(
+            text_content: str = translations.get(item.text.key, item.text.key)
+            author_name: str = translations.get(item.author.key, item.author.key)
+            img_alt_text: str = translations.get(
                 item.author_image.alt_text.key, "User photo"
             )
+
+            image_html = img(src=item.author_image.src, alt=img_alt_text)
+            # Ensure quotes are handled correctly if they are part of the content
+            paragraph_html = create_element("p", content=f'"{escape_html(text_content)}"')
+            author_html = create_element("h4", content=escape_html(author_name))
+
             html_output.append(
-                textwrap.dedent(f"""\
-                    <div class="testimonial-item">
-                        <img src="{item.author_image.src}" alt="{img_alt}">
-                        <p>"{text}"</p>
-                        <h4>{author}</h4>
-                    </div>
-                """)
+                create_element(
+                    "div",
+                    content=f"\n{image_html}\n{paragraph_html}\n{author_html}\n",
+                    attributes={"class": "testimonial-item"},
+                )
             )
         return "\n".join(html_output)
 
@@ -118,32 +136,37 @@ class FeaturesHtmlGenerator(HtmlBlockGenerator):
             return ""
         html_output: List[str] = []
         for item in data:
-            title: str = translations.get(
+            title_text: str = translations.get(
                 item.content.title.key, item.content.title.key
             )
-            description: str = translations.get(
+            description_text: str = translations.get(
                 item.content.description.key, item.content.description.key
             )
-            # Icon handling: Assumes icon.svg_content contains raw SVG if present.
-            icon_html = ""
+
+            icon_html_content = ""
             if (
-                hasattr(item, "icon")  # Check if icon field exists
-                and item.icon  # Check if icon message is set
-                and hasattr(
-                    item.icon, "svg_content"
-                )  # Check if svg_content field exists
-                and item.icon.svg_content  # Check if svg_content has a value
+                hasattr(item, "icon")
+                and item.icon
+                and hasattr(item.icon, "svg_content")
+                and item.icon.svg_content
             ):
-                icon_html = item.icon.svg_content
+                # Assuming SVG content is safe and doesn't need escaping here.
+                # If it could contain user-input that's not SVG, it would need sanitization.
+                icon_html_content = item.icon.svg_content
+
+            title_html = create_element("h3", content=escape_html(title_text))
+            description_html = create_element("p", content=escape_html(description_text))
+
+            # Ensure icon_html_content is on its own line if present
+            inner_content = f"\n{icon_html_content}\n" if icon_html_content else "\n"
+            inner_content += f"{title_html}\n{description_html}\n"
 
             html_output.append(
-                textwrap.dedent(f"""\
-                    <div class="feature-item">
-                        {icon_html}
-                        <h3>{title}</h3>
-                        <p>{description}</p>
-                    </div>
-                """)
+                create_element(
+                    "div",
+                    content=inner_content,
+                    attributes={"class": "feature-item"},
+                )
             )
         return "\n".join(html_output)
 
@@ -155,9 +178,6 @@ class HeroHtmlGenerator(HtmlBlockGenerator):
         self, data: Optional[HeroItem], translations: Translations
     ) -> str:
         """Generates HTML for the hero section, selecting a variation.
-
-        If a default variation ID is specified in the data and found, it's used.
-        Otherwise, if variations exist, one is chosen randomly.
 
         Args:
             data: An optional HeroItem protobuf message.
@@ -184,60 +204,72 @@ class HeroHtmlGenerator(HtmlBlockGenerator):
         if not selected_variation:
             return "<!-- Could not select a hero variation -->"
 
-        title = translations.get(
+        title_text = translations.get(
             selected_variation.title.key, selected_variation.title.key
         )
-        subtitle = translations.get(
+        subtitle_text = translations.get(
             selected_variation.subtitle.key, selected_variation.subtitle.key
         )
-        cta_text = translations.get(
+        cta_link_text = translations.get(
             selected_variation.cta.text.key, selected_variation.cta.text.key
         )
 
-        return textwrap.dedent(f"""\
-            <h1>{title}</h1>
-            <p>{subtitle}</p>
-            <a href="{selected_variation.cta.uri}" class="cta-button">{cta_text}</a>
-            <!-- Selected variation: {selected_variation.variation_id} -->
-        """)
+        h1_html = create_element("h1", content=escape_html(title_text))
+        p_html = create_element("p", content=escape_html(subtitle_text))
+        a_html = create_element(
+            "a",
+            content=escape_html(cta_link_text),
+            attributes={
+                "href": selected_variation.cta.uri,
+                "class": "cta-button",
+            },
+        )
+        comment_html = f"<!-- Selected variation: {selected_variation.variation_id} -->"
+
+        return f"\n{h1_html}\n{p_html}\n{a_html}\n{comment_html}\n"
 
 
 class ContactFormHtmlGenerator(HtmlBlockGenerator):
-    """Generates HTML data attributes string for a contact form."""
+    """Generates a dictionary of HTML attributes for a contact form."""
 
     def generate_html(
         self, data: Optional[ContactFormConfig], translations: Translations
-    ) -> str:
-        """Generates a string of HTML data attributes for the contact form.
+    ) -> Dict[str, str]: # Return type changed to reflect it always returns a dict
+        """Generates a dictionary of HTML attributes for the contact form.
 
-        This generator is intended to produce attributes that can be merged
-        into an existing <form> tag in a template.
+        This generator produces a dictionary of attributes that can be merged
+        into an existing <form> tag by the page assembly logic.
 
         Args:
             data: An optional ContactFormConfig protobuf message.
             translations: A dictionary containing translations.
 
         Returns:
-            A string of HTML attributes, or an HTML comment if configuration
-            is not found.
+            A dictionary of HTML attributes for the form.
+            Returns an empty dictionary if configuration is not found,
+            and logs a warning.
         """
         if not data:
-            return "<!-- Contact form configuration not found -->"
+            logger.warning(
+                "Contact form configuration not found. Returning empty attributes."
+            )
+            return {} # Return empty dict instead of comment string
 
-        attrs = []
+        attrs: Dict[str, str] = {}
         if data.form_action_uri:
-            attrs.append(f'action="{data.form_action_uri}"')
+            attrs["action"] = data.form_action_uri
 
         # These data attributes are for client-side JavaScript to use.
-        attrs.append(f'data-form-action-url="{data.form_action_uri}"')
-        attrs.append(
-            f'data-success-message="{translations.get(data.success_message_key, "Message sent!")}"'
+        # Ensure keys are valid for HTML attributes (usually data-* is fine)
+        attrs["data-form-action-url"] = data.form_action_uri
+        attrs["data-success-message"] = translations.get(
+            data.success_message_key, "Message sent!"
         )
-        attrs.append(
-            f'data-error-message="{translations.get(data.error_message_key, "Error sending message.")}"'
+        attrs["data-error-message"] = translations.get(
+            data.error_message_key, "Error sending message."
         )
-        attrs.append('method="POST"')  # Standard method for form submission
-        return " ".join(attrs)
+        attrs["method"] = "POST"  # Standard method for form submission
+        return attrs
 
 
 class BlogHtmlGenerator(HtmlBlockGenerator):
@@ -258,16 +290,27 @@ class BlogHtmlGenerator(HtmlBlockGenerator):
             return ""
         html_output: List[str] = []
         for post in data:
-            title: str = translations.get(post.title.key, post.title.key)
-            excerpt: str = translations.get(post.excerpt.key, post.excerpt.key)
-            cta_text: str = translations.get(post.cta.text.key, post.cta.text.key)
+            title_text: str = translations.get(post.title.key, post.title.key)
+            excerpt_text: str = translations.get(post.excerpt.key, post.excerpt.key)
+            cta_link_text: str = translations.get(post.cta.text.key, post.cta.text.key)
+
+            title_html = create_element("h3", content=escape_html(title_text))
+            excerpt_html = create_element("p", content=escape_html(excerpt_text))
+            cta_html = create_element(
+                "a",
+                content=escape_html(cta_link_text),
+                attributes={"href": post.cta.uri, "class": "read-more"},
+            )
+
+            div_attrs = {"class": "blog-item"}
+            if post.id:
+                div_attrs["id"] = post.id
+
             html_output.append(
-                textwrap.dedent(f"""\
-                    <div class="blog-item" id="{post.id if post.id else ""}">
-                        <h3>{title}</h3>
-                        <p>{excerpt}</p>
-                        <a href="{post.cta.uri}" class="read-more">{cta_text}</a>
-                    </div>
-                """)
+                create_element(
+                    "div",
+                    content=f"\n{title_html}\n{excerpt_html}\n{cta_html}\n",
+                    attributes=div_attrs,
+                )
             )
         return "\n".join(html_output)

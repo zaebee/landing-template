@@ -4,6 +4,7 @@ Provides data loading and caching capabilities for protobuf messages from JSON f
 This module includes:
 - `JsonProtoDataLoader`: A class that implements the `DataLoader` protocol
   to load data from JSON files and parse it into specified protobuf messages.
+  It now raises specific exceptions for different error conditions.
 - `InMemoryDataCache`: A class that implements the `DataCache` protocol
   for simple in-memory storage of loaded data.
 - Module-level convenience functions (`load_dynamic_list_data`,
@@ -21,14 +22,40 @@ from google.protobuf.message import Message
 from .interfaces import DataCache, DataLoader, T
 
 # Configure basic logging
-logging.basicConfig(level=logging.INFO)
+# Consider moving basicConfig to the main application entry point (e.g., build.py)
+# if not already done, to avoid multiple configurations.
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
+
+
+# --- Custom Exceptions for Data Loading ---
+class DataLoaderError(Exception):
+    """Base class for exceptions raised by data loaders."""
+
+
+class DataFileNotFoundError(DataLoaderError):
+    """Raised when a data file cannot be found."""
+
+
+class DataJsonDecodeError(DataLoaderError):
+    """Raised when a JSON data file cannot be decoded."""
+
+
+class DataProtobufParseError(DataLoaderError):
+    """Raised when data cannot be parsed into a Protobuf message."""
+
+
+class InvalidDataStructureError(DataLoaderError):
+    """Raised when the data structure is not as expected (e.g., not a list)."""
 
 
 class JsonProtoDataLoader(DataLoader[T]):
     """
     Loads data from JSON files into Protobuf messages.
     Implements the `DataLoader` protocol using a generic type `T` for messages.
+    Raises specific exceptions for different failure modes.
     """
 
     def load_dynamic_list_data(
@@ -41,45 +68,54 @@ class JsonProtoDataLoader(DataLoader[T]):
             message_type: The protobuf message class to parse each item into.
 
         Returns:
-            A list of protobuf messages of type T. Returns an empty list if
-            the file is not found, cannot be decoded, or if parsing fails.
-            Warnings are logged in such cases.
+            A list of protobuf messages of type T.
+
+        Raises:
+            DataFileNotFoundError: If the specified data file is not found.
+            DataJsonDecodeError: If the JSON data cannot be decoded.
+            InvalidDataStructureError: If the root JSON structure is not a list.
+            DataProtobufParseError: If an item in the list cannot be parsed
+                                    into the protobuf message.
+            DataLoaderError: For other unexpected errors during loading.
         """
         items: List[T] = []
         try:
             with open(data_file_path, "r", encoding="utf-8") as f:
                 data_list_json = json.load(f)
                 if not isinstance(data_list_json, list):
-                    logger.warning(
-                        "Data in %s is not a list. Returning empty list.",
-                        data_file_path,
+                    msg = (
+                        f"Data in '{data_file_path}' is not a list as expected."
                     )
-                    return []
+                    logger.error(msg)
+                    raise InvalidDataStructureError(msg)
                 for item_data in data_list_json:
                     message = message_type()
                     json_format.ParseDict(item_data, message)
                     items.append(message)
-        except FileNotFoundError:
-            logger.warning(
-                "Data file %s not found. Returning empty list.", data_file_path
-            )
-        except json.JSONDecodeError:
-            logger.warning(
-                "Could not decode JSON from %s. Returning empty list.",
-                data_file_path,
-            )
+        except FileNotFoundError as e:
+            msg = f"Data file '{data_file_path}' not found."
+            logger.error(msg, exc_info=True)
+            raise DataFileNotFoundError(msg) from e
+        except json.JSONDecodeError as e:
+            msg = f"Could not decode JSON from '{data_file_path}'."
+            logger.error(msg, exc_info=True)
+            raise DataJsonDecodeError(msg) from e
         except json_format.ParseError as e:
-            logger.warning(
-                "Could not parse JSON into protobuf for %s: %s. Returning empty list.",
-                data_file_path,
-                e,
+            msg = (
+                f"Could not parse JSON into protobuf message "
+                f"'{message_type.__name__}' from '{data_file_path}'. "
+                f"Problematic item data (approx): {item_data if 'item_data' in locals() else 'N/A'}"
             )
-        except Exception as e:  # pylint: disable=broad-except
-            logger.warning(
-                "An unexpected error occurred loading list %s: %s",
-                data_file_path,
-                e,
+            logger.error(msg, exc_info=True)
+            raise DataProtobufParseError(msg) from e
+        except Exception as e:
+            # Catch any other unexpected errors.
+            msg = (
+                f"An unexpected error occurred while loading list data "
+                f"from '{data_file_path}' for message type '{message_type.__name__}'."
             )
+            logger.error(msg, exc_info=True)
+            raise DataLoaderError(msg) from e
         return items
 
     def load_dynamic_single_item_data(
@@ -93,8 +129,16 @@ class JsonProtoDataLoader(DataLoader[T]):
 
         Returns:
             An optional protobuf message of type T. Returns None if the file
-            is not found, cannot be decoded, or if parsing fails.
-            Warnings are logged in such cases.
+            is not found (this behavior is kept for single items where
+            missing might be a valid non-critical scenario, though it could
+            also be changed to raise DataFileNotFoundError consistently).
+
+        Raises:
+            DataJsonDecodeError: If the JSON data cannot be decoded.
+            DataProtobufParseError: If the item cannot be parsed into the
+                                    protobuf message.
+            DataLoaderError: For other unexpected errors during loading.
+            DataFileNotFoundError: If the specified data file is not found (New Behavior).
         """
         try:
             with open(data_file_path, "r", encoding="utf-8") as f:
@@ -102,25 +146,33 @@ class JsonProtoDataLoader(DataLoader[T]):
                 message: T = message_type()
                 json_format.ParseDict(data_json, message)
                 return message
-        except FileNotFoundError:
-            logger.warning("Data file %s not found. Returning None.", data_file_path)
-        except json.JSONDecodeError:
-            logger.warning(
-                "Could not decode JSON from %s. Returning None.", data_file_path
-            )
+        except FileNotFoundError as e:
+            # Changed behavior: Consistently raise for missing files.
+            # The caller can decide if this is critical or not.
+            msg = f"Data file '{data_file_path}' not found."
+            logger.error(msg, exc_info=True)
+            raise DataFileNotFoundError(msg) from e
+        except json.JSONDecodeError as e:
+            msg = f"Could not decode JSON from '{data_file_path}'."
+            logger.error(msg, exc_info=True)
+            raise DataJsonDecodeError(msg) from e
         except json_format.ParseError as e:
-            logger.warning(
-                "Could not parse JSON into protobuf for %s: %s. Returning None.",
-                data_file_path,
-                e,
+            msg = (
+                f"Could not parse JSON into protobuf message "
+                f"'{message_type.__name__}' from '{data_file_path}'."
             )
-        except Exception as e:  # pylint: disable=broad-except
-            logger.warning(
-                "An unexpected error occurred loading single item %s: %s",
-                data_file_path,
-                e,
+            logger.error(msg, exc_info=True)
+            raise DataProtobufParseError(msg) from e
+        except Exception as e:
+            # Catch any other unexpected errors.
+            msg = (
+                f"An unexpected error occurred while loading single item data "
+                f"from '{data_file_path}' for message type '{message_type.__name__}'."
             )
-        return None
+            logger.error(msg, exc_info=True)
+            raise DataLoaderError(msg) from e
+        # This line is now unreachable due to consistent exception raising.
+        # return None
 
 
 class InMemoryDataCache(DataCache[T]):
