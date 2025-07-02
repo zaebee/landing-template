@@ -1,0 +1,42 @@
+{
+    "blocks": [
+        "hero.html",
+        "features.html",
+        "testimonials.html",
+        "portfolio.html",
+        "blog.html"
+    ],
+    "navigation_data_file": "data/navigation.json",
+    "supported_langs": [
+        "en",
+        "es"
+    ],
+    "default_lang": "en",
+    "navigation": [
+        {
+            "label_i18n_key": "nav_home",
+            "label": "Home",
+            "href": "#"
+        },
+        {
+            "label_i18n_key": "nav_features",
+            "label": "Features",
+            "href": "#features"
+        },
+        {
+            "label_i18n_key": "nav_testimonials",
+            "label": "Testimonials",
+            "href": "#testimonials"
+        },
+        {
+            "label_i18n_key": "nav_portfolio",
+            "label": "Portfolio",
+            "href": "#portfolio"
+        },
+        {
+            "label_i18n_key": "nav_blog",
+            "label": "Blog",
+            "href": "#blog"
+        }
+    ]
+}

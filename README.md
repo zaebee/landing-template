@@ -45,6 +45,8 @@ The `build.py` script uses Protocol Buffers for managing data structures related
 
     This executes `python build.py`, which reads `config.json`, loads data (using the generated Protobuf stubs), assembles HTML blocks, applies translations, and writes the final `index.html` files.
 
+    *A note on Protobuf imports in `build.py`*: The script modifies `sys.path` at its beginning to include the `generated/` directory directly. This is done to ensure that Python can correctly resolve imports within the auto-generated Protobuf files (e.g., a generated `blog_post_pb2.py` file trying to `import common_pb2`).
+
 ## Customizing Blocks
 
 - **Add a new block**:

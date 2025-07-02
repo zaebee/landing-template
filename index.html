@@ -38,7 +38,7 @@
 <a class="cta-button" href="#">Learn More</a>
 </section>
 
-<section class="features">
+<section class="features" data-aos="fade-up" data-aos-delay="100" id="features">
 <h2 data-i18n="features_title">Our Features</h2>
 <div class="feature-list">
 <!-- Feature items will be dynamically injected here by build.py -->
@@ -57,7 +57,7 @@
 </div>
 </section>
 
-<section class="testimonials">
+<section class="testimonials" id="testimonials">
 <h2 data-i18n="testimonials_title">What Our Users Say</h2>
 <div class="testimonial-list">
 <!-- Testimonial items will be dynamically injected here by build.py -->
@@ -79,7 +79,7 @@
 </div>
 </section>
 
-<section class="portfolio">
+<section class="portfolio" id="portfolio">
 <h2 data-i18n="portfolio_title">Our Work</h2>
 <div class="portfolio-grid">
 <!-- Portfolio items will be dynamically injected here by build.py -->
@@ -106,7 +106,7 @@
 </div>
 </section>
 
-<section class="blog">
+<section class="blog" id="blog">
 <h2 data-i18n="blog_title">Latest Posts</h2>
 <div class="blog-list">
 <!-- Blog posts will be dynamically injected here by build.py -->
@@ -137,14 +137,51 @@
         let currentTranslations = {};
 
         async function generateNavigation() {
+            // Determine the current language to fetch the correct config file.
+            // The `initializeApp` function sets `preferredLang` and calls `setLanguage`,
+            // which in turn updates `document.documentElement.lang`.
+            // We should ensure this function is called after language is determined,
+            // or pass lang to it.
+            // For simplicity, let's assume `document.documentElement.lang` is set or defaults correctly.
+            const currentLang = document.documentElement.lang || 'en';
+            const configPath = `public/generated_configs/config_${currentLang}.json`;
+
             try {
-                const response = await fetch('public/config.json');
+                const response = await fetch(configPath);
                 if (!response.ok) {
-                    console.error('Failed to load config.json:', response.statusText);
+                    console.error(`Failed to load ${configPath}:`, response.statusText);
+                    // Fallback to default config if language specific one fails? Or just error out?
+                    // For now, let's try the default base config as a fallback.
+                    const fallbackResponse = await fetch('public/config.json');
+                    if (!fallbackResponse.ok) {
+                        console.error('Failed to load fallback public/config.json:', fallbackResponse.statusText);
+                        return;
+                    }
+                    const config = await fallbackResponse.json();
+                    // Check if fallback has navigation, probably not in the desired processed format.
+                    // This fallback might not be ideal if the structure is different.
+                    // Best to ensure build.py always creates these files.
+                    console.warn(`Falling back to public/config.json for navigation due to error with ${configPath}. Navigation might be incomplete or unstyled.`);
+                    const navItems = config.navigation; // This might be undefined or not what we expect
+                    if (!navItems) {
+                         console.error('Navigation data not found in fallback config.json.');
+                         return;
+                    }
+                    // Process fallback navItems if necessary (they won't have translated labels directly)
+                    // This part needs careful consideration if we want a robust fallback.
+                    // For now, the primary path is to load the generated config.
+                    // The existing code below expects `item.label_i18n_key` and uses it for `data-i18n`.
+                    // The generated config from build.py already includes a 'label' field with the translated text.
+                    // So, if we successfully load `configPath`, the `item.label` should be used.
+                    // If we fallback, and `config.navigation` is raw (only i18n keys), it will still mostly work
+                    // as `applyTranslations` will translate it later.
+
+                    // Let's simplify: if the specific config fails, we log error and return.
+                    // The build process should guarantee these files.
                     return;
                 }
                 const config = await response.json();
-                const navItems = config.navigation;
+                const navItems = config.navigation; // This should now have translated labels if loaded from generated_configs
 
                 if (navItems && Array.isArray(navItems)) {
                     const navUl = document.querySelector('.nav-items ul');
@@ -157,13 +194,28 @@
                     navItems.forEach(item => {
                         const li = document.createElement('li');
                         const a = document.createElement('a');
-                        a.setAttribute('data-i18n', item.label_i18n_key);
+                        // The generated config now has a 'label' field with the translated text.
+                        // And 'label_i18n_key' for potential future use or if applyTranslations needs it.
+                        // We should use the pre-translated label directly.
+                        // If applyTranslations is still desired to run over these, it needs to be aware.
+                        // For now, let's use the translated label from the config.
+                        a.textContent = item.label; // Use the translated label
                         a.href = item.href;
-                        // Set initial text content, which will be replaced by translation
-                        a.textContent = item.label_i18n_key;
+                        // Optionally, keep data-i18n if other mechanisms rely on it,
+                        // or if we want applyTranslations to re-translate if language changes *after* nav generation.
+                        // Given generateNavigation is called in initializeApp before setLanguage,
+                        // and setLanguage calls applyTranslations, it's good to keep data-i18n.
+                        // The `build.py` now adds `label_i18n_key` to the generated config.
+                        if (item.label_i18n_key) {
+                            a.setAttribute('data-i18n', item.label_i18n_key);
+                        }
                         li.appendChild(a);
                         navUl.appendChild(li);
                     });
+                    // Since navigation is generated before initial applyTranslations,
+                    // and the labels in generated_config are already translated for that language,
+                    // we might not need to explicitly call applyTranslations here for nav items.
+                    // However, if the language changes later, applyTranslations will handle it.
                 }
             } catch (error) {
                 console.error('Error generating navigation:', error);
@@ -255,9 +307,14 @@
 
         // Initial setup
         async function initializeApp() {
-            await generateNavigation(); // Generate navigation first
+            // Language must be determined first, so generateNavigation can use it.
             const preferredLang = localStorage.getItem('language') || 'en';
-            await setLanguage(preferredLang); // Then set language (which applies translations)
+            // Set document.documentElement.lang here, so generateNavigation can pick it up.
+            // setLanguage also does this, but generateNavigation might be called before setLanguage completes fully if not careful.
+            document.documentElement.lang = preferredLang;
+
+            await generateNavigation(); // Generate navigation (now uses document.documentElement.lang)
+            await setLanguage(preferredLang); // Then set language (which applies all other translations)
 
             // No need to initialize the old theme switcher here
             // The dark mode toggle is already initialized by checking localStorage for 'darkMode'

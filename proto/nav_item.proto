@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package website_content.v1;
+
+import "common.proto"; // Removed "proto/" prefix
+
+option go_package = "example.com/website_content/v1;website_content_v1";
+
+// Message for a single navigation item.
+message NavItem {
+  I18nString label = 1; // Using I18nString for the label
+  string href = 2;       // URL or anchor link (e.g., "#features")
+  string animation_hint = 3; // Optional: hint for animation type (e.g., "smooth_scroll", "fade_in")
+}
+
+// Message for the overall navigation structure.
+message Navigation {
+  repeated NavItem items = 1;
+}
