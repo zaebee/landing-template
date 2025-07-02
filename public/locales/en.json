@@ -60,5 +60,7 @@
   "light_mode_toggle": "Toggle Light Mode",
   "theme_light_button": "Light Theme",
   "theme_dark_button": "Dark Theme",
-  "footer_text": "&copy; 2023 Simple Landing Page. All rights reserved."
+  "footer_text": "&copy; 2023 Simple Landing Page. All rights reserved.",
+  "contact_form_success": "Message sent successfully! Thank you.",
+  "contact_form_error": "Oops! Something went wrong. Please try again."
 }

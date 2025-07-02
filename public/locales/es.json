@@ -60,5 +60,7 @@
   "light_mode_toggle": "Alternar Modo Claro",
   "theme_light_button": "Tema Claro",
   "theme_dark_button": "Tema Oscuro",
-  "footer_text": "&copy; 2023 Página de Destino Simple. Todos los derechos reservados."
+  "footer_text": "&copy; 2023 Página de Destino Simple. Todos los derechos reservados.",
+  "contact_form_success": "¡Mensaje enviado con éxito! Gracias.",
+  "contact_form_error": "¡Ups! Algo salió mal. Por favor, inténtalo de nuevo."
 }

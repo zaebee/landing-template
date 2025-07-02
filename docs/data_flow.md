@@ -4,45 +4,54 @@ This document outlines the structure of our data entities defined using Protocol
 
 ## Protobuf Message Definitions
 
-We use Protocol Buffers to define the schema for our dynamic data entities.
+We use Protocol Buffers to define the schema for our dynamic data entities. Common types like `I18nString` (for internationalized strings), `Image`, `CTA` (Call To Action), and `TitledBlock` are defined in `common.proto`.
 
-### `BlogPost`
-
-Represents a single blog post item.
-
+### `BlogPost` (`blog_post.proto`)
+Represents a single blog post item. Loaded as a list from `data/blog_posts.json`.
 ```proto
-syntax = "proto3";
-
-package project;
-
-option go_package = "example.com/project/proto";
-
 message BlogPost {
-  string id = 1;                 // Unique identifier for the blog post
-  string title_i18n_key = 2;     // Key for localized title string
-  string excerpt_i18n_key = 3;   // Key for localized excerpt string
-  string cta_i18n_key = 4;       // Key for localized call-to-action text
-  string link = 5;               // URL link for the blog post
+  string id = 1;                // Unique identifier
+  I18nString title = 2;         // Title of the blog post
+  I18nString excerpt = 3;       // Short summary of the post
+  CTA cta = 4;                  // Call to action (e.g., "Read More")
 }
 ```
 
-### `PortfolioItem`
-
-Represents a single portfolio item.
-
+### `PortfolioItem` (`portfolio_item.proto`)
+Represents a single portfolio item. Loaded as a list from `data/portfolio_items.json`.
 ```proto
-syntax = "proto3";
-
-package project;
-
-option go_package = "example.com/project/proto";
-
 message PortfolioItem {
-  string id = 1;                 // Unique identifier for the portfolio item
-  string img_src = 2;            // Source URL for the item's image
-  string img_alt = 3;            // Alt text for the item's image
-  string title_i18n_key = 4;     // Key for localized title string
-  string desc_i18n_key = 5;      // Key for localized description string
+  string id = 1;                // Unique identifier
+  Image image = 2;              // Image for the portfolio item
+  TitledBlock details = 3;      // Title and description for the item
+}
+```
+
+### `HeroItem` (`hero_item.proto`)
+Represents the content for the hero section. Loaded as a single item from `data/hero_item.json`.
+```proto
+message HeroItem {
+  I18nString title = 1;         // Main headline
+  I18nString subtitle = 2;      // Supporting text
+  CTA cta = 3;                  // Primary call to action
+}
+```
+
+### `FeatureItem` (`feature_item.proto`)
+Represents a feature list item. Loaded as a list from `data/feature_items.json`.
+```proto
+message FeatureItem {
+  TitledBlock content = 1;      // Title and description of the feature
+}
+```
+
+### `TestimonialItem` (`testimonial_item.proto`)
+Represents a single testimonial. Loaded as a list from `data/testimonial_items.json`.
+```proto
+message TestimonialItem {
+  I18nString text = 1;          // The testimonial quote
+  I18nString author = 2;        // Author of the testimonial
+  Image author_image = 3;       // Image of the author
 }
 ```
 
@@ -52,54 +61,101 @@ The `build.py` script is responsible for generating the static HTML pages (`inde
 
 ```mermaid
 graph TD
-    A[JSON Data Files: data/*.json] --> B{build.py Script};
-    C[Proto Definitions: proto/*.proto] --> D[protoc];
-    D --> E[Generated Python Stubs: generated/*.py];
-    E --> B;
-    F[HTML Block Templates: blocks/*.html] --> B;
-    G[Locale Translations: locales/*.json] --> B;
-    B --> H[Output HTML Files: index_lang.html];
+    A_CFG[public/config.json] --> B{build.py Script};
+    A_DATA[JSON Data Files: data/*.json] --> B;
+    C_PROTO[Proto Definitions: proto/*.proto] --> D_PROTOC[protoc];
+    D_PROTOC --> E_STUBS[Generated Python Stubs: generated/*.py];
+    E_STUBS --> B;
+    F_BLOCKS[HTML Block Templates: blocks/*.html] --> B;
+    G_LOCALES[Locale Translations: public/locales/*.json] --> B;
+    H_BASE_HTML[index.html (Base Template)] --> B;
+    B --> I_OUTPUT_HTML[Output HTML Files: index_lang.html];
 
-    subgraph "Data Loading and Processing"
-        B_LOAD[load_dynamic_data]
-        B_GEN_BLOG[generate_blog_html]
-        B_GEN_PORT[generate_portfolio_html]
-        B_TRANSLATE[translate_html_content]
+    subgraph "Build Script Core Logic"
+        direction LR
+        B_READ_CFG[1. Read public/config.json]
+        B_LOAD_DATA[2. Load All Dynamic Data via<br>load_dynamic_data &<br>load_single_item_dynamic_data]
+        B_LOOP_LANG[3. Loop Through Languages]
+        B_LOAD_TRANS[4. Load Translations]
+        B_PROC_BLOCKS[5. Process HTML Blocks]
+        B_GEN_CONTENT[6. Generate Dynamic Content<br>(e.g., generate_blog_html, generate_hero_html)]
+        B_TRANSLATE[7. Translate Content]
+        B_ASSEMBLE[8. Assemble Final HTML]
+        B_WRITE[9. Write Output File]
     end
 
-    A -- Reads --> B_LOAD;
-    E -- Used by --> B_LOAD;
-    B_LOAD -- Protobuf Objects --> B_GEN_BLOG;
-    B_LOAD -- Protobuf Objects --> B_GEN_PORT;
-    B_GEN_BLOG -- HTML Snippets --> B;
-    B_GEN_PORT -- HTML Snippets --> B;
-    F -- Assembled by --> B;
-    G -- Used for I18N by --> B_TRANSLATE;
-    B_TRANSLATE -- Translated HTML --> B;
+    A_CFG --> B_READ_CFG;
+    A_DATA -- Reads --> B_LOAD_DATA;
+    E_STUBS -- Used by --> B_LOAD_DATA;
 
-    style A fill:#f9f,stroke:#333,stroke-width:2px
-    style C fill:#f9f,stroke:#333,stroke-width:2px
-    style F fill:#f9f,stroke:#333,stroke-width:2px
-    style G fill:#f9f,stroke:#333,stroke-width:2px
-    style E fill:#ccf,stroke:#333,stroke-width:2px
-    style H fill:#cfc,stroke:#333,stroke-width:2px
+    B_READ_CFG --> B_LOOP_LANG;
+    B_LOOP_LANG -- For each lang --> B_LOAD_TRANS;
+    G_LOCALES -- Used by --> B_LOAD_TRANS;
+
+    B_LOOP_LANG -- For each lang --> B_PROC_BLOCKS;
+    F_BLOCKS -- Used by --> B_PROC_BLOCKS;
+    H_BASE_HTML -- Used for structure --> B_PROC_BLOCKS
+
+    B_PROC_BLOCKS -- Needs data --> B_GEN_CONTENT;
+    B_LOAD_DATA -- Provides Protobuf Objects --> B_GEN_CONTENT;
+    B_LOAD_TRANS -- Provides Translations --> B_GEN_CONTENT;
+
+    B_GEN_CONTENT -- HTML Snippets --> B_TRANSLATE;
+    B_PROC_BLOCKS -- Static HTML parts --> B_TRANSLATE
+    B_LOAD_TRANS -- Provides Translations --> B_TRANSLATE;
+
+    B_TRANSLATE -- Translated HTML --> B_ASSEMBLE;
+    H_BASE_HTML -- Base structure for header/footer --> B_ASSEMBLE
+    B_ASSEMBLE --> B_WRITE;
+    B_WRITE --> I_OUTPUT_HTML;
+
+    style A_CFG fill:#f9f,stroke:#333,stroke-width:2px
+    style A_DATA fill:#f9f,stroke:#333,stroke-width:2px
+    style C_PROTO fill:#f9f,stroke:#333,stroke-width:2px
+    style F_BLOCKS fill:#f9f,stroke:#333,stroke-width:2px
+    style G_LOCALES fill:#f9f,stroke:#333,stroke-width:2px
+    style H_BASE_HTML fill:#f9f,stroke:#333,stroke-width:2px
+
+    style E_STUBS fill:#ccf,stroke:#333,stroke-width:2px
+    style I_OUTPUT_HTML fill:#cfc,stroke:#333,stroke-width:2px
     style B fill:#9cf,stroke:#333,stroke-width:4px
+
+    style B_READ_CFG fill:#lightgrey,stroke:#333
+    style B_LOAD_DATA fill:#lightgrey,stroke:#333
+    style B_LOOP_LANG fill:#lightgrey,stroke:#333
+    style B_LOAD_TRANS fill:#lightgrey,stroke:#333
+    style B_PROC_BLOCKS fill:#lightgrey,stroke:#333
+    style B_GEN_CONTENT fill:#lightgrey,stroke:#333
+    style B_TRANSLATE fill:#lightgrey,stroke:#333
+    style B_ASSEMBLE fill:#lightgrey,stroke:#333
+    style B_WRITE fill:#lightgrey,stroke:#333
 ```
 
 ### Explanation of Diagram
 
-1. **JSON Data Files (`data/*.json`)**: These files (e.g., `blog_posts.json`, `portfolio_items.json`) contain the raw data for blog posts and portfolio items.
-2. **Proto Definitions (`proto/*.proto`)**: These files define the structure of `BlogPost` and `PortfolioItem` messages.
-3. **protoc (Protocol Buffer Compiler)**: This tool compiles the `.proto` definitions into Python stubs.
-4. **Generated Python Stubs (`generated/*.py`)**: These are the Python classes (`BlogPost_pb2.py`, `PortfolioItem_pb2.py`) generated by `protoc`. They are imported and used by `build.py`.
-5. **`build.py` Script**:
-    * **`load_dynamic_data(file_path, message_type)`**: Reads a JSON data file, and uses `json_format.ParseDict` from the `google.protobuf` library to parse each JSON object into an instance of the specified protobuf message type (e.g., `BlogPost` or `PortfolioItem`).
-    * **`generate_blog_html(posts, translations)`**: Takes a list of `BlogPost` protobuf objects and generates the corresponding HTML structure for the blog section. It accesses fields like `post.title_i18n_key`, `post.link`, etc.
-    * **`generate_portfolio_html(items, translations)`**: Takes a list of `PortfolioItem` protobuf objects and generates the HTML for the portfolio section. It accesses fields like `item.img_src`, `item.title_i18n_key`, etc.
-    * The script then assembles these generated HTML snippets with other static blocks from `blocks/*.html`.
-    * **`translate_html_content(html_content, translations)`**: Applies translations from `locales/*.json` to elements tagged with `data-i18n`.
-6. **HTML Block Templates (`blocks/*.html`)**: These are partial HTML files that are combined to form the final pages. Placeholders like `{{blog_posts}}` and `{{portfolio_items}}` are replaced with dynamically generated content.
-7. **Locale Translations (`locales/*.json`)**: JSON files containing key-value pairs for internationalization.
-8. **Output HTML Files (`index_lang.html`)**: The final, fully assembled and translated HTML pages (e.g., `index.html`, `index_es.html`).
+1.  **`public/config.json`**: Configuration file defining which HTML blocks to include, supported languages, and the default language. This is the entry point for the build script's configuration.
+2.  **JSON Data Files (`data/*.json`)**: These files (e.g., `data/blog_posts.json`, `data/hero_item.json`) contain the raw content for dynamic sections of the website.
+3.  **Proto Definitions (`proto/*.proto`)**: These files define the structure for various data types like `BlogPost`, `PortfolioItem`, `HeroItem`, etc., using Protocol Buffers.
+4.  **`protoc` (Protocol Buffer Compiler)**: This tool compiles the `.proto` definitions into Python stub files.
+5.  **Generated Python Stubs (`generated/*.py`)**: These are the Python classes (e.g., `BlogPost_pb2.py`) generated by `protoc`. They are imported and used by `build.py` to ensure data conforms to the defined schemas.
+6.  **HTML Block Templates (`blocks/*.html`)**: Individual HTML files for different sections of the page (e.g., `hero.html`, `features.html`). Some contain placeholders for dynamic content.
+7.  **Locale Translations (`public/locales/*.json`)**: JSON files holding key-value pairs for internationalization (i18n), allowing content to be translated into different languages.
+8.  **`index.html` (Base Template)**: The main `index.html` file serves as a template for the overall page structure, including the header, footer, and the `<main>` container where blocks are inserted.
+9.  **`build.py` Script (Core Logic)**:
+    *   **Read `public/config.json`**: Determines which blocks to use and languages to build for.
+    *   **Load All Dynamic Data**: Reads all JSON data files from `data/` using:
+        *   `load_dynamic_data()`: For lists of items (e.g., blog posts, portfolio items).
+        *   `load_single_item_dynamic_data()`: For single items (e.g., hero content).
+        Data is parsed into Protobuf message objects using the generated Python stubs. This data is cached.
+    *   **Loop Through Languages**: Iterates over each supported language defined in `config.json`.
+    *   **Load Translations**: For the current language, loads the corresponding `public/locales/{lang}.json` file.
+    *   **Process HTML Blocks**: For each block specified in `config.json`:
+        *   Reads the block's HTML template from `blocks/`.
+        *   **Generate Dynamic Content**: If the block is associated with dynamic data (e.g., `hero.html` uses `data/hero_item.json`), it calls the appropriate generator function (e.g., `generate_hero_html`). These functions take the loaded Protobuf objects and translations to produce HTML snippets.
+        *   The generated HTML snippet replaces a placeholder in the block's template.
+        *   **Translate Content**: The combined block content (static parts + dynamically generated snippets) is processed by `translate_html_content` to replace `data-i18n` keys with text from the loaded translations.
+    *   **Assemble Final HTML**: The translated HTML parts of the header and footer (from the base `index.html` template) and the processed blocks are combined to form the full page content for the current language. The `<html lang="...">` attribute is set.
+    *   **Write Output File**: The assembled HTML is written to `index_{lang}.html` (or `index.html` for the default language).
+10. **Output HTML Files (`index_lang.html`)**: The final, fully assembled, and translated HTML pages for each supported language.
 
-This setup ensures that data handling is strongly typed and structured, improving maintainability and reducing potential errors from manually handling dictionary keys.Tool output for `create_file_with_block`:
+This setup ensures that data handling is strongly typed and structured, improving maintainability and reducing potential errors. The build process is configuration-driven and supports internationalization.
