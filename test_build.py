@@ -27,10 +27,24 @@ from generated.nav_item_pb2 import Navigation  # Moved to top
 from generated.portfolio_item_pb2 import PortfolioItem
 from generated.testimonial_item_pb2 import TestimonialItem
 
-project_root = os.path.dirname(os.path.abspath(__file__))
-if project_root not in sys.path:  # This sys.path manipulation is for generated files
-    sys.path.insert(0, project_root)
+# Ensure the project root (and thus 'generated' directory) is in the Python path
+# This needs to be done BEFORE other imports from 'build' or 'build_protocols'
+_current_dir = os.path.dirname(os.path.abspath(__file__)) # This is /app for test_build.py
+_project_root_for_test = _current_dir # Assuming test_build.py is in the project root
 
+# Path to the 'generated' directory, assuming it's a sibling to test_build.py, build.py etc.
+_generated_dir_path = os.path.join(_project_root_for_test, "generated")
+
+if _project_root_for_test not in sys.path:
+    sys.path.insert(0, _project_root_for_test)
+if _generated_dir_path not in sys.path and os.path.isdir(_generated_dir_path):
+    sys.path.insert(0, _generated_dir_path)
+# This ensures that `from generated.xxx_pb2 import Xxx` works.
+
+# The following is also important from build.py to ensure build_protocols can be found
+# if build.py is in project_root and build_protocols is a subdir.
+# In this test setup, _project_root_for_test is already the top-level /app,
+# so imports like `from build_protocols.xyz` should work if /app is in sys.path.
 
 class TestBuildScript(unittest.TestCase):
     """Test cases for build.py script."""
