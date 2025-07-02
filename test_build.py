@@ -87,7 +87,9 @@ class TestBuildScript(unittest.TestCase):
         # os.makedirs(self.test_blocks_dir, exist_ok=True) # Not needed
         os.makedirs(self.test_public_generated_configs_dir, exist_ok=True)
         # Ensure the target directory for dummy block templates exists
-        os.makedirs(os.path.join(self.test_root_dir, "templates", "blocks"), exist_ok=True)
+        os.makedirs(
+            os.path.join(self.test_root_dir, "templates", "blocks"), exist_ok=True
+        )
 
     def _instantiate_services(self) -> None:
         """Instantiates common service components used in tests."""
@@ -344,7 +346,9 @@ class TestBuildScript(unittest.TestCase):
     def _create_dummy_block_files(self) -> None:
         """Creates dummy HTML block files in templates/blocks/ directory."""
         # The directory templates/blocks is created in _create_test_directories
-        dummy_blocks_dir = os.path.join("templates", "blocks") # Relative to self.test_root_dir
+        dummy_blocks_dir = os.path.join(
+            "templates", "blocks"
+        )  # Relative to self.test_root_dir
 
         # For hero.html, matching the context from HeroHtmlGenerator and test assertions
         hero_template_content = """
@@ -359,7 +363,9 @@ class TestBuildScript(unittest.TestCase):
     {% endif %}
 </section>
 """
-        with open(os.path.join(dummy_blocks_dir, "hero.html"), "w", encoding="utf-8") as f:
+        with open(
+            os.path.join(dummy_blocks_dir, "hero.html"), "w", encoding="utf-8"
+        ) as f:
             f.write(hero_template_content)
 
         # For list-based items, the generators pass `items` to the template.
@@ -380,7 +386,9 @@ class TestBuildScript(unittest.TestCase):
     {% endfor %}
 </div>
 """
-        with open(os.path.join(dummy_blocks_dir, "features.html"), "w", encoding="utf-8") as f:
+        with open(
+            os.path.join(dummy_blocks_dir, "features.html"), "w", encoding="utf-8"
+        ) as f:
             f.write(features_template_content)
 
         # test_generate_testimonials_html asserts:
@@ -401,7 +409,9 @@ class TestBuildScript(unittest.TestCase):
     {% endfor %}
 </div>
 """
-        with open(os.path.join(dummy_blocks_dir, "testimonials.html"), "w", encoding="utf-8") as f:
+        with open(
+            os.path.join(dummy_blocks_dir, "testimonials.html"), "w", encoding="utf-8"
+        ) as f:
             f.write(testimonials_template_content)
 
         # test_generate_portfolio_html asserts:
@@ -422,7 +432,9 @@ class TestBuildScript(unittest.TestCase):
     {% endfor %}
 </div>
 """
-        with open(os.path.join(dummy_blocks_dir, "portfolio.html"), "w", encoding="utf-8") as f:
+        with open(
+            os.path.join(dummy_blocks_dir, "portfolio.html"), "w", encoding="utf-8"
+        ) as f:
             f.write(portfolio_template_content)
 
         # test_generate_blog_html asserts:
@@ -443,7 +455,9 @@ class TestBuildScript(unittest.TestCase):
     {% endfor %}
 </div>
 """
-        with open(os.path.join(dummy_blocks_dir, "blog.html"), "w", encoding="utf-8") as f:
+        with open(
+            os.path.join(dummy_blocks_dir, "blog.html"), "w", encoding="utf-8"
+        ) as f:
             f.write(blog_template_content)
 
         # ContactFormHtmlGenerator passes `config` to template.
@@ -457,9 +471,10 @@ class TestBuildScript(unittest.TestCase):
     {% endif %}
 </form>
 """
-        with open(os.path.join(dummy_blocks_dir, "contact-form.html"), "w", encoding="utf-8") as f:
+        with open(
+            os.path.join(dummy_blocks_dir, "contact-form.html"), "w", encoding="utf-8"
+        ) as f:
             f.write(contact_form_template_content)
-
 
     def tearDown(self) -> None:
         """Clean up the temporary test environment after each test."""
@@ -794,9 +809,7 @@ class TestBuildScript(unittest.TestCase):
         mock_testimonial_item = TestimonialItem(text={"key": "ttk"})
         mock_hero_item = HeroItem(
             default_variation_id="v1",
-            variations=[
-                HeroItemContent(variation_id="v1", title={"key": "htk"})
-            ],
+            variations=[HeroItemContent(variation_id="v1", title={"key": "htk"})],
         )  # type: ignore
         mock_contact_config = ContactFormConfig(
             form_action_uri="/test_action",
@@ -828,9 +841,7 @@ class TestBuildScript(unittest.TestCase):
                 return mock_navigation_data
             return None
 
-        mock_load_single_item_data.side_effect = (
-            load_single_item_data_side_effect
-        )
+        mock_load_single_item_data.side_effect = load_single_item_data_side_effect
 
         mock_data_cache_preload.return_value = None
 
@@ -849,20 +860,14 @@ class TestBuildScript(unittest.TestCase):
                 return mock_contact_config
             return None
 
-        mock_data_cache_get_item.side_effect = (
-            data_cache_get_item_side_effect
-        )
+        mock_data_cache_get_item.side_effect = data_cache_get_item_side_effect
 
         mock_gen_portfolio_html.return_value = "<p>Portfolio Content</p>"
         mock_gen_blog_html.return_value = "<p>Blog Content</p>"
         mock_gen_features_html.return_value = "<p>Features Content</p>"
-        mock_gen_testimonials_html.return_value = (
-            "<p>Testimonials Content</p>"
-        )
+        mock_gen_testimonials_html.return_value = "<p>Testimonials Content</p>"
         mock_gen_hero_html.return_value = "<p>Hero Content</p>"
-        mock_gen_contact_html.return_value = (
-            'data-form-id="contact-form-attrs"'
-        )
+        mock_gen_contact_html.return_value = 'data-form-id="contact-form-attrs"'
         mock_generate_lang_config.return_value = {
             "lang": "test",
             "ui_strings": {},
@@ -878,12 +883,8 @@ class TestBuildScript(unittest.TestCase):
             self.dummy_index_content,
             re.DOTALL,
         )
-        dummy_header_content = (
-            header_match.group(0) if header_match else "<header></header>"
-        )
-        dummy_footer_content = (
-            footer_match.group(0) if footer_match else "<footer></footer>"
-        )
+        _ = header_match.group(0) if header_match else "<header></header>"
+        _ = footer_match.group(0) if footer_match else "<footer></footer>"
 
         # mock_extract_parts.return_value = ( # No longer needed as the function is not called
         #     "<html><head_content/></head><body>",
@@ -895,14 +896,10 @@ class TestBuildScript(unittest.TestCase):
             "<html><body>Assembled Page Content</body></html>"
         )
 
-        def mock_builtin_open_side_effect(
-            filename, mode="r", *args, **kwargs
-        ):
+        def mock_builtin_open_side_effect(filename, mode="r", *args, **kwargs):
             normalized_filename = os.path.normpath(filename)
             if mode == "r":
-                if normalized_filename.startswith(
-                    os.path.join("blocks")
-                ):
+                if normalized_filename.startswith(os.path.join("blocks")):
                     block_name = os.path.basename(filename)
                     placeholder_map = {
                         "hero.html": "{{hero_content}}",
@@ -913,17 +910,13 @@ class TestBuildScript(unittest.TestCase):
                         "contact-form.html": "{{contact_form_attributes}}",
                     }
                     return mock.mock_open(
-                        read_data=(
-                            f"<div>{placeholder_map.get(block_name, '')}</div>"
-                        )
+                        read_data=(f"<div>{placeholder_map.get(block_name, '')}</div>")
                     ).return_value
                 if normalized_filename == "index.html":
                     return mock.mock_open(
                         read_data=self.dummy_index_content
                     ).return_value
-                if normalized_filename == os.path.join(
-                    "public", "config.json"
-                ):
+                if normalized_filename == os.path.join("public", "config.json"):
                     return mock.mock_open(
                         read_data=json.dumps(self.dummy_config)
                     ).return_value
@@ -954,13 +947,9 @@ class TestBuildScript(unittest.TestCase):
         build_main()
 
         expected_paths = [
-            os.path.join(
-                "public", "generated_configs", "config_en.json"
-            ),
+            os.path.join("public", "generated_configs", "config_en.json"),
             "index.html",
-            os.path.join(
-                "public", "generated_configs", "config_es.json"
-            ),
+            os.path.join("public", "generated_configs", "config_es.json"),
             "index_es.html",
         ]
         expected_write_calls = [
@@ -969,9 +958,7 @@ class TestBuildScript(unittest.TestCase):
         ]
 
         actual_write_calls = [
-            c
-            for c in mock_builtin_open.call_args_list
-            if c.args[1] == "w"
+            c for c in mock_builtin_open.call_args_list if c.args[1] == "w"
         ]
 
         self.assertEqual(
@@ -982,9 +969,7 @@ class TestBuildScript(unittest.TestCase):
 
         for expected_call in expected_write_calls:
             normalized_actual_calls = [
-                mock.call(
-                    os.path.normpath(c.args[0]), *c.args[1:], **c.kwargs
-                )
+                mock.call(os.path.normpath(c.args[0]), *c.args[1:], **c.kwargs)
                 for c in actual_write_calls
             ]
             self.assertIn(
@@ -1004,17 +989,13 @@ class TestBuildScript(unittest.TestCase):
         self.assertEqual(mock_generate_lang_config.call_count, 2)
 
         num_langs = len(self.dummy_config["supported_langs"])
-        # Each lang processes: 1 header, 1 footer, and N blocks
-        num_blocks_in_config = len(
-            self.dummy_config.get("blocks", [])
-        )  # Use .get for safety
-        # After refactor, translate_html_content is only called for header and footer
-        # for each language, not for each block.
+
         expected_translate_calls = num_langs * 2
         self.assertEqual(
-            mock_translate_content.call_count, expected_translate_calls,
+            mock_translate_content.call_count,
+            expected_translate_calls,
             f"Expected {expected_translate_calls} calls to translate_html_content, "
-            f"got {mock_translate_content.call_count}"
+            f"got {mock_translate_content.call_count}",
         )
 
 
