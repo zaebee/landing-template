@@ -751,13 +751,13 @@ class TestBuildScript(unittest.TestCase):
 
         expected_write_calls = [
             mock.call(
-                os.path.join("public", "generated_configs", "config_en.json"),
+                "public/generated_configs/config_en.json",  # Use forward slashes
                 "w",
                 encoding="utf-8",
             ),
             mock.call("index.html", "w", encoding="utf-8"),
             mock.call(
-                os.path.join("public", "generated_configs", "config_es.json"),
+                "public/generated_configs/config_es.json",  # Use forward slashes
                 "w",
                 encoding="utf-8",
             ),
