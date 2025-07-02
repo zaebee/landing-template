@@ -2,35 +2,18 @@
 Builds the index.html file from configured blocks for multiple languages.
 """
 
-import os
-import sys
-
-# Ensure the project root (and thus 'generated' directory) is in the Python path
-project_root = os.path.dirname(os.path.abspath(__file__))
-generated_dir = os.path.join(project_root, "generated")
-
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
-if generated_dir not in sys.path:
-    sys.path.insert(0, generated_dir)  # Add generated to sys.path
-
 import json
-from typing import Any, Dict, List, Type, TypeVar, Union
+import os
+import random  # Moved to top
+import re  # Moved to top
+import sys
+from typing import Any, Dict, List, Tuple, Type, TypeVar, Union
 
 from bs4 import BeautifulSoup
-from bs4.element import Tag  # Removed _RawAttributeValues
+from bs4.element import Tag
 from google.protobuf import json_format
 from google.protobuf.message import Message
 
-# This is where the error occurs
-from generated.blog_post_pb2 import BlogPost
-from generated.contact_form_config_pb2 import ContactFormConfig  # Added
-from generated.feature_item_pb2 import FeatureItem
-from generated.hero_item_pb2 import HeroItem  # Added
-from generated.nav_item_pb2 import Navigation  # Added
-from generated.portfolio_item_pb2 import PortfolioItem
-from generated.testimonial_item_pb2 import TestimonialItem
-
 # Ensure the project root (and thus 'generated' directory) is in the Python path
 project_root = os.path.dirname(os.path.abspath(__file__))
 generated_dir = os.path.join(project_root, "generated")
@@ -40,13 +23,15 @@ if project_root not in sys.path:
 if generated_dir not in sys.path:
     sys.path.insert(0, generated_dir)  # Add generated to sys.path
 
-print(f"DEBUG: project_root: {project_root}")
-print(f"DEBUG: generated_dir: {generated_dir}")
-print(f"DEBUG: sys.path: {sys.path}")
-import os
 
-print(f"DEBUG: Contents of generated_dir: {os.listdir(generated_dir)}")
-
+# Protobuf imports - These MUST come AFTER sys.path manipulation
+from generated.blog_post_pb2 import BlogPost  # noqa: E402
+from generated.contact_form_config_pb2 import ContactFormConfig  # noqa: E402
+from generated.feature_item_pb2 import FeatureItem  # noqa: E402
+from generated.hero_item_pb2 import HeroItem  # noqa: E402
+from generated.nav_item_pb2 import Navigation  # noqa: E402
+from generated.portfolio_item_pb2 import PortfolioItem  # noqa: E402
+from generated.testimonial_item_pb2 import TestimonialItem  # noqa: E402
 
 # Type aliases
 Translations = Dict[str, str]
@@ -247,7 +232,7 @@ def generate_features_html(items: List[FeatureItem], translations: Translations)
     return "\n".join(html_output)
 
 
-import random  # Added for A/B testing selection
+# import random  # Moved to top
 
 
 def generate_hero_html(hero_data: HeroItem | None, translations: Translations) -> str:
@@ -258,10 +243,12 @@ def generate_hero_html(hero_data: HeroItem | None, translations: Translations) -
     selected_variation = None
     if hero_data.variations:
         # Simple random selection for A/B testing.
-        # More sophisticated logic could be added here (e.g., based on build count, environment variable)
+        # More sophisticated logic could be added here (e.g., based on build count,
+        # environment variable)
         selected_variation = random.choice(hero_data.variations)
 
-    # Fallback to default if random selection somehow fails or if specific default is needed
+    # Fallback to default if random selection somehow fails or
+    # if specific default is needed
     if not selected_variation:
         default_id = hero_data.default_variation_id
         for var in hero_data.variations:
@@ -303,11 +290,11 @@ def generate_contact_form_html(
         return "<!-- Contact form configuration not found -->"
 
     # These will be used by the client-side JavaScript
-    return f"""
-    data-form-action-url="{config.form_action_url}"
-    data-success-message="{translations.get(config.success_message_key, 'Message sent!')}"
-    data-error-message="{translations.get(config.error_message_key, 'Error sending message.')}"
-    """
+    return (
+        f'data-form-action-url="{config.form_action_url}"\n'
+        f'    data-success-message="{translations.get(config.success_message_key, "Message sent!")}"\n' # noqa: E501
+        f'    data-error-message="{translations.get(config.error_message_key, "Error sending message.")}"' # noqa: E501
+    )
 
 
 def generate_blog_html(posts: List[BlogPost], translations: Translations) -> str:
@@ -349,16 +336,122 @@ def generate_navigation_data_for_config(
     return nav_items_for_config
 
 
+def load_app_config(config_path: str = "public/config.json") -> Dict[str, Any]:
+    """Loads the main application configuration file."""
+    try:
+        with open(config_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"Error: Configuration file {config_path} not found. Exiting.")
+        sys.exit(1)
+    except json.JSONDecodeError:
+        print(f"Error: Could not decode JSON from {config_path}. Exiting.")
+        sys.exit(1)
+
+
+def extract_base_html_parts(
+    base_html_file: str = "index.html",
+) -> Tuple[str, str, str, str]:
+    """
+    Extracts key structural parts from the base HTML file.
+
+    Returns:
+        A tuple containing:
+        - html_start: The HTML content up to and including the opening <body> tag.
+        - header_content: The content of the <header> or elements before <main>.
+        - footer_content: The content of the <footer> or elements after <main>.
+        - html_end: The closing </body> and </html> tags.
+    """
+    try:
+        with open(base_html_file, "r", encoding="utf-8") as f:
+            base_content = f.read()
+    except FileNotFoundError:
+        print(f"Error: Base HTML file '{base_html_file}' not found. Exiting.")
+        sys.exit(1)
+
+    soup = BeautifulSoup(base_content, "html.parser")
+
+    header_content_parts: List[str] = []
+    footer_content_parts: List[str] = []
+
+    body_tag = soup.body
+    if body_tag and isinstance(body_tag, Tag):
+        main_tag = body_tag.find("main")
+        if main_tag and isinstance(main_tag, Tag):
+            # Capture elements before <main> as header content
+            for element in main_tag.previous_siblings:
+                header_content_parts.append(str(element))
+            # Capture elements after <main> as footer content
+            for element in main_tag.find_next_siblings():
+                footer_content_parts.append(str(element))
+        else:
+            print(
+                f"Warning: <main> tag not found in {base_html_file}. "
+                "Header/footer content might be incomplete."
+            )
+            # Fallback: consider all direct children of <body> as potential
+            # header/footer if no <main>
+            # This part can be refined based on expected structure if <main> is missing
+    else:
+        print(
+            f"Warning: <body> tag not found in {base_html_file}. "
+            "Header/footer content might be empty."
+        )
+
+    html_tag = soup.find("html")
+    html_start: str
+    if html_tag and isinstance(html_tag, Tag):
+        # Attempt to reconstruct the part of HTML before <body>, keeping attributes
+        html_str = str(html_tag)
+        body_open_tag_index = html_str.lower().find("<body")
+        if body_open_tag_index != -1:
+            # Find where the opening body tag actually ends
+            body_tag_end_index = html_str.find(">", body_open_tag_index) + 1
+            html_start = html_str[:body_tag_end_index] + "\n"
+        else:
+            # Fallback if body tag is not found as expected
+            html_start = str(soup.find("head")) if soup.head else ""  # Or more robust
+            if not html_start:  # Minimal valid start
+                html_start = (
+                    '<!DOCTYPE html>\n<html><head><meta charset="UTF-8">'
+                    '<meta name="viewport" content="width=device-width, '
+                    'initial-scale=1.0"><title>Page</title></head><body>\n'
+                )
+    else:
+        print(
+            f"Warning: <html> tag not found in {base_html_file}. "
+            "Using default HTML structure."
+        )
+        html_start = (
+            '<!DOCTYPE html>\n<html><head><meta charset="UTF-8">'
+            '<meta name="viewport" content="width=device-width, '
+            'initial-scale=1.0"><title>Page</title></head><body>\n'
+        )
+
+    html_end: str = "\n</body>\n</html>" # Standard closing tags
+
+    return (
+        html_start,
+        "".join(header_content_parts),
+        "".join(footer_content_parts),
+        html_end,
+    )
+
+
 def main() -> None:
     """
     Reads config, assembles blocks, translates, and writes new index_<lang>.html
     files.
     """
-    supported_langs: List[str] = ["en", "es"]
-    default_lang: str = "en"
+    # Load main application configuration
+    app_config = load_app_config() # Uses default "public/config.json"
+
+    supported_langs: List[str] = app_config.get("supported_langs", ["en", "es"])
+    default_lang: str = app_config.get("default_lang", "en")
 
     # Define the dynamic data loaders configuration
-    dynamic_data_loaders: Dict[str, Dict[str, Any]] = {
+    # This could also be part of the app_config if it needs to be more dynamic
+    dynamic_data_loaders_config: Dict[str, Dict[str, Any]] = {
         "portfolio.html": {
             "data_file": "data/portfolio_items.json",
             "message_type": PortfolioItem,
@@ -382,7 +475,7 @@ def main() -> None:
             "message_type": TestimonialItem,
             "generator": generate_testimonials_html,
             "placeholder": "{{testimonial_items}}",
-            "is_list": True,  # Indicates data is a list of items
+            "is_list": True,
         },
         "hero.html": {
             "data_file": "data/hero_item.json",
@@ -400,335 +493,245 @@ def main() -> None:
         },
     }
 
-    # Pre-load all dynamic data once
-    loaded_data_cache: Dict[str, Union[List[Message], Message, None]] = (
-        {}
-    )  # Allow single Message or None
-
-    # Load navigation data first as it might be needed by config processing
-    # Assuming nav_data_file path will be added to config.json or hardcoded for now
-    # For now, let's assume a fixed path for navigation data
-    # and that it's loaded for each language variant if needed, or once if translations applied later
-    # The plan is to put navigation data into config.json, so we load it before processing languages.
-
-    raw_config: Dict[str, Any]
-    try:
-        with open("public/config.json", "r", encoding="utf-8") as f:
-            raw_config = json.load(f)
-    except FileNotFoundError:
-        print("Error: public/config.json not found. Exiting.")
-        sys.exit(1)
-    except json.JSONDecodeError:
-        print("Error: Could not decode JSON from public/config.json. Exiting.")
-        sys.exit(1)
+    # Pre-load all dynamic data
+    dynamic_data_cache: Dict[str, Union[List[Message], Message, None]] = {}
+    preload_dynamic_data(dynamic_data_loaders_config, dynamic_data_cache)
 
     # Load navigation proto data
-    # This assumes a single navigation.json for all languages, with labels being i18n keys
-    navigation_data_file_path = raw_config.get(
+    navigation_data_file_path = app_config.get(
         "navigation_data_file", "data/navigation.json"
     )
     navigation_proto_data: Navigation | None = load_single_item_dynamic_data(
         navigation_data_file_path, Navigation
     )
 
-    # TODO: use `block_name, config_item` to put into dynamic place.
-    for _, config_item in dynamic_data_loaders.items():
-        data_file = config_item["data_file"]
-        message_type = config_item["message_type"]
-        is_list = config_item.get("is_list", True)  # Default to True if not specified
-
-        if data_file not in loaded_data_cache:
-            if is_list:
-                loaded_data_cache[data_file] = load_dynamic_data(
-                    data_file, message_type
-                )
-            else:
-                loaded_data_cache[data_file] = load_single_item_dynamic_data(
-                    data_file, message_type
-                )
-
-    # The main config object will be language-specific if navigation is injected per language
-    # For now, let's keep one main 'raw_config' and adapt it per language if necessary
-    # The objective is to have `build.py` generate the navigation array for `config.json`
-    # This means the `config.json` written to disk or used by JS should have this.
-    # Let's refine this: `build.py` will *not* rewrite `public/config.json`.
-    # Instead, it will make the navigation data available for the JavaScript running in `index.html`.
-    # The simplest way is to embed it as a JS variable or make `generateNavigation()` fetch a new file.
-    # Plan step 4. says "Modify `build.py` to populate the `navigation` array within `public/config.json`"
-    # This is tricky as `build.py` generates `index_LANG.html`.
-    # Let's assume `build.py` will create a *new* config file for each language, e.g. `public/config_en.json`
-    # which `index_en.html` will load.
-
-    # Original config loaded into raw_config
-    # We will create language-specific configs based on this raw_config
-    # and add the translated navigation items to them.
-
-    # The existing config structure in `public/config.json` will be used as a base.
-    # `build.py` will generate language-specific versions of this config if needed,
-    # or directly embed the navigation data if that's simpler.
-
-    # Let's stick to the plan of `build.py` making nav data available to the *existing* JS.
-    # The existing JS (`generateNavigation` in `index.html`) fetches `public/config.json`.
-    # So, `build.py` needs to create/update `public/config_en.json`, `public/config_es.json` etc.
-    # These files will be copies of the original `public/config.json` but with an added `navigation` array.
-
-    # Create a directory for generated language-specific configs if it doesn't exist
+    # Create a directory for generated language-specific configs
     os.makedirs("public/generated_configs", exist_ok=True)
 
-    config: Dict[
-        str, Any
-    ]  # This will be used inside the loop for language-specific config
-    try:
-        # This is the base config, will be augmented with navigation for each lang
-        with open("public/config.json", "r", encoding="utf-8") as f:
-            config = json.load(f)
-    except FileNotFoundError:
-        print("Error: config.json not found. Exiting.")
-        sys.exit(1)  # Exit if config is essential
-    except json.JSONDecodeError:
-        print("Error: Could not decode JSON from config.json. Exiting.")
-        sys.exit(1)  # Exit if config is essential
 
-    portfolio_data_untyped: List[Message] = load_dynamic_data(
-        "data/portfolio_items.json", PortfolioItem
-    )
-    portfolio_data: List[PortfolioItem] = [
-        item for item in portfolio_data_untyped if isinstance(item, PortfolioItem)
-    ]
-
-    blog_data_untyped: List[Message] = load_dynamic_data(
-        "data/blog_posts.json", BlogPost
-    )
-    blog_data: List[BlogPost] = [
-        item for item in blog_data_untyped if isinstance(item, BlogPost)
-    ]
-
-    feature_data_untyped: List[Message] = load_dynamic_data(
-        "data/feature_items.json", FeatureItem
-    )
-    feature_data: List[FeatureItem] = [
-        item for item in feature_data_untyped if isinstance(item, FeatureItem)
-    ]
-
-    testimonial_data_untyped: List[Message] = load_dynamic_data(
-        "data/testimonial_items.json", TestimonialItem
-    )
-    # The individual data lists (portfolio_data, blog_data, etc.) are no longer needed here,
-    # as data will be fetched from loaded_data_cache within the loop.
-
-    base_content: str
-    try:
-        with open("index.html", "r", encoding="utf-8") as f:
-            base_content = f.read()
-    except FileNotFoundError:
-        print("Error: Base index.html not found. Exiting.")
-        sys.exit(1)  # Exit if base template is essential
-
-    base_soup: BeautifulSoup = BeautifulSoup(base_content, "html.parser")
-
-    header_content: str = ""
-    body_tag = base_soup.body
-    if body_tag and isinstance(body_tag, Tag):
-        main_tag = body_tag.find("main")
-        if main_tag and isinstance(main_tag, Tag):
-            for element in main_tag.previous_siblings:
-                header_content += str(element)
-        else:
-            print(
-                "Warning: <main> tag not found in base index.html. "
-                "Header might be incomplete."
-            )
-    else:
-        print(
-            "Warning: <body> tag not found in base index.html. "
-            "Header might be empty."
-        )
-
-    footer_content: str = ""
-    if body_tag and isinstance(body_tag, Tag):
-        main_tag = body_tag.find("main")
-        if main_tag and isinstance(main_tag, Tag):
-            for element in main_tag.find_next_siblings():
-                footer_content += str(element)
-        else:
-            print(
-                "Warning: <main> tag not found in base index.html. "
-                "Footer might be incomplete."
-            )
-    else:
-        print(
-            "Warning: <body> tag not found in base index.html. "
-            "Footer might be empty."
-        )
-
-    html_tag = base_soup.find("html")
-    html_start: str
-    if html_tag and isinstance(html_tag, Tag):
-        html_parts = str(html_tag).split("<body>", 1)
-        if len(html_parts) > 1:
-            html_start = html_parts[0] + "<body>\n"
-        else:
-            html_start = html_parts[0] + "\n<body>\n"
-    else:
-        print("Warning: <html> tag not found. Using default HTML structure.")
-        html_start = (
-            '<!DOCTYPE html>\n<html><head><meta charset="UTF-8">'
-            '<meta name="viewport" content="width=device-width, '
-            'initial-scale=1.0"><title>Page</title></head><body>\n'
-        )
-    html_end: str = "\n</body>\n</html>"
+    # Extract parts from base index.html (or other configured base file)
+    # Assuming base_html_file is 'index.html' by default as per original logic
+    # html_parts is a tuple: (html_start, header_content, footer_content, html_end)
+    html_parts = extract_base_html_parts()
 
     for lang in supported_langs:
-        print(f"Processing language: {lang}")
-        translations: Translations = load_translations(lang)
-
-        # Generate language-specific config with navigation
-        lang_config = raw_config.copy()  # Start with a copy of the base config
-        lang_config["navigation"] = generate_navigation_data_for_config(
-            navigation_proto_data, translations
+        process_language_build(
+            lang=lang,
+            app_config=app_config, # Pass the loaded application config
+            dynamic_data_cache=dynamic_data_cache,
+            nav_proto_data=navigation_proto_data,
+            html_parts=html_parts,
+            dynamic_data_loaders_config=dynamic_data_loaders_config,
+            default_lang=default_lang,
         )
 
-        # Save the language-specific config
-        # The JS in index.html will need to be updated to load config_en.json instead of config.json
-        # Or, if we are generating index_en.html, index_es.html, we can change the script path in those files.
-        # Let's assume for now the script in the generated HTML will point to the correct lang-specific config.
-        generated_config_path = f"public/generated_configs/config_{lang}.json"
-        try:
-            with open(generated_config_path, "w", encoding="utf-8") as f_config:
-                json.dump(lang_config, f_config, indent=4, ensure_ascii=False)
-            print(f"Generated language-specific config: {generated_config_path}")
-        except IOError as e:
-            print(
-                f"Error writing language-specific config {generated_config_path}: {e}"
+    print("Build process complete.")
+
+
+def preload_dynamic_data(
+    loaders_config: Dict[str, Dict[str, Any]],
+    cache: Dict[str, Union[List[Message], Message, None]],
+) -> None:
+    """Pre-loads dynamic data from JSON files into a cache."""
+    for _, config_item in loaders_config.items():
+        data_file = config_item["data_file"]
+        message_type = config_item["message_type"]
+        is_list = config_item.get("is_list", True)
+
+        if data_file not in cache:
+            if is_list:
+                cache[data_file] = load_dynamic_data(data_file, message_type)
+            else:
+                cache[data_file] = load_single_item_dynamic_data(
+                    data_file, message_type
+                )
+
+
+def generate_language_config(
+    base_app_config: Dict[str, Any],
+    nav_proto_data: Navigation | None,
+    translations: Translations,
+    # lang parameter can be used if more lang-specific logic is added later
+    lang: str,  # pylint: disable=unused-argument # Keep for potential future use
+) -> Dict[str, Any]:
+    """Generates a language-specific configuration dictionary."""
+    lang_config = base_app_config.copy()
+    lang_config["navigation"] = generate_navigation_data_for_config(
+        nav_proto_data, translations
+    )
+    # Potentially add other language-specific config overrides here
+    return lang_config
+
+
+def assemble_translated_page( # pylint: disable=too-many-locals
+    lang: str,
+    translations: Translations,
+    html_parts: Tuple[str, str, str, str],
+    assembled_main_content: str,
+) -> str:
+    """
+    Assembles the full HTML page for a given language.
+
+    This includes:
+    - Translating i18n elements in the header and footer.
+    - Setting the 'lang' attribute on the <html> tag.
+    - Combining the HTML start, translated header, assembled main content,
+      translated footer, and HTML end.
+    """
+    html_start, header_content, footer_content, html_end = html_parts
+
+    # Translate header content
+    translated_header_soup = BeautifulSoup(header_content, "html.parser")
+    for element in translated_header_soup.find_all(attrs={"data-i18n": True}):
+        if isinstance(element, Tag):
+            key = get_attribute_value_as_str(element, "data-i18n")
+            if key and key in translations:
+                element.string = translations[key]
+
+    translated_footer_soup = BeautifulSoup(footer_content, "html.parser")
+    for element in translated_footer_soup.find_all(attrs={"data-i18n": True}):
+        if isinstance(element, Tag):
+            key = get_attribute_value_as_str(element, "data-i18n")
+            if key and key in translations:
+                element.string = translations[key]
+
+    # Set language attribute in HTML tag
+    current_html_start = html_start
+    temp_soup = BeautifulSoup(current_html_start, "html.parser")
+    html_tag_from_temp = temp_soup.find("html")
+
+    if html_tag_from_temp and isinstance(html_tag_from_temp, Tag):
+        html_tag_from_temp["lang"] = lang
+        reconstructed_start_parts = str(temp_soup).split("<body>", 1)
+        if len(reconstructed_start_parts) > 1:
+            current_html_start = reconstructed_start_parts[0] + "<body>\n"
+        else:  # Fallback if structure is unexpected (e.g. no body in html_start)
+            current_html_start = str(temp_soup)
+    else:  # Fallback if no <html> tag found in html_start
+        if "<html" in current_html_start.lower():
+            # Attempt to replace <html ...> with <html lang="lang" ...>
+            # This is a simplified approach;
+            # a more robust parser might be needed for complex cases
+            # import re # Moved to top
+            current_html_start = re.sub(
+                r"<html(\s*[^>]*)>",
+                f'<html lang="{lang}"\\1>',
+                current_html_start,
+                count=1,
+                flags=re.IGNORECASE
+            )
+        else:  # Prepend if no html tag at all
+            current_html_start = (
+                f'<!DOCTYPE html>\n<html lang="{lang}">\n' + current_html_start
             )
 
-        blocks_html_parts: List[str] = []
-        # Use raw_config here for block list, as lang_config is for JS side.
-        for block_file_any in raw_config.get("blocks", []):
-            if not isinstance(block_file_any, str):
-                print(
-                    f"Warning: Invalid block file entry in config: {block_file_any}. "
-                    "Skipping."
+    # Assemble the full page
+    page_parts = [
+        current_html_start,
+        str(translated_header_soup),
+        "<main>\n",
+        assembled_main_content,
+        "\n</main>",
+        str(translated_footer_soup),
+        html_end,
+    ]
+    return "".join(page_parts)
+
+
+def process_language_build(
+    lang: str,
+    app_config: Dict[str, Any], # Base application config
+    dynamic_data_cache: Dict[str, Union[List[Message], Message, None]],
+    nav_proto_data: Navigation | None,
+    html_parts: Tuple[str, str, str, str],
+    dynamic_data_loaders_config: Dict[str, Dict[str, Any]],
+    default_lang: str,
+) -> None:
+    """
+    Handles the generation of index_<lang>.html and config_<lang>.json
+    for a single language.
+    """
+    print(f"Processing language: {lang}")
+    translations = load_translations(lang)
+
+    # 1. Generate and save language-specific JSON config
+    lang_specific_config = generate_language_config(
+        app_config, nav_proto_data, translations, lang
+    )
+    generated_config_path = f"public/generated_configs/config_{lang}.json"
+    try:
+        with open(generated_config_path, "w", encoding="utf-8") as f_config:
+            json.dump(lang_specific_config, f_config, indent=4, ensure_ascii=False)
+        print(f"Generated language-specific config: {generated_config_path}")
+    except IOError as e:
+        print(f"Error writing language-specific config {generated_config_path}: {e}")
+        # Depending on severity, might want to exit or raise exception
+
+    # 2. Assemble main content from blocks
+    blocks_html_parts: List[str] = []
+    # Use the 'blocks' list from the base app_config
+    for block_file_any in app_config.get("blocks", []):
+        if not isinstance(block_file_any, str):
+            print(
+                f"Warning: Invalid block file entry in config: {block_file_any}. "
+                "Skipping."
+            )
+            continue
+        block_file: str = block_file_any
+        try:
+            with open(f"blocks/{block_file}", "r", encoding="utf-8") as f_block:
+                block_template_content = f_block.read()
+            block_content_with_data: str
+
+            if block_file in dynamic_data_loaders_config:
+                loader_config = dynamic_data_loaders_config[block_file]
+                data_items = dynamic_data_cache.get(loader_config["data_file"])
+
+                data_items_for_gen: Union[List[Any], Message, None]
+                if loader_config.get("is_list", True):
+                    data_items_for_gen = data_items if data_items is not None else []
+                else:
+                    data_items_for_gen = data_items # Can be None for single items
+
+                generated_html = loader_config["generator"](
+                    data_items_for_gen, translations
                 )
-                continue
-            block_file: str = block_file_any
-            try:
-                with open(f"blocks/{block_file}", "r", encoding="utf-8") as f:
-                    block_template_content: str = f.read()
-                    block_content_with_data: str
-
-                    if block_file in dynamic_data_loaders:
-                        loader_config = dynamic_data_loaders[block_file]
-                        # Fetch pre-loaded data from cache
-                        # Ensure items are correctly typed for the generator function
-                        # The list from loaded_data_cache might be List[Message],
-                        # so we filter/cast if necessary or ensure generators accept List[Message]
-                        # and handle type checking internally if strict typing is desired.
-                        # For simplicity, we'll assume generators can handle List[Message]
-                        # or that the types are compatible enough.
-                        # A more robust solution might involve type checking here or ensuring
-                        # generators are flexible.
-                        data_items = loaded_data_cache.get(
-                            loader_config["data_file"], []
-                        )
-
-                        # Ensure the data passed to the generator is correctly typed.
-                        # This step is crucial if generators expect specific protobuf types.
-                        # Example: typed_data_items = [item for item in data_items if isinstance(item, loader_config["message_type"])]
-                        # However, load_dynamic_data already returns List[T] where T is the message_type.
-                        # So, data_items from loaded_data_cache should already be correctly typed.
-
-                        generated_html: str = loader_config["generator"](
-                            data_items, translations  # Pass the correctly typed list
-                        )
-                        block_content_with_data = block_template_content.replace(
-                            loader_config["placeholder"], generated_html
-                        )
-                    else:
-                        # Static block, no dynamic data injection needed beyond i18n
-                        block_content_with_data = block_template_content
-
-                    translated_block_content: str = translate_html_content(
-                        block_content_with_data, translations
-                    )
-                    blocks_html_parts.append(translated_block_content)
-            except FileNotFoundError:
-                print(f"Warning: Block file blocks/{block_file} not found. Skipping.")
-                continue
-            except Exception as e:
-                print(f"Error processing block {block_file}: {e}. Skipping.")
-                continue
-
-        assembled_main_content: str = "\n".join(blocks_html_parts)
-
-        # Translate header and footer sections if they have data-i18n tags
-        # For this, we'll re-parse the original header and footer parts of index.html
-        # and apply translations to them.
-
-        # Create a full HTML document string for this language
-        # The header and footer parts are taken from the original index.html,
-        # and then translated. The main content is built from translated blocks.
-
-        # Translate navigation and other header elements
-        # that are part of the main index.html template
-        translated_header_soup = BeautifulSoup(header_content, "html.parser")
-        for element in translated_header_soup.find_all(attrs={"data-i18n": True}):
-            if isinstance(element, Tag):
-                key = get_attribute_value_as_str(element, "data-i18n")
-                if key and key in translations:
-                    element.string = translations[key]
-
-        # Translate footer elements
-        translated_footer_soup = BeautifulSoup(footer_content, "html.parser")
-        for element in translated_footer_soup.find_all(attrs={"data-i18n": True}):
-            if isinstance(element, Tag):
-                key = get_attribute_value_as_str(element, "data-i18n")
-                if key and key in translations:
-                    element.string = translations[key]
-
-        current_html_start = html_start
-        temp_soup = BeautifulSoup(current_html_start, "html.parser")
-        html_tag_from_temp = temp_soup.find("html")
-
-        if html_tag_from_temp and isinstance(html_tag_from_temp, Tag):
-            html_tag_from_temp["lang"] = lang
-
-            reconstructed_start_parts = str(temp_soup).split("<body>", 1)
-            if len(reconstructed_start_parts) > 1:
-                current_html_start = reconstructed_start_parts[0] + "<body>\n"
-            else:  # If <body> wasn't in the original html_start or temp_soup string
-                current_html_start = str(temp_soup)  # Use the whole soup string
-        else:
-            # Fallback if no <html> tag in current_html_start (e.g. it's just a doctype)
-            # Attempt to inject lang into <html> tag if present, otherwise prepend
-            # new html tag
-            if "<html" in current_html_start.lower():
-                current_html_start = current_html_start.lower().replace(
-                    "<html", f'<html lang="{lang}"', 1
+                block_content_with_data = block_template_content.replace(
+                    loader_config["placeholder"], generated_html
                 )
             else:
-                current_html_start = (
-                    f'<!DOCTYPE html>\n<html lang="{lang}">\n' + current_html_start
-                )
+                block_content_with_data = block_template_content
 
-        output_filename: str = f"index_{lang}.html"
-        if lang == default_lang:
-            output_filename = "index.html"
+            translated_block_content = translate_html_content(
+                block_content_with_data, translations
+            )
+            blocks_html_parts.append(translated_block_content)
+        except FileNotFoundError:
+            print(f"Warning: Block file blocks/{block_file} not found. Skipping.")
+        except Exception as e:
+            print(
+                f"Error processing block {block_file} for lang {lang}: {e}. "
+                "Skipping."
+            )
 
-        print(f"Writing {output_filename}")
-        try:
-            with open(output_filename, "w", encoding="utf-8") as f:
-                f.write(current_html_start)
-                f.write(str(translated_header_soup))
-                f.write("<main>\n")
-                f.write(assembled_main_content)
-                f.write("\n</main>")
-                f.write(str(translated_footer_soup))
-                f.write(html_end)
-        except IOError as e:
-            print(f"Error writing file {output_filename}: {e}")
+    assembled_main_content = "\n".join(blocks_html_parts)
 
-    print("Build process complete.")
+    # 3. Assemble the full translated page
+    full_html_content = assemble_translated_page(
+        lang, translations, html_parts, assembled_main_content
+    )
+
+    # 4. Write the output HTML file
+    output_filename = f"index_{lang}.html"
+    if lang == default_lang:
+        output_filename = "index.html"
+
+    print(f"Writing {output_filename}")
+    try:
+        with open(output_filename, "w", encoding="utf-8") as f_out:
+            f_out.write(full_html_content)
+    except IOError as e:
+        print(f"Error writing file {output_filename}: {e}")
 
 
 if __name__ == "__main__":
