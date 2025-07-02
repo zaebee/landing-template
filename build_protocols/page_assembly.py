@@ -115,4 +115,4 @@ class DefaultPageBuilder(PageBuilder):
         # Server-side translation of base.html structure can be done by passing translations
         # to its render context (as done above).
 
-        return base_template.render(context)
+        return str(base_template.render(context))
