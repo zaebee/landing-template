@@ -8,7 +8,7 @@ caching can be used interchangeably as long as they adhere to these defined
 contracts.
 """
 
-from typing import Any, Dict, List, Optional, Protocol, Tuple, Type, TypeVar, Union
+from typing import Any, Dict, List, Optional, Protocol, Type, TypeVar, Union
 
 from google.protobuf.message import Message
 

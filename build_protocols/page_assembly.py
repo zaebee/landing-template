@@ -7,7 +7,7 @@ main content, and language-specific attributes to form a complete HTML page.
 """
 
 import logging
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 from jinja2 import Environment
 
