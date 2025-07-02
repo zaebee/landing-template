@@ -30,7 +30,6 @@ from build import (  # noqa: E402
     translate_html_content,
 )
 from build import main as build_main  # noqa: E402
-
 from generated.blog_post_pb2 import BlogPost  # noqa: E402
 from generated.feature_item_pb2 import FeatureItem  # noqa: E402
 from generated.hero_item_pb2 import HeroItem  # noqa: E402
