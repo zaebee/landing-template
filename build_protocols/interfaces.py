@@ -204,6 +204,7 @@ class PageBuilder(Protocol):
         main_content: str,
         header_content: Optional[str] = None,
         footer_content: Optional[str] = None,
+        page_title: Optional[str] = None,
     ) -> str:
         """Assembles a full HTML page using translated and generated content.
 
