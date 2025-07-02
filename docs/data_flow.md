@@ -65,6 +65,36 @@ message TestimonialItem {
 }
 ```
 
+### `ContactFormConfig` (`contact_form_config.proto`)
+
+Defines the configuration for the contact form. Loaded as a single item from `data/contact_form_config.json`.
+
+```proto
+message ContactFormConfig {
+  string form_action_uri = 1;     // The URI where the form data will be submitted
+  string success_message_key = 2; // I18n key for the success message
+  string error_message_key = 3;   // I18n key for the error message
+}
+```
+
+### `NavItem` and `Navigation` (`nav_item.proto`)
+
+Define the structure for navigation links. `Navigation` is loaded as a single item from `data/navigation.json`.
+
+```proto
+// Message for a single navigation item.
+message NavItem {
+  I18nString label = 1;       // Using I18nString for the label
+  string href = 2;            // URL or anchor link (e.g., "#features")
+  string animation_hint = 3;  // Optional: hint for animation type
+}
+
+// Message for the overall navigation structure.
+message Navigation {
+  repeated NavItem items = 1;
+}
+```
+
 ## Data Flow in `build.py`
 
 The `build.py` script is responsible for generating the static HTML pages (`index.html`, `index_es.html`, etc.) by assembling HTML blocks and populating them with dynamic data and translations.

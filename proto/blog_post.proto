@@ -5,6 +5,9 @@ package website_content.v1;
 import "common.proto";
 
 option go_package = "example.com/website_content/v1;website_content_v1";
+option java_package = "com.website_content.v1";
+option java_multiple_files = true;
+option java_outer_classname = "BlogPostProto";
 
 message BlogPost {
   string id = 1;
