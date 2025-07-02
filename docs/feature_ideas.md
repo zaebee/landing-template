@@ -95,3 +95,111 @@ This document outlines potential new features for the landing page generator.
             *   The `og:url` would be the canonical URL for the page being generated.
             *   `og:type` could be defaulted to "website".
             *   If a page-specific title/description is available (e.g. from Hero block), it could override the default social meta tags for title/description.
+
+---
+
+### 5. Theme Customization via `config.json`
+
+*   **Concept**: Allow users to select from a predefined set of themes or specify basic color palettes directly within `public/config.json`. The build script would then inject theme-specific CSS variables or class names into the main HTML structure or link to a theme-specific CSS file.
+*   **Benefits**:
+    *   Enables easy visual customization without needing to directly edit CSS files.
+    *   Allows for quick switching between different looks (e.g., "dark mode", "light mode", "brand-aligned theme").
+    *   Content creators can focus on content, while basic styling choices are managed centrally.
+*   **Implementation Sketch**:
+    *   **Configuration (`public/config.json`)**:
+        *   Add a `theme` object:
+            ```json
+            "theme": {
+              "name": "dark", // or "light", "custom"
+              "settings": { // Optional, for "custom" theme
+                "primary_color": "#1a73e8",
+                "secondary_color": "#f0f0f0",
+                "background_color": "#121212",
+                "text_color": "#e8eaed"
+              }
+            }
+            ```
+    *   **CSS**:
+        *   Define CSS variables in `public/style.css` for common elements (e.g., `--primary-color`, `--background-color`, `--text-color`).
+        *   Create alternative theme stylesheets (e.g., `public/themes/dark.css`, `public/themes/light.css`) that override these variables or provide entirely different styles.
+    *   **Build Script (`build.py`)**:
+        *   In `BuildOrchestrator.build_all_languages()` or `DefaultPageBuilder.assemble_translated_page()`:
+            *   Read the `theme` configuration from `app_config`.
+            *   If `theme.name` points to a predefined theme, inject a `<link>` tag for the corresponding theme CSS file (e.g., `<link rel="stylesheet" href="themes/dark.css">`) into the `<head>`.
+            *   Alternatively, if `theme.settings` are provided, generate a `<style>` block in the `<head>` that defines the CSS variables:
+                ```html
+                <style>
+                  :root {
+                    --primary-color: #1a73e8;
+                    /* ... other variables ... */
+                  }
+                </style>
+                ```
+            *   Add a class to the `<body>` tag, e.g., `<body class="theme-dark">`.
+    *   **HTML Structure**: Ensure HTML elements use classes or CSS variables that can be targeted by themes.
+
+---
+
+### 6. Automated Image Optimization
+
+*   **Concept**: Integrate an image optimization step into the build process. When images are referenced in data files (e.g., `hero_item.json`, `portfolio_items.json`), the build script would find these images, create optimized versions (e.g., compressed JPEGs, WebP format), and update the references in the generated HTML to point to these optimized images.
+*   **Benefits**:
+    *   Improves page load speed significantly.
+    *   Reduces bandwidth consumption.
+    *   Enhances SEO and user experience.
+    *   Automates a typically manual optimization task.
+*   **Implementation Sketch**:
+    *   **Dependencies**: Add a Python image processing library like `Pillow` or `Wand`.
+    *   **Configuration (`public/config.json`)**:
+        *   Add an `image_optimization` object:
+            ```json
+            "image_optimization": {
+              "enabled": true,
+              "quality": 85, // For JPEGs
+              "format": "webp", // "original", "webp" - convert to WebP if possible
+              "output_dir": "public/optimized_images/"
+            }
+            ```
+    *   **Build Script (`build.py`)**:
+        *   Create a new service, e.g., `ImageOptimizer`.
+        *   During data loading or just before HTML generation for blocks containing images (Hero, Portfolio, Testimonials):
+            *   Identify image paths from Protobuf messages (e.g., `Image.src`).
+            *   If optimization is enabled:
+                *   Construct a new path for the optimized image in `image_optimization.output_dir`.
+                *   If the optimized image doesn't exist or the source is newer:
+                    *   Use the chosen library to open the source image, resize (optional, could be another config), convert format (e.g., to WebP), and save it to the output directory with specified quality.
+                *   Update the `src` field in the Protobuf message *in memory* to point to the optimized image path.
+        *   The HTML generation functions would then use these updated paths.
+    *   **File Structure**: Original images might reside in `public/images/` (or specified in data files), and optimized versions would be saved to `public/optimized_images/`. The `.gitignore` should be updated to ignore the `optimized_images` directory.
+    *   **Considerations**:
+        *   Handling of external image URLs (skip optimization or attempt to download and optimize).
+        *   Caching of optimized images to avoid reprocessing unchanged images.
+
+---
+
+### 7. Versioned Static Assets (CSS/JS)
+
+*   **Concept**: Implement a cache-busting mechanism for static assets like `public/style.css` and any JavaScript files. During the build, append a content hash or build timestamp to asset URLs in the generated HTML (e.g., `style.css?v=abcdef12345`).
+*   **Benefits**:
+    *   Ensures users always receive the latest version of CSS/JS files after an update, avoiding issues caused by browser caching of stale assets.
+    *   Improves site reliability when deploying updates.
+*   **Implementation Sketch**:
+    *   **Build Script (`build.py`)**:
+        *   In `BuildOrchestrator` or `DefaultPageBuilder`:
+            *   When linking `public/style.css` (or any other project-specific JS files if they were added):
+                *   Calculate a hash (e.g., MD5 or SHA256) of the file's content.
+                *   Alternatively, use a build timestamp. A content hash is generally preferred as it only changes when the file content changes.
+                *   Append this hash as a query parameter to the asset URL in the generated HTML:
+                    ```html
+                    <link rel="stylesheet" href="style.css?v={content_hash}">
+                    ```
+            *   This logic would typically be in `DefaultPageBuilder.assemble_translated_page()` where the final HTML `<head>` is constructed, or wherever the CSS link is added.
+    *   **Configuration (`public/config.json`)**:
+        *   Could add a configuration option to enable/disable this or choose the versioning method (hash vs. timestamp), though content hashing is a good default.
+        ```json
+        "asset_versioning": {
+          "enabled": true,
+          "method": "content_hash" // "content_hash" or "timestamp"
+        }
+        ```
+    *   **Helper Function**: A utility function `get_asset_version(file_path, method)` could be created to compute the version string.
