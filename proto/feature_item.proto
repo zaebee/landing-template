@@ -9,6 +9,7 @@ option go_package = "example.com/website_content/v1;website_content_v1";
 message FeatureItem {
   TitledBlock content = 1;
   // Optional: Add if icons or specific images per feature are needed
-  // string icon_class = 2; // This could be part of a more specific FeatureItem if not all features have it
-  // Image image = 3;        // Or an image if preferred over an icon class
+  // string icon_class = 2; // This could be part of a more specific FeatureItem
+  // if not all features have it Image image = 3;        // Or an image if
+  // preferred over an icon class
 }
