@@ -131,7 +131,7 @@ class HeroHtmlGenerator(HtmlBlockGenerator):
         return f"""
         <h1>{title}</h1>
         <p>{subtitle}</p>
-        <a href="{selected_variation.cta.link}" class="cta-button">{cta_text}</a>
+        <a href="{selected_variation.cta.uri}" class="cta-button">{cta_text}</a>
         <!-- Selected variation: {selected_variation.variation_id} -->
         """
 
@@ -189,7 +189,7 @@ class BlogHtmlGenerator(HtmlBlockGenerator):
             <div class="blog-item" id="{post.id if post.id else ''}">
                 <h3>{title}</h3>
                 <p>{excerpt}</p>
-                <a href="{post.cta.link}" class="read-more">{cta_text}</a>
+                <a href="{post.cta.uri}" class="read-more">{cta_text}</a>
             </div>
             """
             )

@@ -2,7 +2,6 @@ import json
 import os
 import re  # Import re module
 import shutil
-import sys
 import tempfile
 import unittest
 from unittest import mock
@@ -35,16 +34,7 @@ from generated.nav_item_pb2 import Navigation
 from generated.portfolio_item_pb2 import PortfolioItem
 from generated.testimonial_item_pb2 import TestimonialItem
 
-# Ensure the project root (and thus 'generated' directory) is in the Python path
-_current_dir = os.path.dirname(os.path.abspath(__file__))
-_project_root_for_test = _current_dir
-
-_generated_dir_path = os.path.join(_project_root_for_test, "generated")
-if _project_root_for_test not in sys.path:
-    sys.path.insert(0, _project_root_for_test)
-if _generated_dir_path not in sys.path and os.path.isdir(_generated_dir_path):
-    sys.path.insert(0, _generated_dir_path)
-
+# sys.path modification moved to conftest.py
 
 class TestBuildScript(unittest.TestCase):
     """Test cases for build.py script components and main execution."""
@@ -644,7 +634,7 @@ class TestBuildScript(unittest.TestCase):
             variations=[HeroItemContent(variation_id="v1", title={"key": "htk"})],
         )
         mock_contact_config = ContactFormConfig(
-            form_action_url="/test_action",
+            form_action_uri="/test_action",  # Changed form_action_url to form_action_uri
             success_message_key="contact_success",
             error_message_key="contact_error",
         )
