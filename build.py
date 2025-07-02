@@ -119,8 +119,6 @@ class BuildOrchestrator:
         self,
         lang: str,
         default_lang: str,
-        # html_parts is no longer used directly in the same way
-        _html_parts: tuple[str, str, str, str],  # Marked as unused
         dynamic_data_loaders_config: Dict[str, Dict[str, Any]],
         navigation_items: List[Dict[str, Any]],
     ) -> None:
@@ -143,7 +141,6 @@ class BuildOrchestrator:
         full_html_content = self.page_builder.assemble_translated_page(
             lang=lang,
             translations=translations,
-            html_parts=("", "", "", ""),  # Dummy value, DefaultPageBuilder ignores this
             main_content=assembled_main_content,
             navigation_items=navigation_items,
             page_title=page_title,
@@ -169,19 +166,39 @@ class BuildOrchestrator:
         )
         default_lang: str = self.app_config.get("default_lang", "en")
 
-        dynamic_data_loaders_config = (
-            self._get_dynamic_data_loaders_config()
-        )
+        # Mapping of message type names (from config) to actual protobuf classes
+        proto_message_types = {
+            "PortfolioItem": PortfolioItem,
+            "BlogPost": BlogPost,
+            "FeatureItem": FeatureItem,
+            "TestimonialItem": TestimonialItem,
+            "HeroItem": HeroItem,
+            "ContactFormConfig": ContactFormConfig,
+            "Navigation": Navigation, # Added for completeness, though not in block_data_loaders
+        }
+
+        # Get block data loader configuration from app_config
+        block_loaders_config_raw = self.app_config.get("block_data_loaders", {})
+
+        # Resolve message_type_name to actual message_type class
+        dynamic_data_loaders_config_resolved = {}
+        for block_name, config_item in block_loaders_config_raw.items():
+            message_type_name = config_item.get("message_type_name")
+            message_type_class = proto_message_types.get(message_type_name)
+            if not message_type_class:
+                print(f"Warning: Unknown message_type_name '{message_type_name}' for block '{block_name}'. Skipping.")
+                continue
+
+            # Create a new config dict for resolved types to avoid modifying original app_config
+            resolved_item_config = config_item.copy()
+            resolved_item_config["message_type"] = message_type_class
+            dynamic_data_loaders_config_resolved[block_name] = resolved_item_config
+
         self.data_cache.preload_data(
-            dynamic_data_loaders_config, self.data_loader
+            dynamic_data_loaders_config_resolved, self.data_loader
         )
 
         os.makedirs("public/generated_configs", exist_ok=True)
-
-        # base_html_path is no longer needed to extract parts by PageBuilder
-        # Dummy html_parts to satisfy the _process_language signature that still expects it
-        # This parameter in _process_language should be removed or refactored further.
-        dummy_html_parts = ("", "", "", "")
 
         # Process navigation data into the format expected by the template
         processed_nav_items = []
@@ -197,64 +214,11 @@ class BuildOrchestrator:
             self._process_language(
                 lang=lang,
                 default_lang=default_lang,
-                _html_parts=dummy_html_parts,  # Pass dummy value
-                dynamic_data_loaders_config=dynamic_data_loaders_config,
+                dynamic_data_loaders_config=dynamic_data_loaders_config_resolved, # Use resolved config
                 navigation_items=processed_nav_items,
             )
 
         print("Build process complete.")
-
-    def _get_dynamic_data_loaders_config(self) -> Dict[str, Dict[str, Any]]:
-        """Constructs the configuration for data loaders and HTML generators.
-
-        This configuration maps block filenames (e.g., "portfolio.html")
-        to their data requirements (data file, message type, etc.) and
-        placeholder string in the block's HTML template. This config is
-        primarily used for data preloading and content injection.
-
-        Returns:
-            A dictionary where keys are block filenames and values are
-            dictionaries containing data loading and templating information.
-        """
-        # Line length is managed by breaking down the dictionary.
-        return {
-            "portfolio.html": {
-                "data_file": "data/portfolio_items.json",
-                "message_type": PortfolioItem,
-                "is_list": True,
-                "placeholder": "{{portfolio_items}}",
-            },
-            "blog.html": {
-                "data_file": "data/blog_posts.json",
-                "message_type": BlogPost,
-                "is_list": True,
-                "placeholder": "{{blog_posts}}",
-            },
-            "features.html": {
-                "data_file": "data/feature_items.json",
-                "message_type": FeatureItem,
-                "is_list": True,
-                "placeholder": "{{feature_items}}",
-            },
-            "testimonials.html": {
-                "data_file": "data/testimonial_items.json",
-                "message_type": TestimonialItem,
-                "is_list": True,
-                "placeholder": "{{testimonial_items}}",
-            },
-            "hero.html": {
-                "data_file": "data/hero_item.json",
-                "message_type": HeroItem,
-                "is_list": False,
-                "placeholder": "{{hero_content}}",
-            },
-            "contact-form.html": {
-                "data_file": "data/contact_form_config.json",
-                "message_type": ContactFormConfig,
-                "is_list": False,
-                "placeholder": "{{contact_form_attributes}}",
-            },
-        }
 
     def _generate_language_specific_config(
         self, lang: str, translations: Translations

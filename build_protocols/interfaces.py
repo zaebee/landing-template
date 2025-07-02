@@ -178,29 +178,10 @@ class PageBuilder(Protocol):
     from its constituent parts.
     """
 
-    def extract_base_html_parts(
-        self, base_html_path: str = "index.html"
-    ) -> Tuple[str, str, str, str]:
-        """Extracts structural parts from a base HTML template file.
-
-        Typically, this involves splitting the base HTML into segments like
-        (html_start, header, footer, html_end).
-
-        Args:
-            base_html_path: Path to the base HTML template file.
-                            Defaults to "index.html".
-
-        Returns:
-            A tuple of strings representing the distinct parts of the HTML
-            template (e.g., start, header, footer, end).
-        """
-        ...
-
     def assemble_translated_page(
         self,
         lang: str,
         translations: Translations,
-        html_parts: Tuple[str, str, str, str],
         main_content: str,
         navigation_items: Optional[List[Dict[str, Any]]] = None,
         page_title: Optional[str] = None,

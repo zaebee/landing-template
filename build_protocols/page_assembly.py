@@ -41,32 +41,10 @@ class DefaultPageBuilder(PageBuilder):
         self.translation_provider = translation_provider
         self.jinja_env = jinja_env
 
-    def extract_base_html_parts(
-        self, base_html_path: str = "index.html"
-    ) -> Tuple[str, str, str, str]:
-        """
-        Extracts key structural parts from the base HTML file.
-        NOTE: This method is now largely obsolete with Jinja2 managing the base structure.
-        It's kept to satisfy the protocol but should ideally be removed or re-evaluated
-        if the PageBuilder protocol changes. For now, it returns dummy values
-        as the main assembly logic is in `assemble_translated_page` using Jinja.
-        """
-        logger.warning(
-            "extract_base_html_parts is called but is largely obsolete "
-            "with Jinja2 templating. Returning dummy values."
-        )
-        # These parts are no longer extracted this way.
-        # The base.html Jinja template defines these sections.
-        # Returning placeholder values to satisfy the interface.
-        # The actual header/footer content for the template will be passed
-        # directly to assemble_translated_page or handled within base.html itself.
-        return ("", "", "", "")
-
     def assemble_translated_page(
         self,
         lang: str,
         translations: Translations,
-        html_parts: Tuple[str, str, str, str],  # This argument is now less relevant
         main_content: str,
         navigation_items: Optional[
             List[Dict[str, Any]]
@@ -78,8 +56,6 @@ class DefaultPageBuilder(PageBuilder):
         Args:
             lang: The language code (e.g., "en").
             translations: A dictionary of translations for the language.
-            html_parts: A tuple from `extract_base_html_parts`.
-                        NOTE: Largely ignored due to Jinja2 templating.
             main_content: The HTML string for the main content of the page
                           (already rendered blocks).
             navigation_items: Optional list of navigation item dictionaries for the header.
