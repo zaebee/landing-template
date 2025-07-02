@@ -106,7 +106,9 @@ class HeroHtmlGenerator(HtmlBlockGenerator):
         Returns:
             An HTML string for the hero section.
         """
-        selected_variation: Optional[HeroItemContent] = None  # Define type once at the correct scope
+        selected_variation: Optional[HeroItemContent] = (
+            None  # Define type once at the correct scope
+        )
 
         if not data or not data.variations:
             # selected_variation remains None, which is handled by the template
@@ -126,7 +128,9 @@ class HeroHtmlGenerator(HtmlBlockGenerator):
 
         template = self.jinja_env.get_template("blocks/hero.html")
         # The template expects `hero_item` as the context variable for the selected variation
-        return str(template.render(hero_item=selected_variation, translations=translations))
+        return str(
+            template.render(hero_item=selected_variation, translations=translations)
+        )
 
 
 class ContactFormHtmlGenerator(HtmlBlockGenerator):

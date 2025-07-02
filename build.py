@@ -117,7 +117,7 @@ class BuildOrchestrator:
         lang: str,
         default_lang: str,
         # html_parts is no longer used directly in the same way
-        _html_parts: tuple[str, str, str, str], # Marked as unused
+        _html_parts: tuple[str, str, str, str],  # Marked as unused
         dynamic_data_loaders_config: Dict[str, Dict[str, Any]],
         static_header_html: str,
         static_footer_html: str,
@@ -146,14 +146,13 @@ class BuildOrchestrator:
         # Add specific page titles per language if defined, e.g. "page_title_landing_es"
         page_title = translations.get(f"page_title_landing_{lang}", page_title)
 
-
         full_html_content = self.page_builder.assemble_translated_page(
             lang=lang,
             translations=translations,
-            html_parts=("", "", "", ""), # Dummy value, DefaultPageBuilder ignores this
+            html_parts=("", "", "", ""),  # Dummy value, DefaultPageBuilder ignores this
             main_content=assembled_main_content,
-            header_content=translated_header, # Passed to Jinja context for base.html
-            footer_content=translated_footer, # Passed to Jinja context for base.html
+            header_content=translated_header,  # Passed to Jinja context for base.html
+            footer_content=translated_footer,  # Passed to Jinja context for base.html
             page_title=page_title,
         )
 
@@ -236,7 +235,7 @@ class BuildOrchestrator:
             self._process_language(
                 lang=lang,
                 default_lang=default_lang,
-                _html_parts=dummy_html_parts, # Pass dummy value
+                _html_parts=dummy_html_parts,  # Pass dummy value
                 dynamic_data_loaders_config=dynamic_data_loaders_config,
                 static_header_html=static_header_html,
                 static_footer_html=static_footer_html,
@@ -383,7 +382,6 @@ class BuildOrchestrator:
                         # For single items, if data_items is None, pass None to generator
                         pass
 
-
                     # HtmlBlockGenerator now handles its own template loading & rendering
                     generated_html_for_block = html_generator.generate_html(
                         data_items, translations
@@ -395,7 +393,9 @@ class BuildOrchestrator:
                     # templates/blocks/ directly if it's purely static.
                     # Or, this is an error in configuration.
                     # For now, we'll just log a warning if a block has no generator.
-                    print(f"Warning: No HTML generator found for block: {block_file_name}. Skipping data injection.")
+                    print(
+                        f"Warning: No HTML generator found for block: {block_file_name}. Skipping data injection."
+                    )
                     # Attempt to read static block content if needed, but this wasn't the old behavior.
                     # The old behavior relied on a placeholder for replacement.
                     # With Jinja, if a block is purely static, its template would just be static HTML.
@@ -423,15 +423,22 @@ class BuildOrchestrator:
                     # Let's replicate that if no generator is found but block is in config.
                     # This means the block is treated as mostly static HTML but with i18n tags.
                     try:
-                        block_template_path = os.path.join("templates", "blocks", block_file_name) # new path
-                        with open(block_template_path, "r", encoding="utf-8") as block_file:
+                        block_template_path = os.path.join(
+                            "templates", "blocks", block_file_name
+                        )  # new path
+                        with open(
+                            block_template_path, "r", encoding="utf-8"
+                        ) as block_file:
                             static_block_content = block_file.read()
                         generated_html_for_block = static_block_content
-                        print(f"Info: Treating block {block_file_name} as static HTML for translation only.")
+                        print(
+                            f"Info: Treating block {block_file_name} as static HTML for translation only."
+                        )
                     except FileNotFoundError:
-                         print(f"Warning: Static block file {block_template_path} not found. Skipping.")
-                         continue
-
+                        print(
+                            f"Warning: Static block file {block_file_name} not found. Skipping."
+                        )
+                        continue
 
                 # The translation of the entire block's generated HTML
                 # should ideally be handled by the Jinja templates themselves if they use
@@ -461,8 +468,10 @@ class BuildOrchestrator:
                 # So, `generated_html_for_block` should be final.
                 blocks_html_parts.append(generated_html_for_block)
 
-            except FileNotFoundError: # This would now be an issue with Jinja's loader
-                print(f"Warning: Template for block {block_file_name} not found by Jinja. Skipping.")
+            except FileNotFoundError:  # This would now be an issue with Jinja's loader
+                print(
+                    f"Warning: Template for block {block_file_name} not found by Jinja. Skipping."
+                )
             except Exception as e:
                 print(
                     f"Error processing block {block_file_name} for lang {lang}: "

@@ -97,15 +97,21 @@ class TestBuildScript(unittest.TestCase):
         # Ensure a dummy 'templates' dir exists for FileSystemLoader, or use a mock loader.
         # For simplicity, assuming 'templates' might be a general dir or we mock rendering.
         # Let's create a dummy templates dir for the loader to be valid.
-        os.makedirs(os.path.join(self.test_root_dir, "templates", "blocks"), exist_ok=True)
-        self.jinja_env = Environment(loader=FileSystemLoader(os.path.join(self.test_root_dir, "templates")))
+        os.makedirs(
+            os.path.join(self.test_root_dir, "templates", "blocks"), exist_ok=True
+        )
+        self.jinja_env = Environment(
+            loader=FileSystemLoader(os.path.join(self.test_root_dir, "templates"))
+        )
 
         self.translation_provider = DefaultTranslationProvider()
         self.data_loader = JsonProtoDataLoader[Message]()
         self.portfolio_generator = PortfolioHtmlGenerator(jinja_env=self.jinja_env)
         self.blog_generator = BlogHtmlGenerator(jinja_env=self.jinja_env)
         self.features_generator = FeaturesHtmlGenerator(jinja_env=self.jinja_env)
-        self.testimonials_generator = TestimonialsHtmlGenerator(jinja_env=self.jinja_env)
+        self.testimonials_generator = TestimonialsHtmlGenerator(
+            jinja_env=self.jinja_env
+        )
         self.hero_generator = HeroHtmlGenerator(jinja_env=self.jinja_env)
         self.contact_form_generator = ContactFormHtmlGenerator(jinja_env=self.jinja_env)
 
