@@ -7,7 +7,7 @@ main content, and language-specific attributes to form a complete HTML page.
 """
 
 import logging
-from typing import Optional, Tuple, List, Dict, Any
+from typing import Any, Dict, List, Optional, Tuple
 
 from jinja2 import Environment
 
@@ -66,9 +66,11 @@ class DefaultPageBuilder(PageBuilder):
         self,
         lang: str,
         translations: Translations,
-        html_parts: Tuple[str, str, str, str], # This argument is now less relevant
+        html_parts: Tuple[str, str, str, str],  # This argument is now less relevant
         main_content: str,
-        navigation_items: Optional[List[Dict[str, Any]]] = None, # Processed navigation items
+        navigation_items: Optional[
+            List[Dict[str, Any]]
+        ] = None,  # Processed navigation items
         page_title: Optional[str] = None,
     ) -> str:
         """Assembles a full HTML page using a Jinja2 base template.
@@ -91,7 +93,8 @@ class DefaultPageBuilder(PageBuilder):
 
         context = {
             "lang": lang,
-            "title": page_title or translations.get("default_page_title", "Landing Page"),
+            "title": page_title
+            or translations.get("default_page_title", "Landing Page"),
             "translations": translations,
             "main_content": main_content,
             "navigation_items": navigation_items or [],

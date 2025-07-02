@@ -988,7 +988,7 @@ class TestBuildScript(unittest.TestCase):
         self.assertEqual(mock_assemble_page.call_count, 2)
         self.assertEqual(mock_generate_lang_config.call_count, 2)
 
-        num_langs = len(self.dummy_config["supported_langs"])
+        _ = len(self.dummy_config["supported_langs"])
 
         # Header and Footer are now Jinja includes and handle their own translations.
         # translate_html_content is no longer called for them in _process_language.

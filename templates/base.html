@@ -22,9 +22,7 @@
 
     <main>{{ main_content | safe }}</main>
 
-    {% include "blocks/footer.html" %}
-
-    {% block scripts %}
+    {% include "blocks/footer.html" %} {% block scripts %}
     <script>
       // Dark Mode Toggle
       const darkModeToggle = document.getElementById("dark-mode-toggle");
