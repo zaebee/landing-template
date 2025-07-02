@@ -1,7 +1,8 @@
 import json
 import os
-import shutil  # Added for rmtree
+import shutil
 import sys
+import tempfile  # Added for temporary directory
 import unittest
 from unittest import mock
 
@@ -36,6 +37,11 @@ class TestBuildScript(unittest.TestCase):
 
     def setUp(self):
         """Set up test environment."""
+        self.original_cwd = os.getcwd()
+        self.test_root_dir = tempfile.mkdtemp()
+        os.chdir(self.test_root_dir)
+
+        # These paths are now relative to self.test_root_dir
         self.test_locales_dir = "test_locales"
         self.test_data_dir = "test_data"
         os.makedirs(self.test_locales_dir, exist_ok=True)
@@ -153,7 +159,7 @@ class TestBuildScript(unittest.TestCase):
         ) as f:  # Corresponds to data/hero_item.json used in build.py
             json.dump(self.hero_item_data, f)
 
-        # Create a dummy index.html for main() to read
+        # Create a dummy index.html for main() to read (in self.test_root_dir)
         self.dummy_index_content = """
         <!DOCTYPE html>
         <html>
@@ -167,10 +173,10 @@ class TestBuildScript(unittest.TestCase):
         </body>
         </html>
         """
-        with open("index.html", "w", encoding="utf-8") as f:
+        with open("index.html", "w", encoding="utf-8") as f:  # Will be in self.test_root_dir
             f.write(self.dummy_index_content)
 
-        # Dummy config.json
+        # Dummy config.json (for build.py, which expects public/config.json)
         self.dummy_config = {
             "blocks": [
                 "hero.html",
@@ -182,49 +188,54 @@ class TestBuildScript(unittest.TestCase):
             "supported_langs": ["en", "es"],
             "default_lang": "en",
         }
-        # This config.json is for the test's setup, build.py reads public/config.json
-        with open("config.json", "w", encoding="utf-8") as f:
-            json.dump(self.dummy_config, f)
 
-        # Ensure public/config.json is also created for build.py if it's not
-        # mocked perfectly
+        # Create public directory and public/config.json within self.test_root_dir
         os.makedirs("public", exist_ok=True)
-        with open("public/config.json", "w", encoding="utf-8") as f:
+        with open(os.path.join("public", "config.json"), "w", encoding="utf-8") as f:
             json.dump(self.dummy_config, f)
 
-        # Dummy block files
-        os.makedirs("blocks", exist_ok=True)
-        with open("blocks/hero.html", "w", encoding="utf-8") as f:
+        # Create a root config.json as well if some tests directly expect it
+        # (though build.py itself uses public/config.json)
+        with open("config.json", "w", encoding="utf-8") as f: # will be in self.test_root_dir
+             json.dump(self.dummy_config, f)
+
+
+        # Dummy block files (in self.test_root_dir/blocks/)
+        os.makedirs("blocks", exist_ok=True) # will be self.test_root_dir/blocks
+        with open(os.path.join("blocks", "hero.html"), "w", encoding="utf-8") as f:
             f.write(
                 '<section class="hero">{{hero_content}}</section>'
-            )  # Updated to match new hero block
-        with open("blocks/features.html", "w", encoding="utf-8") as f:
+            )
+        with open(os.path.join("blocks", "features.html"), "w", encoding="utf-8") as f:
             f.write("<div>{{feature_items}}</div>")
-        with open("blocks/testimonials.html", "w", encoding="utf-8") as f:
+        with open(os.path.join("blocks", "testimonials.html"), "w", encoding="utf-8") as f:
             f.write("<div>{{testimonial_items}}</div>")
-        with open("blocks/portfolio.html", "w", encoding="utf-8") as f:
+        with open(os.path.join("blocks", "portfolio.html"), "w", encoding="utf-8") as f:
             f.write("<div>{{portfolio_items}}</div>")
-        with open("blocks/blog.html", "w", encoding="utf-8") as f:
+        with open(os.path.join("blocks", "blog.html"), "w", encoding="utf-8") as f:
             f.write("<div>{{blog_posts}}</div>")
 
     def tearDown(self):
         """Clean up test environment."""
-        # Use shutil.rmtree to remove directories and their contents
-        if os.path.exists(self.test_locales_dir):
-            shutil.rmtree(self.test_locales_dir)
-        if os.path.exists(self.test_data_dir):
-            shutil.rmtree(self.test_data_dir)
-        if os.path.exists("blocks"):
-            shutil.rmtree("blocks")
+        os.chdir(self.original_cwd)  # Restore original CWD
+        if hasattr(self, 'test_root_dir') and os.path.exists(self.test_root_dir):
+            shutil.rmtree(self.test_root_dir) # Remove the entire temporary directory
 
-        # Remove individual files created at root
-        if os.path.exists("index.html"):
-            os.remove("index.html")
-        if os.path.exists("index_es.html"):
-            os.remove("index_es.html")
-        if os.path.exists("config.json"):
-            os.remove("config.json")
-        # Individual block files inside "blocks" will be removed by rmtree("blocks")
+        # The following cleanup is no longer needed as files were in test_root_dir
+        # if os.path.exists(self.test_locales_dir): # This was relative to test_root_dir
+        #     shutil.rmtree(self.test_locales_dir)
+        # if os.path.exists(self.test_data_dir): # This was relative to test_root_dir
+        #     shutil.rmtree(self.test_data_dir)
+        # if os.path.exists("blocks"): # This was relative to test_root_dir
+        #     shutil.rmtree("blocks")
+        #
+        # # Remove individual files created at root (now within test_root_dir)
+        # if os.path.exists("index.html"):
+        #     os.remove("index.html")
+        # if os.path.exists("index_es.html"): # This is an output file, also in test_root_dir
+        #     os.remove("index_es.html")
+        # if os.path.exists("config.json"): # This was relative to test_root_dir
+        #     os.remove("config.json")
 
     @mock.patch("build.project_root", ".")  # Ensure build.py uses test_locales
     def test_load_translations_existing(self):
@@ -280,13 +291,8 @@ class TestBuildScript(unittest.TestCase):
             mocked_open.assert_called_with(  # Changed to assert_called_with
                 "public/locales/invalid.json", "r", encoding="utf-8"
             )
-        # The actual file 'test_locales/invalid.json' is not used by the mocked
-        # 'load_translations' if the mock for 'build.open' is correctly intercepting.
-        # However, the test creates it, so we should clean it up if it was for a
-        # different purpose. For this specific change, the physical file interaction
-        # for this test path is moot as 'build.open' is mocked.
-        if os.path.exists(os.path.join(self.test_locales_dir, "invalid.json")):
-            os.remove(os.path.join(self.test_locales_dir, "invalid.json"))
+        # The actual file 'test_locales/invalid.json' is created in the temp dir
+        # and will be cleaned up by tearDown. No explicit os.remove needed.
 
     def test_translate_html_content(self):
         """Test HTML content translation."""
@@ -396,7 +402,8 @@ class TestBuildScript(unittest.TestCase):
             f.write("[{'title': 'Test' }, {]")  # Invalid JSON
         items = load_dynamic_data(invalid_json_path, PortfolioItem)
         self.assertEqual(items, [])
-        os.remove(invalid_json_path)
+        # invalid_json_path is inside self.test_data_dir, which is in self.test_root_dir.
+        # It will be cleaned up by tearDown. No explicit os.remove needed.
 
     def test_generate_portfolio_html(self):
         """Test generation of portfolio HTML."""
