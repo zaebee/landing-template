@@ -1,4 +1,18 @@
+"""
+Provides data loading and caching capabilities for protobuf messages from JSON files.
+
+This module includes:
+- `JsonProtoDataLoader`: A class that implements the `DataLoader` protocol
+  to load data from JSON files and parse it into specified protobuf messages.
+- `InMemoryDataCache`: A class that implements the `DataCache` protocol
+  for simple in-memory storage of loaded data.
+- Module-level convenience functions (`load_dynamic_list_data`,
+  `load_dynamic_single_item_data`) that use a default instance of
+  `JsonProtoDataLoader` for ease of use or backward compatibility.
+"""
+
 import json
+import logging
 from typing import Any, Dict, List, Optional, Type, Union
 
 from google.protobuf import json_format
@@ -6,24 +20,39 @@ from google.protobuf.message import Message
 
 from .interfaces import DataCache, DataLoader, T
 
+# Configure basic logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 class JsonProtoDataLoader(DataLoader[T]):
     """
     Loads data from JSON files into Protobuf messages.
+    Implements the `DataLoader` protocol using a generic type `T` for messages.
     """
 
     def load_dynamic_list_data(
         self, data_file_path: str, message_type: Type[T]
     ) -> List[T]:
-        """Loads a list of dynamic data from a JSON file into protobuf messages."""
+        """Loads a list of data items from a JSON file into protobuf messages.
+
+        Args:
+            data_file_path: Path to the JSON file containing a list of items.
+            message_type: The protobuf message class to parse each item into.
+
+        Returns:
+            A list of protobuf messages of type T. Returns an empty list if
+            the file is not found, cannot be decoded, or if parsing fails.
+            Warnings are logged in such cases.
+        """
         items: List[T] = []
         try:
             with open(data_file_path, "r", encoding="utf-8") as f:
-                data_list_json = json.load(f)  # Corrected variable name
+                data_list_json = json.load(f)
                 if not isinstance(data_list_json, list):
-                    print(
-                        f"Warning: Data in {data_file_path} is not a list. "
-                        "Returning empty list."
+                    logger.warning(
+                        "Data in %s is not a list. Returning empty list.",
+                        data_file_path,
                     )
                     return []
                 for item_data in data_list_json:
@@ -31,100 +60,149 @@ class JsonProtoDataLoader(DataLoader[T]):
                     json_format.ParseDict(item_data, message)
                     items.append(message)
         except FileNotFoundError:
-            print(
-                f"Warning: Data file {data_file_path} not found. Returning empty list."
+            logger.warning(
+                "Data file %s not found. Returning empty list.", data_file_path
             )
         except json.JSONDecodeError:
-            print(
-                f"Warning: Could not decode JSON from {data_file_path}. "
-                "Returning empty list."
+            logger.warning(
+                "Could not decode JSON from %s. Returning empty list.",
+                data_file_path,
             )
-        except json_format.ParseError as e:  # Added specific ParseError handling
-            print(
-                f"Warning: Could not parse JSON into protobuf for {data_file_path}: {e}. "
-                "Returning empty list."
+        except json_format.ParseError as e:
+            logger.warning(
+                "Could not parse JSON into protobuf for %s: %s. Returning empty list.",
+                data_file_path,
+                e,
             )
-        except Exception as e:  # General exception handler
-            print(f"An unexpected error occurred loading list {data_file_path}: {e}")
-        return items  # Ensure items is returned
+        except Exception as e:  # pylint: disable=broad-except
+            logger.warning(
+                "An unexpected error occurred loading list %s: %s",
+                data_file_path,
+                e,
+            )
+        return items
 
     def load_dynamic_single_item_data(
         self, data_file_path: str, message_type: Type[T]
     ) -> Optional[T]:
-        """Loads a single dynamic data item from a JSON file into a protobuf message."""
+        """Loads a single data item from a JSON file into a protobuf message.
+
+        Args:
+            data_file_path: Path to the JSON file containing a single item.
+            message_type: The protobuf message class to parse the item into.
+
+        Returns:
+            An optional protobuf message of type T. Returns None if the file
+            is not found, cannot be decoded, or if parsing fails.
+            Warnings are logged in such cases.
+        """
         try:
             with open(data_file_path, "r", encoding="utf-8") as f:
-                data_json = json.load(f)  # Corrected variable name
+                data_json = json.load(f)
                 message: T = message_type()
                 json_format.ParseDict(data_json, message)
                 return message
         except FileNotFoundError:
-            print(f"Warning: Data file {data_file_path} not found. Returning None.")
+            logger.warning("Data file %s not found. Returning None.", data_file_path)
         except json.JSONDecodeError:
-            print(
-                f"Warning: Could not decode JSON from {data_file_path}. Returning None."
+            logger.warning(
+                "Could not decode JSON from %s. Returning None.", data_file_path
             )
-        except json_format.ParseError as e:  # Added specific ParseError handling
-            print(
-                f"Warning: Could not parse JSON into protobuf for {data_file_path}: {e}. "
-                "Returning None."
+        except json_format.ParseError as e:
+            logger.warning(
+                "Could not parse JSON into protobuf for %s: %s. Returning None.",
+                data_file_path,
+                e,
             )
-        except Exception as e:  # General exception handler
-            print(
-                f"An unexpected error occurred loading single item {data_file_path}: {e}"
+        except Exception as e:  # pylint: disable=broad-except
+            logger.warning(
+                "An unexpected error occurred loading single item %s: %s",
+                data_file_path,
+                e,
             )
-        return None  # Ensure None is returned on error
+        return None
 
 
 class InMemoryDataCache(DataCache[T]):
     """
-    Simple in-memory cache for dynamic data. Generic over message type T.
+    Simple in-memory cache for dynamic data, generic over message type T.
+    Implements the `DataCache` protocol.
     """
 
     def __init__(self) -> None:
-        # The cache can store lists of messages, single messages, or None.
+        """Initializes an empty in-memory cache."""
+        # The internal cache stores Union[List[Message], Message, None] to handle
+        # various protobuf message types loaded by a generic DataLoader.
+        # The type variable T in DataCache[T] implies that users of this cache
+        # expect items of type T or List[T].
         self._cache: Dict[str, Union[List[Message], Message, None]] = {}
 
     def get_item(self, key: str) -> Optional[Union[List[T], T]]:
-        # External interface uses T, internal _cache uses Message for broader compatibility
-        # but get_item should conceptually return items of type T or List[T]
+        """Retrieves an item or a list of items from the cache by key.
+
+        Args:
+            key: The key (typically the data file path) for the cached item.
+
+        Returns:
+            The cached item(s) (List[T] or T) or None if the key is not found.
+            A `type: ignore` is used here because the internal cache holds
+            `Message` types for flexibility, while the interface promises `T`.
+            This assumes `T` will be compatible with `Message` (e.g., `T` is a
+            subclass of `Message` or `Message` itself), which is generally
+            true for protobuf messages.
+        """
         item = self._cache.get(key)
         if item is None:
             return None
-        # This type assertion is based on how items are added in preload_data
+        # This type assertion is based on the assumption that items are stored
+        # correctly by `set_item` and `preload_data`, and that T is compatible
+        # with Message. If T were bound (e.g., T = TypeVar('T', bound=Message)),
+        # this ignore might be avoidable or replaced with a cast.
         return item  # type: ignore
 
     def set_item(self, key: str, value: Union[List[T], T, None]) -> None:
+        """Sets or updates an item in the cache.
+
+        Args:
+            key: The key (typically the data file path) for the item.
+            value: The item (List[T], T, or None) to cache.
+        """
         self._cache[key] = value
 
     def preload_data(
         self,
         loaders_config: Dict[str, Dict[str, Any]],
-        data_loader: DataLoader[
-            Message
-        ],  # Expects a DataLoader that can handle any Message
+        data_loader: DataLoader[Message],
     ) -> None:
+        """Pre-loads data specified in the configuration into the cache.
+
+        Iterates through the `loaders_config`, using the provided `data_loader`
+        to load data and then stores it in the cache. The 'data_file' path
+        from the config is used as the cache key.
+
+        Args:
+            loaders_config: A dictionary defining what data to load.
+                            Keys are typically block filenames, and values are
+                            dictionaries with 'data_file', 'message_type',
+                            and 'is_list' keys.
+            data_loader: An instance of a DataLoader (typically JsonProtoDataLoader)
+                         configured to handle any `Message` type.
         """
-        Pre-loads all dynamic data specified in the configuration into this cache.
-        Uses the 'data_file' path from the config as the key in the cache.
-        """
-        print("Pre-loading dynamic data...")
+        logger.info("Pre-loading dynamic data...")
         for _block_file, loader_config in loaders_config.items():
             data_file = loader_config.get("data_file")
-            message_type = loader_config.get("message_type")  # This is Type[Message]
+            message_type = loader_config.get("message_type")  # Expected: Type[Message]
             is_list = loader_config.get("is_list", True)
 
             if not data_file or not message_type:
-                print(
-                    f"Warning: Incomplete configuration for loader: {loader_config}. "
-                    "Skipping."
+                logger.warning(
+                    "Incomplete configuration for loader: %s. Skipping.",
+                    loader_config,
                 )
                 continue
 
-            # Avoid reloading if already cached
-            # Check using self.get_item() which is the public API for the cache
             if self.get_item(data_file) is not None:
-                # print(f"Data for {data_file} already in cache. Skipping reload.")
+                # logger.info("Data for %s already in cache. Skipping reload.", data_file)
                 continue
 
             loaded_data: Union[List[Message], Optional[Message]]
@@ -137,29 +215,39 @@ class InMemoryDataCache(DataCache[T]):
                     data_file, message_type
                 )
 
-            # Set item using the public API
-            self.set_item(
-                data_file, loaded_data
-            )  # loaded_data matches Union[List[T], T, None]
-            # print(f"Loaded data for {data_file} into cache.")
-        print("Dynamic data pre-loading complete.")
+            self.set_item(data_file, loaded_data)
+            # logger.info("Loaded data for %s into cache.", data_file)
+        logger.info("Dynamic data pre-loading complete.")
 
 
-# Retain original function names for now if they are used elsewhere (e.g. tests)
-# but ideally, users of this module would instantiate and use the classes.
+# --- Module-Level Convenience Functions ---
+# These functions use a default instance of JsonProtoDataLoader for ease of use
+# or for backward compatibility with code that expects module-level functions.
+# Ideally, new code should instantiate and use JsonProtoDataLoader and
+# InMemoryDataCache directly for better testability and explicitness.
+
 _default_loader: JsonProtoDataLoader = JsonProtoDataLoader()
-# Renamed to match interface for consistency, but old names aliased for compatibility.
+
 load_dynamic_list_data = _default_loader.load_dynamic_list_data
+"""Module-level function to load a list of data items. See JsonProtoDataLoader."""
+
 load_dynamic_single_item_data = _default_loader.load_dynamic_single_item_data
+"""Module-level function to load a single data item. See JsonProtoDataLoader."""
 
-# Alias old names if they were significantly used by tests or other parts not yet refactored.
+# Alias for potential backward compatibility if 'load_dynamic_data' was used
+# specifically for list data in the past.
 load_dynamic_data = load_dynamic_list_data
+"""Alias for load_dynamic_list_data for backward compatibility."""
 
-# The preload_dynamic_data function is now a method of InMemoryDataCache.
-# If a standalone function is absolutely needed for backward compatibility:
-# def preload_dynamic_data(
+# Note: The original `preload_dynamic_data` function (if it existed as a
+# standalone module function) is now primarily a method of `InMemoryDataCache`.
+# If a standalone function is absolutely needed for strict backward compatibility,
+# it would need to accept a cache instance:
+#
+# def preload_dynamic_data_module_level(
 #     loaders_config: Dict[str, Dict[str, Any]],
-#     cache: InMemoryDataCache, # Expects an instance of the cache
-#     data_loader: DataLoader[Message] # Expects an instance of a loader
+#     cache: InMemoryDataCache,
+#     data_loader: DataLoader[Message]
 # ) -> None:
-# cache.preload_data(loaders_config, data_loader)
+#     """Stand-alone version of preload_data for specific use cases."""
+#     cache.preload_data(loaders_config, data_loader)
