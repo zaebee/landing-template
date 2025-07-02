@@ -20,11 +20,11 @@
     <header>
       <nav>
         <div class="logo">
-          <a href="#">Logo</a>
+          <a href="#" data-i18n="logo_text">Logo ES</a>
         </div>
         <button
           aria-expanded="false"
-          aria-label="Toggle menu"
+          aria-label="Alternar menú"
           class="hamburger-menu"
         >
           <span class="hamburger-bar"></span>
@@ -196,11 +196,90 @@
           </div>
         </div>
       </section>
+      <section class="contact-form" id="contact">
+        <h2 data-i18n="contact_title">Contáctanos</h2>
+        <form
+          id="contactForm"
+          method="POST"
+          action="https://formspree.io/f/xgvyddyg"
+          data-form-action-url="https://formspree.io/f/xgvyddyg"
+          data-success-message="¡Mensaje enviado con éxito! Gracias."
+          data-error-message="¡Ups! Algo salió mal. Por favor, inténtalo de nuevo."
+        >
+          <label for="name" data-i18n="contact_name_label">Nombre:</label>
+          <input type="text" id="name" name="name" required />
+
+          <label for="email" data-i18n="contact_email_label"
+            >Correo Electrónico:</label
+          >
+          <input type="email" id="email" name="email" required />
+
+          <label for="message" data-i18n="contact_message_label"
+            >Mensaje:</label
+          >
+          <textarea id="message" name="message" rows="4" required></textarea>
+
+          <button type="submit" data-i18n="contact_send_button">
+            Enviar Mensaje
+          </button>
+          <div id="contactFormStatus" role="status"></div>
+        </form>
+      </section>
+
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const form = document.getElementById("contactForm");
+          if (form) {
+            const statusDiv = document.getElementById("contactFormStatus");
+            // These are now read from the form's data attributes, which are set by Jinja2
+            const actionUrl = form.dataset.formActionUrl;
+            const successMessage = form.dataset.successMessage;
+            const errorMessage = form.dataset.errorMessage;
+
+            form.addEventListener("submit", function (event) {
+              event.preventDefault();
+              const formData = new FormData(form);
+              statusDiv.textContent = "";
+              statusDiv.classList.remove("success", "error");
+
+              fetch(actionUrl, {
+                method: "POST",
+                body: formData,
+                headers: {
+                  Accept: "application/json",
+                },
+              })
+                .then((response) => {
+                  if (response.ok) {
+                    statusDiv.textContent = successMessage;
+                    statusDiv.classList.add("success");
+                    form.reset();
+                  } else {
+                    response.json().then((data) => {
+                      if (Object.hasOwn(data, "errors")) {
+                        statusDiv.textContent = data["errors"]
+                          .map((error) => error["message"])
+                          .join(", ");
+                      } else {
+                        statusDiv.textContent = errorMessage;
+                      }
+                      statusDiv.classList.add("error");
+                    });
+                  }
+                })
+                .catch((error) => {
+                  statusDiv.textContent = errorMessage;
+                  statusDiv.classList.add("error");
+                });
+            });
+          }
+        });
+      </script>
     </main>
 
     <footer>
       <p data-i18n="footer_text">
-        &amp;copy; 2023 Simple Landing Page. All rights reserved.
+        &amp;copy; 2024 Página de Destino Simple. Todos los derechos reservados.
       </p>
     </footer>
     <script>

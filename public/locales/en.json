@@ -62,5 +62,8 @@
   "theme_dark_button": "Dark Theme",
   "footer_text": "&copy; 2023 Simple Landing Page. All rights reserved.",
   "contact_form_success": "Message sent successfully! Thank you.",
-  "contact_form_error": "Oops! Something went wrong. Please try again."
+  "contact_form_error": "Oops! Something went wrong. Please try again.",
+  "logo_text": "Logo",
+  "toggle_menu_label": "Toggle menu",
+  "footer_text": "&copy; 2024 Simple Landing Page. All rights reserved."
 }

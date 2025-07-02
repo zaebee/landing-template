@@ -1,11 +1,13 @@
 <header>
   <nav>
     <div class="logo">
-      <a href="#">Logo</a>
+      <a href="#" data-i18n="logo_text"
+        >{{ translations.get('logo_text', 'Logo') }}</a
+      >
     </div>
     <button
       aria-expanded="false"
-      aria-label="Toggle menu"
+      aria-label="{{ translations.get('toggle_menu_label', 'Toggle menu') }}"
       class="hamburger-menu"
     >
       <span class="hamburger-bar"></span>
