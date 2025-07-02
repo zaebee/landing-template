@@ -1,0 +1,16 @@
+<section class="features" id="features" data-aos="fade-up" data-aos-delay="100">
+  <h2 data-i18n="features_title">{{ translations.get('features_title', 'Features') }}</h2>
+  <div class="feature-list">
+    {% for item in items %}
+    <div class="feature-item">
+      {% if item.icon and item.icon.svg_content %}
+      {{ item.icon.svg_content | safe }}
+      {% endif %}
+      <h3>{{ translations.get(item.content.title.key, item.content.title.key) }}</h3>
+      <p>{{ translations.get(item.content.description.key, item.content.description.key) }}</p>
+    </div>
+    {% else %}
+    <!-- No feature items provided -->
+    {% endfor %}
+  </div>
+</section>

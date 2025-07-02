@@ -1,0 +1,14 @@
+<section class="testimonials" id="testimonials">
+  <h2 data-i18n="testimonials_title">{{ translations.get('testimonials_title', 'Testimonials') }}</h2>
+  <div class="testimonial-list">
+    {% for item in items %}
+    <div class="testimonial-item">
+      <img src="{{ item.author_image.src }}" alt="{{ translations.get(item.author_image.alt_text.key, 'User photo') }}">
+      <p>"{{ translations.get(item.text.key, item.text.key) }}"</p>
+      <h4>{{ translations.get(item.author.key, item.author.key) }}</h4>
+    </div>
+    {% else %}
+    <!-- No testimonial items provided -->
+    {% endfor %}
+  </div>
+</section>

@@ -1,0 +1,10 @@
+<section class="hero">
+    {% if hero_item %}
+    <h1>{{ translations.get(hero_item.title.key, hero_item.title.key) }}</h1>
+    <p>{{ translations.get(hero_item.subtitle.key, hero_item.subtitle.key) }}</p>
+    <a href="{{ hero_item.cta.uri }}" class="cta-button">{{ translations.get(hero_item.cta.text.key, hero_item.cta.text.key) }}</a>
+    <!-- Selected variation: {{ hero_item.variation_id }} -->
+    {% else %}
+    <!-- Hero data not found or no variations -->
+    {% endif %}
+</section>
