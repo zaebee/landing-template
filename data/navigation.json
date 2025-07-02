@@ -1,0 +1,39 @@
+{
+  "items": [
+    {
+      "label": {
+        "key": "nav_home"
+      },
+      "href": "#",
+      "animation_hint": "smooth_scroll"
+    },
+    {
+      "label": {
+        "key": "nav_features"
+      },
+      "href": "#features",
+      "animation_hint": "smooth_scroll"
+    },
+    {
+      "label": {
+        "key": "nav_testimonials"
+      },
+      "href": "#testimonials",
+      "animation_hint": "smooth_scroll"
+    },
+    {
+      "label": {
+        "key": "nav_portfolio"
+      },
+      "href": "#portfolio",
+      "animation_hint": "smooth_scroll"
+    },
+    {
+      "label": {
+        "key": "nav_blog"
+      },
+      "href": "#blog",
+      "animation_hint": "smooth_scroll"
+    }
+  ]
+}
