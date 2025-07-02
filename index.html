@@ -14,7 +14,7 @@
     />
 
     <title>Simple Landing Page</title>
-    <link href="public/style.css" rel="stylesheet" />
+    <link href="public/dist/main.css" rel="stylesheet" />
   </head>
   <body>
     <header>
@@ -55,11 +55,10 @@
               <a href="#blog" data-i18n="nav_blog">Blog</a>
             </li>
           </ul>
-          <button aria-label="Switch to Dark Mode" id="dark-mode-toggle">
-            🌙
-          </button>
+          <button aria-label="Toggle Dark Mode" id="dark-mode-toggle"></button>
           <div id="language-switcher">
             <button data-lang="en">EN</button>
+
             <button data-lang="es">ES</button>
           </div>
         </div>
@@ -74,65 +73,274 @@
         <!-- Selected variation: hero_v1 -->
       </section>
       <section
-        class="features"
+        data-sads-component="features"
         id="features"
         data-aos="fade-up"
         data-aos-delay="100"
+        data-sads-padding="xxl"
+        data-sads-text-align="center"
+        data-sads-bg-color="surface"
       >
-        <h2 data-i18n="features_title">Our Features</h2>
-        <div class="feature-list">
-          <div class="feature-item">
-            <h3>Feature One</h3>
-            <p>Description of feature one.</p>
+        <h2
+          data-sads-element="title"
+          data-i18n="features_title"
+          data-sads-margin-bottom="xl"
+          data-sads-font-size="xl"
+        >
+          Our Features
+        </h2>
+        <div
+          data-sads-element="list"
+          data-sads-layout-type="flex"
+          data-sads-flex-wrap="wrap"
+          data-sads-flex-justify="space-around"
+          data-sads-gap="m"
+          data-sads-max-width="content-container"
+          data-sads-margin="auto"
+          data-sads-responsive-rules='[
+        {"breakpoint": "mobile", "styles": {"flexDirection": "column"}}
+    ]'
+        >
+          <div
+            data-sads-element="item"
+            data-sads-bg-color="surface-accent"
+            data-sads-padding="l"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-flex-basis="third-gap-m"
+            data-sads-text-align="left"
+            data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+        ]'
+          >
+            <h3
+              data-sads-element="item-title"
+              data-sads-margin-top="none"
+              data-sads-text-color="text-accent"
+              data-sads-font-size="l"
+            >
+              Feature One
+            </h3>
+            <p
+              data-sads-element="item-description"
+              data-sads-font-size="default"
+            >
+              Description of feature one.
+            </p>
           </div>
 
-          <div class="feature-item">
-            <h3>Feature Two</h3>
-            <p>Description of feature two.</p>
+          <div
+            data-sads-element="item"
+            data-sads-bg-color="surface-accent"
+            data-sads-padding="l"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-flex-basis="third-gap-m"
+            data-sads-text-align="left"
+            data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+        ]'
+          >
+            <h3
+              data-sads-element="item-title"
+              data-sads-margin-top="none"
+              data-sads-text-color="text-accent"
+              data-sads-font-size="l"
+            >
+              Feature Two
+            </h3>
+            <p
+              data-sads-element="item-description"
+              data-sads-font-size="default"
+            >
+              Description of feature two.
+            </p>
           </div>
 
-          <div class="feature-item">
-            <h3>Feature Three</h3>
-            <p>Description of feature three.</p>
+          <div
+            data-sads-element="item"
+            data-sads-bg-color="surface-accent"
+            data-sads-padding="l"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-flex-basis="third-gap-m"
+            data-sads-text-align="left"
+            data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+        ]'
+          >
+            <h3
+              data-sads-element="item-title"
+              data-sads-margin-top="none"
+              data-sads-text-color="text-accent"
+              data-sads-font-size="l"
+            >
+              Feature Three
+            </h3>
+            <p
+              data-sads-element="item-description"
+              data-sads-font-size="default"
+            >
+              Description of feature three.
+            </p>
           </div>
         </div>
       </section>
-      <section class="testimonials" id="testimonials">
-        <h2 data-i18n="testimonials_title">What Our Users Say</h2>
-        <div class="testimonial-list">
-          <div class="testimonial-item">
+      <section
+        data-sads-component="testimonials"
+        id="testimonials"
+        data-sads-padding="xl"
+        data-sads-text-align="center"
+        data-sads-bg-color="surface-accent"
+      >
+        <h2
+          data-sads-element="title"
+          data-i18n="testimonials_title"
+          data-sads-margin-bottom="xl"
+          data-sads-font-size="xl"
+          data-sads-text-color="text-primary"
+        >
+          What Our Users Say
+        </h2>
+        <div
+          data-sads-element="list"
+          data-sads-layout-type="flex"
+          data-sads-flex-wrap="wrap"
+          data-sads-flex-justify="space-around"
+          data-sads-gap="m"
+          data-sads-max-width="content-container"
+          data-sads-margin="custom:0 auto"
+          data-sads-responsive-rules='[{"breakpoint": "mobile", "styles": {"flexDirection": "column"}}]'
+        >
+          <div
+            data-sads-element="item"
+            data-sads-bg-color="surface"
+            data-sads-padding="l"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-flex-basis="third-gap-m"
+            data-sads-text-align="center"
+            data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+        ]'
+          >
             <img
+              data-sads-element="item-image"
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
               alt="User 1 Photo"
+              data-sads-border-radius="custom:50%"
+              data-sads-width="custom:80px"
+              data-sads-height="custom:80px"
+              data-sads-object-fit="cover"
+              data-sads-margin-bottom="m"
+              data-sads-border-width="custom:3px"
+              data-sads-border-style="solid"
+              data-sads-border-color="border-accent"
             />
-            <p>
+            <p
+              data-sads-element="item-text"
+              data-sads-font-style="italic"
+              data-sads-text-color="text-secondary"
+              data-sads-margin-bottom="m"
+            >
               "This is the best service I have ever used. Highly recommended!"
             </p>
-            <h4>- Jane Doe</h4>
+            <h4
+              data-sads-element="item-author"
+              data-sads-margin-top="none"
+              data-sads-text-color="text-primary"
+              data-sads-font-weight="bold"
+            >
+              - Jane Doe
+            </h4>
           </div>
 
-          <div class="testimonial-item">
+          <div
+            data-sads-element="item"
+            data-sads-bg-color="surface"
+            data-sads-padding="l"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-flex-basis="third-gap-m"
+            data-sads-text-align="center"
+            data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+        ]'
+          >
             <img
+              data-sads-element="item-image"
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
               alt="User 2 Photo"
+              data-sads-border-radius="custom:50%"
+              data-sads-width="custom:80px"
+              data-sads-height="custom:80px"
+              data-sads-object-fit="cover"
+              data-sads-margin-bottom="m"
+              data-sads-border-width="custom:3px"
+              data-sads-border-style="solid"
+              data-sads-border-color="border-accent"
             />
-            <p>
+            <p
+              data-sads-element="item-text"
+              data-sads-font-style="italic"
+              data-sads-text-color="text-secondary"
+              data-sads-margin-bottom="m"
+            >
               "Amazing features and incredible support. My business has grown
               significantly."
             </p>
-            <h4>- John Smith</h4>
+            <h4
+              data-sads-element="item-author"
+              data-sads-margin-top="none"
+              data-sads-text-color="text-primary"
+              data-sads-font-weight="bold"
+            >
+              - John Smith
+            </h4>
           </div>
 
-          <div class="testimonial-item">
+          <div
+            data-sads-element="item"
+            data-sads-bg-color="surface"
+            data-sads-padding="l"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-flex-basis="third-gap-m"
+            data-sads-text-align="center"
+            data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+        ]'
+          >
             <img
+              data-sads-element="item-image"
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
               alt="User 3 Photo"
+              data-sads-border-radius="custom:50%"
+              data-sads-width="custom:80px"
+              data-sads-height="custom:80px"
+              data-sads-object-fit="cover"
+              data-sads-margin-bottom="m"
+              data-sads-border-width="custom:3px"
+              data-sads-border-style="solid"
+              data-sads-border-color="border-accent"
             />
-            <p>
+            <p
+              data-sads-element="item-text"
+              data-sads-font-style="italic"
+              data-sads-text-color="text-secondary"
+              data-sads-margin-bottom="m"
+            >
               "A game-changer for our workflow. Simple, effective, and
               reliable."
             </p>
-            <h4>- Alice Brown</h4>
+            <h4
+              data-sads-element="item-author"
+              data-sads-margin-top="none"
+              data-sads-text-color="text-primary"
+              data-sads-font-weight="bold"
+            >
+              - Alice Brown
+            </h4>
           </div>
         </div>
       </section>
@@ -176,264 +384,307 @@
           </div>
         </div>
       </section>
-      <section class="blog" id="blog">
-        <h2 data-i18n="blog_title">Latest Posts</h2>
-        <div class="blog-list">
-          <div class="blog-item" id="post1">
-            <h3>Alpha Post Title</h3>
-            <p>Excerpt for Alpha blog post...</p>
-            <a href="#post1-link" class="read-more">Read Alpha Post</a>
+      <section
+        data-sads-component="blog"
+        id="blog"
+        data-sads-padding="xl"
+        data-sads-text-align="center"
+        data-sads-bg-color="blog-section-bg"
+      >
+        <h2
+          data-sads-element="title"
+          data-i18n="blog_title"
+          data-sads-margin-bottom="xl"
+          data-sads-font-size="xl"
+          data-sads-text-color="text-primary"
+        >
+          Latest Posts
+        </h2>
+        <div
+          data-sads-element="list"
+          data-sads-layout-type="flex"
+          data-sads-flex-wrap="wrap"
+          data-sads-flex-justify="space-around"
+          data-sads-gap="m"
+          data-sads-max-width="content-container"
+          data-sads-margin="custom:0 auto"
+          data-sads-responsive-rules='[{"breakpoint": "mobile", "styles": {"flexDirection": "column"}}]'
+        >
+          <div
+            data-sads-element="item"
+            id="post1"
+            data-sads-bg-color="blog-item-bg"
+            data-sads-padding="l"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-flex-basis="third-gap-m"
+            data-sads-text-align="left"
+            data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+        ]'
+          >
+            <h3
+              data-sads-element="item-title"
+              data-sads-margin-top="none"
+              data-sads-text-color="text-accent"
+              data-sads-font-size="l"
+            >
+              Alpha Post Title
+            </h3>
+            <p
+              data-sads-element="item-excerpt"
+              data-sads-font-size="s"
+              data-sads-text-color="text-secondary"
+              data-sads-margin-bottom="m"
+            >
+              Excerpt for Alpha blog post...
+            </p>
+            <a
+              data-sads-element="read-more-link"
+              href="#post1-link"
+              data-sads-display="inline-block"
+              data-sads-text-color="text-accent"
+              data-sads-text-decoration="none"
+              data-sads-font-weight="bold"
+            >
+              Read Alpha Post</a
+            >
           </div>
 
-          <div class="blog-item" id="post2">
-            <h3>Beta Post Title</h3>
-            <p>Excerpt for Beta blog post...</p>
-            <a href="#post2-link" class="read-more">Read Beta Post</a>
+          <div
+            data-sads-element="item"
+            id="post2"
+            data-sads-bg-color="blog-item-bg"
+            data-sads-padding="l"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-flex-basis="third-gap-m"
+            data-sads-text-align="left"
+            data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+        ]'
+          >
+            <h3
+              data-sads-element="item-title"
+              data-sads-margin-top="none"
+              data-sads-text-color="text-accent"
+              data-sads-font-size="l"
+            >
+              Beta Post Title
+            </h3>
+            <p
+              data-sads-element="item-excerpt"
+              data-sads-font-size="s"
+              data-sads-text-color="text-secondary"
+              data-sads-margin-bottom="m"
+            >
+              Excerpt for Beta blog post...
+            </p>
+            <a
+              data-sads-element="read-more-link"
+              href="#post2-link"
+              data-sads-display="inline-block"
+              data-sads-text-color="text-accent"
+              data-sads-text-decoration="none"
+              data-sads-font-weight="bold"
+            >
+              Read Beta Post</a
+            >
           </div>
 
-          <div class="blog-item" id="post3">
-            <h3>Gamma Post Title</h3>
-            <p>Excerpt for Gamma blog post...</p>
-            <a href="#post3-link" class="read-more">Read Gamma Post</a>
+          <div
+            data-sads-element="item"
+            id="post3"
+            data-sads-bg-color="blog-item-bg"
+            data-sads-padding="l"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-flex-basis="third-gap-m"
+            data-sads-text-align="left"
+            data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+        ]'
+          >
+            <h3
+              data-sads-element="item-title"
+              data-sads-margin-top="none"
+              data-sads-text-color="text-accent"
+              data-sads-font-size="l"
+            >
+              Gamma Post Title
+            </h3>
+            <p
+              data-sads-element="item-excerpt"
+              data-sads-font-size="s"
+              data-sads-text-color="text-secondary"
+              data-sads-margin-bottom="m"
+            >
+              Excerpt for Gamma blog post...
+            </p>
+            <a
+              data-sads-element="read-more-link"
+              href="#post3-link"
+              data-sads-display="inline-block"
+              data-sads-text-color="text-accent"
+              data-sads-text-decoration="none"
+              data-sads-font-weight="bold"
+            >
+              Read Gamma Post</a
+            >
           </div>
         </div>
       </section>
-      <section class="contact-form" id="contact">
-        <h2 data-i18n="contact_title">Contact Us</h2>
+      <section
+        data-sads-component="contact-form"
+        id="contact"
+        data-sads-padding="xl"
+        data-sads-bg-color="contact-section-bg"
+        data-sads-text-align="center"
+      >
+        <h2
+          data-sads-element="title"
+          data-i18n="contact_title"
+          data-sads-margin-bottom="xl"
+          data-sads-font-size="xl"
+          data-sads-text-color="text-primary"
+        >
+          Contact Us
+        </h2>
         <form
+          data-sads-element="form"
           id="contactForm"
           method="POST"
           action="https://formspree.io/f/xgvyddyg"
           data-form-action-url="https://formspree.io/f/xgvyddyg"
           data-success-message="Message sent successfully! Thank you."
           data-error-message="Oops! Something went wrong. Please try again."
+          data-sads-max-width="custom:600px"
+          data-sads-margin="custom:0 auto"
+          data-sads-bg-color="contact-form-bg"
+          data-sads-padding="xl"
+          data-sads-border-radius="m"
+          data-sads-shadow="subtle"
         >
-          <label for="name" data-i18n="contact_name_label">Name:</label>
-          <input type="text" id="name" name="name" required />
+          <label
+            data-sads-element="label"
+            for="name"
+            data-i18n="contact_name_label"
+            data-sads-display="block"
+            data-sads-margin-bottom="s"
+            data-sads-text-align="left"
+            data-sads-font-weight="bold"
+            data-sads-text-color="text-primary"
+            >Name:</label
+          >
+          <input
+            data-sads-element="text-input"
+            type="text"
+            id="name"
+            name="name"
+            required
+            data-sads-width="custom:100%"
+            data-sads-padding="input"
+            data-sads-margin-bottom="m"
+            data-sads-border-width="custom:1px"
+            data-sads-border-style="solid"
+            data-sads-border-color="input-border-color"
+            data-sads-border-radius="s"
+            data-sads-box-sizing="border-box"
+            data-sads-bg-color="input-bg-color"
+            data-sads-text-color="text-primary"
+          />
 
-          <label for="email" data-i18n="contact_email_label">Email:</label>
-          <input type="email" id="email" name="email" required />
+          <label
+            data-sads-element="label"
+            for="email"
+            data-i18n="contact_email_label"
+            data-sads-display="block"
+            data-sads-margin-bottom="s"
+            data-sads-text-align="left"
+            data-sads-font-weight="bold"
+            data-sads-text-color="text-primary"
+            >Email:</label
+          >
+          <input
+            data-sads-element="email-input"
+            type="email"
+            id="email"
+            name="email"
+            required
+            data-sads-width="custom:100%"
+            data-sads-padding="input"
+            data-sads-margin-bottom="m"
+            data-sads-border-width="custom:1px"
+            data-sads-border-style="solid"
+            data-sads-border-color="input-border-color"
+            data-sads-border-radius="s"
+            data-sads-box-sizing="border-box"
+            data-sads-bg-color="input-bg-color"
+            data-sads-text-color="text-primary"
+          />
 
-          <label for="message" data-i18n="contact_message_label"
+          <label
+            data-sads-element="label"
+            for="message"
+            data-i18n="contact_message_label"
+            data-sads-display="block"
+            data-sads-margin-bottom="s"
+            data-sads-text-align="left"
+            data-sads-font-weight="bold"
+            data-sads-text-color="text-primary"
             >Message:</label
           >
-          <textarea id="message" name="message" rows="4" required></textarea>
+          <textarea
+            data-sads-element="textarea-input"
+            id="message"
+            name="message"
+            rows="4"
+            required
+            data-sads-width="custom:100%"
+            data-sads-padding="input"
+            data-sads-margin-bottom="m"
+            data-sads-border-width="custom:1px"
+            data-sads-border-style="solid"
+            data-sads-border-color="input-border-color"
+            data-sads-border-radius="s"
+            data-sads-box-sizing="border-box"
+            data-sads-bg-color="input-bg-color"
+            data-sads-text-color="text-primary"
+            data-sads-resize="vertical"
+          ></textarea>
 
-          <button type="submit" data-i18n="contact_send_button">
+          <button
+            data-sads-element="button"
+            type="submit"
+            data-i18n="contact_send_button"
+            data-sads-display="inline-block"
+            data-sads-bg-color="button-primary-bg-color"
+            data-sads-text-color="button-primary-text-color"
+            data-sads-padding="custom:10px 20px"
+            data-sads-border-style="none"
+            data-sads-border-radius="s"
+            data-sads-cursor="pointer"
+            data-sads-font-size="m"
+            data-sads-font-weight="bold"
+            data-sads-transition="custom:background-color 0.3s ease"
+          >
             Send Message
           </button>
-          <div id="contactFormStatus" role="status"></div>
+          <div
+            data-sads-element="form-status"
+            id="contactFormStatus"
+            role="status"
+            data-sads-margin-top="m"
+          ></div>
         </form>
       </section>
-
-      <script>
-        document.addEventListener("DOMContentLoaded", function () {
-          const form = document.getElementById("contactForm");
-          if (form) {
-            const statusDiv = document.getElementById("contactFormStatus");
-            // These are now read from the form's data attributes, which are set by Jinja2
-            const actionUrl = form.dataset.formActionUrl;
-            const successMessage = form.dataset.successMessage;
-            const errorMessage = form.dataset.errorMessage;
-
-            form.addEventListener("submit", function (event) {
-              event.preventDefault();
-              const formData = new FormData(form);
-              statusDiv.textContent = "";
-              statusDiv.classList.remove("success", "error");
-
-              fetch(actionUrl, {
-                method: "POST",
-                body: formData,
-                headers: {
-                  Accept: "application/json",
-                },
-              })
-                .then((response) => {
-                  if (response.ok) {
-                    statusDiv.textContent = successMessage;
-                    statusDiv.classList.add("success");
-                    form.reset();
-                  } else {
-                    response.json().then((data) => {
-                      if (Object.hasOwn(data, "errors")) {
-                        statusDiv.textContent = data["errors"]
-                          .map((error) => error["message"])
-                          .join(", ");
-                      } else {
-                        statusDiv.textContent = errorMessage;
-                      }
-                      statusDiv.classList.add("error");
-                    });
-                  }
-                })
-                .catch((error) => {
-                  statusDiv.textContent = errorMessage;
-                  statusDiv.classList.add("error");
-                });
-            });
-          }
-        });
-      </script>
     </main>
 
     <footer>
       <p data-i18n="footer_text">
-        &amp;copy; 2024 Simple Landing Page. All rights reserved.
+        &copy; 2024 Simple Landing Page. All rights reserved.
       </p>
     </footer>
-    <script>
-      // Dark Mode Toggle
-      const darkModeToggle = document.getElementById("dark-mode-toggle");
-      const body = document.body;
-      let currentTranslations = {};
-
-      async function fetchTranslations(lang) {
-        try {
-          const response = await fetch(`public/locales/${lang}.json`);
-          if (!response.ok) {
-            console.error(
-              `Could not load ${lang}.json: ${response.statusText}`
-            );
-            return null;
-          }
-          return await response.json();
-        } catch (error) {
-          console.error(`Error fetching ${lang}.json:`, error);
-          return null;
-        }
-      }
-
-      function applyTranslations(translations) {
-        if (!translations) return;
-        currentTranslations = translations;
-        document.querySelectorAll("[data-i18n]").forEach((element) => {
-          const key = element.getAttribute("data-i18n");
-          if (translations[key] && element.id !== "dark-mode-toggle") {
-            element.textContent = translations[key];
-          }
-        });
-        updateDarkModeButtonIcon();
-      }
-
-      function updateDarkModeButtonIcon() {
-        const isDarkMode = body.classList.contains("dark-mode");
-        if (isDarkMode) {
-          darkModeToggle.textContent = "☀️";
-          darkModeToggle.setAttribute(
-            "aria-label",
-            currentTranslations["light_mode_toggle"] || "Switch to Light Mode"
-          );
-        } else {
-          darkModeToggle.textContent = "🌙";
-          darkModeToggle.setAttribute(
-            "aria-label",
-            currentTranslations["dark_mode_toggle"] || "Switch to Dark Mode"
-          );
-        }
-      }
-
-      async function setLanguage(lang) {
-        const translations = await fetchTranslations(lang);
-        if (translations) {
-          applyTranslations(translations);
-          localStorage.setItem("language", lang);
-          document.documentElement.lang = lang;
-
-          document
-            .querySelectorAll("#language-switcher button")
-            .forEach((btn) => {
-              btn.classList.remove("active");
-              if (btn.getAttribute("data-lang") === lang) {
-                btn.classList.add("active");
-              }
-            });
-        }
-      }
-
-      if (localStorage.getItem("darkMode") === "enabled") {
-        body.classList.add("dark-mode");
-      }
-
-      darkModeToggle.addEventListener("click", () => {
-        body.classList.toggle("dark-mode");
-        if (body.classList.contains("dark-mode")) {
-          localStorage.setItem("darkMode", "enabled");
-        } else {
-          localStorage.setItem("darkMode", "disabled");
-        }
-        updateDarkModeButtonIcon();
-      });
-
-      const languageSwitcher = document.getElementById("language-switcher");
-      if (languageSwitcher) {
-        languageSwitcher.addEventListener("click", (event) => {
-          const button = event.target.closest("button[data-lang]");
-          if (button) {
-            const lang = button.getAttribute("data-lang");
-            setLanguage(lang);
-          }
-        });
-      }
-
-      async function initializeApp() {
-        const preferredLang = localStorage.getItem("language") || "en";
-        document.documentElement.lang = preferredLang;
-
-        await setLanguage(preferredLang);
-      }
-
-      initializeApp();
-
-      const hamburgerMenu = document.querySelector(".hamburger-menu");
-      const navItemsContainer = document.querySelector(".nav-items");
-
-      if (hamburgerMenu && navItemsContainer) {
-        hamburgerMenu.addEventListener("click", () => {
-          navItemsContainer.classList.toggle("active");
-          const isExpanded = navItemsContainer.classList.contains("active");
-          hamburgerMenu.setAttribute("aria-expanded", isExpanded);
-        });
-      }
-
-      const contactForm = document.querySelector(".contact-form form");
-      if (contactForm) {
-        contactForm.addEventListener("submit", function (event) {
-          const name = document.getElementById("name").value.trim();
-          const email = document.getElementById("email").value.trim();
-          const message = document.getElementById("message").value.trim();
-          let isValid = true;
-          let errors = [];
-
-          if (name === "") {
-            isValid = false;
-            errors.push("Name is required.");
-          }
-
-          if (email === "") {
-            isValid = false;
-            errors.push("Email is required.");
-          } else {
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailPattern.test(email)) {
-              isValid = false;
-              errors.push("Please enter a valid email address.");
-            }
-          }
-
-          if (message === "") {
-            isValid = false;
-            errors.push("Message is required.");
-          }
-
-          if (!isValid) {
-            event.preventDefault();
-            alert(
-              "Please correct the following errors:\n\n" + errors.join("\n")
-            );
-          }
-        });
-      }
-    </script>
+    <script src="public/dist/main.js" defer></script>
   </body>
 </html>
