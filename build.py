@@ -273,7 +273,7 @@ def generate_hero_html(hero_data: HeroItem | None, translations: Translations) -
     return f"""
     <h1>{title}</h1>
     <p>{subtitle}</p>
-    <a href="{selected_variation.cta.link}" class="cta-button">{cta_text}</a>
+    <a href="{selected_variation.cta.uri}" class="cta-button">{cta_text}</a>
     <!-- Selected variation: {selected_variation.variation_id} -->
     """
 
@@ -291,7 +291,7 @@ def generate_contact_form_html(
 
     # These will be used by the client-side JavaScript
     return (
-        f'data-form-action-url="{config.form_action_url}"\n'
+        f'data-form-action-url="{config.form_action_uri}"\n'
         f'    data-success-message="{translations.get(config.success_message_key, "Message sent!")}"\n'  # noqa: E501
         f'    data-error-message="{translations.get(config.error_message_key, "Error sending message.")}"'  # noqa: E501
     )
@@ -310,7 +310,7 @@ def generate_blog_html(posts: List[BlogPost], translations: Translations) -> str
         <div class="blog-item">
             <h3>{title}</h3>
             <p>{excerpt}</p>
-            <a href="{post.cta.link}" class="read-more">{cta_text}</a>
+            <a href="{post.cta.uri}" class="read-more">{cta_text}</a>
         </div>
         """
         )
