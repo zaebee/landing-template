@@ -340,7 +340,8 @@ def load_app_config(config_path: str = "public/config.json") -> Dict[str, Any]:
     """Loads the main application configuration file."""
     try:
         with open(config_path, "r", encoding="utf-8") as f:
-            return json.load(f)
+            result: Dict[str, Any] = json.load(f)
+            return result
     except FileNotFoundError:
         print(f"Error: Configuration file {config_path} not found. Exiting.")
         sys.exit(1)
