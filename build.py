@@ -1,8 +1,9 @@
 """
 Builds the index.html file from configured blocks for multiple languages.
 """
-import sys
+
 import os
+import sys
 
 # Ensure the project root (and thus 'generated' directory) is in the Python path
 project_root = os.path.dirname(os.path.abspath(__file__))
@@ -11,25 +12,8 @@ generated_dir = os.path.join(project_root, "generated")
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 if generated_dir not in sys.path:
-    sys.path.insert(0, generated_dir) # Add generated to sys.path
+    sys.path.insert(0, generated_dir)  # Add generated to sys.path
 
-print(f"DEBUG (top): project_root: {project_root}")
-print(f"DEBUG (top): generated_dir: {generated_dir}")
-print(f"DEBUG (top): sys.path: {sys.path}")
-if os.path.exists(generated_dir):
-    print(f"DEBUG (top): Contents of generated_dir: {os.listdir(generated_dir)}")
-else:
-    print(f"DEBUG (top): generated_dir {generated_dir} does not exist.")
-"""
-# Removed debug prints from here:
-# print(f"DEBUG (top): project_root: {project_root}")
-# print(f"DEBUG (top): generated_dir: {generated_dir}")
-# print(f"DEBUG (top): sys.path: {sys.path}")
-# if os.path.exists(generated_dir):
-#     print(f"DEBUG (top): Contents of generated_dir: {os.listdir(generated_dir)}")
-# else:
-#     print(f"DEBUG (top): generated_dir {generated_dir} does not exist.")
-"""
 import json
 from typing import Any, Dict, List, Type, TypeVar, Union
 
@@ -40,12 +24,12 @@ from google.protobuf.message import Message
 
 # This is where the error occurs
 from generated.blog_post_pb2 import BlogPost
+from generated.contact_form_config_pb2 import ContactFormConfig  # Added
 from generated.feature_item_pb2 import FeatureItem
 from generated.hero_item_pb2 import HeroItem  # Added
 from generated.nav_item_pb2 import Navigation  # Added
 from generated.portfolio_item_pb2 import PortfolioItem
 from generated.testimonial_item_pb2 import TestimonialItem
-from generated.contact_form_config_pb2 import ContactFormConfig # Added
 
 # Ensure the project root (and thus 'generated' directory) is in the Python path
 project_root = os.path.dirname(os.path.abspath(__file__))
@@ -54,12 +38,13 @@ generated_dir = os.path.join(project_root, "generated")
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 if generated_dir not in sys.path:
-    sys.path.insert(0, generated_dir) # Add generated to sys.path
+    sys.path.insert(0, generated_dir)  # Add generated to sys.path
 
 print(f"DEBUG: project_root: {project_root}")
 print(f"DEBUG: generated_dir: {generated_dir}")
 print(f"DEBUG: sys.path: {sys.path}")
 import os
+
 print(f"DEBUG: Contents of generated_dir: {os.listdir(generated_dir)}")
 
 
@@ -198,8 +183,12 @@ def generate_portfolio_html(
         # TitledBlock: title (I18nString), description (I18nString)
         # I18nString: key
         title: str = translations.get(item.details.title.key, item.details.title.key)
-        description: str = translations.get(item.details.description.key, item.details.description.key)
-        alt_text: str = translations.get(item.image.alt_text.key, "Portfolio image") # Default alt
+        description: str = translations.get(
+            item.details.description.key, item.details.description.key
+        )
+        alt_text: str = translations.get(
+            item.image.alt_text.key, "Portfolio image"
+        )  # Default alt
 
         html_output.append(
             f"""
@@ -244,7 +233,9 @@ def generate_features_html(items: List[FeatureItem], translations: Translations)
         # FeatureItem: content (TitledBlock)
         # TitledBlock: title (I18nString), description (I18nString)
         title: str = translations.get(item.content.title.key, item.content.title.key)
-        description: str = translations.get(item.content.description.key, item.content.description.key)
+        description: str = translations.get(
+            item.content.description.key, item.content.description.key
+        )
         html_output.append(
             f"""
         <div class="feature-item">
@@ -256,7 +247,8 @@ def generate_features_html(items: List[FeatureItem], translations: Translations)
     return "\n".join(html_output)
 
 
-import random # Added for A/B testing selection
+import random  # Added for A/B testing selection
+
 
 def generate_hero_html(hero_data: HeroItem | None, translations: Translations) -> str:
     """Generates HTML for the hero section, selecting a variation."""
@@ -276,17 +268,20 @@ def generate_hero_html(hero_data: HeroItem | None, translations: Translations) -
             if var.variation_id == default_id:
                 selected_variation = var
                 break
-        if not selected_variation: # If default_id not found, pick first
-             selected_variation = hero_data.variations[0]
+        if not selected_variation:  # If default_id not found, pick first
+            selected_variation = hero_data.variations[0]
 
-
-    if not selected_variation: # Should not happen if variations exist
+    if not selected_variation:  # Should not happen if variations exist
         return "<!-- Could not select a hero variation -->"
 
     # HeroItemContent: title (I18nString), subtitle (I18nString), cta (CTA)
     title = translations.get(selected_variation.title.key, selected_variation.title.key)
-    subtitle = translations.get(selected_variation.subtitle.key, selected_variation.subtitle.key)
-    cta_text = translations.get(selected_variation.cta.text.key, selected_variation.cta.text.key)
+    subtitle = translations.get(
+        selected_variation.subtitle.key, selected_variation.subtitle.key
+    )
+    cta_text = translations.get(
+        selected_variation.cta.text.key, selected_variation.cta.text.key
+    )
 
     return f"""
     <h1>{title}</h1>
@@ -296,7 +291,9 @@ def generate_hero_html(hero_data: HeroItem | None, translations: Translations) -
     """
 
 
-def generate_contact_form_html(config: ContactFormConfig | None, translations: Translations) -> str:
+def generate_contact_form_html(
+    config: ContactFormConfig | None, translations: Translations
+) -> str:
     """
     Generates HTML for the contact form, including data attributes for AJAX submission.
     The actual form fields are expected to be in the block template.
@@ -311,6 +308,7 @@ def generate_contact_form_html(config: ContactFormConfig | None, translations: T
     data-success-message="{translations.get(config.success_message_key, 'Message sent!')}"
     data-error-message="{translations.get(config.error_message_key, 'Error sending message.')}"
     """
+
 
 def generate_blog_html(posts: List[BlogPost], translations: Translations) -> str:
     """Generates HTML for blog posts."""
@@ -345,7 +343,9 @@ def generate_navigation_data_for_config(
 
     for item in nav_proto.items:
         label: str = translations.get(item.label.key, item.label.key)
-        nav_items_for_config.append({"label_i18n_key": item.label.key, "label": label, "href": item.href})
+        nav_items_for_config.append(
+            {"label_i18n_key": item.label.key, "label": label, "href": item.href}
+        )
     return nav_items_for_config
 
 
@@ -397,7 +397,7 @@ def main() -> None:
             "generator": generate_contact_form_html,
             "placeholder": "{{contact_form_attributes}}",
             "is_list": False,
-        }
+        },
     }
 
     # Pre-load all dynamic data once
@@ -424,7 +424,9 @@ def main() -> None:
 
     # Load navigation proto data
     # This assumes a single navigation.json for all languages, with labels being i18n keys
-    navigation_data_file_path = raw_config.get("navigation_data_file", "data/navigation.json")
+    navigation_data_file_path = raw_config.get(
+        "navigation_data_file", "data/navigation.json"
+    )
     navigation_proto_data: Navigation | None = load_single_item_dynamic_data(
         navigation_data_file_path, Navigation
     )
@@ -473,8 +475,9 @@ def main() -> None:
     # Create a directory for generated language-specific configs if it doesn't exist
     os.makedirs("public/generated_configs", exist_ok=True)
 
-
-    config: Dict[str, Any] # This will be used inside the loop for language-specific config
+    config: Dict[
+        str, Any
+    ]  # This will be used inside the loop for language-specific config
     try:
         # This is the base config, will be augmented with navigation for each lang
         with open("public/config.json", "r", encoding="utf-8") as f:
@@ -580,8 +583,10 @@ def main() -> None:
         translations: Translations = load_translations(lang)
 
         # Generate language-specific config with navigation
-        lang_config = raw_config.copy() # Start with a copy of the base config
-        lang_config["navigation"] = generate_navigation_data_for_config(navigation_proto_data, translations)
+        lang_config = raw_config.copy()  # Start with a copy of the base config
+        lang_config["navigation"] = generate_navigation_data_for_config(
+            navigation_proto_data, translations
+        )
 
         # Save the language-specific config
         # The JS in index.html will need to be updated to load config_en.json instead of config.json
@@ -593,8 +598,9 @@ def main() -> None:
                 json.dump(lang_config, f_config, indent=4, ensure_ascii=False)
             print(f"Generated language-specific config: {generated_config_path}")
         except IOError as e:
-            print(f"Error writing language-specific config {generated_config_path}: {e}")
-
+            print(
+                f"Error writing language-specific config {generated_config_path}: {e}"
+            )
 
         blocks_html_parts: List[str] = []
         # Use raw_config here for block list, as lang_config is for JS side.
