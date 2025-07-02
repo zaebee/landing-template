@@ -14,168 +14,20 @@
     />
     {% endblock head_meta %}
     <title>{{ title | default('Simple Landing Page') }}</title>
-    <link href="public/style.css" rel="stylesheet" />
-    {% block head_extra %}{% endblock head_extra %}
+    <link href="public/dist/main.css" rel="stylesheet" />
+    {# Updated CSS link #} {% block head_extra %}{% endblock head_extra %}
   </head>
   <body>
-    {% include "blocks/header.html" %}
+    {% include "components/header/header.html" %} {# Updated path #}
 
     <main>{{ main_content | safe }}</main>
 
-    {% include "blocks/footer.html" %} {% block scripts %}
-    <script>
-      // Dark Mode Toggle
-      const darkModeToggle = document.getElementById("dark-mode-toggle");
-      const body = document.body;
-      let currentTranslations = {};
-
-      async function fetchTranslations(lang) {
-        try {
-          const response = await fetch(`public/locales/${lang}.json`);
-          if (!response.ok) {
-            console.error(
-              `Could not load ${lang}.json: ${response.statusText}`
-            );
-            return null;
-          }
-          return await response.json();
-        } catch (error) {
-          console.error(`Error fetching ${lang}.json:`, error);
-          return null;
-        }
-      }
-
-      function applyTranslations(translations) {
-        if (!translations) return;
-        currentTranslations = translations;
-        document.querySelectorAll("[data-i18n]").forEach((element) => {
-          const key = element.getAttribute("data-i18n");
-          if (translations[key] && element.id !== "dark-mode-toggle") {
-            element.textContent = translations[key];
-          }
-        });
-        updateDarkModeButtonIcon();
-      }
-
-      function updateDarkModeButtonIcon() {
-        const isDarkMode = body.classList.contains("dark-mode");
-        if (isDarkMode) {
-          darkModeToggle.textContent = "☀️";
-          darkModeToggle.setAttribute(
-            "aria-label",
-            currentTranslations["light_mode_toggle"] || "Switch to Light Mode"
-          );
-        } else {
-          darkModeToggle.textContent = "🌙";
-          darkModeToggle.setAttribute(
-            "aria-label",
-            currentTranslations["dark_mode_toggle"] || "Switch to Dark Mode"
-          );
-        }
-      }
-
-      async function setLanguage(lang) {
-        const translations = await fetchTranslations(lang);
-        if (translations) {
-          applyTranslations(translations);
-          localStorage.setItem("language", lang);
-          document.documentElement.lang = lang;
-
-          document
-            .querySelectorAll("#language-switcher button")
-            .forEach((btn) => {
-              btn.classList.remove("active");
-              if (btn.getAttribute("data-lang") === lang) {
-                btn.classList.add("active");
-              }
-            });
-        }
-      }
-
-      if (localStorage.getItem("darkMode") === "enabled") {
-        body.classList.add("dark-mode");
-      }
-
-      darkModeToggle.addEventListener("click", () => {
-        body.classList.toggle("dark-mode");
-        if (body.classList.contains("dark-mode")) {
-          localStorage.setItem("darkMode", "enabled");
-        } else {
-          localStorage.setItem("darkMode", "disabled");
-        }
-        updateDarkModeButtonIcon();
-      });
-
-      const languageSwitcher = document.getElementById("language-switcher");
-      if (languageSwitcher) {
-        languageSwitcher.addEventListener("click", (event) => {
-          const button = event.target.closest("button[data-lang]");
-          if (button) {
-            const lang = button.getAttribute("data-lang");
-            setLanguage(lang);
-          }
-        });
-      }
-
-      async function initializeApp() {
-        const preferredLang = localStorage.getItem("language") || "en";
-        document.documentElement.lang = preferredLang;
-
-        await setLanguage(preferredLang);
-      }
-
-      initializeApp();
-
-      const hamburgerMenu = document.querySelector(".hamburger-menu");
-      const navItemsContainer = document.querySelector(".nav-items");
-
-      if (hamburgerMenu && navItemsContainer) {
-        hamburgerMenu.addEventListener("click", () => {
-          navItemsContainer.classList.toggle("active");
-          const isExpanded = navItemsContainer.classList.contains("active");
-          hamburgerMenu.setAttribute("aria-expanded", isExpanded);
-        });
-      }
-
-      const contactForm = document.querySelector(".contact-form form");
-      if (contactForm) {
-        contactForm.addEventListener("submit", function (event) {
-          const name = document.getElementById("name").value.trim();
-          const email = document.getElementById("email").value.trim();
-          const message = document.getElementById("message").value.trim();
-          let isValid = true;
-          let errors = [];
-
-          if (name === "") {
-            isValid = false;
-            errors.push("Name is required.");
-          }
-
-          if (email === "") {
-            isValid = false;
-            errors.push("Email is required.");
-          } else {
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailPattern.test(email)) {
-              isValid = false;
-              errors.push("Please enter a valid email address.");
-            }
-          }
-
-          if (message === "") {
-            isValid = false;
-            errors.push("Message is required.");
-          }
-
-          if (!isValid) {
-            event.preventDefault();
-            alert(
-              "Please correct the following errors:\n\n" + errors.join("\n")
-            );
-          }
-        });
-      }
-    </script>
+    {% include "components/footer/footer.html" %} {# Updated path #} {% block
+    scripts %} {# All JavaScript logic is now bundled into main.js by the build
+    script. This includes sads-style-engine.js, app.js, and component-specific
+    JS. The app.js contains the DOMContentLoaded listener and initializes
+    everything. #}
+    <script src="public/dist/main.js" defer></script>
     {% endblock scripts %}
   </body>
 </html>

@@ -1,0 +1,76 @@
+<section
+    data-sads-component="testimonials"
+    id="testimonials"
+    data-sads-padding="xl"
+    data-sads-text-align="center"
+    data-sads-bg-color="surface-accent" {# Light: #f9f9f9, Dark: #1f1f1f (engine 'surface-accent-dark' is now #1f1f1f) #}
+>
+  <h2
+    data-sads-element="title"
+    data-i18n="testimonials_title"
+    data-sads-margin-bottom="xl"
+    data-sads-font-size="xl"
+    data-sads-text-color="text-primary"
+  >
+    {{ translations.get('testimonials_title', 'Testimonials') }}
+  </h2>
+  <div
+    data-sads-element="list"
+    data-sads-layout-type="flex"
+    data-sads-flex-wrap="wrap"
+    data-sads-flex-justify="space-around"
+    data-sads-gap="m" {# Original 20px, theme 'm' is 1rem. 'l' could be 1.25rem for 20px if defined. #}
+    data-sads-max-width="content-container"
+    data-sads-margin="custom:0 auto" {# Corrected from margin-horizontal #}
+    data-sads-responsive-rules='[{"breakpoint": "mobile", "styles": {"flexDirection": "column"}}]'
+  >
+    {% for item_data in items %}
+    <div
+        data-sads-element="item"
+        data-sads-bg-color="surface" {# Light: #fff, Dark: #2a2a2a (engine 'surface-dark' is now #2a2a2a) #}
+        data-sads-padding="l"
+        data-sads-border-radius="m"
+        data-sads-shadow="subtle"
+        data-sads-flex-basis="third-gap-m"
+        {# data-sads-box-sizing="border-box" /* Should be global */ #}
+        data-sads-text-align="center"
+        data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+        ]'
+        {# TODO: Handle :last-child margin-bottom:0 for mobile via SADS #}
+    >
+      <img
+        data-sads-element="item-image"
+        src="{{ item_data.author_image.src }}"
+        alt="{{ translations.get(item_data.author_image.alt_text.key, 'User photo') }}"
+        data-sads-border-radius="custom:50%"
+        data-sads-width="custom:80px"
+        data-sads-height="custom:80px"
+        data-sads-object-fit="cover"
+        data-sads-margin-bottom="m"
+        data-sads-border-width="custom:3px"
+        data-sads-border-style="solid"
+        data-sads-border-color="border-accent" {# Was text-accent, using border-accent for clarity, maps to same color #}
+      />
+      <p
+        data-sads-element="item-text"
+        data-sads-font-style="italic"
+        data-sads-text-color="text-secondary"
+        data-sads-margin-bottom="m"
+      >
+        "{{ translations.get(item_data.text.key, item_data.text.key) }}"
+      </p>
+      <h4
+        data-sads-element="item-author"
+        data-sads-margin-top="none"
+        data-sads-text-color="text-primary"
+        data-sads-font-weight="bold"
+      >
+        {{ translations.get(item_data.author.key, item_data.author.key) }}
+      </h4>
+    </div>
+    {% else %}
+    <!-- No testimonial items provided -->
+    {% endfor %}
+  </div>
+</section>

@@ -60,6 +60,7 @@ class DefaultPageBuilder(PageBuilder):
                           (already rendered blocks).
             navigation_items: Optional list of navigation item dictionaries for the header.
             page_title: Optional title for the page.
+            app_config: Optional application configuration dictionary.
 
 
         Returns:
@@ -74,6 +75,7 @@ class DefaultPageBuilder(PageBuilder):
             "translations": translations,
             "main_content": main_content,
             "navigation_items": navigation_items or [],
+            "app_config": app_config or {}, # Pass app_config to the template context
             # Add any other variables your base.html might need
         }
         return str(base_template.render(context))

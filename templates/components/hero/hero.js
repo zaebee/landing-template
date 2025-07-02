@@ -1,0 +1,1 @@
+// Hero Component JS

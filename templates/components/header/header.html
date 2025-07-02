@@ -1,0 +1,44 @@
+<header>
+  <nav>
+    <div class="logo">
+      <a href="#" data-i18n="logo_text"
+        >{{ translations.get('logo_text', 'Logo') }}</a
+      >
+    </div>
+    <button
+      aria-expanded="false"
+      aria-label="{{ translations.get('toggle_menu_label', 'Toggle menu') }}"
+      {#
+      Fallback
+      added
+      #}
+      class="hamburger-menu"
+    >
+      <span class="hamburger-bar"></span>
+      <span class="hamburger-bar"></span>
+      <span class="hamburger-bar"></span>
+    </button>
+    <div class="nav-items">
+      <ul>
+        {% for item in navigation_items %}
+        <li>
+          <a href="{{ item.href }}" data-i18n="{{ item.label.key }}"
+            >{{ translations.get(item.label.key, item.label.key) }}</a
+          >
+        </li>
+        {% endfor %}
+      </ul>
+      <button
+        aria-label="{{ translations.get('dark_mode_toggle', 'Switch to Dark Mode') }}"
+        id="dark-mode-toggle"
+      >
+        {# Icon will be set by JS #}
+      </button>
+      <div id="language-switcher">
+        {% for lang_code in app_config.supported_langs %}
+        <button data-lang="{{ lang_code }}">{{ lang_code | upper }}</button>
+        {% endfor %}
+      </div>
+    </div>
+  </nav>
+</header>

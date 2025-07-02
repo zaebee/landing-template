@@ -1,0 +1,16 @@
+/* Footer Component CSS */
+footer {
+  background: #333;
+  color: #fff;
+  text-align: center;
+  padding: 1rem 0;
+  margin-top: 20px; /* Ensure space above footer if content is short */
+}
+
+/* Dark Mode Override for Footer */
+/* This relies on body.dark-mode. If the component needs to be styled
+   independently of the body tag, this approach would need adjustment. */
+body.dark-mode footer {
+  background: #1f1f1f;
+  color: #e0e0e0;
+}

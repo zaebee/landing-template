@@ -1,0 +1,57 @@
+/* Hero Component CSS */
+.hero {
+  background: #007bff;
+  color: #fff;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+/* .cta-button is used by Hero. If it becomes a more generic button,
+   its styles could be moved to a shared/global CSS file. */
+.hero .cta-button {
+  /* Scoping to .hero for now */
+  display: inline-block;
+  background: #fff;
+  color: #007bff;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.hero .cta-button:hover {
+  /* Scoping to .hero for now */
+  background-color: #e6e6e6;
+  color: #0056b3;
+}
+
+/* Dark Mode Overrides for Hero */
+body.dark-mode .hero {
+  background: #0056b3; /* Darker blue */
+  color: #e0e0e0;
+}
+
+/* If cta-button styles were global, its dark mode override would also be global.
+   Scoped to .hero for now. */
+body.dark-mode .hero .cta-button {
+  background: #e0e0e0;
+  color: #121212;
+}
+
+body.dark-mode .hero .cta-button:hover {
+  background-color: #ccc;
+  color: #000;
+}
