@@ -4,29 +4,41 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <meta content="A simple and modern landing page template for showcasing your business, services, or portfolio." name="description"/>
 <meta content="landing page, template, HTML, CSS, JavaScript, responsive, business, portfolio, services" name="keywords"/>
-<title data-i18n="document_title">My Landing Page</title>
+<title>Simple Landing Page</title>
 <link href="public/style.css" rel="stylesheet"/>
 </head>
 <body>
 
 <header>
 <nav>
+<div class="logo">
+<a href="#">Logo</a>
+</div>
+<button aria-expanded="false" aria-label="Toggle menu" class="hamburger-menu">
+<span class="hamburger-bar"></span>
+<span class="hamburger-bar"></span>
+<span class="hamburger-bar"></span>
+</button>
+<div class="nav-items">
 <ul>
-<li><a data-i18n="nav_home" href="#home">Home</a></li>
-<li><a data-i18n="nav_features" href="#features">Features</a></li>
-<li><a data-i18n="nav_portfolio" href="#portfolio">Portfolio</a></li>
-<li><a data-i18n="nav_contact" href="#contact">Contact</a></li>
+<!-- Navigation items will be dynamically injected here -->
 </ul>
+<button aria-label="Switch to Dark Mode" id="dark-mode-toggle">🌙</button>
+<div id="language-switcher">
+<button data-lang="en">EN</button>
+<button data-lang="es">ES</button>
+</div>
+</div>
 </nav>
 </header>
 <main>
-<section id="hero">
-<h1 data-i18n="hero_title">Welcome to Our Landing Page</h1>
-<p data-i18n="hero_subtitle">This is a simple hero section to grab attention.</p>
-<a class="cta-button" data-i18n="hero_cta" href="#contact">Learn More</a>
+<section class="hero">
+<h1>Welcome to Our Landing Page</h1>
+<p>This is a simple hero section to grab attention.</p>
+<a class="cta-button" href="#">Learn More</a>
 </section>
 
-<section id="features">
+<section class="features">
 <h2 data-i18n="features_title">Our Features</h2>
 <div class="feature-list">
 <!-- Feature items will be dynamically injected here by build.py -->
@@ -67,10 +79,10 @@
 </div>
 </section>
 
-
-<section id="portfolio">
+<section class="portfolio">
 <h2 data-i18n="portfolio_title">Our Work</h2>
-<div class="portfolio-container">
+<div class="portfolio-grid">
+<!-- Portfolio items will be dynamically injected here by build.py -->
 <div class="portfolio-item">
 <img alt="Portfolio image" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="/>
 <h3>Project Alpha</h3>
@@ -94,9 +106,10 @@
 </div>
 </section>
 
-<section id="blog">
+<section class="blog">
 <h2 data-i18n="blog_title">Latest Posts</h2>
-<div class="blog-container">
+<div class="blog-list">
+<!-- Blog posts will be dynamically injected here by build.py -->
 <div class="blog-item">
 <h3>Alpha Post Title</h3>
 <p>Excerpt for Alpha blog post...</p>
@@ -116,7 +129,7 @@
 </section>
 
 </main><footer>
-<p data-i18n="footer_copyright">© 2024 My Company. All rights reserved.</p>
+<p data-i18n="footer_text">&amp;copy; 2023 Simple Landing Page. All rights reserved.</p>
 </footer><script>
         // Dark Mode Toggle
         const darkModeToggle = document.getElementById('dark-mode-toggle');

@@ -1,29 +1,41 @@
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <meta content="A simple and modern landing page template for showcasing your business, services, or portfolio." name="description"/>
 <meta content="landing page, template, HTML, CSS, JavaScript, responsive, business, portfolio, services" name="keywords"/>
-<title data-i18n="document_title">My Landing Page</title>
+<title>Simple Landing Page</title>
 <link href="public/style.css" rel="stylesheet"/>
 </head>
 <body>
 
 <header>
 <nav>
+<div class="logo">
+<a href="#">Logo</a>
+</div>
+<button aria-expanded="false" aria-label="Toggle menu" class="hamburger-menu">
+<span class="hamburger-bar"></span>
+<span class="hamburger-bar"></span>
+<span class="hamburger-bar"></span>
+</button>
+<div class="nav-items">
 <ul>
-<li><a data-i18n="nav_home" href="#home">Home</a></li>
-<li><a data-i18n="nav_features" href="#features">Features</a></li>
-<li><a data-i18n="nav_portfolio" href="#portfolio">Portfolio</a></li>
-<li><a data-i18n="nav_contact" href="#contact">Contact</a></li>
+<!-- Navigation items will be dynamically injected here -->
 </ul>
+<button aria-label="Switch to Dark Mode" id="dark-mode-toggle">🌙</button>
+<div id="language-switcher">
+<button data-lang="en">EN</button>
+<button data-lang="es">ES</button>
+</div>
+</div>
 </nav>
 </header>
 <main>
-<section id="hero">
-<h1 data-i18n="hero_title">Welcome to Our Landing Page</h1>
-<p data-i18n="hero_subtitle">This is a simple hero section to grab attention.</p>
-<a class="cta-button" data-i18n="hero_cta" href="#contact">Learn More</a>
+<section class="hero">
+<h1>Bienvenido a Nuestra Página de Destino</h1>
+<p>Esta es una sección de héroe simple para llamar la atención.</p>
+<a class="cta-button" href="#">Aprende Más</a>
 </section>
 
 <section class="features">
@@ -46,7 +58,7 @@
 </section>
 
 <section class="testimonials">
-<h2 data-i18n="testimonials_title">What Our Users Say</h2>
+<h2 data-i18n="testimonials_title">Lo Que Dicen Nuestros Usuarios</h2>
 <div class="testimonial-list">
 <!-- Testimonial items will be dynamically injected here by build.py -->
 <div class="testimonial-item">
@@ -67,10 +79,10 @@
 </div>
 </section>
 
-
-<section id="portfolio">
-<h2 data-i18n="portfolio_title">Our Work</h2>
-<div class="portfolio-container">
+<section class="portfolio">
+<h2 data-i18n="portfolio_title">Nuestro Trabajo</h2>
+<div class="portfolio-grid">
+<!-- Portfolio items will be dynamically injected here by build.py -->
 <div class="portfolio-item">
 <img alt="Portfolio image" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="/>
 <h3>Proyecto Alfa</h3>
@@ -94,29 +106,30 @@
 </div>
 </section>
 
-<section id="blog">
-<h2 data-i18n="blog_title">Latest Posts</h2>
-<div class="blog-container">
+<section class="blog">
+<h2 data-i18n="blog_title">Últimas Publicaciones</h2>
+<div class="blog-list">
+<!-- Blog posts will be dynamically injected here by build.py -->
 <div class="blog-item">
-<h3>Alpha Post Title</h3>
-<p>Excerpt for Alpha blog post...</p>
-<a class="read-more" href="#post1-link">Read Alpha Post</a>
+<h3>Título de la Publicación Alfa</h3>
+<p>Extracto de la publicación Alfa del blog...</p>
+<a class="read-more" href="#post1-link">Leer Publicación Alfa</a>
 </div>
 <div class="blog-item">
-<h3>Beta Post Title</h3>
-<p>Excerpt for Beta blog post...</p>
-<a class="read-more" href="#post2-link">Read Beta Post</a>
+<h3>Título de la Publicación Beta</h3>
+<p>Extracto de la publicación Beta del blog...</p>
+<a class="read-more" href="#post2-link">Leer Publicación Beta</a>
 </div>
 <div class="blog-item">
-<h3>Gamma Post Title</h3>
-<p>Excerpt for Gamma blog post...</p>
-<a class="read-more" href="#post3-link">Read Gamma Post</a>
+<h3>Título de la Publicación Gama</h3>
+<p>Extracto de la publicación Gama del blog...</p>
+<a class="read-more" href="#post3-link">Leer Publicación Gama</a>
 </div>
 </div>
 </section>
 
 </main><footer>
-<p data-i18n="footer_copyright">© 2024 My Company. All rights reserved.</p>
+<p data-i18n="footer_text">&amp;copy; 2023 Página de Destino Simple. Todos los derechos reservados.</p>
 </footer><script>
         // Dark Mode Toggle
         const darkModeToggle = document.getElementById('dark-mode-toggle');
