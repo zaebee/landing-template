@@ -277,7 +277,7 @@ class ContactFormHtmlGenerator(HtmlBlockGenerator):
             # Use html_utils.escape_html for attribute values for consistency,
             # though protobuf strings are generally not expected to have HTML special chars.
             # Keys are assumed to be safe.
-            if value is not None: # Ensure value is a string before escaping
+            if value is not None:  # Ensure value is a string before escaping
                 escaped_value = escape_html(str(value))
                 attrs_list.append(f'{key}="{escaped_value}"')
         return " ".join(attrs_list)

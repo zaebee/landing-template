@@ -22,16 +22,16 @@ if generated_dir not in sys.path:
 
 # Application-specific imports (Protobuf and services)
 # Generated Protobuf message class imports
-from generated.blog_post_pb2 import BlogPost
-from generated.contact_form_config_pb2 import ContactFormConfig
-from generated.feature_item_pb2 import FeatureItem
-from generated.hero_item_pb2 import HeroItem
-from generated.nav_item_pb2 import Navigation
-from generated.portfolio_item_pb2 import PortfolioItem
-from generated.testimonial_item_pb2 import TestimonialItem
-
+# Updated build_protocols imports
 from build_protocols.config_management import DefaultAppConfigManager
-from build_protocols.data_loading import InMemoryDataCache, JsonProtoDataLoader
+from build_protocols.data_loading import (
+    DataFileNotFoundError,  # Import new exceptions
+    DataJsonDecodeError,
+    DataLoaderError,
+    DataProtobufParseError,
+    InMemoryDataCache,
+    JsonProtoDataLoader,
+)
 from build_protocols.html_generation import (
     BlogHtmlGenerator,
     ContactFormHtmlGenerator,
@@ -51,6 +51,13 @@ from build_protocols.interfaces import (
 )
 from build_protocols.page_assembly import DefaultPageBuilder
 from build_protocols.translation import DefaultTranslationProvider
+from generated.blog_post_pb2 import BlogPost
+from generated.contact_form_config_pb2 import ContactFormConfig
+from generated.feature_item_pb2 import FeatureItem
+from generated.hero_item_pb2 import HeroItem
+from generated.nav_item_pb2 import Navigation
+from generated.portfolio_item_pb2 import PortfolioItem
+from generated.testimonial_item_pb2 import TestimonialItem
 
 
 class BuildOrchestrator:
@@ -100,17 +107,44 @@ class BuildOrchestrator:
         This method populates `self.app_config` and `self.nav_proto_data`.
         """
         self.app_config = self.app_config_manager.load_app_config()
+        self.nav_proto_data = None  # Ensure it's None by default
 
         nav_data_file = self.app_config.get(
             "navigation_data_file", "data/navigation.json"
         )
-        # The DataLoader is generic (Message), but here we expect Navigation.
-        # A type: ignore is used as the generic loader's signature doesn't
-        # specifically guarantee Navigation without more complex generics.
-        self.nav_proto_data = self.data_loader.load_dynamic_single_item_data(
-            nav_data_file,
-            Navigation,  # type: ignore
-        )
+        if nav_data_file:
+            try:
+                # The DataLoader is generic (Message), but here we expect Navigation.
+                # A type: ignore is used as the generic loader's signature doesn't
+                # specifically guarantee Navigation without more complex generics.
+                self.nav_proto_data = self.data_loader.load_dynamic_single_item_data(
+                    nav_data_file,
+                    Navigation,  # type: ignore
+                )
+                if (
+                    self.nav_proto_data is None
+                ):  # Should not happen if loader raises exceptions
+                    print(
+                        f"Warning: Navigation data file {nav_data_file} loaded as None unexpectedly."
+                    )
+
+            except (
+                DataFileNotFoundError,  # type: ignore
+                DataJsonDecodeError,  # type: ignore
+                DataProtobufParseError,  # type: ignore
+                DataLoaderError,  # type: ignore
+            ) as e:  # Catching specific data loading errors
+                print(
+                    f"Error loading navigation data from '{nav_data_file}': {e}. Proceeding without navigation data."
+                )
+            except Exception as e:  # Catch any other unexpected errors
+                print(
+                    f"Unexpected error loading navigation data from '{nav_data_file}': {e}. Proceeding without navigation data."
+                )
+        else:
+            print(
+                "Warning: 'navigation_data_file' not specified in app config. Proceeding without navigation data."
+            )
 
     def _process_language(
         self,

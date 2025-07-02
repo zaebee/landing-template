@@ -252,20 +252,45 @@ class InMemoryDataCache(DataCache[T]):
                 continue
 
             if self.get_item(data_file) is not None:
-                # logger.info("Data for %s already in cache. Skipping reload.", data_file)
+                # logger.debug("Data for %s already in cache. Skipping reload.", data_file) # Changed to debug
                 continue
 
-            loaded_data: Union[List[Message], Optional[Message]]
-            if is_list:
-                loaded_data = data_loader.load_dynamic_list_data(
-                    data_file, message_type
+            loaded_data: Union[List[Message], Optional[Message]] = (
+                None  # Initialize to None
+            )
+            try:
+                if is_list:
+                    loaded_data = data_loader.load_dynamic_list_data(
+                        data_file, message_type
+                    )
+                else:
+                    loaded_data = data_loader.load_dynamic_single_item_data(
+                        data_file, message_type
+                    )
+                self.set_item(data_file, loaded_data)
+                # logger.debug("Loaded data for %s into cache.", data_file) # Changed to debug
+            except (
+                DataFileNotFoundError,
+                DataJsonDecodeError,
+                DataProtobufParseError,
+                InvalidDataStructureError,
+                DataLoaderError,
+            ) as e:
+                logger.error(
+                    f"Failed to preload data for '{data_file}' into cache: {e}. "
+                    "This item will be skipped."
                 )
-            else:
-                loaded_data = data_loader.load_dynamic_single_item_data(
-                    data_file, message_type
+                # self.set_item(data_file, None) # Explicitly cache as None or skip setting
+                # Skipping set_item means get_item will return None later
+            except (
+                Exception
+            ) as e:  # Catch any other unexpected errors during preload of one item
+                logger.error(
+                    f"An unexpected error occurred preloading data for '{data_file}': {e}. "
+                    "This item will be skipped."
                 )
 
-            self.set_item(data_file, loaded_data)
+            # self.set_item(data_file, loaded_data) # Moved inside try or handle None if error
             # logger.info("Loaded data for %s into cache.", data_file)
         logger.info("Dynamic data pre-loading complete.")
 

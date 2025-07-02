@@ -172,7 +172,9 @@ class DefaultPageBuilder(PageBuilder):
 
         # Detach body children for a moment to print html_tag start and head
         original_body_children = []
-        if isinstance(body_tag, Tag): # Ensure body_tag is a Tag before accessing .children
+        if isinstance(
+            body_tag, Tag
+        ):  # Ensure body_tag is a Tag before accessing .children
             original_body_children = [child.extract() for child in body_tag.children]
 
         # Now html_tag string without its body's children but with body tag itself
@@ -186,7 +188,9 @@ class DefaultPageBuilder(PageBuilder):
         )
 
         # Put children back if they were taken (though not strictly necessary for this func's output)
-        if isinstance(body_tag, Tag) and original_body_children: # Ensure body_tag is a Tag for .append
+        if (
+            isinstance(body_tag, Tag) and original_body_children
+        ):  # Ensure body_tag is a Tag for .append
             for child in original_body_children:
                 body_tag.append(child)
 
@@ -311,21 +315,59 @@ class DefaultPageBuilder(PageBuilder):
 
         temp_soup = BeautifulSoup(html_start_original, "html.parser")
         html_tag_in_start = temp_soup.find("html")
-        if isinstance(html_tag_in_start, Tag): # Ensure it's a Tag before passing
+        if isinstance(html_tag_in_start, Tag):  # Ensure it's a Tag before passing
             self._set_html_lang_attribute(html_tag_in_start, lang)
             # Reconstruct the html_start string from temp_soup
             # This will include doctype if it was part of html_start_original
             # and the modified html tag
 
-            # Need to handle doctype carefully. self._extract_doctype_str(temp_soup)
-            # plus the string of temp_soup.html
-            doctype_from_start_original = self._extract_doctype_str(temp_soup)
-            final_html_start = doctype_from_start_original + str(temp_soup.html) if temp_soup.html else html_start_original
+            # Need to handle doctype carefully.
+            doctype_s = self._extract_doctype_str(temp_soup)
 
+            head_tag_in_start = html_tag_in_start.find("head")
+            head_content_in_start = (
+                str(head_tag_in_start) if head_tag_in_start else "<head></head>"
+            )
+
+            body_tag_in_start = html_tag_in_start.find("body")
+            opening_body_tag_str = "<body>"  # Default
+            if isinstance(body_tag_in_start, Tag):
+                # Construct body tag with its attributes
+                body_attrs = {
+                    k: " ".join(v) if isinstance(v, list) else str(v)
+                    for k, v in body_tag_in_start.attrs.items()
+                }
+                attrs_str_list = [f'{k}="{v}"' for k, v in body_attrs.items()]
+                opening_body_tag_str = (
+                    f"<body{' ' if attrs_str_list else ''}{' '.join(attrs_str_list)}>"
+                )
+
+            # Reconstruct the opening html tag string with its (potentially updated) attributes
+            # Create a new, empty HTML tag with the same name and attributes as html_tag_in_start
+            isolated_html_tag_for_str = BeautifulSoup("", "html.parser").new_tag(
+                html_tag_in_start.name,
+                attrs={
+                    k: " ".join(v) if isinstance(v, list) else str(v)
+                    for k, v in html_tag_in_start.attrs.items()
+                },
+            )
+            # Get string like <html lang="en"></html> and remove the closing part
+            opening_html_tag_with_attrs = str(isolated_html_tag_for_str).replace(
+                f"</{html_tag_in_start.name}>", ""
+            )
+
+            final_html_start = (
+                doctype_s
+                + opening_html_tag_with_attrs
+                + head_content_in_start
+                + opening_body_tag_str
+                + "\n"
+            )
         else:
-            logger.warning(f"Could not find <html> tag in html_start_original to set lang='{lang}'. Using original.")
+            logger.warning(
+                f"Could not find valid <html> tag in html_start_original to set lang='{lang}'. Using original."
+            )
             final_html_start = html_start_original
-
 
         # Assemble the full page.
         # Ensure <main> tags correctly wrap the main_content.
