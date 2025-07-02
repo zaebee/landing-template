@@ -185,6 +185,7 @@ class PageBuilder(Protocol):
         main_content: str,
         navigation_items: Optional[List[Dict[str, Any]]] = None,
         page_title: Optional[str] = None,
+        app_config: Optional[Dict[str, Any]] = None, # Added app_config
     ) -> str:
         """Assembles a full HTML page using translated and generated content.
 
