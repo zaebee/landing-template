@@ -5,7 +5,9 @@ import sys
 import unittest
 from unittest import mock
 
-from build import (
+from google.protobuf import json_format
+
+from build import (  # Grouped with other 'from build' imports
     generate_blog_html,
     generate_features_html,
     generate_hero_html,  # Added
@@ -19,12 +21,13 @@ from build import (
 from build import main as build_main
 from generated.blog_post_pb2 import BlogPost
 from generated.feature_item_pb2 import FeatureItem
-from generated.hero_item_pb2 import HeroItem  # Added
+from generated.hero_item_pb2 import HeroItem
+from generated.nav_item_pb2 import Navigation  # Moved to top
 from generated.portfolio_item_pb2 import PortfolioItem
 from generated.testimonial_item_pb2 import TestimonialItem
 
 project_root = os.path.dirname(os.path.abspath(__file__))
-if project_root not in sys.path:
+if project_root not in sys.path:  # This sys.path manipulation is for generated files
     sys.path.insert(0, project_root)
 
 
@@ -51,19 +54,23 @@ class TestBuildScript(unittest.TestCase):
         ) as f:
             json.dump(self.es_translations, f)
 
-        # Create dummy data files
+        # Create dummy data files matching the new proto structure
         self.portfolio_items_data = [
             {
-                "title_i18n_key": "portfolio_title_1",
-                "desc_i18n_key": "portfolio_desc_1",
-                "img_src": "img1.jpg",
-                "img_alt": "Alt 1",
+                "id": "p1",
+                "image": {"src": "img1.jpg", "alt_text": {"key": "portfolio_alt_1"}},
+                "details": {
+                    "title": {"key": "portfolio_title_1"},
+                    "description": {"key": "portfolio_desc_1"},
+                },
             },
             {
-                "title_i18n_key": "portfolio_title_2",
-                "desc_i18n_key": "portfolio_desc_2",
-                "img_src": "img2.jpg",
-                "img_alt": "Alt 2",
+                "id": "p2",
+                "image": {"src": "img2.jpg", "alt_text": {"key": "portfolio_alt_2"}},
+                "details": {
+                    "title": {"key": "portfolio_title_2"},
+                    "description": {"key": "portfolio_desc_2"},
+                },
             },
         ]
         with open(
@@ -73,16 +80,16 @@ class TestBuildScript(unittest.TestCase):
 
         self.blog_posts_data = [
             {
-                "title_i18n_key": "blog_title_1",
-                "excerpt_i18n_key": "blog_excerpt_1",
-                "link": "link1.html",
-                "cta_i18n_key": "blog_cta_1",
+                "id": "b1",
+                "title": {"key": "blog_title_1"},
+                "excerpt": {"key": "blog_excerpt_1"},
+                "cta": {"text": {"key": "blog_cta_1"}, "link": "link1.html"},
             },
             {
-                "title_i18n_key": "blog_title_2",
-                "excerpt_i18n_key": "blog_excerpt_2",
-                "link": "link2.html",
-                "cta_i18n_key": "blog_cta_2",
+                "id": "b2",
+                "title": {"key": "blog_title_2"},
+                "excerpt": {"key": "blog_excerpt_2"},
+                "cta": {"text": {"key": "blog_cta_2"}, "link": "link2.html"},
             },
         ]
         with open(
@@ -92,12 +99,16 @@ class TestBuildScript(unittest.TestCase):
 
         self.feature_items_data = [
             {
-                "title_i18n_key": "feature_title_1",
-                "desc_i18n_key": "feature_desc_1",
+                "content": {
+                    "title": {"key": "feature_title_1"},
+                    "description": {"key": "feature_desc_1"},
+                }
             },
             {
-                "title_i18n_key": "feature_title_2",
-                "desc_i18n_key": "feature_desc_2",
+                "content": {
+                    "title": {"key": "feature_title_2"},
+                    "description": {"key": "feature_desc_2"},
+                }
             },
         ]
         with open(
@@ -107,10 +118,12 @@ class TestBuildScript(unittest.TestCase):
 
         self.testimonial_items_data = [
             {
-                "text_i18n_key": "testimonial_text_1",
-                "author_i18n_key": "testimonial_author_1",
-                "img_src": "img_testimonial1.jpg",
-                "img_alt_i18n_key": "testimonial_alt_1",
+                "text": {"key": "testimonial_text_1"},
+                "author": {"key": "testimonial_author_1"},
+                "author_image": {
+                    "src": "img_testimonial1.jpg",
+                    "alt_text": {"key": "testimonial_alt_1"},
+                },
             }
         ]
         with open(
@@ -118,11 +131,22 @@ class TestBuildScript(unittest.TestCase):
         ) as f:
             json.dump(self.testimonial_items_data, f)
 
-        self.hero_item_data = {  # Single item, not a list
-            "title_i18n_key": "hero_title_main",
-            "subtitle_i18n_key": "hero_subtitle_main",
-            "cta_text_i18n_key": "hero_cta_main",
-            "cta_link": "#gohere",
+        self.hero_item_data = {
+            "variations": [
+                {
+                    "variation_id": "var1",
+                    "title": {"key": "hero_title_main_v1"},
+                    "subtitle": {"key": "hero_subtitle_main_v1"},
+                    "cta": {"text": {"key": "hero_cta_main_v1"}, "link": "#gohere_v1"},
+                },
+                {
+                    "variation_id": "var2",
+                    "title": {"key": "hero_title_main_v2"},
+                    "subtitle": {"key": "hero_subtitle_main_v2"},
+                    "cta": {"text": {"key": "hero_cta_main_v2"}, "link": "#gohere_v2"},
+                },
+            ],
+            "default_variation_id": "var1",
         }
         with open(
             os.path.join(self.test_data_dir, "hero.json"), "w", encoding="utf-8"
@@ -162,7 +186,8 @@ class TestBuildScript(unittest.TestCase):
         with open("config.json", "w", encoding="utf-8") as f:
             json.dump(self.dummy_config, f)
 
-        # Ensure public/config.json is also created for build.py if it's not mocked perfectly
+        # Ensure public/config.json is also created for build.py if it's not
+        # mocked perfectly
         os.makedirs("public", exist_ok=True)
         with open("public/config.json", "w", encoding="utf-8") as f:
             json.dump(self.dummy_config, f)
@@ -255,11 +280,11 @@ class TestBuildScript(unittest.TestCase):
             mocked_open.assert_called_with(  # Changed to assert_called_with
                 "public/locales/invalid.json", "r", encoding="utf-8"
             )
-        # The actual file 'test_locales/invalid.json' is not used by the mocked 'load_translations'
-        # if the mock for 'build.open' is correctly intercepting.
-        # However, the test creates it, so we should clean it up if it was for a different purpose.
-        # For this specific change, the physical file interaction for this test path is moot
-        # as 'build.open' is mocked.
+        # The actual file 'test_locales/invalid.json' is not used by the mocked
+        # 'load_translations' if the mock for 'build.open' is correctly intercepting.
+        # However, the test creates it, so we should clean it up if it was for a
+        # different purpose. For this specific change, the physical file interaction
+        # for this test path is moot as 'build.open' is mocked.
         if os.path.exists(os.path.join(self.test_locales_dir, "invalid.json")):
             os.remove(os.path.join(self.test_locales_dir, "invalid.json"))
 
@@ -298,8 +323,10 @@ class TestBuildScript(unittest.TestCase):
         self.assertEqual(len(items), len(self.portfolio_items_data))
         if items:  # mypy check
             self.assertIsInstance(items[0], PortfolioItem)
+            # Compare a nested field to ensure parsing worked
             self.assertEqual(
-                items[0].title_i18n_key, self.portfolio_items_data[0]["title_i18n_key"]
+                items[0].details.title.key,
+                self.portfolio_items_data[0]["details"]["title"]["key"],
             )
 
     def test_load_dynamic_data_feature(self):
@@ -311,7 +338,8 @@ class TestBuildScript(unittest.TestCase):
         if items:  # mypy check
             self.assertIsInstance(items[0], FeatureItem)
             self.assertEqual(
-                items[0].title_i18n_key, self.feature_items_data[0]["title_i18n_key"]
+                items[0].content.title.key,
+                self.feature_items_data[0]["content"]["title"]["key"],
             )
 
     def test_load_dynamic_data_testimonial(self):
@@ -323,7 +351,7 @@ class TestBuildScript(unittest.TestCase):
         if items:  # mypy check
             self.assertIsInstance(items[0], TestimonialItem)
             self.assertEqual(
-                items[0].text_i18n_key, self.testimonial_items_data[0]["text_i18n_key"]
+                items[0].text.key, self.testimonial_items_data[0]["text"]["key"]
             )
 
     def test_load_single_item_dynamic_data_hero(self):
@@ -332,9 +360,12 @@ class TestBuildScript(unittest.TestCase):
             os.path.join(self.test_data_dir, "hero.json"), HeroItem
         )
         self.assertIsNotNone(item)
-        if item:  # for type checking
+        if item and item.variations:  # for type checking
             self.assertIsInstance(item, HeroItem)
-            self.assertEqual(item.title_i18n_key, self.hero_item_data["title_i18n_key"])
+            self.assertEqual(
+                item.variations[0].title.key,
+                self.hero_item_data["variations"][0]["title"]["key"],
+            )
 
     def test_load_single_item_dynamic_data_not_found(self):
         """Test loading single item from non-existent file."""
@@ -350,7 +381,7 @@ class TestBuildScript(unittest.TestCase):
         if posts:  # mypy check
             self.assertIsInstance(posts[0], BlogPost)
             self.assertEqual(
-                posts[0].title_i18n_key, self.blog_posts_data[0]["title_i18n_key"]
+                posts[0].title.key, self.blog_posts_data[0]["title"]["key"]
             )
 
     def test_load_dynamic_data_file_not_found(self):
@@ -371,20 +402,24 @@ class TestBuildScript(unittest.TestCase):
         """Test generation of portfolio HTML."""
         items = [
             PortfolioItem(
-                title_i18n_key="p_title",
-                desc_i18n_key="p_desc",
-                img_src="img.png",
-                img_alt="alt",
+                id="p1",
+                image={"src": "img.png", "alt_text": {"key": "p_alt"}},
+                details={
+                    "title": {"key": "p_title"},
+                    "description": {"key": "p_desc"},
+                },
             )
         ]
         translations = {
             "p_title": "Translated Title",
             "p_desc": "Translated Description",
+            "p_alt": "Translated Alt Text",
         }
         html = generate_portfolio_html(items, translations)
         self.assertIn("Translated Title", html)
         self.assertIn("Translated Description", html)
-        self.assertIn('img src="img.png"', html)
+        self.assertIn('src="img.png"', html)
+        self.assertIn('alt="Translated Alt Text"', html)
 
     def test_generate_portfolio_html_empty(self):
         """Test generation of portfolio HTML with no items."""
@@ -395,10 +430,10 @@ class TestBuildScript(unittest.TestCase):
         """Test generation of blog HTML."""
         posts = [
             BlogPost(
-                title_i18n_key="b_title",
-                excerpt_i18n_key="b_excerpt",
-                link="link.html",
-                cta_i18n_key="b_cta",
+                id="b1",
+                title={"key": "b_title"},
+                excerpt={"key": "b_excerpt"},
+                cta={"text": {"key": "b_cta"}, "link": "link.html"},
             )
         ]
         translations = {
@@ -421,8 +456,10 @@ class TestBuildScript(unittest.TestCase):
         """Test generation of features HTML."""
         items = [
             FeatureItem(
-                title_i18n_key="f_title",
-                desc_i18n_key="f_desc",
+                content={
+                    "title": {"key": "f_title"},
+                    "description": {"key": "f_desc"},
+                }
             )
         ]
         translations = {
@@ -443,10 +480,12 @@ class TestBuildScript(unittest.TestCase):
         """Test generation of testimonials HTML."""
         items = [
             TestimonialItem(
-                text_i18n_key="t_text",
-                author_i18n_key="t_author",
-                img_src="testimonial.png",
-                img_alt_i18n_key="t_alt",
+                text={"key": "t_text"},
+                author={"key": "t_author"},
+                author_image={
+                    "src": "testimonial.png",
+                    "alt_text": {"key": "t_alt"},
+                },
             )
         ]
         translations = {
@@ -468,28 +507,36 @@ class TestBuildScript(unittest.TestCase):
 
     def test_generate_hero_html(self):
         """Test generation of hero HTML."""
-        item = HeroItem(
-            title_i18n_key="hero_title_key",
-            subtitle_i18n_key="hero_subtitle_key",
-            cta_text_i18n_key="hero_cta_key",
-            cta_link="#testlink",
-        )
+        # Using the structure from self.hero_item_data for consistency
+        # Create a HeroItem instance and parse the dictionary into it
+        hero_item_instance = HeroItem()
+        json_format.ParseDict(self.hero_item_data, hero_item_instance)
+
+
         translations = {
-            "hero_title_key": "Translated Hero Title",
-            "hero_subtitle_key": "Translated Hero Subtitle",
-            "hero_cta_key": "Translated CTA Text",
+            "hero_title_main_v1": "Translated Hero Title V1",
+            "hero_subtitle_main_v1": "Translated Hero Subtitle V1",
+            "hero_cta_main_v1": "Translated CTA Text V1",
+            "hero_title_main_v2": "Translated Hero Title V2",
+            "hero_subtitle_main_v2": "Translated Hero Subtitle V2",
+            "hero_cta_main_v2": "Translated CTA Text V2",
         }
-        html = generate_hero_html(item, translations)
-        self.assertIn("<h1>Translated Hero Title</h1>", html)
-        self.assertIn("<p>Translated Hero Subtitle</p>", html)
+        # Mock random.choice to always pick the first variation for predictable testing
+        with mock.patch('random.choice', side_effect=lambda x: x[0]):
+            html = generate_hero_html(hero_item_instance, translations)
+
+        self.assertIn("<h1>Translated Hero Title V1</h1>", html)
+        self.assertIn("<p>Translated Hero Subtitle V1</p>", html)
         self.assertIn(
-            '<a href="#testlink" class="cta-button">Translated CTA Text</a>', html
+            '<a href="#gohere_v1" class="cta-button">Translated CTA Text V1</a>', html
         )
+        self.assertIn("<!-- Selected variation: var1 -->", html)
+
 
     def test_generate_hero_html_none_item(self):
         """Test hero HTML generation when item is None."""
         html = generate_hero_html(None, self.en_translations)
-        self.assertEqual(html.strip(), "<!-- Hero data not found -->")
+        self.assertEqual(html.strip(), "<!-- Hero data not found or no variations -->")
 
     @mock.patch("build.load_translations")
     # Patch both data loading functions used in the main pre-loading loop
@@ -511,51 +558,68 @@ class TestBuildScript(unittest.TestCase):
             self.es_translations,  # For ES
         ]
 
-        # Mock data items
-        mock_hero_item = HeroItem(
-            title_i18n_key="h_title",
-            subtitle_i18n_key="h_sub",
-            cta_text_i18n_key="h_cta",
-            cta_link="#hero",
-        )
-        mock_portfolio_item = PortfolioItem(
-            title_i18n_key="p_title",
-            desc_i18n_key="p_desc",
-            img_src="p.jpg",
-            img_alt="p_alt",
-        )
-        mock_blog_post = BlogPost(
-            title_i18n_key="b_title",
-            excerpt_i18n_key="b_excerpt",
-            link="b.html",
-            cta_i18n_key="b_cta",
-        )
-        mock_feature_item = FeatureItem(
-            title_i18n_key="f_title", desc_i18n_key="f_desc"
-        )
-        mock_testimonial_item = TestimonialItem(
-            text_i18n_key="t_text",
-            author_i18n_key="t_author",
-            img_src="t.jpg",
-            img_alt_i18n_key="t_alt",
-        )
+        # Mock data items using the new structure
+        mock_hero_item = HeroItem()
+        json_format.ParseDict({
+            "variations": [
+                {
+                    "variation_id": "v1",
+                    "title": {"key": "h_title"},
+                    "subtitle": {"key": "h_sub"},
+                    "cta": {"text": {"key": "h_cta"}, "link": "#hero"},
+                }
+            ],
+            "default_variation_id":"v1"
+        }, mock_hero_item)
 
-        def load_list_data_side_effect(data_file_path, message_type):
-            if data_file_path == "data/portfolio_items.json":
+        mock_portfolio_item = PortfolioItem()
+        json_format.ParseDict({
+            "id":"p1",
+            "image":{"src": "p.jpg", "alt_text": {"key": "p_alt"}},
+            "details":{"title": {"key": "p_title"}, "description": {"key": "p_desc"}},
+        }, mock_portfolio_item)
+
+        mock_blog_post = BlogPost()
+        json_format.ParseDict({
+            "id": "b1",
+            "title": {"key": "b_title"},
+            "excerpt": {"key": "b_excerpt"},
+            "cta": {"text": {"key": "b_cta"}, "link": "b.html"},
+        }, mock_blog_post)
+
+        mock_feature_item = FeatureItem()
+        json_format.ParseDict({
+            "content":{"title": {"key": "f_title"}, "description": {"key": "f_desc"}}
+        }, mock_feature_item)
+
+        mock_testimonial_item = TestimonialItem()
+        json_format.ParseDict({
+            "text": {"key": "t_text"},
+            "author": {"key": "t_author"},
+            "author_image": {"src": "t.jpg", "alt_text": {"key": "t_alt"}},
+        }, mock_testimonial_item)
+
+
+        def load_list_data_side_effect(data_file_path, message_type): # pylint: disable=unused-argument
+            if "portfolio_items.json" in data_file_path:
                 return [mock_portfolio_item]
-            if data_file_path == "data/blog_posts.json":
+            if "blog_posts.json" in data_file_path:
                 return [mock_blog_post]
-            if data_file_path == "data/feature_items.json":
+            if "feature_items.json" in data_file_path:
                 return [mock_feature_item]
-            if data_file_path == "data/testimonial_items.json":
+            if "testimonial_items.json" in data_file_path:
                 return [mock_testimonial_item]
             return []
 
         mock_load_list_data.side_effect = load_list_data_side_effect
 
-        def load_single_item_data_side_effect(data_file_path, message_type):
-            if data_file_path == "data/hero_item.json":
+        def load_single_item_data_side_effect(data_file_path, message_type): # pylint: disable=unused-argument
+            if "hero_item.json" in data_file_path: # Match actual path used in build.py
                 return mock_hero_item
+            # Add mock for navigation.json if it's loaded as a single item
+            if "navigation.json" in data_file_path:  # Assuming Navigation is loaded this way # noqa: E501
+                # Return a dummy Navigation object or None as appropriate for the test
+                return Navigation()  # Return an empty Navigation object - import is at top # noqa: E501
             return None
 
         mock_load_single_item_data.side_effect = load_single_item_data_side_effect
