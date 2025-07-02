@@ -5,11 +5,7 @@ from typing import List, Optional, Tuple  # Added Optional
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
-# get_attribute_value_as_str is used internally by this module's original functions.
-# If DefaultTranslationProvider.translate_html_content is used, this direct import might not be needed
-# by the class methods, but we keep it for now to ensure existing logic ported to methods works.
-# from build_protocols.translation import get_attribute_value_as_str # REMOVED
-from .interfaces import (  # ADDED TranslationProvider
+from .interfaces import (
     PageBuilder,
     TranslationProvider,
     Translations,
@@ -20,21 +16,36 @@ class DefaultPageBuilder(PageBuilder):
     """
     Default implementation for assembling HTML pages.
     """
+
     def __init__(self, translation_provider: TranslationProvider):
         self.translation_provider = translation_provider
 
+    def _get_attributes_string(self, tag: Tag) -> str:
+        """Helper to convert tag attributes to a string."""
+        attrs = ""
+        if tag.attrs:
+            for key, value in tag.attrs.items():
+                if isinstance(value, list):
+                    value = " ".join(value)
+                attrs += f' {key}="{value}"'
+        return attrs
+
     def extract_base_html_parts(
-        self, base_html_file: str = "index.html"
+        self, base_html_path: str = "index.html"
     ) -> Tuple[str, str, str, str]:
         """
         Extracts key structural parts from the base HTML file.
         Returns a tuple: (html_start, header_content, footer_content, html_end).
+        html_start includes from <!DOCTYPE> up to and including opening <body> tag.
+        header_content is content between <body> and <main>.
+        footer_content is content between </main> and </body> (e.g. <footer>, scripts).
+        html_end is typically '</body></html>'.
         """
         try:
-            with open(base_html_file, "r", encoding="utf-8") as f:
+            with open(base_html_path, "r", encoding="utf-8") as f:
                 base_content = f.read()
         except FileNotFoundError:
-            print(f"Error: Base HTML file '{base_html_file}' not found. Exiting.")
+            print(f"Error: Base HTML file '{base_html_path}' not found. Exiting.")
             sys.exit(1)
 
         soup = BeautifulSoup(base_content, "html.parser")
@@ -46,59 +57,95 @@ class DefaultPageBuilder(PageBuilder):
             main_tag = body_tag.find("main")
             if main_tag and isinstance(main_tag, Tag):
                 for element in main_tag.previous_siblings:
-                    header_content_parts.append(str(element))
+                    if str(element).strip():
+                        header_content_parts.append(str(element))
                 for element in main_tag.find_next_siblings():
-                    footer_content_parts.append(str(element))
+                    if str(element).strip():
+                        footer_content_parts.append(str(element))
             else:
                 print(
-                    f"Warning: <main> tag not found in {base_html_file}. "
+                    f"Warning: <main> tag not found in {base_html_path}. "
                     "Header/footer content might be incomplete."
                 )
         else:
             print(
-                f"Warning: <body> tag not found in {base_html_file}. "
+                f"Warning: <body> tag not found in {base_html_path}. "
                 "Header/footer content might be empty."
             )
 
-        html_tag = soup.find("html")
-        html_start: str
-        if html_tag and isinstance(html_tag, Tag):
-            html_str = str(html_tag)
-            body_open_tag_index = html_str.lower().find("<body")
-            if body_open_tag_index != -1:
-                body_tag_end_index = html_str.find(">", body_open_tag_index) + 1
-                html_start = html_str[:body_tag_end_index] + "\n"
-            else: # No <body> tag found within <html>, try to get <head> or default
-                html_start = str(soup.find("head")) if soup.head else ""
-                if not html_start.strip().endswith("</head>"): # Ensure head is complete
-                    html_start += "</head>" if html_start else "<head></head>"
-                html_start = f"<html>{html_start}<body>\n" # Add html and body start
-        else:
+        html_tag_obj = soup.find("html")
+        html_start_str: str
+        html_end_str: str
+
+        doctype_str = ""
+        doctype_match = re.match(
+            r"^(<!DOCTYPE[^>]+>)\s*", base_content, re.IGNORECASE | re.DOTALL
+        )
+        if doctype_match:
+            doctype_str = doctype_match.group(1) + "\n"
+
+        if html_tag_obj and isinstance(html_tag_obj, Tag):
+            # Full HTML content as a string, without doctype (str(html_tag_obj) includes <html>...</html>)
+            full_html_minus_doctype = str(html_tag_obj)
+
+            # Try to extract up to the end of the opening <body> tag
+            body_open_match = re.search(
+                r"<body[^>]*>", full_html_minus_doctype, re.IGNORECASE
+            )
+            if body_open_match:
+                # html_start_str is from start of <html> to end of opening <body>
+                html_start_str = full_html_minus_doctype[: body_open_match.end()]
+            else:
+                # Fallback: if no <body> tag inside <html>, construct a basic start
+                head_tag = soup.head
+                # Include attributes of <html> tag
+                html_attrs = self._get_attributes_string(html_tag_obj)
+                head_content = str(head_tag) if head_tag else "<head></head>"
+                html_start_str = f"<html{html_attrs}>{head_content}<body>"
+
+            # Ensure html_start_str starts with <html...> if it wasn't already
+            # This check is mostly for the fallback case above.
+            if not html_start_str.strip().lower().startswith("<html"):
+                # This should not happen if full_html_minus_doctype was used primarily
+                html_attrs = self._get_attributes_string(html_tag_obj)
+                html_start_str = f"<html{html_attrs}>{html_start_str}"
+
+            # For html_end, capture from </body> to </html>
+            # Search from the end of the string for </body>
+            body_close_match = re.search(
+                r"</body>\s*</html>\s*$",
+                full_html_minus_doctype,
+                re.IGNORECASE | re.DOTALL,
+            )
+            if body_close_match:
+                html_end_str = body_close_match.group(0)  # Capture "</body></html>"
+            else:
+                # Fallback if no </body></html> found (e.g. malformed or body-less html element)
+                html_end_str = "</body></html>"  # Default assumption
+
+        else:  # No <html> tag found, use default structure
             print(
-                f"Warning: <html> tag not found in {base_html_file}. "
+                f"Warning: <html> tag not found in {base_html_path}. "
                 "Using default HTML structure."
             )
-            html_start = (
-                '<!DOCTYPE html>\n<html><head><meta charset="UTF-8">'
+            if not doctype_str:  # Add default doctype if none was found
+                doctype_str = "<!DOCTYPE html>\n"
+            # Default html_start includes up to opening <body>
+            html_start_str = (
+                '<html><head><meta charset="UTF-8">'
                 '<meta name="viewport" content="width=device-width, '
-                'initial-scale=1.0"><title>Page</title></head><body>\n'
+                'initial-scale=1.0"><title>Page</title></head><body>'
             )
+            html_end_str = "\n</body>\n</html>"
 
-        # Ensure html_start always begins with <!DOCTYPE html> if not present
-        if not html_start.lower().strip().startswith("<!doctype html>"):
-            # Check if <!DOCTYPE html> is already there from soup string
-            # A bit naive, but better than nothing if soup didn't include it.
-            if "<!doctype html>" not in base_content.lower() :
-                 html_start = "<!DOCTYPE html>\n" + html_start
-
-
-        html_end: str = "\n</body>\n</html>"
+        # Add doctype at the very beginning
+        final_html_start = doctype_str + html_start_str.strip() + "\n"
 
         return (
-            html_start,
-            "".join(header_content_parts),
-            "".join(footer_content_parts),
-            html_end,
+            final_html_start,
+            "\n".join(header_content_parts),
+            "\n".join(footer_content_parts),
+            html_end_str.strip(),
         )
 
     def assemble_translated_page(
@@ -106,24 +153,21 @@ class DefaultPageBuilder(PageBuilder):
         lang: str,
         translations: Translations,
         html_parts: Tuple[str, str, str, str],
-        main_content: str, # This is the fully assembled and translated main block content
-        header_content: Optional[str] = None, # Optional override for header
-        footer_content: Optional[str] = None, # Optional override for footer
+        main_content: str,
+        header_content: Optional[str] = None,
+        footer_content: Optional[str] = None,
     ) -> str:
-        """
-        Assembles the full HTML page for a given language.
-        Header and footer content (from html_parts or overrides) are translated here.
-        """
-        # pylint: disable=too-many-locals
-        html_start_original, header_original, footer_original, html_end_original = html_parts
+        html_start_original, header_original, footer_original, html_end_original = (
+            html_parts
+        )
 
-        # Use overrides if provided, otherwise use extracted parts
-        current_header_str = header_content if header_content is not None else header_original
-        current_footer_str = footer_content if footer_content is not None else footer_original
+        current_header_str = (
+            header_content if header_content is not None else header_original
+        )
+        current_footer_str = (
+            footer_content if footer_content is not None else footer_original
+        )
 
-        # Translate header and footer using the translation_provider
-        # The main_content is assumed to be already translated before being passed to this function.
-        # The translations object is passed to translate_html_content for context.
         final_header_content = self.translation_provider.translate_html_content(
             current_header_str, translations
         )
@@ -131,38 +175,70 @@ class DefaultPageBuilder(PageBuilder):
             current_footer_str, translations
         )
 
-        # Set lang attribute on <html> tag in html_start_original
-        final_html_start = html_start_original
-        # More robust lang attribute setting
-        temp_soup_start = BeautifulSoup(final_html_start, "html.parser")
-        html_tag_node = temp_soup_start.find("html", recursive=False) # Find top-level html
-        if html_tag_node and isinstance(html_tag_node, Tag):
-            html_tag_node["lang"] = lang
-            final_html_start = str(temp_soup_start)
-        elif "<html" in final_html_start.lower(): # Fallback for regex if parsing is tricky
-             final_html_start = re.sub(
-                r"<html(\s*[^>]*)>",
-                f'<html lang="{lang}"\\1>',
-                final_html_start,
-                count=1,
-                flags=re.IGNORECASE,
-            )
-        else: # If no html tag, prepend a basic one
-            final_html_start = f'<!DOCTYPE html>\n<html lang="{lang}">\n' + final_html_start
+        processed_html_start = html_start_original
 
+        # Regex to find and update/add lang attribute in <html> tag
+        # Handles existing lang attribute or adds it if missing
+        # Assumes html_start_original contains the full doctype and html tag.
+
+        # Pattern to find <html ... >
+        html_tag_pattern = re.compile(r"(<html[^>]*>)", re.IGNORECASE)
+        match = html_tag_pattern.search(processed_html_start)
+
+        if match:
+            html_tag_str = match.group(1)
+            # Check if lang attribute exists
+            if re.search(r"lang\s*=", html_tag_str, re.IGNORECASE):
+                # Replace existing lang value
+                new_html_tag_str = re.sub(
+                    r'(lang\s*=\s*["\'])([^"\']*)(["\'])',
+                    rf"\1{lang}\3",
+                    html_tag_str,
+                    count=1,
+                    flags=re.IGNORECASE,
+                )
+            else:
+                # Add lang attribute
+                new_html_tag_str = re.sub(
+                    r"(<html)",
+                    rf'\1 lang="{lang}"',
+                    html_tag_str,
+                    count=1,
+                    flags=re.IGNORECASE,
+                )
+
+            processed_html_start = processed_html_start.replace(
+                html_tag_str, new_html_tag_str, 1
+            )
+        else:
+            # This case implies html_start_original did not contain a proper <html> tag.
+            # This should be rare given the changes in extract_base_html_parts.
+            # Prepend a default html tag with lang if necessary.
+            # However, extract_base_html_parts aims to always provide a complete html_start.
+            # If doctype is present, it should be before the <html> tag.
+            if processed_html_start.lower().strip().startswith("<!doctype html>"):
+                processed_html_start = re.sub(
+                    r"(<!doctype html>)",
+                    rf'\1\n<html lang="{lang}">',
+                    processed_html_start,
+                    count=1,
+                    flags=re.IGNORECASE,
+                )
+                # If body was part of this minimal start, ensure it's still there or add it
+                if "<body" not in processed_html_start.lower():
+                    processed_html_start += "\n<body>"  # Minimal
+            elif not processed_html_start.lower().strip().startswith("<html"):
+                processed_html_start = f'<html lang="{lang}">\n' + processed_html_start
+
+        final_html_start = processed_html_start
 
         page_parts = [
             final_html_start,
             final_header_content,
-            "<main>\n", # Add main tags around the already processed main_content
+            "<main>\n",
             main_content,
             "\n</main>",
             final_footer_content,
             html_end_original,
         ]
         return "".join(page_parts)
-
-# Aliases for backward compatibility if tests rely on old function names
-# _page_builder_instance = DefaultPageBuilder()
-# extract_base_html_parts = _page_builder_instance.extract_base_html_parts
-# assemble_translated_page = _page_builder_instance.assemble_translated_page

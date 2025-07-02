@@ -1,11 +1,10 @@
 import random
-from typing import List, Optional  # Added Optional
+from typing import List, Optional
 
-# Assuming protos are compiled and available in generated.*
 from generated.blog_post_pb2 import BlogPost
 from generated.contact_form_config_pb2 import ContactFormConfig
 from generated.feature_item_pb2 import FeatureItem
-from generated.hero_item_pb2 import (  # Changed HeroVariation to HeroItemContent
+from generated.hero_item_pb2 import (
     HeroItem,
     HeroItemContent,
 )
@@ -14,24 +13,23 @@ from generated.testimonial_item_pb2 import TestimonialItem
 
 from .interfaces import HtmlBlockGenerator, Translations
 
-# TranslatableString might be in common.proto, but not explicitly used by current functions after re-read.
-# If it were, it would be: from generated.common_pb2 import TranslatableString
-
 
 class PortfolioHtmlGenerator(HtmlBlockGenerator):
-    def generate_html(self, items: List[PortfolioItem], translations: Translations) -> str:
+    def generate_html(
+        self, data: List[PortfolioItem], translations: Translations
+    ) -> str:
         """Generates HTML for portfolio items."""
-        if not items:
+        if not data:
             return ""
         html_output: List[str] = []
-        for item in items:
-            title: str = translations.get(item.details.title.key, item.details.title.key)
+        for item in data:
+            title: str = translations.get(
+                item.details.title.key, item.details.title.key
+            )
             description: str = translations.get(
                 item.details.description.key, item.details.description.key
             )
-            alt_text: str = translations.get(
-                item.image.alt_text.key, "Portfolio image"
-            )
+            alt_text: str = translations.get(item.image.alt_text.key, "Portfolio image")
 
             html_output.append(
                 f"""
@@ -46,12 +44,14 @@ class PortfolioHtmlGenerator(HtmlBlockGenerator):
 
 
 class TestimonialsHtmlGenerator(HtmlBlockGenerator):
-    def generate_html(self, items: List[TestimonialItem], translations: Translations) -> str:
+    def generate_html(
+        self, data: List[TestimonialItem], translations: Translations
+    ) -> str:
         """Generates HTML for testimonial items."""
-        if not items:
+        if not data:
             return ""
         html_output: List[str] = []
-        for item in items:
+        for item in data:
             text: str = translations.get(item.text.key, item.text.key)
             author: str = translations.get(item.author.key, item.author.key)
             img_alt: str = translations.get(
@@ -65,24 +65,31 @@ class TestimonialsHtmlGenerator(HtmlBlockGenerator):
                 <h4>{author}</h4>
             </div>
             """
-            ) # Added quotes around text for typical testimonial style
+            )
         return "\n".join(html_output)
 
 
 class FeaturesHtmlGenerator(HtmlBlockGenerator):
-    def generate_html(self, items: List[FeatureItem], translations: Translations) -> str:
+    def generate_html(self, data: List[FeatureItem], translations: Translations) -> str:
         """Generates HTML for feature items."""
-        if not items:
+        if not data:
             return ""
         html_output: List[str] = []
-        for item in items:
-            title: str = translations.get(item.content.title.key, item.content.title.key)
+        for item in data:
+            title: str = translations.get(
+                item.content.title.key, item.content.title.key
+            )
             description: str = translations.get(
                 item.content.description.key, item.content.description.key
             )
             # Assuming icon handling is simple or done via CSS/template
             icon_html = ""
-            if hasattr(item, 'icon') and item.icon and hasattr(item.icon, 'svg_content') and item.icon.svg_content:
+            if (
+                hasattr(item, "icon")
+                and item.icon
+                and hasattr(item.icon, "svg_content")
+                and item.icon.svg_content
+            ):
                 icon_html = item.icon.svg_content
 
             html_output.append(
@@ -98,29 +105,33 @@ class FeaturesHtmlGenerator(HtmlBlockGenerator):
 
 
 class HeroHtmlGenerator(HtmlBlockGenerator):
-    def generate_html(self, hero_data: Optional[HeroItem], translations: Translations) -> str:
+    def generate_html(
+        self, data: Optional[HeroItem], translations: Translations
+    ) -> str:
         """Generates HTML for the hero section, selecting a variation."""
-        if not hero_data or not hero_data.variations:
+        if not data or not data.variations:
             return "<!-- Hero data not found or no variations -->"
 
-        selected_variation: Optional[HeroItemContent] = None # Explicit type
+        selected_variation: Optional[HeroItemContent] = None  # Explicit type
 
         # Try to find the default variation
-        if hero_data.default_variation_id:
-            for var in hero_data.variations:
-                if var.variation_id == hero_data.default_variation_id:
+        if data.default_variation_id:
+            for var in data.variations:
+                if var.variation_id == data.default_variation_id:
                     selected_variation = var
                     break
 
         # If default not found or not specified, and variations exist, pick randomly
-        if not selected_variation and hero_data.variations:
-            selected_variation = random.choice(hero_data.variations)
+        if not selected_variation and data.variations:
+            selected_variation = random.choice(data.variations)
 
         # If still no variation selected (e.g., empty variations list initially)
         if not selected_variation:
             return "<!-- Could not select a hero variation -->"
 
-        title = translations.get(selected_variation.title.key, selected_variation.title.key)
+        title = translations.get(
+            selected_variation.title.key, selected_variation.title.key
+        )
         subtitle = translations.get(
             selected_variation.subtitle.key, selected_variation.subtitle.key
         )
@@ -137,50 +148,39 @@ class HeroHtmlGenerator(HtmlBlockGenerator):
 
 
 class ContactFormHtmlGenerator(HtmlBlockGenerator):
-    def generate_html(self, config: Optional[ContactFormConfig], translations: Translations) -> str:
+    def generate_html(
+        self, data: Optional[ContactFormConfig], translations: Translations
+    ) -> str:
         """
         Generates HTML data attributes string for the contact form.
         """
-        if not config:
+        if not data:
             return "<!-- Contact form configuration not found -->"
-
-        # The original function returned a string of attributes.
-        # This is suitable if the block template has <form {{placeholder}} >
-        # The interface HtmlBlockGenerator.generate_html expects full HTML string.
-        # For now, let's assume this generator's output is still just the attribute string,
-        # and the build script will handle placing it.
-        # Or, the block template itself must be very simple, just these attributes.
-        # Given the name "generate_contact_form_html", it implies it should generate the form.
-        # However, the existing code only generates attributes.
-        # Let's stick to generating attributes as per original logic for minimal change.
-        # This means the placeholder in contact-form.html must be for attributes.
 
         attrs = []
         # Use form_action_url for the action attribute
-        if config.form_action_url:
-            attrs.append(f'action="{config.form_action_url}"')
+        if data.form_action_uri:
+            attrs.append(f'action="{data.form_action_uri}"')
 
-        # Data attributes for AJAX handling
-        attrs.append(f'data-form-action-url="{config.form_action_url}"') # Keep for JS if it uses this
-        attrs.append(f'data-success-message="{translations.get(config.success_message_key, "Message sent!")}"')
-        attrs.append(f'data-error-message="{translations.get(config.error_message_key, "Error sending message.")}"')
+        attrs.append(f'data-form-action-url="{data.form_action_uri}"')
+        attrs.append(
+            f'data-success-message="{translations.get(data.success_message_key, "Message sent!")}"'
+        )
+        attrs.append(
+            f'data-error-message="{translations.get(data.error_message_key, "Error sending message.")}"'
+        )
 
-        # Default method to POST, as it's common for contact forms.
-        # This is not configurable via proto currently.
         attrs.append('method="POST"')
-
-        # No 'id' or other attributes like 'enctype' are defined in the proto, so they are omitted.
-        # If an ID is needed, it should be static in the block template or added to proto.
         return " ".join(attrs)
 
 
 class BlogHtmlGenerator(HtmlBlockGenerator):
-    def generate_html(self, posts: List[BlogPost], translations: Translations) -> str:
+    def generate_html(self, data: List[BlogPost], translations: Translations) -> str:
         """Generates HTML for blog posts."""
-        if not posts:
+        if not data:
             return ""
         html_output: List[str] = []
-        for post in posts:
+        for post in data:
             title: str = translations.get(post.title.key, post.title.key)
             excerpt: str = translations.get(post.excerpt.key, post.excerpt.key)
             cta_text: str = translations.get(post.cta.text.key, post.cta.text.key)
@@ -194,8 +194,3 @@ class BlogHtmlGenerator(HtmlBlockGenerator):
             """
             )
         return "\n".join(html_output)
-
-# The old functions can be removed or aliased if necessary for tests,
-# but the build script should use the new classes.
-# Example alias (less ideal than direct class usage):
-# generate_portfolio_html = PortfolioHtmlGenerator().generate_html
