@@ -42,6 +42,8 @@ class PortfolioHtmlGenerator(HtmlBlockGenerator):
         Returns:
             An HTML string representing the portfolio items.
         """
+        if not data:
+            return ""
         template = self.jinja_env.get_template("blocks/portfolio.html")
         return str(template.render(items=data, translations=translations))
 
@@ -64,6 +66,8 @@ class TestimonialsHtmlGenerator(HtmlBlockGenerator):
         Returns:
             An HTML string representing the testimonial items.
         """
+        if not data:
+            return ""
         template = self.jinja_env.get_template("blocks/testimonials.html")
         return str(template.render(items=data, translations=translations))
 
@@ -84,6 +88,8 @@ class FeaturesHtmlGenerator(HtmlBlockGenerator):
         Returns:
             An HTML string representing the feature items.
         """
+        if not data:
+            return ""
         template = self.jinja_env.get_template("blocks/features.html")
         return str(template.render(items=data, translations=translations))
 
@@ -106,25 +112,22 @@ class HeroHtmlGenerator(HtmlBlockGenerator):
         Returns:
             An HTML string for the hero section.
         """
-        selected_variation: Optional[HeroItemContent] = (
-            None  # Define type once at the correct scope
-        )
-
         if not data or not data.variations:
-            # selected_variation remains None, which is handled by the template
-            pass
-        else:
-            # Attempt to find and set the selected_variation
-            if data.default_variation_id:
-                for var in data.variations:
-                    if var.variation_id == data.default_variation_id:
-                        selected_variation = var
-                        break
+            return "<!-- Hero data not found or no variations -->"
 
-            # If no specific variation was found yet (e.g. default_variation_id didn't match or wasn't set)
-            # and variations are available, pick one randomly.
-            if not selected_variation and data.variations:
-                selected_variation = random.choice(data.variations)
+        selected_variation: Optional[HeroItemContent] = None
+
+        # Attempt to find and set the selected_variation
+        if data.default_variation_id:
+            for var in data.variations:
+                if var.variation_id == data.default_variation_id:
+                    selected_variation = var
+                    break
+
+        # If no specific variation was found yet (e.g. default_variation_id didn't match or wasn't set)
+        # and variations are available, pick one randomly. (This condition also ensures data.variations is not empty)
+        if not selected_variation: # Already know data.variations is not empty from the guard clause
+            selected_variation = random.choice(data.variations)
 
         template = self.jinja_env.get_template("blocks/hero.html")
         # The template expects `hero_item` as the context variable for the selected variation
@@ -151,6 +154,8 @@ class ContactFormHtmlGenerator(HtmlBlockGenerator):
         Returns:
             An HTML string representing the contact form section.
         """
+        if not data:
+            return ""
         template = self.jinja_env.get_template("blocks/contact-form.html")
         # The template expects `config` for the ContactFormConfig data
         return str(template.render(config=data, translations=translations))
@@ -172,5 +177,7 @@ class BlogHtmlGenerator(HtmlBlockGenerator):
         Returns:
             An HTML string representing the blog posts.
         """
+        if not data:
+            return ""
         template = self.jinja_env.get_template("blocks/blog.html")
         return str(template.render(items=data, translations=translations))

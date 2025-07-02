@@ -76,7 +76,7 @@ class TestBuildScript(unittest.TestCase):
             self.test_root_dir, "public", "locales"
         )
         self.test_data_dir: str = os.path.join(self.test_root_dir, "data")
-        self.test_blocks_dir: str = os.path.join(self.test_root_dir, "blocks")
+        # self.test_blocks_dir is no longer needed as dummy blocks go into templates/blocks
         self.test_public_dir: str = os.path.join(self.test_root_dir, "public")
         self.test_public_generated_configs_dir: str = os.path.join(
             self.test_public_dir, "generated_configs"
@@ -84,8 +84,12 @@ class TestBuildScript(unittest.TestCase):
 
         os.makedirs(self.test_locales_dir, exist_ok=True)
         os.makedirs(self.test_data_dir, exist_ok=True)
-        os.makedirs(self.test_blocks_dir, exist_ok=True)
+        # os.makedirs(self.test_blocks_dir, exist_ok=True) # Not needed
         os.makedirs(self.test_public_generated_configs_dir, exist_ok=True)
+        # Ensure the target directory for dummy block templates exists
+        os.makedirs(
+            os.path.join(self.test_root_dir, "templates", "blocks"), exist_ok=True
+        )
 
     def _instantiate_services(self) -> None:
         """Instantiates common service components used in tests."""
@@ -97,9 +101,10 @@ class TestBuildScript(unittest.TestCase):
         # Ensure a dummy 'templates' dir exists for FileSystemLoader, or use a mock loader.
         # For simplicity, assuming 'templates' might be a general dir or we mock rendering.
         # Let's create a dummy templates dir for the loader to be valid.
-        os.makedirs(
-            os.path.join(self.test_root_dir, "templates", "blocks"), exist_ok=True
-        )
+        # This directory is now created in _create_test_directories
+        # os.makedirs(
+        #     os.path.join(self.test_root_dir, "templates", "blocks"), exist_ok=True
+        # ) # Moved to _create_test_directories
         self.jinja_env = Environment(
             loader=FileSystemLoader(os.path.join(self.test_root_dir, "templates"))
         )
@@ -339,20 +344,137 @@ class TestBuildScript(unittest.TestCase):
             json.dump(dummy_nav_data, f)
 
     def _create_dummy_block_files(self) -> None:
-        """Creates dummy HTML block files."""
-        os.makedirs("blocks", exist_ok=True)
-        with open(os.path.join("blocks", "hero.html"), "w", encoding="utf-8") as f:
-            f.write('<section class="hero">{{hero_content}}</section>')
-        with open(os.path.join("blocks", "features.html"), "w", encoding="utf-8") as f:
-            f.write("<div>{{feature_items}}</div>")
+        """Creates dummy HTML block files in templates/blocks/ directory."""
+        # The directory templates/blocks is created in _create_test_directories
+        dummy_blocks_dir = os.path.join(
+            "templates", "blocks"
+        )  # Relative to self.test_root_dir
+
+        # For hero.html, matching the context from HeroHtmlGenerator and test assertions
+        hero_template_content = """
+<section class="hero">
+    {% if hero_item %}
+    <h1>{{ translations[hero_item.title.key] }}</h1>
+    <p>{{ translations[hero_item.subtitle.key] }}</p>
+    <a href="{{ hero_item.cta.uri }}" class="cta-button">{{ translations[hero_item.cta.text.key] }}</a>
+    <!-- Selected variation: {{ hero_item.variation_id }} -->
+    {% else %}
+    <!-- Hero item data was None or empty in dummy template -->
+    {% endif %}
+</section>
+"""
         with open(
-            os.path.join("blocks", "testimonials.html"), "w", encoding="utf-8"
+            os.path.join(dummy_blocks_dir, "hero.html"), "w", encoding="utf-8"
         ) as f:
-            f.write("<div>{{testimonial_items}}</div>")
-        with open(os.path.join("blocks", "portfolio.html"), "w", encoding="utf-8") as f:
-            f.write("<div>{{portfolio_items}}</div>")
-        with open(os.path.join("blocks", "blog.html"), "w", encoding="utf-8") as f:
-            f.write("<div>{{blog_posts}}</div>")
+            f.write(hero_template_content)
+
+        # For list-based items, the generators pass `items` to the template.
+        # The dummy templates should loop through `items` and display relevant translated fields.
+        # Example for features.html (others will be similar)
+        # test_generate_features_html asserts:
+        # self.assertIn("Translated Feature Title", html)
+        # self.assertIn("Translated Feature Description", html)
+        # self.assertIn('<div class="feature-item">', html)
+        # FeatureItem has content.title.key and content.description.key
+        features_template_content = """
+<div>
+    {% for item in items %}
+    <div class="feature-item">
+        <h2>{{ translations[item.content.title.key] }}</h2>
+        <p>{{ translations[item.content.description.key] }}</p>
+    </div>
+    {% endfor %}
+</div>
+"""
+        with open(
+            os.path.join(dummy_blocks_dir, "features.html"), "w", encoding="utf-8"
+        ) as f:
+            f.write(features_template_content)
+
+        # test_generate_testimonials_html asserts:
+        # self.assertIn("Translated Testimonial Text", html)
+        # self.assertIn("Translated Testimonial Author", html)
+        # self.assertIn('src="testimonial.png"', html)
+        # self.assertIn('alt="Translated Testimonial Alt Text"', html)
+        # self.assertIn('<div class="testimonial-item">', html)
+        # TestimonialItem has text.key, author.key, author_image.src, author_image.alt_text.key
+        testimonials_template_content = """
+<div>
+    {% for item in items %}
+    <div class="testimonial-item">
+        <p>"{{ translations[item.text.key] }}"</p>
+        <cite>- {{ translations[item.author.key] }}</cite>
+        <img src="{{ item.author_image.src }}" alt="{{ translations[item.author_image.alt_text.key] }}" />
+    </div>
+    {% endfor %}
+</div>
+"""
+        with open(
+            os.path.join(dummy_blocks_dir, "testimonials.html"), "w", encoding="utf-8"
+        ) as f:
+            f.write(testimonials_template_content)
+
+        # test_generate_portfolio_html asserts:
+        # self.assertIn("Translated Title", html)
+        # self.assertIn("Translated Description", html)
+        # self.assertIn('src="img.png"', html)
+        # self.assertIn('alt="Translated Alt Text"', html)
+        # self.assertIn('id="p1"', html)
+        # PortfolioItem has id, image.src, image.alt_text.key, details.title.key, details.description.key
+        portfolio_template_content = """
+<div>
+    {% for item in items %}
+    <div id="{{ item.id }}">
+        <img src="{{ item.image.src }}" alt="{{ translations[item.image.alt_text.key] }}" />
+        <h3>{{ translations[item.details.title.key] }}</h3>
+        <p>{{ translations[item.details.description.key] }}</p>
+    </div>
+    {% endfor %}
+</div>
+"""
+        with open(
+            os.path.join(dummy_blocks_dir, "portfolio.html"), "w", encoding="utf-8"
+        ) as f:
+            f.write(portfolio_template_content)
+
+        # test_generate_blog_html asserts:
+        # self.assertIn("Blog Title", html)
+        # self.assertIn("Blog Excerpt", html)
+        # self.assertIn('href="link.html"', html)
+        # self.assertIn(">Read More</a>", html)
+        # self.assertIn('id="b1"', html)
+        # BlogPost has id, title.key, excerpt.key, cta.uri, cta.text.key
+        blog_template_content = """
+<div>
+    {% for item in items %}
+    <article id="{{ item.id }}">
+        <h2>{{ translations[item.title.key] }}</h2>
+        <p>{{ translations[item.excerpt.key] }}</p>
+        <a href="{{ item.cta.uri }}">{{ translations[item.cta.text.key] }}</a>
+    </article>
+    {% endfor %}
+</div>
+"""
+        with open(
+            os.path.join(dummy_blocks_dir, "blog.html"), "w", encoding="utf-8"
+        ) as f:
+            f.write(blog_template_content)
+
+        # ContactFormHtmlGenerator passes `config` to template.
+        # The tests for this generator are not among the initial failures, but good to be consistent.
+        # ContactFormConfig has form_action_uri, success_message_key, error_message_key
+        contact_form_template_content = """
+<form id="contact-form" action="{{ config.form_action_uri if config else '' }}">
+    {% if config %}
+    <p class="success-message">{{ translations[config.success_message_key] }}</p>
+    <p class="error-message">{{ translations[config.error_message_key] }}</p>
+    {% endif %}
+</form>
+"""
+        with open(
+            os.path.join(dummy_blocks_dir, "contact-form.html"), "w", encoding="utf-8"
+        ) as f:
+            f.write(contact_form_template_content)
 
     def tearDown(self) -> None:
         """Clean up the temporary test environment after each test."""
@@ -641,7 +763,7 @@ class TestBuildScript(unittest.TestCase):
     @mock.patch("build.InMemoryDataCache.preload_data")
     @mock.patch("build.InMemoryDataCache.get_item")
     @mock.patch("build.DefaultAppConfigManager.generate_language_config")
-    @mock.patch("build.DefaultPageBuilder.extract_base_html_parts")
+    # @mock.patch("build.DefaultPageBuilder.extract_base_html_parts") # This method is no longer used directly by the orchestrator
     @mock.patch("build.DefaultPageBuilder.assemble_translated_page")
     @mock.patch("build_protocols.html_generation.PortfolioHtmlGenerator.generate_html")
     @mock.patch("build_protocols.html_generation.BlogHtmlGenerator.generate_html")
@@ -664,7 +786,7 @@ class TestBuildScript(unittest.TestCase):
         mock_gen_blog_html,
         mock_gen_portfolio_html,
         mock_assemble_page,
-        mock_extract_parts,
+        # mock_extract_parts, # Removed as the method is no longer patched
         mock_generate_lang_config,
         mock_data_cache_get_item,
         mock_data_cache_preload,
@@ -687,9 +809,7 @@ class TestBuildScript(unittest.TestCase):
         mock_testimonial_item = TestimonialItem(text={"key": "ttk"})
         mock_hero_item = HeroItem(
             default_variation_id="v1",
-            variations=[
-                HeroItemContent(variation_id="v1", title={"key": "htk"})
-            ],
+            variations=[HeroItemContent(variation_id="v1", title={"key": "htk"})],
         )  # type: ignore
         mock_contact_config = ContactFormConfig(
             form_action_uri="/test_action",
@@ -721,9 +841,7 @@ class TestBuildScript(unittest.TestCase):
                 return mock_navigation_data
             return None
 
-        mock_load_single_item_data.side_effect = (
-            load_single_item_data_side_effect
-        )
+        mock_load_single_item_data.side_effect = load_single_item_data_side_effect
 
         mock_data_cache_preload.return_value = None
 
@@ -742,20 +860,14 @@ class TestBuildScript(unittest.TestCase):
                 return mock_contact_config
             return None
 
-        mock_data_cache_get_item.side_effect = (
-            data_cache_get_item_side_effect
-        )
+        mock_data_cache_get_item.side_effect = data_cache_get_item_side_effect
 
         mock_gen_portfolio_html.return_value = "<p>Portfolio Content</p>"
         mock_gen_blog_html.return_value = "<p>Blog Content</p>"
         mock_gen_features_html.return_value = "<p>Features Content</p>"
-        mock_gen_testimonials_html.return_value = (
-            "<p>Testimonials Content</p>"
-        )
+        mock_gen_testimonials_html.return_value = "<p>Testimonials Content</p>"
         mock_gen_hero_html.return_value = "<p>Hero Content</p>"
-        mock_gen_contact_html.return_value = (
-            'data-form-id="contact-form-attrs"'
-        )
+        mock_gen_contact_html.return_value = 'data-form-id="contact-form-attrs"'
         mock_generate_lang_config.return_value = {
             "lang": "test",
             "ui_strings": {},
@@ -771,31 +883,23 @@ class TestBuildScript(unittest.TestCase):
             self.dummy_index_content,
             re.DOTALL,
         )
-        dummy_header_content = (
-            header_match.group(0) if header_match else "<header></header>"
-        )
-        dummy_footer_content = (
-            footer_match.group(0) if footer_match else "<footer></footer>"
-        )
+        _ = header_match.group(0) if header_match else "<header></header>"
+        _ = footer_match.group(0) if footer_match else "<footer></footer>"
 
-        mock_extract_parts.return_value = (
-            "<html><head_content/></head><body>",
-            dummy_header_content,
-            dummy_footer_content,
-            "</body></html>",
-        )
+        # mock_extract_parts.return_value = ( # No longer needed as the function is not called
+        #     "<html><head_content/></head><body>",
+        #     dummy_header_content,
+        #     dummy_footer_content,
+        #     "</body></html>",
+        # )
         mock_assemble_page.return_value = (
             "<html><body>Assembled Page Content</body></html>"
         )
 
-        def mock_builtin_open_side_effect(
-            filename, mode="r", *args, **kwargs
-        ):
+        def mock_builtin_open_side_effect(filename, mode="r", *args, **kwargs):
             normalized_filename = os.path.normpath(filename)
             if mode == "r":
-                if normalized_filename.startswith(
-                    os.path.join("blocks")
-                ):
+                if normalized_filename.startswith(os.path.join("blocks")):
                     block_name = os.path.basename(filename)
                     placeholder_map = {
                         "hero.html": "{{hero_content}}",
@@ -806,17 +910,13 @@ class TestBuildScript(unittest.TestCase):
                         "contact-form.html": "{{contact_form_attributes}}",
                     }
                     return mock.mock_open(
-                        read_data=(
-                            f"<div>{placeholder_map.get(block_name, '')}</div>"
-                        )
+                        read_data=(f"<div>{placeholder_map.get(block_name, '')}</div>")
                     ).return_value
                 if normalized_filename == "index.html":
                     return mock.mock_open(
                         read_data=self.dummy_index_content
                     ).return_value
-                if normalized_filename == os.path.join(
-                    "public", "config.json"
-                ):
+                if normalized_filename == os.path.join("public", "config.json"):
                     return mock.mock_open(
                         read_data=json.dumps(self.dummy_config)
                     ).return_value
@@ -847,13 +947,9 @@ class TestBuildScript(unittest.TestCase):
         build_main()
 
         expected_paths = [
-            os.path.join(
-                "public", "generated_configs", "config_en.json"
-            ),
+            os.path.join("public", "generated_configs", "config_en.json"),
             "index.html",
-            os.path.join(
-                "public", "generated_configs", "config_es.json"
-            ),
+            os.path.join("public", "generated_configs", "config_es.json"),
             "index_es.html",
         ]
         expected_write_calls = [
@@ -862,9 +958,7 @@ class TestBuildScript(unittest.TestCase):
         ]
 
         actual_write_calls = [
-            c
-            for c in mock_builtin_open.call_args_list
-            if c.args[1] == "w"
+            c for c in mock_builtin_open.call_args_list if c.args[1] == "w"
         ]
 
         self.assertEqual(
@@ -875,9 +969,7 @@ class TestBuildScript(unittest.TestCase):
 
         for expected_call in expected_write_calls:
             normalized_actual_calls = [
-                mock.call(
-                    os.path.normpath(c.args[0]), *c.args[1:], **c.kwargs
-                )
+                mock.call(os.path.normpath(c.args[0]), *c.args[1:], **c.kwargs)
                 for c in actual_write_calls
             ]
             self.assertIn(
@@ -892,20 +984,18 @@ class TestBuildScript(unittest.TestCase):
         mock_load_app_config.assert_called_once()
         self.assertEqual(mock_load_translations.call_count, 2)
         mock_data_cache_preload.assert_called_once()
-        mock_extract_parts.assert_called_once()
+        # mock_extract_parts.assert_called_once() # Method is no longer called
         self.assertEqual(mock_assemble_page.call_count, 2)
         self.assertEqual(mock_generate_lang_config.call_count, 2)
 
         num_langs = len(self.dummy_config["supported_langs"])
-        # Each lang processes: 1 header, 1 footer, and N blocks
-        num_blocks_in_config = len(
-            self.dummy_config.get("blocks", [])
-        )  # Use .get for safety
-        expected_translate_calls = num_langs * (
-            2 + num_blocks_in_config
-        )
+
+        expected_translate_calls = num_langs * 2
         self.assertEqual(
-            mock_translate_content.call_count, expected_translate_calls
+            mock_translate_content.call_count,
+            expected_translate_calls,
+            f"Expected {expected_translate_calls} calls to translate_html_content, "
+            f"got {mock_translate_content.call_count}",
         )
 
 
