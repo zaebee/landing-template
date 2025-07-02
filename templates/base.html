@@ -1,6 +1,6 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="{{ lang | default('en') }}">
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     {% block head_meta %}
@@ -16,8 +16,8 @@
     <title>{{ title | default('Simple Landing Page') }}</title>
     <link href="public/style.css" rel="stylesheet" />
     {% block head_extra %}{% endblock head_extra %}
-</head>
-<body>
+  </head>
+  <body>
     {% block header_content %}
     <header>
       <nav>
@@ -49,9 +49,7 @@
     </header>
     {% endblock header_content %}
 
-    <main>
-        {{ main_content | safe }}
-    </main>
+    <main>{{ main_content | safe }}</main>
 
     {% block footer_content %}
     <footer>
@@ -59,9 +57,7 @@
         &amp;copy; 2023 Simple Landing Page. All rights reserved.
       </p>
     </footer>
-    {% endblock footer_content %}
-
-    {% block scripts %}
+    {% endblock footer_content %} {% block scripts %}
     <script>
       // Dark Mode Toggle
       const darkModeToggle = document.getElementById("dark-mode-toggle");
@@ -255,5 +251,5 @@
       }
     </script>
     {% endblock scripts %}
-</body>
+  </body>
 </html>
