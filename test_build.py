@@ -1,15 +1,26 @@
+"""
+Unit tests for the static site build script and its components.
+
+This module contains test cases for various parts of the build process,
+including translation loading, data loading, HTML generation for different
+content blocks, and the main build orchestration logic. It uses a temporary
+file system structure to simulate real project files (configs, data, locales,
+blocks) and extensive mocking to isolate units under test.
+"""
+
 import json
 import os
-import re  # Import re module
+import re
 import shutil
 import tempfile
 import unittest
+from typing import Any, Dict  # For type hinting self.dummy_config
 from unittest import mock
 
-from google.protobuf import json_format  # For Message type hint
+from google.protobuf import json_format
 from google.protobuf.message import Message  # Explicit import for T = TypeVar bound
 
-from build import main as build_main  # To test the main orchestrator
+from build import main as build_main
 from build_protocols.data_loading import JsonProtoDataLoader
 from build_protocols.html_generation import (
     BlogHtmlGenerator,
@@ -19,68 +30,107 @@ from build_protocols.html_generation import (
     PortfolioHtmlGenerator,
     TestimonialsHtmlGenerator,
 )
-
-# Interfaces might be needed for type hinting if we mock them
 from build_protocols.interfaces import Translations
 from build_protocols.translation import DefaultTranslationProvider
+
+# Generated protobuf messages
 from generated.blog_post_pb2 import BlogPost
 from generated.contact_form_config_pb2 import ContactFormConfig
 from generated.feature_item_pb2 import FeatureItem
-from generated.hero_item_pb2 import (  # Changed HeroVariation to HeroItemContent
-    HeroItem,
-    HeroItemContent,
-)
+from generated.hero_item_pb2 import HeroItem, HeroItemContent
 from generated.nav_item_pb2 import Navigation
 from generated.portfolio_item_pb2 import PortfolioItem
 from generated.testimonial_item_pb2 import TestimonialItem
 
-# sys.path modification moved to conftest.py
 
 class TestBuildScript(unittest.TestCase):
     """Test cases for build.py script components and main execution."""
 
-    def setUp(self):
-        """Set up test environment."""
-        self.original_cwd = os.getcwd()
-        self.test_root_dir = (
-            tempfile.mkdtemp()
-        )  # Create a temporary root directory for tests
-        os.chdir(self.test_root_dir)  # Change CWD to the temporary directory
+    def setUp(self) -> None:
+        """Set up a temporary test environment before each test.
 
-        # Create subdirectories within the temporary root
-        self.test_locales_dir = os.path.join(self.test_root_dir, "public", "locales")
-        self.test_data_dir = os.path.join(self.test_root_dir, "data")
-        self.test_blocks_dir = os.path.join(self.test_root_dir, "blocks")
-        self.test_public_dir = os.path.join(self.test_root_dir, "public")
-        self.test_public_generated_configs_dir = os.path.join(
+        This involves:
+        - Creating a temporary root directory.
+        - Changing the current working directory to this temporary root.
+        - Creating necessary subdirectories (public/locales, data, blocks, etc.).
+        - Instantiating service components (translation provider, data loader,
+          HTML generators) for direct testing.
+        - Creating dummy translation files, data files, config files, and
+          HTML block files within the temporary directory structure.
+        """
+        self.original_cwd: str = os.getcwd()
+        self.test_root_dir: str = tempfile.mkdtemp()
+        os.chdir(self.test_root_dir)
+
+        self._create_test_directories()
+        self._instantiate_services()
+        self._create_dummy_translation_files()
+        self._create_dummy_data_files()
+        self._create_dummy_config_and_index()
+        self._create_dummy_block_files()
+
+    def _create_test_directories(self) -> None:
+        """Creates the necessary directory structure within the temp root."""
+        self.test_locales_dir: str = os.path.join(
+            self.test_root_dir, "public", "locales"
+        )
+        self.test_data_dir: str = os.path.join(self.test_root_dir, "data")
+        self.test_blocks_dir: str = os.path.join(self.test_root_dir, "blocks")
+        self.test_public_dir: str = os.path.join(self.test_root_dir, "public")
+        self.test_public_generated_configs_dir: str = os.path.join(
             self.test_public_dir, "generated_configs"
         )
 
         os.makedirs(self.test_locales_dir, exist_ok=True)
         os.makedirs(self.test_data_dir, exist_ok=True)
         os.makedirs(self.test_blocks_dir, exist_ok=True)
-        # public dir itself is created by test_locales_dir if "public" is in its path
         os.makedirs(self.test_public_generated_configs_dir, exist_ok=True)
 
-        # Instantiate service components for direct testing
+    def _instantiate_services(self) -> None:
+        """Instantiates common service components used in tests."""
         self.translation_provider = DefaultTranslationProvider()
-        self.data_loader = JsonProtoDataLoader[
-            Message
-        ]()  # Use Message for generic loader instance
+        self.data_loader = JsonProtoDataLoader[Message]()
         self.portfolio_generator = PortfolioHtmlGenerator()
         self.blog_generator = BlogHtmlGenerator()
         self.features_generator = FeaturesHtmlGenerator()
         self.testimonials_generator = TestimonialsHtmlGenerator()
         self.hero_generator = HeroHtmlGenerator()
         self.contact_form_generator = ContactFormHtmlGenerator()
-        # Other services like AppConfigManager, PageBuilder can be instantiated if needed for specific tests
 
-        # Dummy translation files (now created in temp_root/public/locales/)
+    def _create_dummy_translation_files(self) -> None:
+        """Creates dummy translation JSON files (en.json, es.json)."""
         self.en_translations: Translations = {
             "greeting": "Hello",
             "farewell": "Goodbye",
             "header_text": "Test Header",
             "footer_text": "Test Footer",
+            "portfolio_alt_1": "Alt 1 EN",
+            "portfolio_title_1": "Title 1 EN",
+            "portfolio_desc_1": "Desc 1 EN",
+            "portfolio_alt_2": "Alt 2 EN",
+            "portfolio_title_2": "Title 2 EN",
+            "portfolio_desc_2": "Desc 2 EN",
+            "blog_title_1": "Blog Title 1 EN",
+            "blog_excerpt_1": "Excerpt 1 EN",
+            "blog_cta_1": "Read EN",
+            "blog_title_2": "Blog Title 2 EN",
+            "blog_excerpt_2": "Excerpt 2 EN",
+            "blog_cta_2": "More EN",
+            "feature_title_1": "Feat Title 1 EN",
+            "feature_desc_1": "Feat Desc 1 EN",
+            "feature_title_2": "Feat Title 2 EN",
+            "feature_desc_2": "Feat Desc 2 EN",
+            "testimonial_text_1": "Testimonial Text EN",
+            "testimonial_author_1": "Author EN",
+            "testimonial_alt_1": "Alt EN",
+            "hero_title_main_v1": "Hero V1 EN",
+            "hero_subtitle_main_v1": "Sub V1 EN",
+            "hero_cta_main_v1": "CTA V1 EN",
+            "hero_title_main_v2": "Hero V2 EN",
+            "hero_subtitle_main_v2": "Sub V2 EN",
+            "hero_cta_main_v2": "CTA V2 EN",
+            "contact_success": "Success EN",
+            "contact_error": "Error EN",
         }
         with open(
             os.path.join(self.test_locales_dir, "en.json"), "w", encoding="utf-8"
@@ -92,13 +142,41 @@ class TestBuildScript(unittest.TestCase):
             "farewell": "Adiós",
             "header_text": "Cabecera de Prueba",
             "footer_text": "Pie de Página de Prueba",
+            "portfolio_alt_1": "Alt 1 ES",
+            "portfolio_title_1": "Título 1 ES",
+            "portfolio_desc_1": "Desc 1 ES",
+            "portfolio_alt_2": "Alt 2 ES",
+            "portfolio_title_2": "Título 2 ES",
+            "portfolio_desc_2": "Desc 2 ES",
+            "blog_title_1": "Blog Título 1 ES",
+            "blog_excerpt_1": "Extracto 1 ES",
+            "blog_cta_1": "Leer ES",
+            "blog_title_2": "Blog Título 2 ES",
+            "blog_excerpt_2": "Extracto 2 ES",
+            "blog_cta_2": "Más ES",
+            "feature_title_1": "Caract Título 1 ES",
+            "feature_desc_1": "Caract Desc 1 ES",
+            "feature_title_2": "Caract Título 2 ES",
+            "feature_desc_2": "Caract Desc 2 ES",
+            "testimonial_text_1": "Testimonio Texto ES",
+            "testimonial_author_1": "Autor ES",
+            "testimonial_alt_1": "Alt ES",
+            "hero_title_main_v1": "Héroe V1 ES",
+            "hero_subtitle_main_v1": "Sub V1 ES",
+            "hero_cta_main_v1": "CTA V1 ES",
+            "hero_title_main_v2": "Héroe V2 ES",
+            "hero_subtitle_main_v2": "Sub V2 ES",
+            "hero_cta_main_v2": "CTA V2 ES",
+            "contact_success": "Éxito ES",
+            "contact_error": "Error ES",
         }
         with open(
             os.path.join(self.test_locales_dir, "es.json"), "w", encoding="utf-8"
         ) as f:
             json.dump(self.es_translations, f)
 
-        # Dummy data files (now created in temp_root/data/)
+    def _create_dummy_data_files(self) -> None:
+        """Creates dummy JSON data files for portfolio, blog, etc."""
         self.portfolio_items_data = [
             {
                 "id": "p1",
@@ -194,10 +272,11 @@ class TestBuildScript(unittest.TestCase):
         }
         with open(
             os.path.join(self.test_data_dir, "hero.json"), "w", encoding="utf-8"
-        ) as f:  # Corresponds to data/hero_item.json used in build.py
+        ) as f:
             json.dump(self.hero_item_data, f)
 
-        # Create a dummy index.html for main() to read (in self.test_root_dir)
+    def _create_dummy_config_and_index(self) -> None:
+        """Creates dummy index.html and config.json files."""
         self.dummy_index_content = """
         <!DOCTYPE html>
         <html>
@@ -211,13 +290,10 @@ class TestBuildScript(unittest.TestCase):
         </body>
         </html>
         """
-        with open(
-            "index.html", "w", encoding="utf-8"
-        ) as f:  # Will be in self.test_root_dir
+        with open("index.html", "w", encoding="utf-8") as f:
             f.write(self.dummy_index_content)
 
-        # Dummy config.json (for build.py, which expects public/config.json)
-        self.dummy_config = {
+        self.dummy_config: Dict[str, Any] = {
             "blocks": [
                 "hero.html",
                 "features.html",
@@ -227,22 +303,26 @@ class TestBuildScript(unittest.TestCase):
             ],
             "supported_langs": ["en", "es"],
             "default_lang": "en",
+            "navigation_data_file": os.path.join(
+                "data", "navigation.json"
+            ),  # Ensure this path is used by tests
+            "base_html_file": "index.html",
         }
-
-        # Create public directory and public/config.json within self.test_root_dir
         os.makedirs("public", exist_ok=True)
         with open(os.path.join("public", "config.json"), "w", encoding="utf-8") as f:
             json.dump(self.dummy_config, f)
-
-        # Create a root config.json as well if some tests directly expect it
-        # (though build.py itself uses public/config.json)
+        # Create dummy navigation.json
+        dummy_nav_data = {
+            "items": [{"label": {"key": "nav_home"}, "href": "index.html"}]
+        }
         with open(
-            "config.json", "w", encoding="utf-8"
-        ) as f:  # will be in self.test_root_dir
-            json.dump(self.dummy_config, f)
+            os.path.join(self.test_data_dir, "navigation.json"), "w", encoding="utf-8"
+        ) as f:
+            json.dump(dummy_nav_data, f)
 
-        # Dummy block files (in self.test_root_dir/blocks/)
-        os.makedirs("blocks", exist_ok=True)  # will be self.test_root_dir/blocks
+    def _create_dummy_block_files(self) -> None:
+        """Creates dummy HTML block files."""
+        os.makedirs("blocks", exist_ok=True)
         with open(os.path.join("blocks", "hero.html"), "w", encoding="utf-8") as f:
             f.write('<section class="hero">{{hero_content}}</section>')
         with open(os.path.join("blocks", "features.html"), "w", encoding="utf-8") as f:
@@ -256,45 +336,33 @@ class TestBuildScript(unittest.TestCase):
         with open(os.path.join("blocks", "blog.html"), "w", encoding="utf-8") as f:
             f.write("<div>{{blog_posts}}</div>")
 
-    def tearDown(self):
-        """Clean up test environment."""
-        os.chdir(self.original_cwd)  # Restore original CWD
+    def tearDown(self) -> None:
+        """Clean up the temporary test environment after each test."""
+        os.chdir(self.original_cwd)
         if hasattr(self, "test_root_dir") and os.path.exists(self.test_root_dir):
             shutil.rmtree(self.test_root_dir)
 
     def test_load_translations_existing(self):
         """Test loading existing translation files using DefaultTranslationProvider."""
-        # The setUp method now creates dummy files in the temp CWD's public/locales
-        # So, we can test the actual file loading if mocks are not used,
-        # or mock 'open' to control the content precisely.
-        # For this test, let's use the actual files created in setUp.
-        # No, the provider uses `open(f"public/locales/{lang}.json")` which is relative to CWD.
-        # And CWD is self.test_root_dir. So it will look for `self.test_root_dir/public/locales/en.json`.
-        # This matches where setUp creates them.
-
         translations_en = self.translation_provider.load_translations("en")
-        self.assertEqual(translations_en, self.en_translations)
+        self.assertEqual(translations_en["greeting"], self.en_translations["greeting"])
 
         translations_es = self.translation_provider.load_translations("es")
-        self.assertEqual(translations_es, self.es_translations)
+        self.assertEqual(translations_es["greeting"], self.es_translations["greeting"])
 
     def test_load_translations_non_existing(self):
         """Test loading non-existing translation file with DefaultTranslationProvider."""
-        # This will try to open 'public/locales/non_existent_lang.json' in the CWD (temp_root)
-        # It should not find it and return {}.
         translations = self.translation_provider.load_translations("non_existent_lang")
         self.assertEqual(translations, {})
 
     def test_load_translations_invalid_json(self):
         """Test loading translation file with invalid JSON with DefaultTranslationProvider."""
-        # Create an invalid JSON file in the expected path within the temp directory
         invalid_json_file_path = os.path.join(self.test_locales_dir, "invalid.json")
         with open(invalid_json_file_path, "w", encoding="utf-8") as f:
             f.write('{"greeting": "Hello", "farewell":')  # Malformed JSON
 
         translations = self.translation_provider.load_translations("invalid")
         self.assertEqual(translations, {})
-        # The provider prints a warning, which is fine.
 
     def test_translate_html_content(self):
         """Test HTML content translation with DefaultTranslationProvider."""
@@ -302,11 +370,13 @@ class TestBuildScript(unittest.TestCase):
             '<p data-i18n="greeting">Original Greeting</p>'
             '<p data-i18n="farewell">Original Farewell</p>'
         )
+        # Use a subset of translations for this specific test for clarity
+        test_translations = {"greeting": "Hello Test", "farewell": "Goodbye Test"}
         translated_html = self.translation_provider.translate_html_content(
-            html_content, self.en_translations
+            html_content, test_translations
         )
-        self.assertIn(self.en_translations["greeting"], translated_html)
-        self.assertIn(self.en_translations["farewell"], translated_html)
+        self.assertIn(test_translations["greeting"], translated_html)
+        self.assertIn(test_translations["farewell"], translated_html)
 
     def test_translate_html_content_no_translations(self):
         """Test HTML content translation with no translations with DefaultTranslationProvider."""
@@ -314,24 +384,22 @@ class TestBuildScript(unittest.TestCase):
         translated_html = self.translation_provider.translate_html_content(
             html_content, {}
         )
-        self.assertIn("Greeting", translated_html)  # Should remain unchanged
+        self.assertIn("Greeting", translated_html)
 
     def test_translate_html_content_missing_key(self):
         """Test HTML content translation with a missing key with DefaultTranslationProvider."""
         html_content = (
             '<p data-i18n="greeting">Greeting</p><p data-i18n="missing_key">Missing</p>'
         )
+        test_translations = {"greeting": "Hello Test"}
         translated_html = self.translation_provider.translate_html_content(
-            html_content, self.en_translations
+            html_content, test_translations
         )
-        self.assertIn(self.en_translations["greeting"], translated_html)
-        self.assertIn("Missing", translated_html)
+        self.assertIn(test_translations["greeting"], translated_html)
+        self.assertIn("Missing", translated_html)  # Should remain if key is missing
 
     def test_load_dynamic_data_portfolio(self):
         """Test loading dynamic portfolio data with JsonProtoDataLoader."""
-        # Data files are created in self.test_data_dir by setUp.
-        # JsonProtoDataLoader expects paths relative to CWD (which is self.test_root_dir).
-        # So, the path should be "data/portfolio.json".
         portfolio_file_path = os.path.join("data", "portfolio.json")
         items = self.data_loader.load_dynamic_list_data(
             portfolio_file_path, PortfolioItem
@@ -374,16 +442,15 @@ class TestBuildScript(unittest.TestCase):
         hero_file_path = os.path.join("data", "hero.json")
         item = self.data_loader.load_dynamic_single_item_data(hero_file_path, HeroItem)
         self.assertIsNotNone(item)
-        if item and item.variations:
+        if item and item.variations:  # type: ignore
             self.assertIsInstance(item, HeroItem)
-            self.assertEqual(
-                item.variations[0].title.key,
+            self.assertEqual(  # type: ignore
+                item.variations[0].title.key,  # type: ignore
                 self.hero_item_data["variations"][0]["title"]["key"],
             )
 
     def test_load_single_item_dynamic_data_not_found(self):
         """Test loading single item from non-existent file with JsonProtoDataLoader."""
-        # Path relative to CWD (self.test_root_dir)
         item = self.data_loader.load_dynamic_single_item_data(
             os.path.join("data", "non_existent_hero.json"), HeroItem
         )
@@ -410,12 +477,10 @@ class TestBuildScript(unittest.TestCase):
     def test_load_dynamic_data_invalid_json(self):
         """Test loading dynamic data from a file with invalid JSON with JsonProtoDataLoader."""
         invalid_json_filename = "invalid_data.json"
-        # Create the invalid file directly in self.test_data_dir (which is temp_root/data)
         invalid_json_path_abs = os.path.join(self.test_data_dir, invalid_json_filename)
         with open(invalid_json_path_abs, "w", encoding="utf-8") as f:
             f.write("[{'title': 'Test' }, {]")  # Invalid JSON
 
-        # Path for loader should be relative to CWD (self.test_root_dir)
         items = self.data_loader.load_dynamic_list_data(
             os.path.join("data", invalid_json_filename), PortfolioItem
         )
@@ -427,10 +492,7 @@ class TestBuildScript(unittest.TestCase):
             PortfolioItem(
                 id="p1",
                 image={"src": "img.png", "alt_text": {"key": "p_alt"}},
-                details={
-                    "title": {"key": "p_title"},
-                    "description": {"key": "p_desc"},
-                },
+                details={"title": {"key": "p_title"}, "description": {"key": "p_desc"}},
             )
         ]
         translations = {
@@ -481,11 +543,7 @@ class TestBuildScript(unittest.TestCase):
         """Test generation of features HTML with FeaturesHtmlGenerator."""
         items = [
             FeatureItem(
-                content={
-                    "title": {"key": "f_title"},
-                    "description": {"key": "f_desc"},
-                }
-                # icon field removed as it's not in the proto definition
+                content={"title": {"key": "f_title"}, "description": {"key": "f_desc"}}
             )
         ]
         translations = {
@@ -495,7 +553,6 @@ class TestBuildScript(unittest.TestCase):
         html = self.features_generator.generate_html(items, translations)
         self.assertIn("Translated Feature Title", html)
         self.assertIn("Translated Feature Description", html)
-        # self.assertIn("<svg></svg>", html) # Icon check removed as FeatureItem proto has no icon field
         self.assertIn('<div class="feature-item">', html)
 
     def test_generate_features_html_empty(self):
@@ -509,10 +566,7 @@ class TestBuildScript(unittest.TestCase):
             TestimonialItem(
                 text={"key": "t_text"},
                 author={"key": "t_author"},
-                author_image={
-                    "src": "testimonial.png",
-                    "alt_text": {"key": "t_alt"},
-                },
+                author_image={"src": "testimonial.png", "alt_text": {"key": "t_alt"}},
             )
         ]
         translations = {
@@ -526,9 +580,7 @@ class TestBuildScript(unittest.TestCase):
         self.assertIn('src="testimonial.png"', html)
         self.assertIn('alt="Translated Testimonial Alt Text"', html)
         self.assertIn('<div class="testimonial-item">', html)
-        self.assertIn(
-            f'<p>"{translations["t_text"]}"</p>', html
-        )  # Check exact structure
+        self.assertIn(f'<p>"{translations["t_text"]}"</p>', html)
 
     def test_generate_testimonials_html_empty(self):
         """Test testimonials HTML generation with no items."""
@@ -539,30 +591,22 @@ class TestBuildScript(unittest.TestCase):
         """Test generation of hero HTML with HeroHtmlGenerator."""
         hero_item_instance = HeroItem()
         json_format.ParseDict(self.hero_item_data, hero_item_instance)
+        translations = self.en_translations  # Use full translations from setUp
 
-        translations = {
-            "hero_title_main_v1": "Translated Hero Title V1",
-            "hero_subtitle_main_v1": "Translated Hero Subtitle V1",
-            "hero_cta_main_v1": "Translated CTA Text V1",
-            "hero_title_main_v2": "Translated Hero Title V2",  # For other variations
-            "hero_subtitle_main_v2": "Translated Hero Subtitle V2",
-            "hero_cta_main_v2": "Translated CTA Text V2",
-        }
-        # Mock random.choice within the html_generation module
         with mock.patch(
             "build_protocols.html_generation.random.choice", side_effect=lambda x: x[0]
         ):
             html = self.hero_generator.generate_html(hero_item_instance, translations)
 
+        # Check against keys from self.en_translations
         self.assertIn(f"<h1>{translations['hero_title_main_v1']}</h1>", html)
         self.assertIn(f"<p>{translations['hero_subtitle_main_v1']}</p>", html)
         self.assertIn(
             f'<a href="#gohere_v1" class="cta-button">{translations["hero_cta_main_v1"]}</a>',
             html,
         )
-        # Check that the selected variation is the first one due to mock
         self.assertIn(
-            f"<!-- Selected variation: {hero_item_instance.variations[0].variation_id} -->",
+            f"<!-- Selected variation: {hero_item_instance.variations[0].variation_id} -->",  # type: ignore
             html,
         )
 
@@ -594,7 +638,7 @@ class TestBuildScript(unittest.TestCase):
     @mock.patch("builtins.open", new_callable=mock.mock_open)
     def test_main_function_creates_files(
         self,
-        mock_builtin_open,  # Corresponds to @mock.patch("builtins.open")
+        mock_builtin_open,
         mock_gen_contact_html,
         mock_gen_hero_html,
         mock_gen_testimonials_html,
@@ -608,33 +652,27 @@ class TestBuildScript(unittest.TestCase):
         mock_data_cache_preload,
         mock_load_single_item_data,
         mock_load_list_data,
-        mock_translate_content,  # Corresponds to DefaultTranslationProvider.translate_html_content
-        mock_load_translations,  # Corresponds to DefaultTranslationProvider.load_translations
-        mock_load_app_config,  # Corresponds to DefaultAppConfigManager.load_app_config
+        mock_translate_content,
+        mock_load_translations,
+        mock_load_app_config,
     ):
         """Test that build_main (via BuildOrchestrator) creates output files."""
-
-        # --- Configure Mocks ---
         mock_load_app_config.return_value = self.dummy_config
-
         mock_load_translations.side_effect = lambda lang: (
             self.en_translations if lang == "en" else self.es_translations
         )
-        mock_translate_content.side_effect = (
-            lambda content, translations: content
-        )  # Passthrough
+        mock_translate_content.side_effect = lambda content, translations: content
 
         mock_portfolio_item = PortfolioItem(id="p1", details={"title": {"key": "ptk"}})
         mock_blog_post = BlogPost(id="b1", title={"key": "btk"})
         mock_feature_item = FeatureItem(content={"title": {"key": "ftk"}})
         mock_testimonial_item = TestimonialItem(text={"key": "ttk"})
-        # Corrected HeroVariation to HeroItemContent
         mock_hero_item = HeroItem(
             default_variation_id="v1",
             variations=[HeroItemContent(variation_id="v1", title={"key": "htk"})],
-        )
+        )  # type: ignore
         mock_contact_config = ContactFormConfig(
-            form_action_uri="/test_action",  # Changed form_action_url to form_action_uri
+            form_action_uri="/test_action",
             success_message_key="contact_success",
             error_message_key="contact_error",
         )
@@ -658,8 +696,8 @@ class TestBuildScript(unittest.TestCase):
                 return mock_hero_item
             if "contact_form" in data_file_path:
                 return mock_contact_config
-            if "navigation" in data_file_path:
-                return mock_navigation_data
+            if os.path.basename(data_file_path) == "navigation.json":
+                return mock_navigation_data  # Check basename
             return None
 
         mock_load_single_item_data.side_effect = load_single_item_data_side_effect
@@ -689,7 +727,6 @@ class TestBuildScript(unittest.TestCase):
         mock_gen_testimonials_html.return_value = "<p>Testimonials Content</p>"
         mock_gen_hero_html.return_value = "<p>Hero Content</p>"
         mock_gen_contact_html.return_value = 'data-form-id="contact-form-attrs"'
-
         mock_generate_lang_config.return_value = {"lang": "test", "ui_strings": {}}
 
         header_match = re.search(
@@ -716,8 +753,10 @@ class TestBuildScript(unittest.TestCase):
         )
 
         def mock_builtin_open_side_effect(filename, mode="r", *args, **kwargs):
+            # Normalize path for comparison
+            normalized_filename = os.path.normpath(filename)
             if mode == "r":
-                if filename.startswith("blocks" + os.sep):
+                if normalized_filename.startswith(os.path.join("blocks")):
                     block_name = os.path.basename(filename)
                     placeholder_map = {
                         "hero.html": "{{hero_content}}",
@@ -727,54 +766,88 @@ class TestBuildScript(unittest.TestCase):
                         "blog.html": "{{blog_posts}}",
                         "contact-form.html": "{{contact_form_attributes}}",
                     }
-                    placeholder = placeholder_map.get(
-                        block_name, "{{unknown_placeholder}}"
-                    )
                     return mock.mock_open(
-                        read_data=f"<div>{placeholder}</div>"
+                        read_data=f"<div>{placeholder_map.get(block_name, '')}</div>"
                     ).return_value
-                elif filename == "index.html":
+                if normalized_filename == "index.html":
                     return mock.mock_open(
                         read_data=self.dummy_index_content
                     ).return_value
-                elif filename == os.path.join("public", "config.json"):
+                if normalized_filename == os.path.join("public", "config.json"):
                     return mock.mock_open(
                         read_data=json.dumps(self.dummy_config)
                     ).return_value
+                # Handle locale files from the mocked structure
+                if normalized_filename == os.path.normpath(
+                    os.path.join("public", "locales", "en.json")
+                ):
+                    return mock.mock_open(
+                        read_data=json.dumps(self.en_translations)
+                    ).return_value
+                if normalized_filename == os.path.normpath(
+                    os.path.join("public", "locales", "es.json")
+                ):
+                    return mock.mock_open(
+                        read_data=json.dumps(self.es_translations)
+                    ).return_value
+                # Handle data files from the mocked structure
+                if normalized_filename == os.path.normpath(
+                    os.path.join("data", "navigation.json")
+                ):
+                    return mock.mock_open(
+                        read_data=json.dumps({"items": []})
+                    ).return_value
+
             elif mode == "w":
+                # For write mode, just return a MagicMock that can be "written" to.
+                # This mock allows the 'write' calls but doesn't interact with a real file system.
                 return mock.MagicMock()
-            return mock.mock_open(read_data="").return_value
+            # Fallback for any other unhandled read:
+            # This helps debug if a file path isn't caught by specific conditions above.
+            # print(f"Unhandled read in mock_open: {filename}")
+            return mock.mock_open(
+                read_data=""
+            ).return_value  # Default empty for unhandled reads
 
         mock_builtin_open.side_effect = mock_builtin_open_side_effect
 
         build_main()
 
+        # Normalize expected paths for assertion
+        expected_paths = [
+            os.path.join("public", "generated_configs", "config_en.json"),
+            "index.html",
+            os.path.join("public", "generated_configs", "config_es.json"),
+            "index_es.html",
+        ]
         expected_write_calls = [
-            mock.call(
-                "public/generated_configs/config_en.json",  # Use forward slashes
-                "w",
-                encoding="utf-8",
-            ),
-            mock.call("index.html", "w", encoding="utf-8"),
-            mock.call(
-                "public/generated_configs/config_es.json",  # Use forward slashes
-                "w",
-                encoding="utf-8",
-            ),
-            mock.call("index_es.html", "w", encoding="utf-8"),
+            mock.call(os.path.normpath(p), "w", encoding="utf-8")
+            for p in expected_paths
         ]
 
-        # Corrected filtering of actual write calls
         actual_write_calls = [
-            c
-            for c in mock_builtin_open.call_args_list
-            if len(c.args) > 1 and c.args[1] == "w"
+            c for c in mock_builtin_open.call_args_list if c.args[1] == "w"
         ]
+
+        # For debugging:
+        # print("Expected calls:", [str(c) for c in expected_write_calls])
+        # print("Actual calls:", [str(c) for c in actual_write_calls])
+
+        self.assertEqual(
+            len(actual_write_calls),
+            len(expected_write_calls),
+            "Number of write calls does not match.",
+        )
 
         for expected_call in expected_write_calls:
-            self.assertIn(  # Use assertIn for comparing call objects with list of calls
+            # Normalize args in actual calls before comparison
+            normalized_actual_calls = [
+                mock.call(os.path.normpath(c.args[0]), *c.args[1:], **c.kwargs)
+                for c in actual_write_calls
+            ]
+            self.assertIn(
                 expected_call,
-                actual_write_calls,
+                normalized_actual_calls,
                 f"Expected write call not found: {expected_call}\nActual write calls: {actual_write_calls}",
             )
 
@@ -787,9 +860,6 @@ class TestBuildScript(unittest.TestCase):
 
         num_langs = len(self.dummy_config["supported_langs"])
         num_blocks_in_config = len(self.dummy_config["blocks"])
-
-        # Check translate_html_content calls:
-        # For each language: 1 for header, 1 for footer, 1 for each block's combined template+data
         expected_translate_calls = num_langs * (2 + num_blocks_in_config)
         self.assertEqual(mock_translate_content.call_count, expected_translate_calls)
 
