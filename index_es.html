@@ -1,7 +1,9 @@
+<!doctype html>
 <html lang="es">
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+
     <meta
       content="A simple and modern landing page template for showcasing your business, services, or portfolio."
       name="description"
@@ -10,6 +12,7 @@
       content="landing page, template, HTML, CSS, JavaScript, responsive, business, portfolio, services"
       name="keywords"
     />
+
     <title>Simple Landing Page</title>
     <link href="public/style.css" rel="stylesheet" />
   </head>
@@ -30,7 +33,7 @@
         </button>
         <div class="nav-items">
           <ul>
-            <!-- Navigation items will be dynamically injected here -->
+            <!-- Navigation items will be dynamically injected here by client-side JS -->
           </ul>
           <button aria-label="Switch to Dark Mode" id="dark-mode-toggle">
             🌙
@@ -42,54 +45,54 @@
         </div>
       </nav>
     </header>
+
     <main>
       <section class="hero">
         <h1>hero_title_v1</h1>
         <p>hero_subtitle_v1</p>
-        <a class="cta-button" href="#signup">hero_cta_v1</a>
+        <a href="#signup" class="cta-button">hero_cta_v1</a>
         <!-- Selected variation: hero_v1 -->
       </section>
-
       <section
         class="features"
+        id="features"
         data-aos="fade-up"
         data-aos-delay="100"
-        id="features"
       >
         <h2 data-i18n="features_title">Nuestras Características</h2>
         <div class="feature-list">
-          <!-- Feature items will be dynamically injected here by build.py -->
           <div class="feature-item">
             <h3>Característica Uno</h3>
             <p>Descripción de la característica uno.</p>
           </div>
+
           <div class="feature-item">
             <h3>Característica Dos</h3>
             <p>Descripción de la característica dos.</p>
           </div>
+
           <div class="feature-item">
             <h3>Característica Tres</h3>
             <p>Descripción of la característica tres.</p>
           </div>
         </div>
       </section>
-
       <section class="testimonials" id="testimonials">
         <h2 data-i18n="testimonials_title">Lo Que Dicen Nuestros Usuarios</h2>
         <div class="testimonial-list">
-          <!-- Testimonial items will be dynamically injected here by build.py -->
           <div class="testimonial-item">
             <img
-              alt="Foto del Usuario 1"
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
+              alt="Foto del Usuario 1"
             />
             <p>"Este es el mejor servicio que he usado. ¡Muy recomendado!"</p>
             <h4>- Jane Doe</h4>
           </div>
+
           <div class="testimonial-item">
             <img
-              alt="Foto del Usuario 2"
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
+              alt="Foto del Usuario 2"
             />
             <p>
               "Características increíbles y un soporte espectacular. Mi negocio
@@ -97,10 +100,11 @@
             </p>
             <h4>- John Smith</h4>
           </div>
+
           <div class="testimonial-item">
             <img
-              alt="Foto del Usuario 3"
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
+              alt="Foto del Usuario 3"
             />
             <p>
               "Un cambio de juego para nuestro flujo de trabajo. Simple,
@@ -110,73 +114,76 @@
           </div>
         </div>
       </section>
-
       <section class="portfolio" id="portfolio">
         <h2 data-i18n="portfolio_title">Nuestro Trabajo</h2>
         <div class="portfolio-grid">
-          <!-- Portfolio items will be dynamically injected here by build.py -->
           <div class="portfolio-item" id="project1">
             <img
-              alt="Portfolio image"
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
+              alt="Portfolio image"
             />
             <h3>Proyecto Alfa</h3>
             <p>Descripción del Proyecto Alfa.</p>
           </div>
+
           <div class="portfolio-item" id="project2">
             <img
-              alt="Portfolio image"
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
+              alt="Portfolio image"
             />
             <h3>Proyecto Beta</h3>
             <p>Descripción del Proyecto Beta.</p>
           </div>
+
           <div class="portfolio-item" id="project3">
             <img
-              alt="Portfolio image"
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
+              alt="Portfolio image"
             />
             <h3>Proyecto Gama</h3>
             <p>Descripción del Proyecto Gama.</p>
           </div>
+
           <div class="portfolio-item" id="project4">
             <img
-              alt="Portfolio image"
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
+              alt="Portfolio image"
             />
             <h3>Proyecto Delta</h3>
             <p>Descripción del Proyecto Delta.</p>
           </div>
         </div>
       </section>
-
       <section class="blog" id="blog">
         <h2 data-i18n="blog_title">Últimas Publicaciones</h2>
         <div class="blog-list">
-          <!-- Blog posts will be dynamically injected here by build.py -->
           <div class="blog-item" id="post1">
             <h3>Título de la Publicación Alfa</h3>
             <p>Extracto de la publicación Alfa del blog...</p>
-            <a class="read-more" href="#post1-link">Leer Publicación Alfa</a>
+            <a href="#post1-link" class="read-more">Leer Publicación Alfa</a>
           </div>
+
           <div class="blog-item" id="post2">
             <h3>Título de la Publicación Beta</h3>
             <p>Extracto de la publicación Beta del blog...</p>
-            <a class="read-more" href="#post2-link">Leer Publicación Beta</a>
+            <a href="#post2-link" class="read-more">Leer Publicación Beta</a>
           </div>
+
           <div class="blog-item" id="post3">
             <h3>Título de la Publicación Gama</h3>
             <p>Extracto de la publicación Gama del blog...</p>
-            <a class="read-more" href="#post3-link">Leer Publicación Gama</a>
+            <a href="#post3-link" class="read-more">Leer Publicación Gama</a>
           </div>
         </div>
       </section>
     </main>
+
     <footer>
       <p data-i18n="footer_text">
-        &amp;copy; 2023 Página de Destino Simple. Todos los derechos reservados.
+        &amp;copy; 2023 Simple Landing Page. All rights reserved.
       </p>
     </footer>
+
     <script>
       // Dark Mode Toggle
       const darkModeToggle = document.getElementById("dark-mode-toggle");
@@ -184,12 +191,6 @@
       let currentTranslations = {};
 
       async function generateNavigation() {
-        // Determine the current language to fetch the correct config file.
-        // The `initializeApp` function sets `preferredLang` and calls `setLanguage`,
-        // which in turn updates `document.documentElement.lang`.
-        // We should ensure this function is called after language is determined,
-        // or pass lang to it.
-        // For simplicity, let's assume `document.documentElement.lang` is set or defaults correctly.
         const currentLang = document.documentElement.lang || "en";
         const configPath = `public/generated_configs/config_${currentLang}.json`;
 
@@ -197,45 +198,10 @@
           const response = await fetch(configPath);
           if (!response.ok) {
             console.error(`Failed to load ${configPath}:`, response.statusText);
-            // Fallback to default config if language specific one fails? Or just error out?
-            // For now, let's try the default base config as a fallback.
-            const fallbackResponse = await fetch("public/config.json");
-            if (!fallbackResponse.ok) {
-              console.error(
-                "Failed to load fallback public/config.json:",
-                fallbackResponse.statusText
-              );
-              return;
-            }
-            const config = await fallbackResponse.json();
-            // Check if fallback has navigation, probably not in the desired processed format.
-            // This fallback might not be ideal if the structure is different.
-            // Best to ensure build.py always creates these files.
-            console.warn(
-              `Falling back to public/config.json for navigation due to error with ${configPath}. Navigation might be incomplete or unstyled.`
-            );
-            const navItems = config.navigation; // This might be undefined or not what we expect
-            if (!navItems) {
-              console.error(
-                "Navigation data not found in fallback config.json."
-              );
-              return;
-            }
-            // Process fallback navItems if necessary (they won't have translated labels directly)
-            // This part needs careful consideration if we want a robust fallback.
-            // For now, the primary path is to load the generated config.
-            // The existing code below expects `item.label_i18n_key` and uses it for `data-i18n`.
-            // The generated config from build.py already includes a 'label' field with the translated text.
-            // So, if we successfully load `configPath`, the `item.label` should be used.
-            // If we fallback, and `config.navigation` is raw (only i18n keys), it will still mostly work
-            // as `applyTranslations` will translate it later.
-
-            // Let's simplify: if the specific config fails, we log error and return.
-            // The build process should guarantee these files.
             return;
           }
           const config = await response.json();
-          const navItems = config.navigation; // This should now have translated labels if loaded from generated_configs
+          const navItems = config.navigation;
 
           if (navItems && Array.isArray(navItems)) {
             const navUl = document.querySelector(".nav-items ul");
@@ -243,33 +209,19 @@
               console.error("Navigation <ul> element not found.");
               return;
             }
-            navUl.innerHTML = ""; // Clear existing items
+            navUl.innerHTML = "";
 
             navItems.forEach((item) => {
               const li = document.createElement("li");
               const a = document.createElement("a");
-              // The generated config now has a 'label' field with the translated text.
-              // And 'label_i18n_key' for potential future use or if applyTranslations needs it.
-              // We should use the pre-translated label directly.
-              // If applyTranslations is still desired to run over these, it needs to be aware.
-              // For now, let's use the translated label from the config.
-              a.textContent = item.label; // Use the translated label
+              a.textContent = item.label;
               a.href = item.href;
-              // Optionally, keep data-i18n if other mechanisms rely on it,
-              // or if we want applyTranslations to re-translate if language changes *after* nav generation.
-              // Given generateNavigation is called in initializeApp before setLanguage,
-              // and setLanguage calls applyTranslations, it's good to keep data-i18n.
-              // The `build.py` now adds `label_i18n_key` to the generated config.
               if (item.label_i18n_key) {
                 a.setAttribute("data-i18n", item.label_i18n_key);
               }
               li.appendChild(a);
               navUl.appendChild(li);
             });
-            // Since navigation is generated before initial applyTranslations,
-            // and the labels in generated_config are already translated for that language,
-            // we might not need to explicitly call applyTranslations here for nav items.
-            // However, if the language changes later, applyTranslations will handle it.
           }
         } catch (error) {
           console.error("Error generating navigation:", error);
@@ -298,24 +250,22 @@
         document.querySelectorAll("[data-i18n]").forEach((element) => {
           const key = element.getAttribute("data-i18n");
           if (translations[key] && element.id !== "dark-mode-toggle") {
-            // Don't translate the icon button
             element.textContent = translations[key];
           }
         });
-        // Update dark mode toggle icon and aria-label based on current language and mode
         updateDarkModeButtonIcon();
       }
 
       function updateDarkModeButtonIcon() {
         const isDarkMode = body.classList.contains("dark-mode");
         if (isDarkMode) {
-          darkModeToggle.textContent = "☀️"; // Sun icon for switching to light mode
+          darkModeToggle.textContent = "☀️";
           darkModeToggle.setAttribute(
             "aria-label",
             currentTranslations["light_mode_toggle"] || "Switch to Light Mode"
           );
         } else {
-          darkModeToggle.textContent = "🌙"; // Moon icon for switching to dark mode
+          darkModeToggle.textContent = "🌙";
           darkModeToggle.setAttribute(
             "aria-label",
             currentTranslations["dark_mode_toggle"] || "Switch to Dark Mode"
@@ -328,9 +278,8 @@
         if (translations) {
           applyTranslations(translations);
           localStorage.setItem("language", lang);
-          document.documentElement.lang = lang; // Update the lang attribute of the html tag
+          document.documentElement.lang = lang;
 
-          // Update active class on buttons
           document
             .querySelectorAll("#language-switcher button")
             .forEach((btn) => {
@@ -342,10 +291,8 @@
         }
       }
 
-      // Dark Mode Toggle
       if (localStorage.getItem("darkMode") === "enabled") {
         body.classList.add("dark-mode");
-        // Text will be set after translations load
       }
 
       darkModeToggle.addEventListener("click", () => {
@@ -355,10 +302,9 @@
         } else {
           localStorage.setItem("darkMode", "disabled");
         }
-        updateDarkModeButtonIcon(); // Update button icon and aria-label on toggle
+        updateDarkModeButtonIcon();
       });
 
-      // Language Switcher
       const languageSwitcher = document.getElementById("language-switcher");
       if (languageSwitcher) {
         languageSwitcher.addEventListener("click", (event) => {
@@ -370,37 +316,27 @@
         });
       }
 
-      // Initial setup
       async function initializeApp() {
-        // Language must be determined first, so generateNavigation can use it.
         const preferredLang = localStorage.getItem("language") || "en";
-        // Set document.documentElement.lang here, so generateNavigation can pick it up.
-        // setLanguage also does this, but generateNavigation might be called before setLanguage completes fully if not careful.
         document.documentElement.lang = preferredLang;
 
-        await generateNavigation(); // Generate navigation (now uses document.documentElement.lang)
-        await setLanguage(preferredLang); // Then set language (which applies all other translations)
-
-        // No need to initialize the old theme switcher here
-        // The dark mode toggle is already initialized by checking localStorage for 'darkMode'
-        // and its button text/icon will be set by updateDarkModeButtonText() called within setLanguage -> applyTranslations.
+        await generateNavigation();
+        await setLanguage(preferredLang);
       }
 
       initializeApp();
 
-      // Hamburger Menu Toggle
       const hamburgerMenu = document.querySelector(".hamburger-menu");
-      const navItems = document.querySelector(".nav-items");
+      const navItemsContainer = document.querySelector(".nav-items");
 
-      if (hamburgerMenu && navItems) {
+      if (hamburgerMenu && navItemsContainer) {
         hamburgerMenu.addEventListener("click", () => {
-          navItems.classList.toggle("active");
-          const isExpanded = navItems.classList.contains("active");
+          navItemsContainer.classList.toggle("active");
+          const isExpanded = navItemsContainer.classList.contains("active");
           hamburgerMenu.setAttribute("aria-expanded", isExpanded);
         });
       }
 
-      // Contact Form Validation
       const contactForm = document.querySelector(".contact-form form");
       if (contactForm) {
         contactForm.addEventListener("submit", function (event) {
@@ -413,14 +349,12 @@
           if (name === "") {
             isValid = false;
             errors.push("Name is required.");
-            // You could add error display logic here, e.g., document.getElementById('name-error').textContent = "Name is required.";
           }
 
           if (email === "") {
             isValid = false;
             errors.push("Email is required.");
           } else {
-            // Basic email format validation
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailPattern.test(email)) {
               isValid = false;
@@ -434,13 +368,11 @@
           }
 
           if (!isValid) {
-            event.preventDefault(); // Prevent form submission
+            event.preventDefault();
             alert(
               "Please correct the following errors:\n\n" + errors.join("\n")
             );
-            // For a better UX, display errors next to fields or in a dedicated error message area
           }
-          // If isValid is true, the form will submit to Formspree
         });
       }
     </script>

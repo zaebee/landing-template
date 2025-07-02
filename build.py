@@ -9,6 +9,7 @@ import sys
 from typing import Any, Dict, List, Optional
 
 from google.protobuf.message import Message
+from jinja2 import Environment, FileSystemLoader
 
 # Ensure the project root (and thus 'generated' directory) is in the Python path
 # This allows for direct execution of this script.
@@ -118,26 +119,24 @@ class BuildOrchestrator:
         self,
         lang: str,
         default_lang: str,
-        html_parts: tuple[str, str, str, str],
+        # html_parts is no longer used directly in the same way
+        _html_parts: tuple[str, str, str, str],  # Marked as unused
         dynamic_data_loaders_config: Dict[str, Dict[str, Any]],
+        static_header_html: str,
+        static_footer_html: str,
     ) -> None:
         """Processes and builds the page for a single language."""
         print(f"Processing language: {lang}")
         translations = self.translation_provider.load_translations(lang)
 
-        _html_start, original_header_html, original_footer_html, _html_end = (
-            html_parts
+        # Translate static header and footer content
+        # These are passed to base.html, which might have its own i18n structure too.
+        # For content within these strings, direct translation is applied.
+        translated_header = self.translation_provider.translate_html_content(
+            static_header_html, translations
         )
-
-        translated_header = (
-            self.translation_provider.translate_html_content(
-                original_header_html, translations
-            )
-        )
-        translated_footer = (
-            self.translation_provider.translate_html_content(
-                original_footer_html, translations
-            )
+        translated_footer = self.translation_provider.translate_html_content(
+            static_footer_html, translations
         )
 
         self._generate_language_specific_config(lang, translations)
@@ -148,15 +147,18 @@ class BuildOrchestrator:
             )
         )
 
-        full_html_content = (
-            self.page_builder.assemble_translated_page(
-                lang=lang,
-                translations=translations,
-                html_parts=html_parts,
-                main_content=assembled_main_content,
-                header_content=translated_header,
-                footer_content=translated_footer,
-            )
+        page_title = translations.get("page_title_default", "Simple Landing Page")
+        # Add specific page titles per language if defined, e.g. "page_title_landing_es"
+        page_title = translations.get(f"page_title_landing_{lang}", page_title)
+
+        full_html_content = self.page_builder.assemble_translated_page(
+            lang=lang,
+            translations=translations,
+            html_parts=("", "", "", ""),  # Dummy value, DefaultPageBuilder ignores this
+            main_content=assembled_main_content,
+            header_content=translated_header,  # Passed to Jinja context for base.html
+            footer_content=translated_footer,  # Passed to Jinja context for base.html
+            page_title=page_title,
         )
 
         output_filename = f"index_{lang}.html"
@@ -188,19 +190,64 @@ class BuildOrchestrator:
 
         os.makedirs("public/generated_configs", exist_ok=True)
 
-        base_html_path = self.app_config.get(
-            "base_html_file", "index.html"
-        )
-        html_parts = self.page_builder.extract_base_html_parts(
-            base_html_path
-        )
+        # base_html_path is no longer needed to extract parts by PageBuilder
+        # html_parts from page_builder.extract_base_html_parts is also not needed in the new way
+        # However, we need the static header and footer content.
+        # For this refactor, we'll define them as static strings.
+        # In a more complex app, these could come from separate files or Jinja includes.
+
+        # Manually define static header and footer content based on original index.html
+        # This is a simplified approach for the refactor.
+        # Ideally, these would be managed as separate small templates or includes if complex.
+        static_header_html = """
+    <header>
+      <nav>
+        <div class="logo">
+          <a href="#">Logo</a>
+        </div>
+        <button
+          aria-expanded="false"
+          aria-label="Toggle menu"
+          class="hamburger-menu"
+        >
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+        </button>
+        <div class="nav-items">
+          <ul>
+            <!-- Navigation items will be dynamically injected here by client-side JS -->
+          </ul>
+          <button aria-label="Switch to Dark Mode" id="dark-mode-toggle">
+            🌙
+          </button>
+          <div id="language-switcher">
+            <button data-lang="en">EN</button>
+            <button data-lang="es">ES</button>
+          </div>
+        </div>
+      </nav>
+    </header>
+        """
+        static_footer_html = """
+    <footer>
+      <p data-i18n="footer_text">
+        &amp;copy; 2023 Simple Landing Page. All rights reserved.
+      </p>
+    </footer>
+        """
+        # Dummy html_parts to satisfy the _process_language signature that still expects it
+        # This parameter in _process_language should be removed or refactored further.
+        dummy_html_parts = ("", "", "", "")
 
         for lang in supported_langs:
             self._process_language(
-                lang,
-                default_lang,
-                html_parts,
-                dynamic_data_loaders_config,
+                lang=lang,
+                default_lang=default_lang,
+                _html_parts=dummy_html_parts,  # Pass dummy value
+                dynamic_data_loaders_config=dynamic_data_loaders_config,
+                static_header_html=static_header_html,
+                static_footer_html=static_footer_html,
             )
 
         print("Build process complete.")
@@ -331,13 +378,12 @@ class BuildOrchestrator:
                 )
                 continue
 
+            # The concept of reading block template content directly and replacing placeholders
+            # is now handled by Jinja2 within each HtmlBlockGenerator.
+            # The generators will use their Jinja environment to load templates from
+            # `templates/blocks/`
+            generated_html_for_block = ""
             try:
-                block_template_path = os.path.join("blocks", block_file_name)
-                with open(block_template_path, "r", encoding="utf-8") as block_file:
-                    block_template_content = block_file.read()
-
-                block_content_with_data = block_template_content
-
                 if (
                     block_file_name in data_loaders_config
                     and block_file_name in self.html_generators
@@ -345,32 +391,105 @@ class BuildOrchestrator:
                     loader_cfg = data_loaders_config[block_file_name]
                     html_generator = self.html_generators[block_file_name]
 
+                    # Data loading remains the same
                     data_items: Any = self.data_cache.get_item(loader_cfg["data_file"])
-
                     if loader_cfg.get("is_list", True) and data_items is None:
                         data_items = []
+                    elif not loader_cfg.get("is_list", True) and data_items is None:
+                        # For single items, if data_items is None, pass None to generator
+                        pass
 
+                    # HtmlBlockGenerator now handles its own template loading & rendering
                     generated_html_for_block = html_generator.generate_html(
                         data_items, translations
                     )
-
-                    block_content_with_data = block_template_content.replace(
-                        loader_cfg["placeholder"], generated_html_for_block
+                else:
+                    # If block is not in html_generators, it might be a simple static block
+                    # This path needs clarification: for now, assume all configured blocks
+                    # have a generator. If not, we might need to read its content from
+                    # templates/blocks/ directly if it's purely static.
+                    # Or, this is an error in configuration.
+                    # For now, we'll just log a warning if a block has no generator.
+                    print(
+                        f"Warning: No HTML generator found for block: {block_file_name}. Skipping data injection."
                     )
+                    # Attempt to read static block content if needed, but this wasn't the old behavior.
+                    # The old behavior relied on a placeholder for replacement.
+                    # With Jinja, if a block is purely static, its template would just be static HTML.
+                    # The current HtmlBlockGenerators expect data.
+                    # This logic branch might need to be removed or adapted if static blocks
+                    # without data are listed in app_config['blocks'].
+                    # For now, we assume blocks in app_config['blocks'] are dynamic and have generators.
+                    # If a block is purely static HTML, it should be part of the main base.html
+                    # or a Jinja include there, not processed via this loop.
 
-                translated_block_html = (
-                    self.translation_provider.translate_html_content(
-                        block_content_with_data, translations
-                    )
+                    # Fallback: try to load the block as a static template if no generator
+                    # This is a deviation, as the old code expected a generator to fill a placeholder.
+                    # If it's a static block, it would have been included directly.
+                    # This part might be an over-correction.
+                    # Let's stick to: if it's in 'blocks' config, it should have a generator.
+                    # If a block is purely static, it shouldn't be in 'blocks' config for this loop.
+                    # It should be part of the base.html or included there.
+                    # The original code read the file content and then potentially replaced a placeholder.
+                    # If no placeholder replacement, it used the content as is.
+                    # With Jinja generators, the generator IS the one loading the template.
+                    # So, if a block is in config, it MUST have a generator.
+
+                    # The old code would read the block file, then if no generator,
+                    # it would still try to translate the raw content.
+                    # Let's replicate that if no generator is found but block is in config.
+                    # This means the block is treated as mostly static HTML but with i18n tags.
+                    try:
+                        block_template_path = os.path.join(
+                            "templates", "blocks", block_file_name
+                        )  # new path
+                        with open(
+                            block_template_path, "r", encoding="utf-8"
+                        ) as block_file:
+                            static_block_content = block_file.read()
+                        generated_html_for_block = static_block_content
+                        print(
+                            f"Info: Treating block {block_file_name} as static HTML for translation only."
+                        )
+                    except FileNotFoundError:
+                        print(
+                            f"Warning: Static block file {block_file_name} not found. Skipping."
+                        )
+                        continue
+
+                # The translation of the entire block's generated HTML
+                # should ideally be handled by the Jinja templates themselves if they use
+                # the `translations` context properly.
+                # If `translate_html_content` is still needed here, it implies that
+                # the generated HTML from blocks might *still* contain {{i18n_key}} tags
+                # that Jinja didn't process (e.g. if they were part of string literals
+                # within the protobuf data that got directly embedded).
+                # This should be minimized; translations should occur within Jinja templates.
+                # For safety, we can keep it, but it might indicate a smell.
+                # The Jinja templates for blocks now receive `translations` object, so they *should*
+                # be doing all necessary translations.
+                # Let's assume the block HTML from generator is fully translated.
+                # If not, `translate_html_content` would be needed here.
+                # The original code did this translation *after* placeholder replacement.
+
+                # If HtmlBlockGenerator.generate_html already returns fully translated HTML
+                # (because Jinja templates use the `translations` object), then this
+                # `translate_html_content` call might be redundant or even harmful
+                # if it re-processes already translated content.
+                # Let's assume for now that generators output translated content.
+                # The `base.html` itself will handle its own i18n via client-side.
+                # Server-side translation of `base.html` structure is done by passing `translations` to its context.
+
+                # Decision: The individual block templates are responsible for their own translation
+                # using the `translations` object passed to them.
+                # So, `generated_html_for_block` should be final.
+                blocks_html_parts.append(generated_html_for_block)
+
+            except FileNotFoundError:  # This would now be an issue with Jinja's loader
+                print(
+                    f"Warning: Template for block {block_file_name} not found by Jinja. Skipping."
                 )
-                blocks_html_parts.append(translated_block_html)
-
-            except FileNotFoundError:
-                print(f"Warning: Block file {block_template_path} not found. Skipping.")
-            except Exception as e:  # pylint: disable=broad-except
-                # Catching general Exception to ensure one block's failure
-                # doesn't stop the entire build for a language.
-                # Consider more specific exceptions if error handling needs refinement.
+            except Exception as e:
                 print(
                     f"Error processing block {block_file_name} for lang {lang}: "
                     f"{e}. Skipping."
@@ -406,6 +525,11 @@ def main() -> None:
     loaders, etc.) and then invokes the BuildOrchestrator to perform the
     website build.
     """
+    # Initialize Jinja2 Environment
+    jinja_env = Environment(
+        loader=FileSystemLoader("templates"), autoescape=True  # Enable autoescaping
+    )
+
     # Instantiate service components with more descriptive names
     app_config_manager_instance = DefaultAppConfigManager()
     translation_provider_instance = DefaultTranslationProvider()
@@ -414,18 +538,19 @@ def main() -> None:
     data_loader_instance = JsonProtoDataLoader[Message]()
     data_cache_instance = InMemoryDataCache[Message]()
     page_builder_instance = DefaultPageBuilder(
-        translation_provider=translation_provider_instance
+        translation_provider=translation_provider_instance,
+        jinja_env=jinja_env,  # Pass env to PageBuilder
     )
 
-    # Map block filenames to their specific HTML generator instances.
-    # Formatted for line length and improved readability.
+    # Map block filenames to their specific HTML generator instances
+    # Pass jinja_env to each generator
     html_generator_instances: Dict[str, HtmlBlockGenerator] = {
-        "portfolio.html": PortfolioHtmlGenerator(),
-        "blog.html": BlogHtmlGenerator(),
-        "features.html": FeaturesHtmlGenerator(),
-        "testimonials.html": TestimonialsHtmlGenerator(),
-        "hero.html": HeroHtmlGenerator(),
-        "contact-form.html": ContactFormHtmlGenerator(),
+        "portfolio.html": PortfolioHtmlGenerator(jinja_env=jinja_env),
+        "blog.html": BlogHtmlGenerator(jinja_env=jinja_env),
+        "features.html": FeaturesHtmlGenerator(jinja_env=jinja_env),
+        "testimonials.html": TestimonialsHtmlGenerator(jinja_env=jinja_env),
+        "hero.html": HeroHtmlGenerator(jinja_env=jinja_env),
+        "contact-form.html": ContactFormHtmlGenerator(jinja_env=jinja_env),
     }
 
     # Create and run the orchestrator

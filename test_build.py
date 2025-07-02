@@ -19,6 +19,7 @@ from unittest import mock
 
 from google.protobuf import json_format
 from google.protobuf.message import Message  # Explicit import for T = TypeVar bound
+from jinja2 import Environment, FileSystemLoader
 
 from build import main as build_main
 from build_protocols.data_loading import JsonProtoDataLoader
@@ -88,14 +89,31 @@ class TestBuildScript(unittest.TestCase):
 
     def _instantiate_services(self) -> None:
         """Instantiates common service components used in tests."""
+        # Create a dummy Jinja2 environment for testing generators
+        # It needs a loader, even if templates aren't actually loaded in all unit tests.
+        # The "templates" directory is assumed to exist or be created by test setup if needed.
+        # For many generator unit tests, the actual rendering might be mocked,
+        # but the constructor needs the env.
+        # Ensure a dummy 'templates' dir exists for FileSystemLoader, or use a mock loader.
+        # For simplicity, assuming 'templates' might be a general dir or we mock rendering.
+        # Let's create a dummy templates dir for the loader to be valid.
+        os.makedirs(
+            os.path.join(self.test_root_dir, "templates", "blocks"), exist_ok=True
+        )
+        self.jinja_env = Environment(
+            loader=FileSystemLoader(os.path.join(self.test_root_dir, "templates"))
+        )
+
         self.translation_provider = DefaultTranslationProvider()
         self.data_loader = JsonProtoDataLoader[Message]()
-        self.portfolio_generator = PortfolioHtmlGenerator()
-        self.blog_generator = BlogHtmlGenerator()
-        self.features_generator = FeaturesHtmlGenerator()
-        self.testimonials_generator = TestimonialsHtmlGenerator()
-        self.hero_generator = HeroHtmlGenerator()
-        self.contact_form_generator = ContactFormHtmlGenerator()
+        self.portfolio_generator = PortfolioHtmlGenerator(jinja_env=self.jinja_env)
+        self.blog_generator = BlogHtmlGenerator(jinja_env=self.jinja_env)
+        self.features_generator = FeaturesHtmlGenerator(jinja_env=self.jinja_env)
+        self.testimonials_generator = TestimonialsHtmlGenerator(
+            jinja_env=self.jinja_env
+        )
+        self.hero_generator = HeroHtmlGenerator(jinja_env=self.jinja_env)
+        self.contact_form_generator = ContactFormHtmlGenerator(jinja_env=self.jinja_env)
 
     def _create_dummy_translation_files(self) -> None:
         """Creates dummy translation JSON files (en.json, es.json)."""

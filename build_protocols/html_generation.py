@@ -9,8 +9,9 @@ and produces an HTML string representation for that block.
 """
 
 import random
-import textwrap
 from typing import List, Optional
+
+from jinja2 import Environment
 
 # Generated protobuf message types
 from generated.blog_post_pb2 import BlogPost
@@ -24,7 +25,10 @@ from .interfaces import HtmlBlockGenerator, Translations
 
 
 class PortfolioHtmlGenerator(HtmlBlockGenerator):
-    """Generates HTML for a list of portfolio items."""
+    """Generates HTML for a list of portfolio items using Jinja2."""
+
+    def __init__(self, jinja_env: Environment):
+        self.jinja_env = jinja_env
 
     def generate_html(
         self, data: List[PortfolioItem], translations: Translations
@@ -36,35 +40,17 @@ class PortfolioHtmlGenerator(HtmlBlockGenerator):
             translations: A dictionary containing translations.
 
         Returns:
-            An HTML string representing the portfolio items, or an empty
-            string if no data is provided.
+            An HTML string representing the portfolio items.
         """
-        if not data:
-            return ""
-        html_output: List[str] = []
-        for item in data:
-            title: str = translations.get(
-                item.details.title.key, item.details.title.key
-            )
-            description: str = translations.get(
-                item.details.description.key, item.details.description.key
-            )
-            alt_text: str = translations.get(item.image.alt_text.key, "Portfolio image")
-
-            html_output.append(
-                textwrap.dedent(f"""\
-                    <div class="portfolio-item" id="{item.id if item.id else ""}">
-                        <img src="{item.image.src}" alt="{alt_text}">
-                        <h3>{title}</h3>
-                        <p>{description}</p>
-                    </div>
-                """)
-            )
-        return "\n".join(html_output)
+        template = self.jinja_env.get_template("blocks/portfolio.html")
+        return str(template.render(items=data, translations=translations))
 
 
 class TestimonialsHtmlGenerator(HtmlBlockGenerator):
-    """Generates HTML for a list of testimonial items."""
+    """Generates HTML for a list of testimonial items using Jinja2."""
+
+    def __init__(self, jinja_env: Environment):
+        self.jinja_env = jinja_env
 
     def generate_html(
         self, data: List[TestimonialItem], translations: Translations
@@ -76,32 +62,17 @@ class TestimonialsHtmlGenerator(HtmlBlockGenerator):
             translations: A dictionary containing translations.
 
         Returns:
-            An HTML string representing the testimonial items, or an empty
-            string if no data is provided.
+            An HTML string representing the testimonial items.
         """
-        if not data:
-            return ""
-        html_output: List[str] = []
-        for item in data:
-            text: str = translations.get(item.text.key, item.text.key)
-            author: str = translations.get(item.author.key, item.author.key)
-            img_alt: str = translations.get(
-                item.author_image.alt_text.key, "User photo"
-            )
-            html_output.append(
-                textwrap.dedent(f"""\
-                    <div class="testimonial-item">
-                        <img src="{item.author_image.src}" alt="{img_alt}">
-                        <p>"{text}"</p>
-                        <h4>{author}</h4>
-                    </div>
-                """)
-            )
-        return "\n".join(html_output)
+        template = self.jinja_env.get_template("blocks/testimonials.html")
+        return str(template.render(items=data, translations=translations))
 
 
 class FeaturesHtmlGenerator(HtmlBlockGenerator):
-    """Generates HTML for a list of feature items."""
+    """Generates HTML for a list of feature items using Jinja2."""
+
+    def __init__(self, jinja_env: Environment):
+        self.jinja_env = jinja_env
 
     def generate_html(self, data: List[FeatureItem], translations: Translations) -> str:
         """Generates HTML markup for feature items.
@@ -111,137 +82,85 @@ class FeaturesHtmlGenerator(HtmlBlockGenerator):
             translations: A dictionary containing translations.
 
         Returns:
-            An HTML string representing the feature items, or an empty
-            string if no data is provided.
+            An HTML string representing the feature items.
         """
-        if not data:
-            return ""
-        html_output: List[str] = []
-        for item in data:
-            title: str = translations.get(
-                item.content.title.key, item.content.title.key
-            )
-            description: str = translations.get(
-                item.content.description.key, item.content.description.key
-            )
-            # Icon handling: Assumes icon.svg_content contains raw SVG if present.
-            icon_html = ""
-            if (
-                hasattr(item, "icon")  # Check if icon field exists
-                and item.icon  # Check if icon message is set
-                and hasattr(
-                    item.icon, "svg_content"
-                )  # Check if svg_content field exists
-                and item.icon.svg_content  # Check if svg_content has a value
-            ):
-                icon_html = item.icon.svg_content
-
-            html_output.append(
-                textwrap.dedent(f"""\
-                    <div class="feature-item">
-                        {icon_html}
-                        <h3>{title}</h3>
-                        <p>{description}</p>
-                    </div>
-                """)
-            )
-        return "\n".join(html_output)
+        template = self.jinja_env.get_template("blocks/features.html")
+        return str(template.render(items=data, translations=translations))
 
 
 class HeroHtmlGenerator(HtmlBlockGenerator):
-    """Generates HTML for a hero section, possibly with variations."""
+    """Generates HTML for a hero section using Jinja2."""
+
+    def __init__(self, jinja_env: Environment):
+        self.jinja_env = jinja_env
 
     def generate_html(
         self, data: Optional[HeroItem], translations: Translations
     ) -> str:
         """Generates HTML for the hero section, selecting a variation.
 
-        If a default variation ID is specified in the data and found, it's used.
-        Otherwise, if variations exist, one is chosen randomly.
-
         Args:
             data: An optional HeroItem protobuf message.
             translations: A dictionary containing translations.
 
         Returns:
-            An HTML string for the hero section, or an HTML comment indicating
-            missing data or inability to select a variation.
+            An HTML string for the hero section.
         """
+        selected_variation: Optional[HeroItemContent] = (
+            None  # Define type once at the correct scope
+        )
+
         if not data or not data.variations:
-            return "<!-- Hero data not found or no variations -->"
+            # selected_variation remains None, which is handled by the template
+            pass
+        else:
+            # Attempt to find and set the selected_variation
+            if data.default_variation_id:
+                for var in data.variations:
+                    if var.variation_id == data.default_variation_id:
+                        selected_variation = var
+                        break
 
-        selected_variation: Optional[HeroItemContent] = None
+            # If no specific variation was found yet (e.g. default_variation_id didn't match or wasn't set)
+            # and variations are available, pick one randomly.
+            if not selected_variation and data.variations:
+                selected_variation = random.choice(data.variations)
 
-        if data.default_variation_id:
-            for var in data.variations:
-                if var.variation_id == data.default_variation_id:
-                    selected_variation = var
-                    break
-
-        if not selected_variation and data.variations:
-            selected_variation = random.choice(data.variations)
-
-        if not selected_variation:
-            return "<!-- Could not select a hero variation -->"
-
-        title = translations.get(
-            selected_variation.title.key, selected_variation.title.key
+        template = self.jinja_env.get_template("blocks/hero.html")
+        # The template expects `hero_item` as the context variable for the selected variation
+        return str(
+            template.render(hero_item=selected_variation, translations=translations)
         )
-        subtitle = translations.get(
-            selected_variation.subtitle.key, selected_variation.subtitle.key
-        )
-        cta_text = translations.get(
-            selected_variation.cta.text.key, selected_variation.cta.text.key
-        )
-
-        return textwrap.dedent(f"""\
-            <h1>{title}</h1>
-            <p>{subtitle}</p>
-            <a href="{selected_variation.cta.uri}" class="cta-button">{cta_text}</a>
-            <!-- Selected variation: {selected_variation.variation_id} -->
-        """)
 
 
 class ContactFormHtmlGenerator(HtmlBlockGenerator):
-    """Generates HTML data attributes string for a contact form."""
+    """Generates HTML for a contact form section using Jinja2."""
+
+    def __init__(self, jinja_env: Environment):
+        self.jinja_env = jinja_env
 
     def generate_html(
         self, data: Optional[ContactFormConfig], translations: Translations
     ) -> str:
-        """Generates a string of HTML data attributes for the contact form.
-
-        This generator is intended to produce attributes that can be merged
-        into an existing <form> tag in a template.
+        """Generates HTML markup for the contact form section.
 
         Args:
             data: An optional ContactFormConfig protobuf message.
             translations: A dictionary containing translations.
 
         Returns:
-            A string of HTML attributes, or an HTML comment if configuration
-            is not found.
+            An HTML string representing the contact form section.
         """
-        if not data:
-            return "<!-- Contact form configuration not found -->"
-
-        attrs = []
-        if data.form_action_uri:
-            attrs.append(f'action="{data.form_action_uri}"')
-
-        # These data attributes are for client-side JavaScript to use.
-        attrs.append(f'data-form-action-url="{data.form_action_uri}"')
-        attrs.append(
-            f'data-success-message="{translations.get(data.success_message_key, "Message sent!")}"'
-        )
-        attrs.append(
-            f'data-error-message="{translations.get(data.error_message_key, "Error sending message.")}"'
-        )
-        attrs.append('method="POST"')  # Standard method for form submission
-        return " ".join(attrs)
+        template = self.jinja_env.get_template("blocks/contact-form.html")
+        # The template expects `config` for the ContactFormConfig data
+        return str(template.render(config=data, translations=translations))
 
 
 class BlogHtmlGenerator(HtmlBlockGenerator):
-    """Generates HTML for a list of blog posts."""
+    """Generates HTML for a list of blog posts using Jinja2."""
+
+    def __init__(self, jinja_env: Environment):
+        self.jinja_env = jinja_env
 
     def generate_html(self, data: List[BlogPost], translations: Translations) -> str:
         """Generates HTML markup for blog posts.
@@ -251,23 +170,7 @@ class BlogHtmlGenerator(HtmlBlockGenerator):
             translations: A dictionary containing translations.
 
         Returns:
-            An HTML string representing the blog posts, or an empty
-            string if no data is provided.
+            An HTML string representing the blog posts.
         """
-        if not data:
-            return ""
-        html_output: List[str] = []
-        for post in data:
-            title: str = translations.get(post.title.key, post.title.key)
-            excerpt: str = translations.get(post.excerpt.key, post.excerpt.key)
-            cta_text: str = translations.get(post.cta.text.key, post.cta.text.key)
-            html_output.append(
-                textwrap.dedent(f"""\
-                    <div class="blog-item" id="{post.id if post.id else ""}">
-                        <h3>{title}</h3>
-                        <p>{excerpt}</p>
-                        <a href="{post.cta.uri}" class="read-more">{cta_text}</a>
-                    </div>
-                """)
-            )
-        return "\n".join(html_output)
+        template = self.jinja_env.get_template("blocks/blog.html")
+        return str(template.render(items=data, translations=translations))

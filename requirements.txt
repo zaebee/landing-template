@@ -2,3 +2,4 @@ beautifulsoup4>=4.13.4
 grpcio
 grpcio-tools
 protobuf
+Jinja2>=3.0.0
