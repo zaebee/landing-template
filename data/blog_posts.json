@@ -5,7 +5,7 @@
     "excerpt": { "key": "blog_post_alpha_excerpt" },
     "cta": {
       "text": { "key": "blog_post_alpha_cta" },
-      "link": "#post1-link"
+      "uri": "#post1-link"
     }
   },
   {
@@ -14,7 +14,7 @@
     "excerpt": { "key": "blog_post_beta_excerpt" },
     "cta": {
       "text": { "key": "blog_post_beta_cta" },
-      "link": "#post2-link"
+      "uri": "#post2-link"
     }
   },
   {
@@ -23,7 +23,7 @@
     "excerpt": { "key": "blog_post_gamma_excerpt" },
     "cta": {
       "text": { "key": "blog_post_gamma_cta" },
-      "link": "#post3-link"
+      "uri": "#post3-link"
     }
   }
 ]

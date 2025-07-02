@@ -6,7 +6,7 @@
       "subtitle": { "key": "hero_subtitle_v1" },
       "cta": {
         "text": { "key": "hero_cta_v1" },
-        "link": "#signup"
+        "uri": "#signup"
       }
     },
     {
@@ -15,7 +15,7 @@
       "subtitle": { "key": "hero_subtitle_v2" },
       "cta": {
         "text": { "key": "hero_cta_v2" },
-        "link": "#learnmore"
+        "uri": "#learnmore"
       }
     }
   ],
