@@ -1,14 +1,20 @@
 [
   {
-    "title_i18n_key": "feature_one_title",
-    "desc_i18n_key": "feature_one_desc"
+    "content": {
+      "title": { "key": "feature_one_title" },
+      "description": { "key": "feature_one_desc" }
+    }
   },
   {
-    "title_i18n_key": "feature_two_title",
-    "desc_i18n_key": "feature_two_desc"
+    "content": {
+      "title": { "key": "feature_two_title" },
+      "description": { "key": "feature_two_desc" }
+    }
   },
   {
-    "title_i18n_key": "feature_three_title",
-    "desc_i18n_key": "feature_three_desc"
+    "content": {
+      "title": { "key": "feature_three_title" },
+      "description": { "key": "feature_three_desc" }
+    }
   }
 ]

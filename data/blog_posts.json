@@ -1,23 +1,29 @@
 [
   {
     "id": "post1",
-    "title_i18n_key": "blog_post_alpha_title",
-    "excerpt_i18n_key": "blog_post_alpha_excerpt",
-    "cta_i18n_key": "blog_post_alpha_cta",
-    "link": "#post1-link"
+    "title": { "key": "blog_post_alpha_title" },
+    "excerpt": { "key": "blog_post_alpha_excerpt" },
+    "cta": {
+      "text": { "key": "blog_post_alpha_cta" },
+      "link": "#post1-link"
+    }
   },
   {
     "id": "post2",
-    "title_i18n_key": "blog_post_beta_title",
-    "excerpt_i18n_key": "blog_post_beta_excerpt",
-    "cta_i18n_key": "blog_post_beta_cta",
-    "link": "#post2-link"
+    "title": { "key": "blog_post_beta_title" },
+    "excerpt": { "key": "blog_post_beta_excerpt" },
+    "cta": {
+      "text": { "key": "blog_post_beta_cta" },
+      "link": "#post2-link"
+    }
   },
   {
     "id": "post3",
-    "title_i18n_key": "blog_post_gamma_title",
-    "excerpt_i18n_key": "blog_post_gamma_excerpt",
-    "cta_i18n_key": "blog_post_gamma_cta",
-    "link": "#post3-link"
+    "title": { "key": "blog_post_gamma_title" },
+    "excerpt": { "key": "blog_post_gamma_excerpt" },
+    "cta": {
+      "text": { "key": "blog_post_gamma_cta" },
+      "link": "#post3-link"
+    }
   }
 ]

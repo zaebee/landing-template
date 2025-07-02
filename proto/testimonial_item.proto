@@ -1,10 +1,13 @@
 syntax = "proto3";
 
-package website_builder;
+package website_content.v1;
+
+import "common.proto";
+
+option go_package = "example.com/website_content/v1;website_content_v1";
 
 message TestimonialItem {
-  string text_i18n_key = 1;
-  string author_i18n_key = 2;
-  string img_src = 3;
-  string img_alt_i18n_key = 4; // For accessibility and potential localization
+  I18nString text = 1;        // The testimonial quote itself
+  I18nString author = 2;      // The author of the testimonial
+  Image author_image = 3;     // Image of the author
 }

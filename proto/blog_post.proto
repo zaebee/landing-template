@@ -1,13 +1,14 @@
 syntax = "proto3";
 
-package project;
+package website_content.v1;
 
-option go_package = "example.com/project/proto"; // Example Go package option
+import "common.proto";
+
+option go_package = "example.com/website_content/v1;website_content_v1";
 
 message BlogPost {
   string id = 1;
-  string title_i18n_key = 2;
-  string excerpt_i18n_key = 3;
-  string cta_i18n_key = 4;
-  string link = 5;
+  I18nString title = 2;
+  I18nString excerpt = 3;
+  CTA cta = 4;
 }

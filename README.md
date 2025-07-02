@@ -1,6 +1,6 @@
 # landing-template
 
-Template website with landing page to track telegram bot user source.
+Template site with landing page to track telegram bot user source.
 
 ## Structure
 
