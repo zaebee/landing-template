@@ -143,7 +143,13 @@ class DefaultPageBuilder(PageBuilder):
 
         # Create a temporary soup to get the opening <html> tag with attributes and head
         temp_soup = BeautifulSoup("", "html.parser")
-        new_html_tag = temp_soup.new_tag(html_tag.name, attrs=html_tag.attrs)
+
+        # Ensure all attribute values in html_tag.attrs are strings for new_tag
+        processed_attrs = {
+            k: " ".join(v) if isinstance(v, list) else str(v)
+            for k, v in html_tag.attrs.items()
+        }
+        new_html_tag = temp_soup.new_tag(html_tag.name, attrs=processed_attrs)
 
         # The html_start includes doctype, html tag (with attrs), head content, and opening body tag
         # To get the opening body tag, we can serialize up to it or reconstruct
@@ -166,7 +172,7 @@ class DefaultPageBuilder(PageBuilder):
 
         # Detach body children for a moment to print html_tag start and head
         original_body_children = []
-        if body_tag:
+        if isinstance(body_tag, Tag): # Ensure body_tag is a Tag before accessing .children
             original_body_children = [child.extract() for child in body_tag.children]
 
         # Now html_tag string without its body's children but with body tag itself
@@ -180,7 +186,7 @@ class DefaultPageBuilder(PageBuilder):
         )
 
         # Put children back if they were taken (though not strictly necessary for this func's output)
-        if body_tag and original_body_children:
+        if isinstance(body_tag, Tag) and original_body_children: # Ensure body_tag is a Tag for .append
             for child in original_body_children:
                 body_tag.append(child)
 
@@ -305,7 +311,7 @@ class DefaultPageBuilder(PageBuilder):
 
         temp_soup = BeautifulSoup(html_start_original, "html.parser")
         html_tag_in_start = temp_soup.find("html")
-        if html_tag_in_start:
+        if isinstance(html_tag_in_start, Tag): # Ensure it's a Tag before passing
             self._set_html_lang_attribute(html_tag_in_start, lang)
             # Reconstruct the html_start string from temp_soup
             # This will include doctype if it was part of html_start_original
