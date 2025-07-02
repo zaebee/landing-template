@@ -9,8 +9,11 @@ from bs4.element import Tag
 # If DefaultTranslationProvider.translate_html_content is used, this direct import might not be needed
 # by the class methods, but we keep it for now to ensure existing logic ported to methods works.
 # from build_protocols.translation import get_attribute_value_as_str # REMOVED
-
-from .interfaces import PageBuilder, Translations, TranslationProvider # ADDED TranslationProvider
+from .interfaces import (  # ADDED TranslationProvider
+    PageBuilder,
+    TranslationProvider,
+    Translations,
+)
 
 
 class DefaultPageBuilder(PageBuilder):

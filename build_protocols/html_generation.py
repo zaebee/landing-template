@@ -5,7 +5,10 @@ from typing import List, Optional  # Added Optional
 from generated.blog_post_pb2 import BlogPost
 from generated.contact_form_config_pb2 import ContactFormConfig
 from generated.feature_item_pb2 import FeatureItem
-from generated.hero_item_pb2 import HeroItem, HeroItemContent # Changed HeroVariation to HeroItemContent
+from generated.hero_item_pb2 import (  # Changed HeroVariation to HeroItemContent
+    HeroItem,
+    HeroItemContent,
+)
 from generated.portfolio_item_pb2 import PortfolioItem
 from generated.testimonial_item_pb2 import TestimonialItem
 
