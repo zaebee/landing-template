@@ -1,16 +1,49 @@
-/* Basic styling for the DNA visualizer component */
+/* Compiled SASS for DNA Visualizer component */
+
+/* _variables.scss definitions (conceptual, values used below) */
+/*
+$dna-border-color: #eee;
+$dna-title-color: #333;
+$dna-sequence-bg-color: #f8f8f8;
+$nucleotide-default-bg-color: #ddd;
+$nucleotide-default-text-color: #333;
+
+$nucleotide-colors: (
+  a: ( bg: #ff5733, text: #fff ),
+  t: ( bg: #33CFFF, text: #fff ),
+  g: ( bg: #33ff57, text: #000 ),
+  c: ( bg: #FFC300, text: #000 ),
+  unknown: ( bg: #808080, text: #fff )
+);
+
+$dna-block-padding: 1rem;
+$dna-block-margin-bottom: 1rem;
+$dna-title-margin-bottom: 0.75rem;
+$dna-sequence-padding: 0.5rem;
+$dna-sequence-gap: 2px;
+
+$nucleotide-font-family: monospace;
+
+$dna-block-border-radius: 4px;
+$dna-sequence-border-radius: 4px;
+$nucleotide-border-radius: 3px;
+
+$nucleotide-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+*/
+
+/* Basic styling for the DNA visualizer component from dna-visualizer.scss */
 .dna-sequence-block {
-  padding: 1rem;
-  margin-bottom: 1rem;
-  border: 1px solid #eee; /* Light border for the block */
-  border-radius: 4px;
+  padding: 1rem; /* $dna-block-padding */
+  margin-bottom: 1rem; /* $dna-block-margin-bottom */
+  border: 1px solid #eee; /* $dna-border-color */
+  border-radius: 4px; /* $dna-block-border-radius */
 }
 
 .dna-sequence-title {
   margin-top: 0;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.75rem; /* $dna-title-margin-bottom */
   font-size: 1.25rem;
-  color: #333; /* Darker color for the title */
+  color: #333; /* $dna-title-color */
 }
 
 .dna-sequence {
@@ -18,50 +51,49 @@
      but adding basic flex here for isolated testing and as a fallback. */
   display: flex;
   flex-direction: row;
-  gap: 2px; /* A small default gap, can be overridden by SADS xxs or similar */
-  min-height: 20px; /* Ensure the container has some height even if empty */
-  background-color: #f8f8f8; /* Slight background to see the container */
-  padding: 0.5rem;
-  border-radius: 4px;
+  gap: 2px; /* $dna-sequence-gap */
+  min-height: 20px;
+  background-color: #f8f8f8; /* $dna-sequence-bg-color */
+  padding: 0.5rem; /* $dna-sequence-padding */
+  border-radius: 4px; /* $dna-sequence-border-radius */
 }
 
-/* Placeholder for nucleotide styling - will be expanded in a later step */
+/* Styles from _nucleotides.scss */
 .nucleotide {
-  display: inline-block; /* Or flex-item if preferred by SADS for direct children */
+  display: inline-block;
   padding: 0.5em 0.75em;
-  border-radius: 3px;
-  font-family: monospace;
+  border-radius: 3px; /* $nucleotide-border-radius */
+  font-family: monospace; /* $nucleotide-font-family */
   font-weight: bold;
   text-align: center;
-  min-width: 2em; /* Ensure a minimum width for each nucleotide block */
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  background-color: #ddd; /* Default/fallback background */
-  color: #333; /* Default/fallback text color */
+  min-width: 2em;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* $nucleotide-box-shadow */
+  background-color: #ddd; /* $nucleotide-default-bg-color */
+  color: #333; /* $nucleotide-default-text-color */
 }
 
-/* Specific styles for each nucleotide type */
+/* Compiled from @each loop in _nucleotides.scss */
 .nucleotide-a {
-  background-color: #ff5733; /* Vibrant Red/Orange */
-  color: #fff;
+  background-color: #ff5733; /* map-get($nucleotide-colors, a, bg) */
+  color: #fff; /* map-get($nucleotide-colors, a, text) */
 }
 
 .nucleotide-t {
-  background-color: #33CFFF; /* Bright Blue */
-  color: #fff;
+  background-color: #33CFFF; /* map-get($nucleotide-colors, t, bg) */
+  color: #fff; /* map-get($nucleotide-colors, t, text) */
 }
 
 .nucleotide-g {
-  background-color: #33ff57; /* Bright Green */
-  color: #000; /* Black text for better contrast on light green */
+  background-color: #33ff57; /* map-get($nucleotide-colors, g, bg) */
+  color: #000; /* map-get($nucleotide-colors, g, text) */
 }
 
 .nucleotide-c {
-  background-color: #FFC300; /* Bright Yellow */
-  color: #000; /* Black text for better contrast on yellow */
+  background-color: #FFC300; /* map-get($nucleotide-colors, c, bg) */
+  color: #000; /* map-get($nucleotide-colors, c, text) */
 }
 
-/* Style for unknown or non-standard nucleotides if needed */
 .nucleotide-unknown {
-  background-color: #808080; /* Grey */
-  color: #fff;
+  background-color: #808080; /* map-get($nucleotide-colors, unknown, bg) */
+  color: #fff; /* map-get($nucleotide-colors, unknown, text) */
 }

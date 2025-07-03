@@ -1,0 +1,30 @@
+// Main SASS file for DNA Visualizer component
+@import 'variables';
+@import 'nucleotides';
+
+// Basic styling for the DNA visualizer component
+.dna-sequence-block {
+  padding: $dna-block-padding;
+  margin-bottom: $dna-block-margin-bottom;
+  border: 1px solid $dna-border-color; // Light border for the block
+  border-radius: $dna-block-border-radius;
+}
+
+.dna-sequence-title {
+  margin-top: 0;
+  margin-bottom: $dna-title-margin-bottom;
+  font-size: 1.25rem;
+  color: $dna-title-color; // Darker color for the title
+}
+
+.dna-sequence {
+  /* Flex layout is handled by data-sads- attributes in the HTML,
+     but adding basic flex here for isolated testing and as a fallback. */
+  display: flex;
+  flex-direction: row;
+  gap: $dna-sequence-gap; /* A small default gap, can be overridden by SADS xxs or similar */
+  min-height: 20px; /* Ensure the container has some height even if empty */
+  background-color: $dna-sequence-bg-color; /* Slight background to see the container */
+  padding: $dna-sequence-padding;
+  border-radius: $dna-sequence-border-radius;
+}
