@@ -21,6 +21,7 @@ from google.protobuf import json_format
 from google.protobuf.message import Message  # Explicit import for T = TypeVar bound
 from jinja2 import Environment, FileSystemLoader
 
+import build  # To access build.__file__
 from build import main as build_main
 from build_protocols.data_loading import JsonProtoDataLoader
 from build_protocols.html_generation import (
@@ -965,18 +966,19 @@ class TestBuildScript(unittest.TestCase):
 
         build_main()
 
-        # build.py's project_root will be /app when tests are run from /app
-        # AssetBundler generates absolute paths for bundled assets.
-        # Other files are written using relative paths from BuildOrchestrator,
-        # which become relative to self.test_root_dir (os.getcwd() in test).
-        build_script_project_root = (
-            "/app"  # Based on typical execution environment for tests
-        )
+        # Determine the project root as build.py sees it.
+        # This is crucial because AssetBundler creates absolute paths based on build.py's location.
+        # build_main is imported, and 'build' module was imported at the top of the file.
+        actual_build_project_root = os.path.dirname(os.path.abspath(build.__file__))
 
         expected_paths = [
-            os.path.join(build_script_project_root, "public", "dist", "main.css"),
-            os.path.join(build_script_project_root, "public", "dist", "main.js"),
-            # These paths are relative to os.getcwd() which is self.test_root_dir
+            os.path.join(
+                actual_build_project_root, "public", "dist", "main.css"
+            ),  # Absolute path
+            os.path.join(
+                actual_build_project_root, "public", "dist", "main.js"
+            ),  # Absolute path
+            # These paths are written relative to os.getcwd() (which is self.test_root_dir for the test)
             os.path.join("public", "generated_configs", "config_en.json"),
             "index.html",  # Default lang
             os.path.join("public", "generated_configs", "config_es.json"),
