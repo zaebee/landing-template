@@ -114,6 +114,7 @@ class HtmlBlockGenerator(Protocol):
     """
 
     template_to_render: str = ""  # Added for type hinting, with default
+    data_key_for_template: str = "items"  # Default key, will be set by decorator
 
     def __init__(self, jinja_env: Environment) -> None: ...
 

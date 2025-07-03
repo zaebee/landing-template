@@ -9,7 +9,7 @@ and produces an HTML string representation for that block.
 """
 
 import random
-from typing import Callable, Dict, List, Optional, Type
+from typing import Any, Callable, Dict, List, Optional, Type
 
 from jinja2 import Environment
 
@@ -28,11 +28,11 @@ HTML_GENERATOR_REGISTRY: Dict[str, Type[HtmlBlockGenerator]] = {}
 
 
 def register_html_generator(
-    block_name: str, template_to_render: str
+    block_name: str, template_to_render: str, data_key: str = "items"
 ) -> Callable[[Type[HtmlBlockGenerator]], Type[HtmlBlockGenerator]]:
     """
-    A decorator to register an HTML generator class for a specific block name
-    and associate it with a specific template file.
+    A decorator to register an HTML generator class for a specific block name,
+    associate it with a template file, and define the data key for the template.
     """
 
     def decorator(cls: Type[HtmlBlockGenerator]) -> Type[HtmlBlockGenerator]:
@@ -42,23 +42,65 @@ def register_html_generator(
                 f"Warning: HTML generator for block '{block_name}' is being overridden by {cls.__name__}"
             )
         HTML_GENERATOR_REGISTRY[block_name] = cls
-        cls.template_to_render = (
-            template_to_render  # Store the template path on the class
-        )
+        cls.template_to_render = template_to_render
+        cls.data_key_for_template = data_key  # Store the data key on the class
         return cls
 
     return decorator
 
 
-@register_html_generator(
-    block_name="portfolio.html", template_to_render="blocks/portfolio.html"
-)
-class PortfolioHtmlGenerator(HtmlBlockGenerator):
-    """Generates HTML for a list of portfolio items using Jinja2."""
+class BaseHtmlGenerator(HtmlBlockGenerator):
+    """
+    A base class for common HTML block generators that provides a default
+    implementation for __init__ and generate_html.
+    """
+
+    template_to_render: str  # Expected to be set by decorator or subclass
+    data_key_for_template: str = "items"  # Default key for passing data to template
 
     def __init__(self, jinja_env: Environment):
         self.jinja_env = jinja_env
 
+    def generate_html(self, data: Any, translations: Translations) -> str:
+        """
+        Generates an HTML string for a content block using a common pattern.
+        Assumes 'template_to_render' and 'data_key_for_template' are set
+        (usually by the @register_html_generator decorator on the subclass).
+        """
+        if not data:
+            # This basic guard might need to be overridden by subclasses
+            # if they handle 'None' data differently (e.g. Hero, ContactForm)
+            return ""
+
+        # Ensure template_to_render is set, which should be guaranteed by the decorator
+        # and protocol, but a runtime check or better initialization could be added if needed.
+        if (
+            not hasattr(self.__class__, "template_to_render")
+            or not self.__class__.template_to_render
+        ):
+            raise ValueError(
+                f"template_to_render not set for {self.__class__.__name__}"
+            )
+
+        template = self.jinja_env.get_template(self.__class__.template_to_render)
+
+        context = {
+            self.__class__.data_key_for_template: data,
+            "translations": translations,
+        }
+        return str(template.render(**context))
+
+
+@register_html_generator(
+    block_name="portfolio.html", template_to_render="blocks/portfolio.html"
+)  # data_key="items" is default
+class PortfolioHtmlGenerator(BaseHtmlGenerator):
+    """Generates HTML for a list of portfolio items using Jinja2."""
+
+    # __init__ is inherited from BaseHtmlGenerator
+
+    # Override generate_html for specific type hinting, if desired,
+    # otherwise, the BaseHtmlGenerator.generate_html would be sufficient if data_key matches.
     def generate_html(
         self, data: List[PortfolioItem], translations: Translations
     ) -> str:
@@ -71,20 +113,18 @@ class PortfolioHtmlGenerator(HtmlBlockGenerator):
         Returns:
             An HTML string representing the portfolio items.
         """
-        if not data:
-            return ""
-        template = self.jinja_env.get_template(self.__class__.template_to_render)
-        return str(template.render(items=data, translations=translations))
+        # Since data_key_for_template defaults to "items" in BaseHtmlGenerator
+        # and this class uses "items", we can rely on the superclass method.
+        return super().generate_html(data, translations)
 
 
 @register_html_generator(
     block_name="testimonials.html", template_to_render="blocks/testimonials.html"
-)
-class TestimonialsHtmlGenerator(HtmlBlockGenerator):
+)  # data_key="items" is default
+class TestimonialsHtmlGenerator(BaseHtmlGenerator):
     """Generates HTML for a list of testimonial items using Jinja2."""
 
-    def __init__(self, jinja_env: Environment):
-        self.jinja_env = jinja_env
+    # __init__ is inherited
 
     def generate_html(
         self, data: List[TestimonialItem], translations: Translations
@@ -98,20 +138,16 @@ class TestimonialsHtmlGenerator(HtmlBlockGenerator):
         Returns:
             An HTML string representing the testimonial items.
         """
-        if not data:
-            return ""
-        template = self.jinja_env.get_template(self.__class__.template_to_render)
-        return str(template.render(items=data, translations=translations))
+        return super().generate_html(data, translations)
 
 
 @register_html_generator(
     block_name="features.html", template_to_render="blocks/features.html"
-)
-class FeaturesHtmlGenerator(HtmlBlockGenerator):
+)  # data_key="items" is default
+class FeaturesHtmlGenerator(BaseHtmlGenerator):
     """Generates HTML for a list of feature items using Jinja2."""
 
-    def __init__(self, jinja_env: Environment):
-        self.jinja_env = jinja_env
+    # __init__ is inherited
 
     def generate_html(self, data: List[FeatureItem], translations: Translations) -> str:
         """Generates HTML markup for feature items.
@@ -123,19 +159,18 @@ class FeaturesHtmlGenerator(HtmlBlockGenerator):
         Returns:
             An HTML string representing the feature items.
         """
-        if not data:
-            return ""
-        template = self.jinja_env.get_template(self.__class__.template_to_render)
-        return str(template.render(items=data, translations=translations))
+        return super().generate_html(data, translations)
 
 
-@register_html_generator(block_name="hero.html", template_to_render="blocks/hero.html")
-class HeroHtmlGenerator(HtmlBlockGenerator):
+@register_html_generator(
+    block_name="hero.html", template_to_render="blocks/hero.html"
+)  # No data_key needed as it has custom generate_html
+class HeroHtmlGenerator(BaseHtmlGenerator):
     """Generates HTML for a hero section using Jinja2."""
 
-    def __init__(self, jinja_env: Environment):
-        self.jinja_env = jinja_env
+    # __init__ is inherited from BaseHtmlGenerator
 
+    # generate_html is custom due to variation logic
     def generate_html(
         self, data: Optional[HeroItem], translations: Translations
     ) -> str:
@@ -175,13 +210,14 @@ class HeroHtmlGenerator(HtmlBlockGenerator):
 
 
 @register_html_generator(
-    block_name="contact-form.html", template_to_render="blocks/contact-form.html"
+    block_name="contact-form.html",
+    template_to_render="blocks/contact-form.html",
+    data_key="config",
 )
-class ContactFormHtmlGenerator(HtmlBlockGenerator):
+class ContactFormHtmlGenerator(BaseHtmlGenerator):
     """Generates HTML for a contact form section using Jinja2."""
 
-    def __init__(self, jinja_env: Environment):
-        self.jinja_env = jinja_env
+    # __init__ is inherited
 
     def generate_html(
         self, data: Optional[ContactFormConfig], translations: Translations
@@ -195,19 +231,16 @@ class ContactFormHtmlGenerator(HtmlBlockGenerator):
         Returns:
             An HTML string representing the contact form section.
         """
-        if not data:
-            return ""
-        template = self.jinja_env.get_template(self.__class__.template_to_render)
-        # The template expects `config` for the ContactFormConfig data
-        return str(template.render(config=data, translations=translations))
+        # BaseHtmlGenerator.generate_html handles the 'if not data'
+        # and rendering using the 'data_key_for_template' which is now "config".
+        return super().generate_html(data, translations)
 
 
 @register_html_generator(block_name="blog.html", template_to_render="blocks/blog.html")
-class BlogHtmlGenerator(HtmlBlockGenerator):
+class BlogHtmlGenerator(BaseHtmlGenerator):
     """Generates HTML for a list of blog posts using Jinja2."""
 
-    def __init__(self, jinja_env: Environment):
-        self.jinja_env = jinja_env
+    # __init__ is inherited
 
     def generate_html(self, data: List[BlogPost], translations: Translations) -> str:
         """Generates HTML markup for blog posts.
@@ -219,7 +252,4 @@ class BlogHtmlGenerator(HtmlBlockGenerator):
         Returns:
             An HTML string representing the blog posts.
         """
-        if not data:
-            return ""
-        template = self.jinja_env.get_template(self.__class__.template_to_render)
-        return str(template.render(items=data, translations=translations))
+        return super().generate_html(data, translations)
