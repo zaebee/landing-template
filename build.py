@@ -8,10 +8,10 @@ import os
 import sys
 from typing import Any, Dict, List, Optional
 
+from google.protobuf import descriptor_pool
 from google.protobuf.message import Message
+from google.protobuf.message_factory import GetMessageClass
 from jinja2 import Environment, FileSystemLoader
-
-from generated.common_pb2 import I18nString
 
 # Ensure the project root (and thus 'generated' directory) is in the Python path
 # This allows for direct execution of this script.
@@ -29,13 +29,7 @@ from build_protocols.asset_bundling import DefaultAssetBundler  # Updated import
 from build_protocols.config_management import DefaultAppConfigManager
 from build_protocols.data_loading import InMemoryDataCache, JsonProtoDataLoader
 from build_protocols.html_generation import (
-    BlogHtmlGenerator,
-    ContactFormHtmlGenerator,
-    DnaVisualizerHtmlGenerator,  # Added import
-    FeaturesHtmlGenerator,
-    HeroHtmlGenerator,
-    PortfolioHtmlGenerator,
-    TestimonialsHtmlGenerator,
+    HTML_GENERATOR_REGISTRY,
 )
 from build_protocols.interfaces import (
     AppConfigManager,
@@ -49,13 +43,7 @@ from build_protocols.interfaces import (
 )
 from build_protocols.page_assembly import DefaultPageBuilder
 from build_protocols.translation import DefaultTranslationProvider
-from generated.blog_post_pb2 import BlogPost
-from generated.contact_form_config_pb2 import ContactFormConfig
-from generated.feature_item_pb2 import FeatureItem
-from generated.hero_item_pb2 import HeroItem
 from generated.nav_item_pb2 import Navigation
-from generated.portfolio_item_pb2 import PortfolioItem
-from generated.testimonial_item_pb2 import TestimonialItem
 
 
 class BuildOrchestrator:
@@ -65,6 +53,8 @@ class BuildOrchestrator:
     This class coordinates the loading of configurations, data, and translations,
     and then assembles HTML pages for each supported language.
     """
+
+    PROTO_PACKAGE_NAME = "website_content.v1"
 
     def __init__(
         self,
@@ -134,8 +124,10 @@ class BuildOrchestrator:
 
         self._generate_language_specific_config(lang, translations)
 
-        assembled_main_content = self._assemble_main_content_for_lang(
-            lang, translations, dynamic_data_loaders_config
+        assembled_main_content = (
+            self._assemble_main_content_for_lang(
+                lang, translations, dynamic_data_loaders_config
+            )
         )
 
         page_title = translations.get("page_title_default", "Simple Landing Page")
@@ -148,7 +140,6 @@ class BuildOrchestrator:
             main_content=assembled_main_content,
             navigation_items=navigation_items,
             page_title=page_title,
-            app_config=self.app_config,  # Pass app_config
         )
 
         output_filename = f"index_{lang}.html"
@@ -184,53 +175,44 @@ class BuildOrchestrator:
         )
         default_lang: str = self.app_config.get("default_lang", "en")
 
-        # Mapping of message type names (from config) to actual protobuf classes
-        proto_message_types = {
-            "PortfolioItem": PortfolioItem,
-            "BlogPost": BlogPost,
-            "FeatureItem": FeatureItem,
-            "TestimonialItem": TestimonialItem,
-            "HeroItem": HeroItem,
-            "ContactFormConfig": ContactFormConfig,
-            "Navigation": Navigation,
-            "None": I18nString,
-        }
-
         # Get block data loader configuration from app_config
         block_loaders_config_raw = self.app_config.get("block_data_loaders", {})
 
         # Resolve message_type_name to actual message_type class
         dynamic_data_loaders_config_resolved = {}
+        pool = descriptor_pool.Default()
+
         for block_name, config_item in block_loaders_config_raw.items():
             message_type_name = config_item.get("message_type_name")
-            message_type_class = None  # Default to None
+            if not message_type_name:
+                print(
+                    f"Warning: Missing 'message_type_name' for block '{block_name}'. Skipping."
+                )
+                continue
 
-            if message_type_name:  # If a message_type_name is provided
-                message_type_class = proto_message_types.get(message_type_name)
-                if not message_type_class:
-                    print(
-                        f"Warning: Unknown message_type_name '{message_type_name}' provided for block '{block_name}'. Skipping data loading for this block."
-                    )
-                    # We still add it to resolved_item_config so it can be processed by a generator if one exists
-                    # The generator will receive no data or handle this case.
-                    resolved_item_config = config_item.copy()
-                    resolved_item_config["message_type"] = (
-                        None  # Indicate no valid type
-                    )
-                    dynamic_data_loaders_config_resolved[block_name] = (
-                        resolved_item_config
-                    )
-                    continue  # Skip to next item in block_loaders_config_raw
-            # If message_type_name was empty, or if it was valid and message_type_class was found:
+            full_message_name = f"{self.PROTO_PACKAGE_NAME}.{message_type_name}"
+            descriptor = pool.FindMessageTypeByName(full_message_name)
+
+            if descriptor is None:
+                print(
+                    f"Warning: Could not find protobuf message type '{full_message_name}' for block '{block_name}'. Ensure .proto files are compiled and imported. Skipping."
+                )
+                continue
+
+            message_type_class = GetMessageClass(descriptor)
+            if not message_type_class:  # Should not happen if descriptor is found
+                print(
+                    f"Warning: Could not get message class for '{full_message_name}' for block '{block_name}'. Skipping."
+                )
+                continue
+
+            # Create a new config dict for resolved types to avoid modifying original app_config
             resolved_item_config = config_item.copy()
-            resolved_item_config["message_type"] = (
-                message_type_class  # Will be None if message_type_name was empty or invalid but allowed
-            )
+            resolved_item_config["message_type"] = message_type_class
             dynamic_data_loaders_config_resolved[block_name] = resolved_item_config
 
         self.data_cache.preload_data(
-            dynamic_data_loaders_config_resolved,
-            self.data_loader,  # data_loader and cache should handle message_type being None
+            dynamic_data_loaders_config_resolved, self.data_loader
         )
 
         os.makedirs("public/generated_configs", exist_ok=True)
@@ -239,21 +221,17 @@ class BuildOrchestrator:
         processed_nav_items = []
         if self.nav_proto_data:
             for item in self.nav_proto_data.items:
-                processed_nav_items.append(
-                    {
-                        "label": {
-                            "key": item.label.key
-                        },  # Pass the key for translation in template
-                        "href": item.href,
-                        "animation_hint": item.animation_hint,
-                    }
-                )
+                processed_nav_items.append({
+                    "label": {"key": item.label.key}, # Pass the key for translation in template
+                    "href": item.href,
+                    "animation_hint": item.animation_hint
+                })
 
         for lang in supported_langs:
             self._process_language(
                 lang=lang,
                 default_lang=default_lang,
-                dynamic_data_loaders_config=dynamic_data_loaders_config_resolved,  # Use resolved config
+                dynamic_data_loaders_config=dynamic_data_loaders_config_resolved, # Use resolved config
                 navigation_items=processed_nav_items,
             )
 
@@ -293,8 +271,7 @@ class BuildOrchestrator:
         except IOError as e:
             # Consider logging this error instead of just printing.
             print(
-                f"Error writing language-specific config "
-                f"{generated_config_path}: {e}"
+                f"Error writing language-specific config {generated_config_path}: {e}"
             )
 
     def _assemble_main_content_for_lang(
@@ -478,7 +455,8 @@ def main() -> None:
     """
     # Initialize Jinja2 Environment
     jinja_env = Environment(
-        loader=FileSystemLoader("templates"), autoescape=True  # Enable autoescaping
+        loader=FileSystemLoader("templates"),
+        autoescape=True,  # Enable autoescaping
     )
 
     # Instantiate service components with more descriptive names
@@ -496,16 +474,10 @@ def main() -> None:
 
     # Map block filenames to their specific HTML generator instances
     # Pass jinja_env to each generator
+    # Ensure all generator modules are imported so decorators run before this.
     html_generator_instances: Dict[str, HtmlBlockGenerator] = {
-        "portfolio.html": PortfolioHtmlGenerator(jinja_env=jinja_env),
-        "blog.html": BlogHtmlGenerator(jinja_env=jinja_env),
-        "features.html": FeaturesHtmlGenerator(jinja_env=jinja_env),
-        "testimonials.html": TestimonialsHtmlGenerator(jinja_env=jinja_env),
-        "hero.html": HeroHtmlGenerator(jinja_env=jinja_env),
-        "contact-form.html": ContactFormHtmlGenerator(jinja_env=jinja_env),
-        "dna-visualizer.html": DnaVisualizerHtmlGenerator(
-            jinja_env=jinja_env
-        ),  # Added generator
+        block_name: GeneratorClass(jinja_env=jinja_env)
+        for block_name, GeneratorClass in HTML_GENERATOR_REGISTRY.items()
     }
 
     # Create and run the orchestrator
