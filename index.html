@@ -15,6 +15,7 @@
 
     <title>Simple Landing Page</title>
     <link href="public/style.css" rel="stylesheet" />
+    <link href="public/dist/main.css" rel="stylesheet" />
   </head>
 
   <body>
@@ -177,26 +178,159 @@
           </div>
         </div>
       </section>
-      <section class="blog" id="blog">
-        <h2 data-i18n="blog_title">Latest Posts</h2>
-        <div class="blog-list">
-          <div class="blog-item" id="post1">
-            <h3>Alpha Post Title</h3>
-            <p>Excerpt for Alpha blog post...</p>
-            <a href="#post1-link" class="read-more">Read Alpha Post</a>
-          </div>
+      <section
+        data-sads-component="blog"
+        id="blog"
+        data-sads-padding="xl"
+        data-sads-text-align="center"
+        data-sads-bg-color="blog-section-bg"
+      >
+        <h2
+          data-sads-element="title"
+          data-i18n="blog_title"
+          data-sads-margin-bottom="xl"
+          data-sads-font-size="xl"
+          data-sads-text-color="text-primary"
+        >
+          Latest Posts
+        </h2>
+        <div
+          data-sads-element="list"
+          data-sads-display="flex"
+          data-sads-flex-wrap="wrap"
+          data-sads-flex-justify="space-around"
+          data-sads-gap="m"
+          data-sads-max-width="content-container"
+          data-sads-margin="custom:0 auto"
+          data-sads-responsive-rules='[
+        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "flexAlignItems": "center"}}
+    ]'
+        >
+          <article
+            data-sads-element="item"
+            id="post1"
+            data-sads-bg-color="blog-item-bg"
+            data-sads-padding="l"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-flex-basis="third-gap-m"
+            data-sads-text-align="left"
+            data-sads-box-sizing="border-box"
+            data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+        ]'
+          >
+            <h3
+              data-sads-element="item-title"
+              data-sads-margin-top="none"
+              data-sads-text-color="text-accent"
+              data-sads-font-size="l"
+            >
+              Alpha Post Title
+            </h3>
+            <p
+              data-sads-element="item-excerpt"
+              data-sads-font-size="s"
+              data-sads-text-color="text-secondary"
+              data-sads-margin-bottom="m"
+            >
+              Excerpt for Alpha blog post...
+            </p>
+            <a
+              data-sads-element="read-more-link"
+              href="#post1-link"
+              data-sads-display="inline-block"
+              data-sads-text-color="text-accent"
+              data-sads-text-decoration="none"
+              data-sads-font-weight="bold"
+            >
+              Read Alpha Post</a
+            >
+          </article>
 
-          <div class="blog-item" id="post2">
-            <h3>Beta Post Title</h3>
-            <p>Excerpt for Beta blog post...</p>
-            <a href="#post2-link" class="read-more">Read Beta Post</a>
-          </div>
+          <article
+            data-sads-element="item"
+            id="post2"
+            data-sads-bg-color="blog-item-bg"
+            data-sads-padding="l"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-flex-basis="third-gap-m"
+            data-sads-text-align="left"
+            data-sads-box-sizing="border-box"
+            data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+        ]'
+          >
+            <h3
+              data-sads-element="item-title"
+              data-sads-margin-top="none"
+              data-sads-text-color="text-accent"
+              data-sads-font-size="l"
+            >
+              Beta Post Title
+            </h3>
+            <p
+              data-sads-element="item-excerpt"
+              data-sads-font-size="s"
+              data-sads-text-color="text-secondary"
+              data-sads-margin-bottom="m"
+            >
+              Excerpt for Beta blog post...
+            </p>
+            <a
+              data-sads-element="read-more-link"
+              href="#post2-link"
+              data-sads-display="inline-block"
+              data-sads-text-color="text-accent"
+              data-sads-text-decoration="none"
+              data-sads-font-weight="bold"
+            >
+              Read Beta Post</a
+            >
+          </article>
 
-          <div class="blog-item" id="post3">
-            <h3>Gamma Post Title</h3>
-            <p>Excerpt for Gamma blog post...</p>
-            <a href="#post3-link" class="read-more">Read Gamma Post</a>
-          </div>
+          <article
+            data-sads-element="item"
+            id="post3"
+            data-sads-bg-color="blog-item-bg"
+            data-sads-padding="l"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-flex-basis="third-gap-m"
+            data-sads-text-align="left"
+            data-sads-box-sizing="border-box"
+            data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+        ]'
+          >
+            <h3
+              data-sads-element="item-title"
+              data-sads-margin-top="none"
+              data-sads-text-color="text-accent"
+              data-sads-font-size="l"
+            >
+              Gamma Post Title
+            </h3>
+            <p
+              data-sads-element="item-excerpt"
+              data-sads-font-size="s"
+              data-sads-text-color="text-secondary"
+              data-sads-margin-bottom="m"
+            >
+              Excerpt for Gamma blog post...
+            </p>
+            <a
+              data-sads-element="read-more-link"
+              href="#post3-link"
+              data-sads-display="inline-block"
+              data-sads-text-color="text-accent"
+              data-sads-text-decoration="none"
+              data-sads-font-weight="bold"
+            >
+              Read Gamma Post</a
+            >
+          </article>
         </div>
       </section>
       <section class="contact-form" id="contact">
@@ -283,8 +417,10 @@
         &amp;copy; 2024 Simple Landing Page. All rights reserved.
       </p>
     </footer>
+    <script src="public/dist/main.js" defer></script>
+
     <script>
-      // Dark Mode Toggle
+      // Dark Mode Toggle logic from original base.html (ensure it doesn't conflict with app.js if SADS re-init is added there)
       const darkModeToggle = document.getElementById("dark-mode-toggle");
       const body = document.body;
       let currentTranslations = {};

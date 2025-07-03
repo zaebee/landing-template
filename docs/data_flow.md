@@ -154,8 +154,8 @@ graph TD
     ASSEMBLE_MAIN -- Iterates Blocks --> LOAD_BLOCK_TPL;
     LOAD_BLOCK_TPL --> GET_CACHED_DATA;
     GET_CACHED_DATA --> GEN_BLOCK_HTML;
-    GEN_BLOCK_HTML --> REPLACE_PLACEHOLDER;
-    REPLACE_PLACEHOLDER --> TRANSLATE_BLOCK;
+    GEN_BLOCK_HTML --> REPLACE_PLACEHOLDER[Jinja handles this];
+    REPLACE_PLACEHOLDER --> TRANSLATE_BLOCK[Jinja handles this];
 
     ASSEMBLE_MAIN -- Aggregated HTML Parts --> ASSEMBLE_PAGE;
     PAGE_BUILDER -- Provides Header/Footer --> ASSEMBLE_PAGE;
@@ -208,13 +208,9 @@ The diagram illustrates the data flow and component interactions within the `bui
    - **`public/config.json`**: Main configuration file (site settings, languages, blocks to use).
    - **`data/*.json`**: JSON files containing content for dynamic blocks (e.g., hero text, portfolio items).
    - **`proto/*.proto`**: Protocol Buffer definitions that define the schema for the data in `data/*.json`.
-   - **`templates/components/*/*.html`**: HTML template files for individual content components.
+   - **`templates/components/*/*.html`**: HTML template files for individual content components used by `HtmlBlockGenerators`.
    - **`public/locales/*.json`**: JSON files with translations for different languages.
-   - **`templates/base.html` (Base Template)**: The main HTML file providing the overall page structure.
-   - **`blocks/*.html`**: HTML template files for individual content blocks.
-   - **`public/locales/*.json`**: JSON files with translations for different languages.
-   - **`index.html` (Base Template)**: The main HTML file providing the overall page structure (header, footer).
-     > > > > > > > main
+   - **`templates/base.html` (Base Template)**: The main HTML file providing the overall page structure, used by `DefaultPageBuilder`.
 
 2. **Initial Processing & Tools**:
 
@@ -225,9 +221,9 @@ The diagram illustrates the data flow and component interactions within the `bui
 
    - **`JsonProtoDataLoader`**: Reads JSON data from `data/*.json`, validates it against the Protobuf stubs (`generated/*.py`), and converts it into Python Protobuf objects.
    - **`InMemoryDataCache`**: Stores the loaded Protobuf objects in memory to avoid redundant loading.
-   - **`DefaultTranslationProvider`**: Loads translations from `public/locales/*.json` and provides functions to translate text and HTML content.
-   - **`DefaultPageBuilder`**: Manages the overall HTML page structure. It uses the base `templates/base.html` and assembles the final page with processed component HTML.
-   - **`HtmlBlockGenerators` (e.g., `HeroHtmlGenerator`, `PortfolioHtmlGenerator`)**: A collection of classes, each responsible for generating the specific HTML for a type of content component (e.g., rendering portfolio items into HTML using templates from `templates/components/`).
+   - **`DefaultTranslationProvider`**: Loads translations from `public/locales/*.json` and provides a `Translations` object accessible within Jinja templates.
+   - **`DefaultPageBuilder`**: Manages the overall HTML page structure. It uses the base `templates/base.html` (via its Jinja environment) and assembles the final page with processed component HTML.
+   - **`HtmlBlockGenerators` (e.g., `HeroHtmlGenerator`, `PortfolioHtmlGenerator`)**: A collection of classes, each responsible for generating the specific HTML for a type of content component. They use their own Jinja environment to load and render templates from `templates/components/`, injecting data and translations.
 
 4. **`BuildOrchestrator` (Dark Blue Node)**: The central component in `build.py`.
 
@@ -236,45 +232,24 @@ The diagram illustrates the data flow and component interactions within the `bui
      - **Load Initial Configs**: Uses `DefaultAppConfigManager` to load `public/config.json` and navigation data.
      - **Preload Data**: Instructs the `JsonProtoDataLoader` to load all necessary dynamic data, which is then stored in `InMemoryDataCache`.
      - **Loop Languages**: Iterates through each supported language defined in `config.json`.
-     - **Load Translations**: For the current language, uses `DefaultTranslationProvider` to load the relevant locale file.
+     - **Load Translations**: For the current language, uses `DefaultTranslationProvider` to load the relevant locale file, making translations available.
      - **Generate Lang Config**: Uses `DefaultAppConfigManager` to create a language-specific version of the configuration (e.g., `public/generated_configs/config_en.json`).
      - **Assemble Main Content**: For the current language, orchestrates the generation of HTML for all content blocks. (See "Assemble Main Content Per Language" subgraph).
-     - **Assemble Full Page**: Uses `DefaultPageBuilder` to combine the translated header, footer, and the assembled main content into a complete HTML page.
+     - **Assemble Full Page**: Uses `DefaultPageBuilder` to combine the translated header, footer (rendered as part of `base.html`), and the assembled main content into a complete HTML page.
      - **Write Output HTML**: Saves the generated page to a file (e.g., `index_en.html`).
 
 5. **Assemble Main Content Per Language (Light Grey Subgraph)**: This process is executed by `BuildOrchestrator` for each component specified in `config.json`.
 
-   - **Load Component Template**: `HtmlBlockGenerator` loads its specific template from `templates/components/<component_name>/<component_name>.html`.
-   - **Get Cached Data**: Retrieves the relevant Protobuf data for this component from `InMemoryDataCache`.
-   - **Generate HTML for Component**: Passes the data and translations to the appropriate `HtmlBlockGenerator` to produce the HTML for that specific component.
-
-   - # **Translate Component Content**: Jinja templates within components use the `translations` object to directly include translated strings. Further `data-i18n` tags for client-side translation might also be present
-
-   - **`DefaultPageBuilder`**: Manages the overall HTML page structure. It extracts header/footer from the base `index.html` and assembles the final page with processed blocks.
-   - **`HtmlBlockGenerators` (e.g., `HeroHtmlGenerator`, `PortfolioHtmlGenerator`)**: A collection of classes, each responsible for generating the specific HTML for a type of content block (e.g., rendering portfolio items into HTML).
-
-6. **`BuildOrchestrator` (Dark Blue Node)**: The central component in `build.py`.
-
-   - It initializes and coordinates all services.
-   - **Core Logic (Grey Subgraph)**:
-     - **Load Initial Configs**: Uses `DefaultAppConfigManager` to load `public/config.json` and navigation data.
-     - **Preload Data**: Instructs the `JsonProtoDataLoader` to load all necessary dynamic data, which is then stored in `InMemoryDataCache`.
-     - **Loop Languages**: Iterates through each supported language defined in `config.json`.
-     - **Load Translations**: For the current language, uses `DefaultTranslationProvider` to load the relevant locale file.
-     - **Generate Lang Config**: Uses `DefaultAppConfigManager` to create a language-specific version of the configuration (e.g., `public/generated_configs/config_en.json`).
-     - **Assemble Main Content**: For the current language, orchestrates the generation of HTML for all content blocks. (See "Assemble Main Content Per Language" subgraph).
-     - **Assemble Full Page**: Uses `DefaultPageBuilder` to combine the translated header, footer, and the assembled main content into a complete HTML page.
-     - **Write Output HTML**: Saves the generated page to a file (e.g., `index_en.html`).
-
-7. **Assemble Main Content Per Language (Light Grey Subgraph)**: This process is executed by `BuildOrchestrator` for each block within each language.
-
-   - **Load Block Template**: Reads the HTML template for the current block from `blocks/`.
+   - **`HtmlBlockGenerator` Selection**: The orchestrator selects the appropriate `HtmlBlockGenerator` for the current block.
    - **Get Cached Data**: Retrieves the relevant Protobuf data for this block from `InMemoryDataCache`.
-   - **Generate HTML for Block**: Passes the data and translations to the appropriate `HtmlBlockGenerator` (e.g., `PortfolioHtmlGenerator`) to produce the HTML for that specific block.
-   - **Replace Placeholder**: Injects the generated block HTML into the block's template (where placeholders like `{{portfolio_items}}` are defined).
-   - **Translate Block Content**: Uses `DefaultTranslationProvider` to translate any `data-i18n` tags within the combined block content.
+   - **Generate HTML for Component (`GEN_BLOCK_HTML`)**:
+     - The selected `HtmlBlockGenerator` is invoked.
+     - It uses its Jinja environment to load its specific component template from `templates/components/<component_name>/<component_name>.html` (`LOAD_BLOCK_TPL` effectively happens here).
+     - It renders the template, passing in the cached data and the `translations` object. The Jinja template itself handles the injection of data and translation lookups (e.g., `{{ item.title }}`, `{{ translations.get('my_key') }}`).
+     - The output is fully formed, translated HTML for that block.
+   - The steps `REPLACE_PLACEHOLDER` and `TRANSLATE_BLOCK` (as separate post-processing steps on raw block HTML) are largely subsumed by the Jinja rendering process within the `HtmlBlockGenerator`.
 
-8. **Output (Green Node)**:
+6. **Output (Green Node)**:
    - **`index_lang.html`**: The final, fully assembled, and translated HTML pages for each supported language (e.g., `index.html`, `index_es.html`).
 
 This modular, service-oriented architecture allows for clear separation of concerns: data loading, translation, HTML generation for specific blocks, and overall page assembly are handled by distinct components, orchestrated by `BuildOrchestrator`.

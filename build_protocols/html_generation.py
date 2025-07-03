@@ -236,9 +236,11 @@ class ContactFormHtmlGenerator(BaseHtmlGenerator):
         return super().generate_html(data, translations)
 
 
-@register_html_generator(block_name="blog.html", template_to_render="blocks/blog.html")
+@register_html_generator(
+    block_name="blog.html", template_to_render="components/blog/blog.html"
+)
 class BlogHtmlGenerator(BaseHtmlGenerator):
-    """Generates HTML for a list of blog posts using Jinja2."""
+    """Generates HTML for a list of blog posts using Jinja2, utilizing SADS attributes."""
 
     # __init__ is inherited
 
