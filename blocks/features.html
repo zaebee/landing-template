@@ -1,6 +1,31 @@
-<section class="features" id="features" data-aos="fade-up" data-aos-delay="100">
-  <h2 data-i18n="features_title">Features</h2>
-  <div class="feature-list">
+<section
+    data-sads-component="features"
+    id="features" {# Keep ID for potential deep linking and original AOS styling #}
+    data-aos="fade-up"
+    data-aos-delay="100"
+    data-sads-padding="xl"
+    data-sads-text-align="center"
+    data-sads-bg-color="section-bg" {# Assuming a generic section background color key #}
+>
+  <h2
+    data-sads-element="title"
+    data-i18n="features_title"
+    data-sads-margin-bottom="xl"
+    data-sads-font-size="xl"
+    data-sads-text-color="text-primary"
+  >
+    {{ translations.get('features_title', 'Features') }} {# Assuming translations similar to blog component #}
+  </h2>
+  <div
+    data-sads-element="list"
+    class="feature-list" {# Keep class if build.py or other JS relies on it #}
+    data-sads-display="flex"
+    data-sads-flex-wrap="wrap"
+    data-sads-flex-justify="space-around"
+    data-sads-gap="m"
+    data-sads-max-width="content-container"
+    data-sads-margin="custom:0 auto" {# Centering the list container #}
+  >
     <!-- Feature items will be dynamically injected here by build.py -->
     {{feature_items}}
   </div>
