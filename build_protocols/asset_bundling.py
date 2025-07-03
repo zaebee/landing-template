@@ -1,6 +1,7 @@
 """
 Handles bundling of CSS and JavaScript assets for the project.
 """
+
 import os
 from typing import List, Optional
 
@@ -8,7 +9,8 @@ from typing import List, Optional
 # from .interfaces import AssetBundler
 # For now, we'll define it structurally. If interfaces.py is importable, use above.
 
-class DefaultAssetBundler: # Implements AssetBundler (structurally)
+
+class DefaultAssetBundler:  # Implements AssetBundler (structurally)
     """
     Default implementation for bundling CSS and JavaScript assets.
     """
@@ -26,7 +28,9 @@ class DefaultAssetBundler: # Implements AssetBundler (structurally)
         for component_name in os.listdir(component_css_dir):
             component_dir_path = os.path.join(component_css_dir, component_name)
             if os.path.isdir(component_dir_path):
-                css_file_path = os.path.join(component_dir_path, f"{component_name}.css")
+                css_file_path = os.path.join(
+                    component_dir_path, f"{component_name}.css"
+                )
                 if os.path.exists(css_file_path):
                     try:
                         with open(css_file_path, "r", encoding="utf-8") as f:
@@ -43,7 +47,7 @@ class DefaultAssetBundler: # Implements AssetBundler (structurally)
                 with open(output_file_path, "w", encoding="utf-8") as f:
                     f.write("/* No component CSS found or bundled. */")
                 print(f"Created empty CSS bundle: {output_file_path}")
-                return output_file_path # Return path to empty bundle
+                return output_file_path  # Return path to empty bundle
             except IOError as e:
                 print(f"Error creating empty CSS bundle {output_file_path}: {e}")
                 return None
@@ -88,7 +92,9 @@ class DefaultAssetBundler: # Implements AssetBundler (structurally)
             ordered_shared_js.append(sads_default_theme_path)
             print(f"Found SADS Default Theme JS: {sads_default_theme_path}")
         else:
-            print(f"Warning: SADS Default Theme JS not found at {sads_default_theme_path}")
+            print(
+                f"Warning: SADS Default Theme JS not found at {sads_default_theme_path}"
+            )
 
         if os.path.exists(sads_engine_path):
             ordered_shared_js.append(sads_engine_path)
@@ -115,7 +121,7 @@ class DefaultAssetBundler: # Implements AssetBundler (structurally)
                 with open(output_file_path, "w", encoding="utf-8") as f:
                     f.write("// No JavaScript files found or bundled.")
                 print(f"Created empty JS bundle: {output_file_path}")
-                return output_file_path # Return path to empty bundle
+                return output_file_path  # Return path to empty bundle
             except IOError as e:
                 print(f"Error creating empty JS bundle {output_file_path}: {e}")
                 return None
@@ -134,7 +140,9 @@ class DefaultAssetBundler: # Implements AssetBundler (structurally)
                 outfile.write("\n// --- JavaScript Bundle --- //\n\n")
                 for i, content in enumerate(js_contents):
                     original_path = js_files_to_bundle[i]
-                    outfile.write(f"\n// --- Source: {os.path.basename(original_path)} --- //\n")
+                    outfile.write(
+                        f"\n// --- Source: {os.path.basename(original_path)} --- //\n"
+                    )
                     outfile.write(content)
                     outfile.write("\n// --- End Source --- //\n\n")
             print(f"Successfully bundled JavaScript to: {output_file_path}")

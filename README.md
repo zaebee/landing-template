@@ -32,59 +32,59 @@ Before you begin, ensure you have the following installed:
 
 1. **Clone the repository (if you haven't already):**
 
-    ```bash
-    git clone <repository-url>
-    cd <repository-directory>
-    ```
+   ```bash
+   git clone <repository-url>
+   cd <repository-directory>
+   ```
 
 2. **Install Python dependencies:**
-    This project uses `uv` for Python package management if available (as per `format.sh`), but `pip` with `requirements.txt` is the standard.
+   This project uses `uv` for Python package management if available (as per `format.sh`), but `pip` with `requirements.txt` is the standard.
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-    For development, including tools for linting and type checking, also install development dependencies:
+   For development, including tools for linting and type checking, also install development dependencies:
 
-    ```bash
-    pip install -r requirements-dev.txt
-    ```
+   ```bash
+   pip install -r requirements-dev.txt
+   ```
 
-    _Note: Ensure `requirements.txt` includes `grpcio-tools` and `protobuf` for Protocol Buffer compilation._
+   _Note: Ensure `requirements.txt` includes `grpcio-tools` and `protobuf` for Protocol Buffer compilation._
 
 ### Build Process
 
 The website generation involves two main steps:
 
 1. **Generate Protocol Buffer Stubs:**
-    If you modify any `.proto` files or are setting up the project for the first time, you need to compile them into Python code.
+   If you modify any `.proto` files or are setting up the project for the first time, you need to compile them into Python code.
 
-    ```bash
-    npm run generate-proto
-    ```
+   ```bash
+   npm run generate-proto
+   ```
 
-    This command executes `protoc` (the Protocol Buffer compiler) using the configurations in `package.json`. It generates Python files in the `generated/` directory, which `build.py` uses to handle structured data.
+   This command executes `protoc` (the Protocol Buffer compiler) using the configurations in `package.json`. It generates Python files in the `generated/` directory, which `build.py` uses to handle structured data.
 
 2. **Build the HTML Pages:**
-    To generate or update `index.html` and its language-specific variants (e.g., `index_es.html`):
+   To generate or update `index.html` and its language-specific variants (e.g., `index_es.html`):
 
-    ```bash
-    npm run build
-    ```
+   ```bash
+   npm run build
+   ```
 
-    This command runs the main `python build.py` script. The script performs the following actions:
+   This command runs the main `python build.py` script. The script performs the following actions:
 
-    - Reads the main configuration from `public/config.json`.
-    - Loads dynamic content from `data/*.json` files, validating it against the generated Protobuf structures.
-    - Loads HTML component templates from `templates/components/`.
-    - For each supported language:
-      - Loads translations from `public/locales/{lang}.json`.
-      - Generates HTML for each content block, populating it with data and translating text.
-      - Assembles the blocks into a complete page based on the base `index.html` template.
-      - Writes the final page to the root directory (e.g., `index.html`, `index_es.html`).
-      - Generates a language-specific configuration file (e.g., `public/generated_configs/config_en.json`).
+   - Reads the main configuration from `public/config.json`.
+   - Loads dynamic content from `data/*.json` files, validating it against the generated Protobuf structures.
+   - Loads HTML component templates from `templates/components/`.
+   - For each supported language:
+     - Loads translations from `public/locales/{lang}.json`.
+     - Generates HTML for each content block, populating it with data and translating text.
+     - Assembles the blocks into a complete page based on the base `index.html` template.
+     - Writes the final page to the root directory (e.g., `index.html`, `index_es.html`).
+     - Generates a language-specific configuration file (e.g., `public/generated_configs/config_en.json`).
 
-    _A note on Protobuf imports in `build.py`_: The script modifies `sys.path` at runtime to include the `generated/` directory. This allows Python to find the auto-generated Protobuf modules.
+   _A note on Protobuf imports in `build.py`_: The script modifies `sys.path` at runtime to include the `generated/` directory. This allows Python to find the auto-generated Protobuf modules.
 
 ## Customization
 
@@ -98,13 +98,13 @@ You can customize various aspects of the generated site:
   2. Add the desired HTML structure. For SADS-styled blocks, use `data-sads-*` attributes. For traditional CSS, create a corresponding CSS file.
   3. Update `public/config.json` by adding the block's template name (e.g., `my-custom-block.html`) to the `blocks` array in the desired order.
   4. If the block uses dynamic data:
-      - Define a Protobuf message for its data structure in a new `.proto` file or an existing one.
-      - Create a corresponding JSON data file in `data/`.
-      - Update `build.py`:
-        - Import the new Protobuf message.
-        - Add a configuration entry in `_get_dynamic_data_loaders_config()` within `BuildOrchestrator`.
-        - Create a new `HtmlBlockGenerator` class for your block in `build_protocols/html_generation.py` and add an instance to the `html_generators` dictionary in `build.py`.
-      - Remember to run `npm run generate-proto` after adding/modifying `.proto` files.
+     - Define a Protobuf message for its data structure in a new `.proto` file or an existing one.
+     - Create a corresponding JSON data file in `data/`.
+     - Update `build.py`:
+       - Import the new Protobuf message.
+       - Add a configuration entry in `_get_dynamic_data_loaders_config()` within `BuildOrchestrator`.
+       - Create a new `HtmlBlockGenerator` class for your block in `build_protocols/html_generation.py` and add an instance to the `html_generators` dictionary in `build.py`.
+     - Remember to run `npm run generate-proto` after adding/modifying `.proto` files.
 
 - **Removing a Block:**
 

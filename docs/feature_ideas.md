@@ -107,13 +107,15 @@ The table below offers a quick glance at all proposed features, their intended f
 - **Implementation Sketch**:
 
   - **Configuration (`public/config.json`)**: - Add an `analytics` object, e.g.:
-    `json
-  "analytics": {
-    "provider": "google_analytics", // or "plausible", "none"
-    "tracking_id": "UA-XXXXX-Y", // for GA
-    "domain": "yourdomain.com" // for Plausible
-  }
-  `
+        ```json
+
+        "analytics": {
+          "provider": "google_analytics", // or "plausible", "none"
+          "tracking_id": "UA-XXXXX-Y", // for GA
+          "domain": "yourdomain.com" // for Plausible
+        }
+
+        ```
 
 - **Build Script (`build.py`)**:
   - In `assemble_translated_page` (or a similar function that constructs the final HTML), check the `analytics` config.
@@ -254,21 +256,6 @@ The table below offers a quick glance at all proposed features, their intended f
   - Allows for quick switching between different looks (e.g., "dark mode", "light mode", "brand-aligned theme").
   - Content creators can focus on content, while basic styling choices are managed centrally.
 - **Implementation Sketch**:
-  <<<<<<< HEAD
-
-  - **Configuration (`public/config.json`)**: - Add a `theme` object:
-    `json
-  "theme": {
-    "name": "dark", // or "light", "custom"
-    "settings": { // Optional, for "custom" theme
-      "primary_color": "#1a73e8",
-      "secondary_color": "#f0f0f0",
-      "background_color": "#121212",
-      "text_color": "#e8eaed"
-    }
-  }
-  `
-    =======
 
   - **Configuration (`public/config.json`)**:
 
@@ -286,24 +273,12 @@ The table below offers a quick glance at all proposed features, their intended f
             }
             ```
 
-> > > > > > > main
-
 - **CSS**:
 
   - Define CSS variables in `public/style.css` for common elements (e.g., `--primary-color`, `--background-color`, `--text-color`).
   - Create alternative theme stylesheets (e.g., `public/themes/dark.css`, `public/themes/light.css`) that override these variables or provide entirely different styles.
 
 - **Build Script (`build.py`)**:
-  <<<<<<< HEAD - In `BuildOrchestrator.build_all_languages()` or `DefaultPageBuilder.assemble_translated_page()`: - Read the `theme` configuration from `app_config`. - If `theme.name` points to a predefined theme, inject a `<link>` tag for the corresponding theme CSS file (e.g., `<link rel="stylesheet" href="themes/dark.css">`) into the `<head>`. - Alternatively, if `theme.settings` are provided, generate a `<style>` block in the `<head>` that defines the CSS variables:
-  `html
-      <style>
-        :root {
-          --primary-color: #1a73e8;
-          /* ... other variables ... */
-        }
-      </style>
-      ` - Add a class to the `<body>` tag, e.g., `<body class="theme-dark">`
-  =======
 
       - In `BuildOrchestrator.build_all_languages()` or `DefaultPageBuilder.assemble_translated_page()`:
 
@@ -321,8 +296,6 @@ The table below offers a quick glance at all proposed features, their intended f
                   ```
 
         - Add a class to the `<body>` tag, e.g., `<body class="theme-dark">`.
-
-> > > > > > > main
 
 - **HTML Structure**: Ensure HTML elements use classes or CSS variables that can be targeted by themes.
 

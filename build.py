@@ -124,10 +124,8 @@ class BuildOrchestrator:
 
         self._generate_language_specific_config(lang, translations)
 
-        assembled_main_content = (
-            self._assemble_main_content_for_lang(
-                lang, translations, dynamic_data_loaders_config
-            )
+        assembled_main_content = self._assemble_main_content_for_lang(
+            lang, translations, dynamic_data_loaders_config
         )
 
         page_title = translations.get("page_title_default", "Simple Landing Page")
@@ -221,17 +219,21 @@ class BuildOrchestrator:
         processed_nav_items = []
         if self.nav_proto_data:
             for item in self.nav_proto_data.items:
-                processed_nav_items.append({
-                    "label": {"key": item.label.key}, # Pass the key for translation in template
-                    "href": item.href,
-                    "animation_hint": item.animation_hint
-                })
+                processed_nav_items.append(
+                    {
+                        "label": {
+                            "key": item.label.key
+                        },  # Pass the key for translation in template
+                        "href": item.href,
+                        "animation_hint": item.animation_hint,
+                    }
+                )
 
         for lang in supported_langs:
             self._process_language(
                 lang=lang,
                 default_lang=default_lang,
-                dynamic_data_loaders_config=dynamic_data_loaders_config_resolved, # Use resolved config
+                dynamic_data_loaders_config=dynamic_data_loaders_config_resolved,  # Use resolved config
                 navigation_items=processed_nav_items,
             )
 
