@@ -427,15 +427,17 @@
         </h2>
         <div
           data-sads-element="list"
-          data-sads-layout-type="flex"
+          data-sads-display="flex"
           data-sads-flex-wrap="wrap"
           data-sads-flex-justify="space-around"
           data-sads-gap="m"
           data-sads-max-width="content-container"
           data-sads-margin="custom:0 auto"
-          data-sads-responsive-rules='[{"breakpoint": "mobile", "styles": {"flexDirection": "column"}}]'
+          data-sads-responsive-rules='[
+        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "flexAlignItems": "center"}}
+    ]'
         >
-          <div
+          <article
             data-sads-element="item"
             id="post1"
             data-sads-bg-color="blog-item-bg"
@@ -444,6 +446,7 @@
             data-sads-shadow="subtle"
             data-sads-flex-basis="third-gap-m"
             data-sads-text-align="left"
+            data-sads-box-sizing="border-box"
             data-sads-responsive-rules='[
             {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
         ]'
@@ -474,9 +477,9 @@
             >
               Leer Publicación Alfa</a
             >
-          </div>
+          </article>
 
-          <div
+          <article
             data-sads-element="item"
             id="post2"
             data-sads-bg-color="blog-item-bg"
@@ -485,6 +488,7 @@
             data-sads-shadow="subtle"
             data-sads-flex-basis="third-gap-m"
             data-sads-text-align="left"
+            data-sads-box-sizing="border-box"
             data-sads-responsive-rules='[
             {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
         ]'
@@ -515,9 +519,9 @@
             >
               Leer Publicación Beta</a
             >
-          </div>
+          </article>
 
-          <div
+          <article
             data-sads-element="item"
             id="post3"
             data-sads-bg-color="blog-item-bg"
@@ -526,6 +530,7 @@
             data-sads-shadow="subtle"
             data-sads-flex-basis="third-gap-m"
             data-sads-text-align="left"
+            data-sads-box-sizing="border-box"
             data-sads-responsive-rules='[
             {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
         ]'
@@ -556,7 +561,7 @@
             >
               Leer Publicación Gama</a
             >
-          </div>
+          </article>
         </div>
       </section>
       <section
