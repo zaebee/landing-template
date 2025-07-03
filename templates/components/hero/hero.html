@@ -1,0 +1,51 @@
+<section
+    data-sads-component="hero"
+    data-sads-padding="xl"
+    data-sads-text-align="center"
+    data-sads-bg-color="hero-section-bg" {# Assumes a theme key 'hero-section-bg' exists or will be added #}
+    data-sads-min-height="custom:75vh" {# Example: make hero take 75% of viewport height #}
+    data-sads-display="flex"
+    data-sads-flex-direction="column"
+    data-sads-flex-justify="center"
+    data-sads-flex-align-items="center"
+>
+  {% if item %}
+  <h1
+    data-sads-element="title"
+    data-i18n="{{ item.title.key if item.title else 'hero_title_placeholder' }}" {# Ensure title.key is the i18n key #}
+    data-sads-font-size="xxl"
+    data-sads-text-color="text-hero-title" {# Assumes 'text-hero-title' for specific hero title color #}
+    data-sads-margin-bottom="m"
+  >
+    {{ translations.get(item.title.key if item.title else 'hero_title_placeholder', 'Welcome to Our Site') }}
+  </h1>
+  <p
+    data-sads-element="subtitle"
+    data-i18n="{{ item.subtitle.key if item.subtitle else 'hero_subtitle_placeholder' }}" {# Ensure subtitle.key is the i18n key #}
+    data-sads-font-size="l"
+    data-sads-text-color="text-hero-subtitle" {# Assumes 'text-hero-subtitle' for specific hero subtitle color #}
+    data-sads-margin-bottom="l"
+    data-sads-max-width="custom:800px" {# Limit width of subtitle for readability #}
+  >
+    {{ translations.get(item.subtitle.key if item.subtitle else 'hero_subtitle_placeholder', 'Discover amazing things.') }}
+  </p>
+  {% if item.cta %}
+  <a
+    data-sads-element="cta-button"
+    href="{{ item.cta.uri }}"
+    data-sads-button-variant="primary" {# Using SADS button styling #}
+    data-sads-padding="m l"
+    data-sads-text-decoration="none"
+    data-sads-font-weight="bold"
+    data-sads-border-radius="s"
+    data-sads-bg-color="button-primary-bg"
+    data-sads-text-color="button-primary-text"
+    {# Add hover/focus styles if SADS supports them directly or via theme keys #}
+  >
+    {{ translations.get(item.cta.text.key if item.cta.text else 'hero_cta_placeholder', 'Learn More') }}
+  </a>
+  {% endif %}
+  {% else %}
+  <p data-sads-text-color="text-error">Hero content not available.</p>
+  {% endif %}
+</section>
