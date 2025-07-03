@@ -25,7 +25,7 @@ if generated_dir not in sys.path:
 
 # Application-specific imports (Protobuf and services)
 # Generated Protobuf message class imports
-from build_protocols.asset_bundling import bundle_component_css, bundle_component_js
+from build_protocols.asset_bundling import DefaultAssetBundler # Updated import
 from build_protocols.config_management import DefaultAppConfigManager
 from build_protocols.data_loading import InMemoryDataCache, JsonProtoDataLoader
 from build_protocols.html_generation import (
@@ -39,6 +39,7 @@ from build_protocols.html_generation import (
 )
 from build_protocols.interfaces import (
     AppConfigManager,
+    AssetBundler, # Added AssetBundler interface
     DataCache,
     DataLoader,
     HtmlBlockGenerator,
@@ -73,6 +74,7 @@ class BuildOrchestrator:
         data_cache: DataCache[Message],
         page_builder: PageBuilder,
         html_generators: Dict[str, HtmlBlockGenerator],
+        asset_bundler: AssetBundler, # Added asset_bundler
     ):
         """Initializes the BuildOrchestrator with necessary service components.
 
@@ -88,6 +90,7 @@ class BuildOrchestrator:
             page_builder: Assembles the final HTML page from various parts.
             html_generators: A dictionary mapping block names to their
                 respective HTML generator instances.
+            asset_bundler: Handles bundling of CSS and JavaScript assets.
         """
         self.app_config_manager = app_config_manager
         self.translation_provider = translation_provider
@@ -95,6 +98,7 @@ class BuildOrchestrator:
         self.data_cache = data_cache
         self.page_builder = page_builder
         self.html_generators = html_generators
+        self.asset_bundler = asset_bundler # Store asset_bundler instance
 
         self.app_config: Dict[str, Any] = {}
         self.nav_proto_data: Optional[Navigation] = None
@@ -165,8 +169,19 @@ class BuildOrchestrator:
         supported language to generate the respective HTML output.
         """
         self.load_initial_configurations()
-        bundle_component_css(project_root) # Bundle CSS
-        bundle_component_js(project_root) # Bundle JS
+
+        # Define output directory for assets
+        asset_output_dir = os.path.join(project_root, "public", "dist")
+        os.makedirs(asset_output_dir, exist_ok=True)
+
+        # Bundle CSS and JS using the AssetBundler instance
+        css_bundle_path = self.asset_bundler.bundle_css(project_root, asset_output_dir)
+        js_bundle_path = self.asset_bundler.bundle_js(project_root, asset_output_dir)
+
+        if not css_bundle_path:
+            print("Warning: CSS bundling failed or produced no output.")
+        if not js_bundle_path:
+            print("Warning: JavaScript bundling failed or produced no output.")
 
         supported_langs: List[str] = self.app_config.get(
             "supported_langs", ["en", "es"]
@@ -472,6 +487,7 @@ def main() -> None:
         translation_provider=translation_provider_instance,
         jinja_env=jinja_env,  # Pass env to PageBuilder
     )
+    asset_bundler_instance = DefaultAssetBundler() # Instantiate AssetBundler
 
     # Map block filenames to their specific HTML generator instances
     # Pass jinja_env to each generator
@@ -493,6 +509,7 @@ def main() -> None:
         data_cache=data_cache_instance,
         page_builder=page_builder_instance,
         html_generators=html_generator_instances,
+        asset_bundler=asset_bundler_instance, # Pass AssetBundler instance
     )
     orchestrator.build_all_languages()
 

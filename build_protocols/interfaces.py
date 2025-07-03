@@ -257,3 +257,38 @@ class DataCache(Protocol[T]):
 #   `NavigationProto` type for `nav_data` as it's a specific, known type.
 # - The `DataCache.set_item` allows `value` to be `None`, enabling explicit
 #   caching of "not found" or clearing entries.
+
+
+class AssetBundler(Protocol):
+    """
+    Defines the interface for services that bundle static assets like
+    CSS and JavaScript.
+    """
+
+    def bundle_css(self, project_root: str, output_dir: str) -> Optional[str]:
+        """
+        Bundles CSS files.
+
+        Args:
+            project_root: The root directory of the project.
+            output_dir: The directory where the bundled CSS file should be saved.
+
+        Returns:
+            The path to the bundled CSS file, or None if bundling failed or
+            no files were bundled.
+        """
+        ...
+
+    def bundle_js(self, project_root: str, output_dir: str) -> Optional[str]:
+        """
+        Bundles JavaScript files.
+
+        Args:
+            project_root: The root directory of the project.
+            output_dir: The directory where the bundled JS file should be saved.
+
+        Returns:
+            The path to the bundled JavaScript file, or None if bundling failed
+            or no files were bundled.
+        """
+        ...
