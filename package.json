@@ -8,7 +8,7 @@
     "test": "python -m pytest",
     "lint:py": "ruff check . && mypy .",
     "lint:py:fix": "ruff check . --fix && mypy .",
-    "format": "prettier --write \"**/*.{json,css,html}\" && clang-format -i proto/*.proto",
+    "format": "prettier --write \"**/*.{json,css,html,js,ts}\" && clang-format -i proto/*.proto",
     "lint": "npm run lint:py && npm run format",
     "generate-proto": "mkdir -p generated && python -m grpc_tools.protoc -I./proto --python_out=./generated --pyi_out=./generated ./proto/*.proto && touch generated/__init__.py",
     "generate-proto-win": "python -m grpc_tools.protoc -I./proto --python_out=./generated --pyi_out=./generated ./proto/*.proto"

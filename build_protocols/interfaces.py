@@ -112,6 +112,8 @@ class HtmlBlockGenerator(Protocol):
     block or component of a page.
     """
 
+    def __init__(self, *args, **kwargs) -> None: ...
+
     def generate_html(self, data: Any, translations: Translations) -> str:
         """Generates an HTML string for a content block.
 

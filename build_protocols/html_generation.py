@@ -9,7 +9,7 @@ and produces an HTML string representation for that block.
 """
 
 import random
-from typing import List, Optional, Callable, Dict, Type
+from typing import Callable, Dict, List, Optional, Type
 
 from jinja2 import Environment
 
@@ -26,16 +26,23 @@ from .interfaces import HtmlBlockGenerator, Translations
 # Registry for HTML block generators
 HTML_GENERATOR_REGISTRY: Dict[str, Type[HtmlBlockGenerator]] = {}
 
-def register_html_generator(block_name: str) -> Callable[[Type[HtmlBlockGenerator]], Type[HtmlBlockGenerator]]:
+
+def register_html_generator(
+    block_name: str,
+) -> Callable[[Type[HtmlBlockGenerator]], Type[HtmlBlockGenerator]]:
     """
     A decorator to register an HTML generator class for a specific block name.
     """
+
     def decorator(cls: Type[HtmlBlockGenerator]) -> Type[HtmlBlockGenerator]:
         if block_name in HTML_GENERATOR_REGISTRY:
             # Use a simple print for warnings if logging is not set up
-            print(f"Warning: HTML generator for block '{block_name}' is being overridden by {cls.__name__}")
+            print(
+                f"Warning: HTML generator for block '{block_name}' is being overridden by {cls.__name__}"
+            )
         HTML_GENERATOR_REGISTRY[block_name] = cls
         return cls
+
     return decorator
 
 
@@ -145,7 +152,9 @@ class HeroHtmlGenerator(HtmlBlockGenerator):
 
         # If no specific variation was found yet (e.g. default_variation_id didn't match or wasn't set)
         # and variations are available, pick one randomly. (This condition also ensures data.variations is not empty)
-        if not selected_variation: # Already know data.variations is not empty from the guard clause
+        if (
+            not selected_variation
+        ):  # Already know data.variations is not empty from the guard clause
             selected_variation = random.choice(data.variations)
 
         template = self.jinja_env.get_template("blocks/hero.html")
