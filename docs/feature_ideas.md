@@ -107,19 +107,20 @@ The table below offers a quick glance at all proposed features, their intended f
 - **Implementation Sketch**:
 
   - **Configuration (`public/config.json`)**: - Add an `analytics` object, e.g.:
+        
         ```json
-
-        "analytics": {
-          "provider": "google_analytics", // or "plausible", "none"
-          "tracking_id": "UA-XXXXX-Y", // for GA
-          "domain": "yourdomain.com" // for Plausible
-        }
-
-        ```
+          "analytics": {
+            "provider": "google_analytics", // or "plausible", "none"
+            "tracking_id": "UA-XXXXX-Y", // for GA
+            "domain": "yourdomain.com" // for Plausible
+          }
+          ```
 
 - **Build Script (`build.py`)**:
+
   - In `assemble_translated_page` (or a similar function that constructs the final HTML), check the `analytics` config.
   - If a provider is specified and configured, inject the appropriate JavaScript snippet into the `<head>` or near the closing `</body>` tag of each HTML page. The snippet would be a template string with placeholders for `tracking_id` or `domain`.
+
 - **HTML Structure**: Ensure the base HTML template (`index.html`) has a clear placeholder or is structured so the script can easily inject the analytics snippet (e.g., before `</head>` or `</body>`).
 
 ---
