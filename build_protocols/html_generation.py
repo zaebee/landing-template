@@ -26,22 +26,33 @@ from .interfaces import HtmlBlockGenerator, Translations
 # Registry for HTML block generators
 HTML_GENERATOR_REGISTRY: Dict[str, Type[HtmlBlockGenerator]] = {}
 
-def register_html_generator(block_name: str, template_to_render: str) -> Callable[[Type[HtmlBlockGenerator]], Type[HtmlBlockGenerator]]:
+
+def register_html_generator(
+    block_name: str, template_to_render: str
+) -> Callable[[Type[HtmlBlockGenerator]], Type[HtmlBlockGenerator]]:
     """
     A decorator to register an HTML generator class for a specific block name
     and associate it with a specific template file.
     """
+
     def decorator(cls: Type[HtmlBlockGenerator]) -> Type[HtmlBlockGenerator]:
         if block_name in HTML_GENERATOR_REGISTRY:
             # Use a simple print for warnings if logging is not set up
-            print(f"Warning: HTML generator for block '{block_name}' is being overridden by {cls.__name__}")
+            print(
+                f"Warning: HTML generator for block '{block_name}' is being overridden by {cls.__name__}"
+            )
         HTML_GENERATOR_REGISTRY[block_name] = cls
-        cls.template_to_render = template_to_render  # Store the template path on the class
+        cls.template_to_render = (
+            template_to_render  # Store the template path on the class
+        )
         return cls
+
     return decorator
 
 
-@register_html_generator(block_name="portfolio.html", template_to_render="blocks/portfolio.html")
+@register_html_generator(
+    block_name="portfolio.html", template_to_render="blocks/portfolio.html"
+)
 class PortfolioHtmlGenerator(HtmlBlockGenerator):
     """Generates HTML for a list of portfolio items using Jinja2."""
 
@@ -66,7 +77,9 @@ class PortfolioHtmlGenerator(HtmlBlockGenerator):
         return str(template.render(items=data, translations=translations))
 
 
-@register_html_generator(block_name="testimonials.html", template_to_render="blocks/testimonials.html")
+@register_html_generator(
+    block_name="testimonials.html", template_to_render="blocks/testimonials.html"
+)
 class TestimonialsHtmlGenerator(HtmlBlockGenerator):
     """Generates HTML for a list of testimonial items using Jinja2."""
 
@@ -91,7 +104,9 @@ class TestimonialsHtmlGenerator(HtmlBlockGenerator):
         return str(template.render(items=data, translations=translations))
 
 
-@register_html_generator(block_name="features.html", template_to_render="blocks/features.html")
+@register_html_generator(
+    block_name="features.html", template_to_render="blocks/features.html"
+)
 class FeaturesHtmlGenerator(HtmlBlockGenerator):
     """Generates HTML for a list of feature items using Jinja2."""
 
@@ -147,7 +162,9 @@ class HeroHtmlGenerator(HtmlBlockGenerator):
 
         # If no specific variation was found yet (e.g. default_variation_id didn't match or wasn't set)
         # and variations are available, pick one randomly. (This condition also ensures data.variations is not empty)
-        if not selected_variation: # Already know data.variations is not empty from the guard clause
+        if (
+            not selected_variation
+        ):  # Already know data.variations is not empty from the guard clause
             selected_variation = random.choice(data.variations)
 
         template = self.jinja_env.get_template(self.__class__.template_to_render)
@@ -157,7 +174,9 @@ class HeroHtmlGenerator(HtmlBlockGenerator):
         )
 
 
-@register_html_generator(block_name="contact-form.html", template_to_render="blocks/contact-form.html")
+@register_html_generator(
+    block_name="contact-form.html", template_to_render="blocks/contact-form.html"
+)
 class ContactFormHtmlGenerator(HtmlBlockGenerator):
     """Generates HTML for a contact form section using Jinja2."""
 

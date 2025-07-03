@@ -112,10 +112,10 @@ class HtmlBlockGenerator(Protocol):
     Defines the interface for services that generate HTML for a specific
     block or component of a page.
     """
+
     template_to_render: str = ""  # Added for type hinting, with default
 
-    def __init__(self, jinja_env: Environment) -> None:
-        ...
+    def __init__(self, jinja_env: Environment) -> None: ...
 
     def generate_html(self, data: Any, translations: Translations) -> str:
         """Generates an HTML string for a content block.
