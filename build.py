@@ -30,7 +30,7 @@ from build_protocols.data_loading import InMemoryDataCache, JsonProtoDataLoader
 from build_protocols.html_generation import (
     BlogHtmlGenerator,
     ContactFormHtmlGenerator,
-    DnaVisualizerHtmlGenerator,
+    DnaVisualizerHtmlGenerator,  # Added import
     FeaturesHtmlGenerator,
     HeroHtmlGenerator,
     PortfolioHtmlGenerator,
@@ -160,18 +160,40 @@ class BuildOrchestrator:
         # 2. Shared/Global JS
         shared_js_dir = os.path.join(project_root, "public", "js")
 
-        # Prioritize SADS engine, then app.js, then component JS
+        # Order of shared JS is important:
+        # 1. Default theme for SADS
+        # 2. SADS engine
+        # 3. Main application logic (app.js)
+        # 4. Component-specific JS (added earlier)
+
+        sads_default_theme_path = os.path.join(shared_js_dir, "sads-default-theme.js")
+        if os.path.exists(sads_default_theme_path):
+            js_files_to_bundle.insert(0, sads_default_theme_path)
+            print(f"Found SADS Default Theme JS: {sads_default_theme_path}")
+        else:
+            print(f"Warning: SADS Default Theme JS not found at {sads_default_theme_path}")
+
         sads_engine_path = os.path.join(shared_js_dir, "sads-style-engine.js")
         if os.path.exists(sads_engine_path):
-            js_files_to_bundle.insert(0, sads_engine_path)
+            # Insert after default theme if present, otherwise at the beginning
+            insert_idx = 1 if sads_default_theme_path in js_files_to_bundle else 0
+            js_files_to_bundle.insert(insert_idx, sads_engine_path)
             print(f"Found SADS Engine JS: {sads_engine_path}")
+        else:
+            print(f"Warning: SADS Engine JS not found at {sads_engine_path}")
 
         app_js_path = os.path.join(shared_js_dir, "app.js")
         if os.path.exists(app_js_path):
-            # Insert after SADS engine if present, otherwise at the beginning
-            insert_idx = 1 if sads_engine_path in js_files_to_bundle else 0
+            # Insert after default theme and SADS engine if present
+            insert_idx = 0
+            if sads_default_theme_path in js_files_to_bundle:
+                insert_idx +=1
+            if sads_engine_path in js_files_to_bundle:
+                insert_idx +=1
             js_files_to_bundle.insert(insert_idx, app_js_path)
             print(f"Found shared App JS: {app_js_path}")
+        else:
+            print(f"Warning: App JS not found at {app_js_path}")
 
         output_dir = os.path.join(project_root, "public", "dist")
         output_file_path = os.path.join(output_dir, "main.js")
