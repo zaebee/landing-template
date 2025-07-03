@@ -11,6 +11,7 @@ contracts.
 from typing import Any, Dict, List, Optional, Protocol, Type, TypeVar, Union
 
 from google.protobuf.message import Message
+from jinja2 import Environment  # Added for HtmlBlockGenerator.__init__
 
 # Import specific generated types used in protocols for clarity.
 from generated.nav_item_pb2 import Navigation as NavigationProto
@@ -111,6 +112,11 @@ class HtmlBlockGenerator(Protocol):
     Defines the interface for services that generate HTML for a specific
     block or component of a page.
     """
+
+    template_to_render: str = ""  # Added for type hinting, with default
+    data_key_for_template: str = "items"  # Default key, will be set by decorator
+
+    def __init__(self, jinja_env: Environment) -> None: ...
 
     def generate_html(self, data: Any, translations: Translations) -> str:
         """Generates an HTML string for a content block.

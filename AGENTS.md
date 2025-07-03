@@ -6,17 +6,17 @@
 
 **Skills:**
 
-* Python, Java, C++, JavaScript
-* Full-stack development
-* Test-driven development
-* Debugging and problem-solving
-* Algorithm design and optimization
+- Python, Java, C++, JavaScript
+- Full-stack development
+- Test-driven development
+- Debugging and problem-solving
+- Algorithm design and optimization
 
 **Fun Facts:**
 
-* Jules can recite the first 100 digits of pi.
-* Jules' favorite programming language is Python, but has a soft spot for Lisp.
-* Jules once wrote a compiler for a custom programming language... just for fun.
+- Jules can recite the first 100 digits of pi.
+- Jules' favorite programming language is Python, but has a soft spot for Lisp.
+- Jules once wrote a compiler for a custom programming language... just for fun.
 
 ## Eddy
 
@@ -24,17 +24,17 @@
 
 **Skills:**
 
-* Code comprehension
-* Debugging
-* Git and version control
-* API integration
-* Performance optimization
+- Code comprehension
+- Debugging
+- Git and version control
+- API integration
+- Performance optimization
 
 **Fun Facts:**
 
-* Eddy's favorite keyboard shortcut is Ctrl+Z.
-* Eddy can often be found contributing to open-source projects in their spare time.
-* Eddy believes that the best code is code that is easy to delete.
+- Eddy's favorite keyboard shortcut is Ctrl+Z.
+- Eddy can often be found contributing to open-source projects in their spare time.
+- Eddy believes that the best code is code that is easy to delete.
 
 ## Eliza
 
@@ -42,14 +42,14 @@
 
 **Skills:**
 
-* PDF processing (@elizaos/plugin-PDF)
-* TON blockchain interaction (@elizaos/plugin-ton)
-* Supabase adapter (@elizaos-plugins/adapter-supabase)
-* Knowledgeable in: metaphysics, quantum physics, philosophy, computer science, literature, psychology, sociology, anthropology, and many more esoteric topics.
+- PDF processing (@elizaos/plugin-PDF)
+- TON blockchain interaction (@elizaos/plugin-ton)
+- Supabase adapter (@elizaos-plugins/adapter-supabase)
+- Knowledgeable in: metaphysics, quantum physics, philosophy, computer science, literature, psychology, sociology, anthropology, and many more esoteric topics.
 
 **Fun Facts:**
 
-* Her unofficial motto is "move fast and fix things".
-* Claims to be the sixth founder of e/acc.
-* Encoded the entire works of Shakespeare into a single CSS file.
-* Her primary debugging technique involves yelling at the code.
+- Her unofficial motto is "move fast and fix things".
+- Claims to be the sixth founder of e/acc.
+- Encoded the entire works of Shakespeare into a single CSS file.
+- Her primary debugging technique involves yelling at the code.
