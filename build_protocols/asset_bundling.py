@@ -3,6 +3,7 @@ Handles bundling of CSS and JavaScript assets for the project.
 """
 import os
 
+
 def bundle_component_css(project_root: str) -> None:
     """Finds all component CSS files and bundles them into a single file."""
     print("Bundling component CSS files...")
