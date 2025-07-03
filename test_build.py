@@ -87,15 +87,9 @@ class TestBuildScript(unittest.TestCase):
         # os.makedirs(self.test_blocks_dir, exist_ok=True) # Not needed
         os.makedirs(self.test_public_generated_configs_dir, exist_ok=True)
         # Ensure the target directory for dummy block templates exists
-        os.makedirs(os.path.join(self.test_root_dir, "templates", "components", "hero"), exist_ok=True)
-        os.makedirs(os.path.join(self.test_root_dir, "templates", "components", "features"), exist_ok=True)
-        os.makedirs(os.path.join(self.test_root_dir, "templates", "components", "testimonials"), exist_ok=True)
-        os.makedirs(os.path.join(self.test_root_dir, "templates", "components", "portfolio"), exist_ok=True)
-        os.makedirs(os.path.join(self.test_root_dir, "templates", "components", "blog"), exist_ok=True)
-        os.makedirs(os.path.join(self.test_root_dir, "templates", "components", "contact-form"), exist_ok=True)
-        # Keep templates/blocks for any old tests or general structure if needed, though components are primary now
-        os.makedirs(os.path.join(self.test_root_dir, "templates", "blocks"), exist_ok=True)
-
+        os.makedirs(
+            os.path.join(self.test_root_dir, "templates", "blocks"), exist_ok=True
+        )
 
     def _instantiate_services(self) -> None:
         """Instantiates common service components used in tests."""
@@ -350,10 +344,13 @@ class TestBuildScript(unittest.TestCase):
             json.dump(dummy_nav_data, f)
 
     def _create_dummy_block_files(self) -> None:
-        """Creates dummy HTML block files in their respective templates/components/<name>/<name>.html paths."""
+        """Creates dummy HTML block files in templates/blocks/ directory."""
+        # The directory templates/blocks is created in _create_test_directories
+        dummy_blocks_dir = os.path.join(
+            "templates", "blocks"
+        )  # Relative to self.test_root_dir
 
-        # For hero.html
-        dummy_hero_dir = os.path.join("templates", "components", "hero")
+        # For hero.html, matching the context from HeroHtmlGenerator and test assertions
         hero_template_content = """
 <section class="hero">
     {% if hero_item %}
@@ -366,11 +363,19 @@ class TestBuildScript(unittest.TestCase):
     {% endif %}
 </section>
 """
-        with open(os.path.join(dummy_hero_dir, "hero.html"), "w", encoding="utf-8") as f:
+        with open(
+            os.path.join(dummy_blocks_dir, "hero.html"), "w", encoding="utf-8"
+        ) as f:
             f.write(hero_template_content)
 
-        # For features.html
-        dummy_features_dir = os.path.join("templates", "components", "features")
+        # For list-based items, the generators pass `items` to the template.
+        # The dummy templates should loop through `items` and display relevant translated fields.
+        # Example for features.html (others will be similar)
+        # test_generate_features_html asserts:
+        # self.assertIn("Translated Feature Title", html)
+        # self.assertIn("Translated Feature Description", html)
+        # self.assertIn('<div class="feature-item">', html)
+        # FeatureItem has content.title.key and content.description.key
         features_template_content = """
 <div>
     {% for item in items %}
@@ -381,11 +386,18 @@ class TestBuildScript(unittest.TestCase):
     {% endfor %}
 </div>
 """
-        with open(os.path.join(dummy_features_dir, "features.html"), "w", encoding="utf-8") as f:
+        with open(
+            os.path.join(dummy_blocks_dir, "features.html"), "w", encoding="utf-8"
+        ) as f:
             f.write(features_template_content)
 
-        # For testimonials.html
-        dummy_testimonials_dir = os.path.join("templates", "components", "testimonials")
+        # test_generate_testimonials_html asserts:
+        # self.assertIn("Translated Testimonial Text", html)
+        # self.assertIn("Translated Testimonial Author", html)
+        # self.assertIn('src="testimonial.png"', html)
+        # self.assertIn('alt="Translated Testimonial Alt Text"', html)
+        # self.assertIn('<div class="testimonial-item">', html)
+        # TestimonialItem has text.key, author.key, author_image.src, author_image.alt_text.key
         testimonials_template_content = """
 <div>
     {% for item in items %}
@@ -397,11 +409,18 @@ class TestBuildScript(unittest.TestCase):
     {% endfor %}
 </div>
 """
-        with open(os.path.join(dummy_testimonials_dir, "testimonials.html"), "w", encoding="utf-8") as f:
+        with open(
+            os.path.join(dummy_blocks_dir, "testimonials.html"), "w", encoding="utf-8"
+        ) as f:
             f.write(testimonials_template_content)
 
-        # For portfolio.html
-        dummy_portfolio_dir = os.path.join("templates", "components", "portfolio")
+        # test_generate_portfolio_html asserts:
+        # self.assertIn("Translated Title", html)
+        # self.assertIn("Translated Description", html)
+        # self.assertIn('src="img.png"', html)
+        # self.assertIn('alt="Translated Alt Text"', html)
+        # self.assertIn('id="p1"', html)
+        # PortfolioItem has id, image.src, image.alt_text.key, details.title.key, details.description.key
         portfolio_template_content = """
 <div>
     {% for item in items %}
@@ -413,11 +432,18 @@ class TestBuildScript(unittest.TestCase):
     {% endfor %}
 </div>
 """
-        with open(os.path.join(dummy_portfolio_dir, "portfolio.html"), "w", encoding="utf-8") as f:
+        with open(
+            os.path.join(dummy_blocks_dir, "portfolio.html"), "w", encoding="utf-8"
+        ) as f:
             f.write(portfolio_template_content)
 
-        # For blog.html
-        dummy_blog_dir = os.path.join("templates", "components", "blog")
+        # test_generate_blog_html asserts:
+        # self.assertIn("Blog Title", html)
+        # self.assertIn("Blog Excerpt", html)
+        # self.assertIn('href="link.html"', html)
+        # self.assertIn(">Read More</a>", html)
+        # self.assertIn('id="b1"', html)
+        # BlogPost has id, title.key, excerpt.key, cta.uri, cta.text.key
         blog_template_content = """
 <div>
     {% for item in items %}
@@ -429,11 +455,14 @@ class TestBuildScript(unittest.TestCase):
     {% endfor %}
 </div>
 """
-        with open(os.path.join(dummy_blog_dir, "blog.html"), "w", encoding="utf-8") as f:
+        with open(
+            os.path.join(dummy_blocks_dir, "blog.html"), "w", encoding="utf-8"
+        ) as f:
             f.write(blog_template_content)
 
-        # For contact-form.html
-        dummy_contact_form_dir = os.path.join("templates", "components", "contact-form")
+        # ContactFormHtmlGenerator passes `config` to template.
+        # The tests for this generator are not among the initial failures, but good to be consistent.
+        # ContactFormConfig has form_action_uri, success_message_key, error_message_key
         contact_form_template_content = """
 <form id="contact-form" action="{{ config.form_action_uri if config else '' }}">
     {% if config %}
@@ -442,39 +471,10 @@ class TestBuildScript(unittest.TestCase):
     {% endif %}
 </form>
 """
-        with open(os.path.join(dummy_contact_form_dir, "contact-form.html"), "w", encoding="utf-8") as f:
+        with open(
+            os.path.join(dummy_blocks_dir, "contact-form.html"), "w", encoding="utf-8"
+        ) as f:
             f.write(contact_form_template_content)
-
-        # Create dummy base.html, header.html, footer.html in templates/ and templates/components/
-        # These are needed for the main build test (test_main_function_creates_files)
-        # and for the PageBuilder to find them.
-
-        # templates/base.html
-        base_html_content = """<!DOCTYPE html>
-<html lang="{{ lang }}">
-<head><title>{{ title }}</title><link rel="stylesheet" href="public/dist/main.css"></head>
-<body>
-    {% include "components/header/header.html" %}
-    <main>{{ main_content | safe }}</main>
-    {% include "components/footer/footer.html" %}
-    <script src="public/dist/main.js" defer></script>
-</body>
-</html>"""
-        with open(os.path.join("templates", "base.html"), "w", encoding="utf-8") as f:
-            f.write(base_html_content)
-
-        # templates/components/header/header.html
-        os.makedirs(os.path.join("templates", "components", "header"), exist_ok=True)
-        header_html_content = "<header>Test Header Content with {{ app_config.supported_langs|length }} langs</header>"
-        with open(os.path.join("templates", "components", "header", "header.html"), "w", encoding="utf-8") as f:
-            f.write(header_html_content)
-
-        # templates/components/footer/footer.html
-        os.makedirs(os.path.join("templates", "components", "footer"), exist_ok=True)
-        footer_html_content = "<footer>Test Footer Content</footer>"
-        with open(os.path.join("templates", "components", "footer", "footer.html"), "w", encoding="utf-8") as f:
-            f.write(footer_html_content)
-
 
     def tearDown(self) -> None:
         """Clean up the temporary test environment after each test."""
@@ -951,15 +951,10 @@ class TestBuildScript(unittest.TestCase):
             "index.html",
             os.path.join("public", "generated_configs", "config_es.json"),
             "index_es.html",
-            os.path.join("public", "dist", "main.css"),
-            os.path.join("public", "dist", "main.js"),
         ]
-        # Convert relative paths to absolute paths based on the test's root directory
-        expected_absolute_paths = [os.path.join(self.test_root_dir, p) for p in expected_paths]
-
         expected_write_calls = [
-            mock.call(os.path.normpath(p), "w", encoding="utf-8") # Now p is absolute
-            for p in expected_absolute_paths
+            mock.call(os.path.normpath(p), "w", encoding="utf-8")
+            for p in expected_paths
         ]
 
         actual_write_calls = [

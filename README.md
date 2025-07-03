@@ -23,6 +23,10 @@ Before you begin, ensure you have the following installed:
 - **Node.js** (for running npm scripts, primarily for Protocol Buffer generation)
 - **pip** (Python package installer)
 - **npm** (Node package manager, usually comes with Node.js)
+- **Python** (version 3.8+ recommended)
+- **Node.js** (for running npm scripts, primarily for Protocol Buffer generation)
+- **pip** (Python package installer)
+- **npm** (Node package manager, usually comes with Node.js)
 
 ### Installation
 
@@ -116,6 +120,12 @@ Modify `public/config.json` to change:
 - `blocks`: The list and order of HTML blocks to include in the pages.
 - `navigation_data_file`: Path to the JSON file containing navigation link data.
 - Other settings as new features (like theming, analytics) are added.
+- `site_name_key`: I18n key for the site name (used in `<title>`).
+- `default_lang`: The default language for the site (e.g., "en"). Files for this language will be named `index.html`.
+- `supported_langs`: A list of language codes (e.g., `["en", "es"]`) for which pages will be generated.
+- `blocks`: The list and order of HTML blocks to include in the pages.
+- `navigation_data_file`: Path to the JSON file containing navigation link data.
+- Other settings as new features (like theming, analytics) are added.
 
 ### Dynamic Content
 
@@ -123,6 +133,7 @@ Modify `public/config.json` to change:
 
 ### Translations
 
+- Add or modify translation keys and values in the JSON files within `public/locales/` (e.g., `public/locales/en.json`).
 - Add or modify translation keys and values in the JSON files within `public/locales/` (e.g., `public/locales/en.json`).
 
 ### Styles

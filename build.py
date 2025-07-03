@@ -8,10 +8,10 @@ import os
 import sys
 from typing import Any, Dict, List, Optional
 
+from google.protobuf import descriptor_pool
 from google.protobuf.message import Message
+from google.protobuf.message_factory import GetMessageClass
 from jinja2 import Environment, FileSystemLoader
-
-from generated.common_pb2 import I18nString
 
 # Ensure the project root (and thus 'generated' directory) is in the Python path
 # This allows for direct execution of this script.
@@ -28,13 +28,7 @@ if generated_dir not in sys.path:
 from build_protocols.config_management import DefaultAppConfigManager
 from build_protocols.data_loading import InMemoryDataCache, JsonProtoDataLoader
 from build_protocols.html_generation import (
-    BlogHtmlGenerator,
-    ContactFormHtmlGenerator,
-    DnaVisualizerHtmlGenerator,  # Added import
-    FeaturesHtmlGenerator,
-    HeroHtmlGenerator,
-    PortfolioHtmlGenerator,
-    TestimonialsHtmlGenerator,
+    HTML_GENERATOR_REGISTRY,
 )
 from build_protocols.interfaces import (
     AppConfigManager,
@@ -47,13 +41,7 @@ from build_protocols.interfaces import (
 )
 from build_protocols.page_assembly import DefaultPageBuilder
 from build_protocols.translation import DefaultTranslationProvider
-from generated.blog_post_pb2 import BlogPost
-from generated.contact_form_config_pb2 import ContactFormConfig
-from generated.feature_item_pb2 import FeatureItem
-from generated.hero_item_pb2 import HeroItem
 from generated.nav_item_pb2 import Navigation
-from generated.portfolio_item_pb2 import PortfolioItem
-from generated.testimonial_item_pb2 import TestimonialItem
 
 
 class BuildOrchestrator:
@@ -63,6 +51,8 @@ class BuildOrchestrator:
     This class coordinates the loading of configurations, data, and translations,
     and then assembles HTML pages for each supported language.
     """
+
+    PROTO_PACKAGE_NAME = "website_content.v1"
 
     def __init__(
         self,
@@ -98,138 +88,6 @@ class BuildOrchestrator:
         self.app_config: Dict[str, Any] = {}
         self.nav_proto_data: Optional[Navigation] = None
 
-    def _bundle_component_css(self) -> None:
-        """Finds all component CSS files and bundles them into a single file."""
-        print("Bundling component CSS files...")
-        component_css_dir = os.path.join(project_root, "templates", "components")
-        output_dir = os.path.join(project_root, "public", "dist")
-        output_file_path = os.path.join(output_dir, "main.css")
-
-        os.makedirs(output_dir, exist_ok=True)
-        css_contents = []
-
-        for component_name in os.listdir(component_css_dir):
-            component_dir_path = os.path.join(component_css_dir, component_name)
-            if os.path.isdir(component_dir_path):
-                css_file_path = os.path.join(component_dir_path, f"{component_name}.css")
-                if os.path.exists(css_file_path):
-                    try:
-                        with open(css_file_path, "r", encoding="utf-8") as f:
-                            css_contents.append(f.read())
-                        print(f"Read CSS from: {css_file_path}")
-                    except IOError as e:
-                        print(f"Error reading CSS file {css_file_path}: {e}")
-
-        if not css_contents:
-            print("No component CSS files found to bundle.")
-            # Create an empty main.css if no components have CSS
-            # to avoid missing file errors if base.html links to it.
-            try:
-                with open(output_file_path, "w", encoding="utf-8") as f:
-                    f.write("/* No component CSS found or bundled. */")
-                print(f"Created empty CSS bundle: {output_file_path}")
-            except IOError as e:
-                print(f"Error creating empty CSS bundle {output_file_path}: {e}")
-            return
-
-        try:
-            with open(output_file_path, "w", encoding="utf-8") as outfile:
-                outfile.write("\n\n/* --- Component CSS Bundle --- */\n\n")
-                for content in css_contents:
-                    outfile.write(content)
-                    outfile.write("\n\n/* --- End of component CSS --- */\n\n")
-            print(f"Successfully bundled CSS to: {output_file_path}")
-        except IOError as e:
-            print(f"Error writing bundled CSS to {output_file_path}: {e}")
-
-    def _bundle_component_js(self) -> None:
-        """Finds all component JS files and shared JS, bundles them."""
-        print("Bundling JavaScript files...")
-        js_files_to_bundle = []
-
-        # 1. Component-specific JS
-        component_js_dir = os.path.join(project_root, "templates", "components")
-        for component_name in os.listdir(component_js_dir):
-            component_dir_path = os.path.join(component_js_dir, component_name)
-            if os.path.isdir(component_dir_path):
-                js_file_path = os.path.join(component_dir_path, f"{component_name}.js")
-                if os.path.exists(js_file_path):
-                    js_files_to_bundle.append(js_file_path)
-                    print(f"Found component JS: {js_file_path}")
-
-        # 2. Shared/Global JS
-        shared_js_dir = os.path.join(project_root, "public", "js")
-
-        # Order of shared JS is important:
-        # 1. Default theme for SADS
-        # 2. SADS engine
-        # 3. Main application logic (app.js)
-        # 4. Component-specific JS (added earlier)
-
-        sads_default_theme_path = os.path.join(shared_js_dir, "sads-default-theme.js")
-        if os.path.exists(sads_default_theme_path):
-            js_files_to_bundle.insert(0, sads_default_theme_path)
-            print(f"Found SADS Default Theme JS: {sads_default_theme_path}")
-        else:
-            print(f"Warning: SADS Default Theme JS not found at {sads_default_theme_path}")
-
-        sads_engine_path = os.path.join(shared_js_dir, "sads-style-engine.js")
-        if os.path.exists(sads_engine_path):
-            # Insert after default theme if present, otherwise at the beginning
-            insert_idx = 1 if sads_default_theme_path in js_files_to_bundle else 0
-            js_files_to_bundle.insert(insert_idx, sads_engine_path)
-            print(f"Found SADS Engine JS: {sads_engine_path}")
-        else:
-            print(f"Warning: SADS Engine JS not found at {sads_engine_path}")
-
-        app_js_path = os.path.join(shared_js_dir, "app.js")
-        if os.path.exists(app_js_path):
-            # Insert after default theme and SADS engine if present
-            insert_idx = 0
-            if sads_default_theme_path in js_files_to_bundle:
-                insert_idx +=1
-            if sads_engine_path in js_files_to_bundle:
-                insert_idx +=1
-            js_files_to_bundle.insert(insert_idx, app_js_path)
-            print(f"Found shared App JS: {app_js_path}")
-        else:
-            print(f"Warning: App JS not found at {app_js_path}")
-
-        output_dir = os.path.join(project_root, "public", "dist")
-        output_file_path = os.path.join(output_dir, "main.js")
-        os.makedirs(output_dir, exist_ok=True)
-
-        if not js_files_to_bundle:
-            print("No JavaScript files found to bundle.")
-            try:
-                with open(output_file_path, "w", encoding="utf-8") as f:
-                    f.write("// No JavaScript files found or bundled.")
-                print(f"Created empty JS bundle: {output_file_path}")
-            except IOError as e:
-                print(f"Error creating empty JS bundle {output_file_path}: {e}")
-            return
-
-        js_contents = []
-        for file_path in js_files_to_bundle:
-            try:
-                with open(file_path, "r", encoding="utf-8") as f:
-                    js_contents.append(f.read())
-            except IOError as e:
-                print(f"Error reading JS file {file_path}: {e}")
-
-        try:
-            with open(output_file_path, "w", encoding="utf-8") as outfile:
-                outfile.write("\n// --- JavaScript Bundle --- //\n\n")
-                for i, content in enumerate(js_contents):
-                    original_path = js_files_to_bundle[i]
-                    outfile.write(f"\n// --- Source: {os.path.basename(original_path)} --- //\n")
-                    outfile.write(content)
-                    outfile.write("\n// --- End Source --- //\n\n")
-            print(f"Successfully bundled JavaScript to: {output_file_path}")
-        except IOError as e:
-            print(f"Error writing bundled JavaScript to {output_file_path}: {e}")
-
-
     def load_initial_configurations(self) -> None:
         """Loads base configurations like app config and navigation data.
 
@@ -243,11 +101,9 @@ class BuildOrchestrator:
         # The DataLoader is generic (Message), but here we expect Navigation.
         # A type: ignore is used as the generic loader's signature doesn't
         # specifically guarantee Navigation without more complex generics.
-        self.nav_proto_data = (
-            self.data_loader.load_dynamic_single_item_data(
-                nav_data_file,
-                Navigation,  # type: ignore
-            )
+        self.nav_proto_data = self.data_loader.load_dynamic_single_item_data(
+            nav_data_file,
+            Navigation,  # type: ignore
         )
 
     def _process_language(
@@ -263,10 +119,8 @@ class BuildOrchestrator:
 
         self._generate_language_specific_config(lang, translations)
 
-        assembled_main_content = (
-            self._assemble_main_content_for_lang(
-                lang, translations, dynamic_data_loaders_config
-            )
+        assembled_main_content = self._assemble_main_content_for_lang(
+            lang, translations, dynamic_data_loaders_config
         )
 
         page_title = translations.get("page_title_default", "Simple Landing Page")
@@ -279,7 +133,6 @@ class BuildOrchestrator:
             main_content=assembled_main_content,
             navigation_items=navigation_items,
             page_title=page_title,
-            app_config=self.app_config, # Pass app_config
         )
 
         output_filename = f"index_{lang}.html"
@@ -296,52 +149,50 @@ class BuildOrchestrator:
         supported language to generate the respective HTML output.
         """
         self.load_initial_configurations()
-        self._bundle_component_css() # Bundle CSS
-        self._bundle_component_js() # Bundle JS
 
         supported_langs: List[str] = self.app_config.get(
             "supported_langs", ["en", "es"]
         )
         default_lang: str = self.app_config.get("default_lang", "en")
 
-        # Mapping of message type names (from config) to actual protobuf classes
-        proto_message_types = {
-            "PortfolioItem": PortfolioItem,
-            "BlogPost": BlogPost,
-            "FeatureItem": FeatureItem,
-            "TestimonialItem": TestimonialItem,
-            "HeroItem": HeroItem,
-            "ContactFormConfig": ContactFormConfig,
-            "Navigation": Navigation,
-            "None": I18nString,
-        }
-
         # Get block data loader configuration from app_config
         block_loaders_config_raw = self.app_config.get("block_data_loaders", {})
 
         # Resolve message_type_name to actual message_type class
         dynamic_data_loaders_config_resolved = {}
+        pool = descriptor_pool.Default()
+
         for block_name, config_item in block_loaders_config_raw.items():
             message_type_name = config_item.get("message_type_name")
-            message_type_class = None # Default to None
+            if not message_type_name:
+                print(
+                    f"Warning: Missing 'message_type_name' for block '{block_name}'. Skipping."
+                )
+                continue
 
-            if message_type_name: # If a message_type_name is provided
-                message_type_class = proto_message_types.get(message_type_name)
-                if not message_type_class:
-                    print(f"Warning: Unknown message_type_name '{message_type_name}' provided for block '{block_name}'. Skipping data loading for this block.")
-                    # We still add it to resolved_item_config so it can be processed by a generator if one exists
-                    # The generator will receive no data or handle this case.
-                    resolved_item_config = config_item.copy()
-                    resolved_item_config["message_type"] = None # Indicate no valid type
-                    dynamic_data_loaders_config_resolved[block_name] = resolved_item_config
-                    continue # Skip to next item in block_loaders_config_raw
-            # If message_type_name was empty, or if it was valid and message_type_class was found:
+            full_message_name = f"{self.PROTO_PACKAGE_NAME}.{message_type_name}"
+            descriptor = pool.FindMessageTypeByName(full_message_name)
+
+            if descriptor is None:
+                print(
+                    f"Warning: Could not find protobuf message type '{full_message_name}' for block '{block_name}'. Ensure .proto files are compiled and imported. Skipping."
+                )
+                continue
+
+            message_type_class = GetMessageClass(descriptor)
+            if not message_type_class:  # Should not happen if descriptor is found
+                print(
+                    f"Warning: Could not get message class for '{full_message_name}' for block '{block_name}'. Skipping."
+                )
+                continue
+
+            # Create a new config dict for resolved types to avoid modifying original app_config
             resolved_item_config = config_item.copy()
-            resolved_item_config["message_type"] = message_type_class # Will be None if message_type_name was empty or invalid but allowed
+            resolved_item_config["message_type"] = message_type_class
             dynamic_data_loaders_config_resolved[block_name] = resolved_item_config
 
         self.data_cache.preload_data(
-            dynamic_data_loaders_config_resolved, self.data_loader # data_loader and cache should handle message_type being None
+            dynamic_data_loaders_config_resolved, self.data_loader
         )
 
         os.makedirs("public/generated_configs", exist_ok=True)
@@ -350,17 +201,21 @@ class BuildOrchestrator:
         processed_nav_items = []
         if self.nav_proto_data:
             for item in self.nav_proto_data.items:
-                processed_nav_items.append({
-                    "label": {"key": item.label.key}, # Pass the key for translation in template
-                    "href": item.href,
-                    "animation_hint": item.animation_hint
-                })
+                processed_nav_items.append(
+                    {
+                        "label": {
+                            "key": item.label.key
+                        },  # Pass the key for translation in template
+                        "href": item.href,
+                        "animation_hint": item.animation_hint,
+                    }
+                )
 
         for lang in supported_langs:
             self._process_language(
                 lang=lang,
                 default_lang=default_lang,
-                dynamic_data_loaders_config=dynamic_data_loaders_config_resolved, # Use resolved config
+                dynamic_data_loaders_config=dynamic_data_loaders_config_resolved,  # Use resolved config
                 navigation_items=processed_nav_items,
             )
 
@@ -381,17 +236,13 @@ class BuildOrchestrator:
         # This method prints errors to stdout rather than raising an IOError
         # directly to allow the build process to continue for other languages
         # if one configuration file fails to write.
-        lang_specific_config = (
-            self.app_config_manager.generate_language_config(
-                base_config=self.app_config,
-                nav_data=self.nav_proto_data,
-                translations=translations,
-                lang=lang,
-            )
+        lang_specific_config = self.app_config_manager.generate_language_config(
+            base_config=self.app_config,
+            nav_data=self.nav_proto_data,
+            translations=translations,
+            lang=lang,
         )
-        generated_config_path = (
-            f"public/generated_configs/config_{lang}.json"
-        )
+        generated_config_path = f"public/generated_configs/config_{lang}.json"
         try:
             with open(generated_config_path, "w", encoding="utf-8") as config_file:
                 json.dump(
@@ -404,8 +255,7 @@ class BuildOrchestrator:
         except IOError as e:
             # Consider logging this error instead of just printing.
             print(
-                f"Error writing language-specific config "
-                f"{generated_config_path}: {e}"
+                f"Error writing language-specific config {generated_config_path}: {e}"
             )
 
     def _assemble_main_content_for_lang(
@@ -589,7 +439,8 @@ def main() -> None:
     """
     # Initialize Jinja2 Environment
     jinja_env = Environment(
-        loader=FileSystemLoader("templates"), autoescape=True  # Enable autoescaping
+        loader=FileSystemLoader("templates"),
+        autoescape=True,  # Enable autoescaping
     )
 
     # Instantiate service components with more descriptive names
@@ -606,14 +457,10 @@ def main() -> None:
 
     # Map block filenames to their specific HTML generator instances
     # Pass jinja_env to each generator
+    # Ensure all generator modules are imported so decorators run before this.
     html_generator_instances: Dict[str, HtmlBlockGenerator] = {
-        "portfolio.html": PortfolioHtmlGenerator(jinja_env=jinja_env),
-        "blog.html": BlogHtmlGenerator(jinja_env=jinja_env),
-        "features.html": FeaturesHtmlGenerator(jinja_env=jinja_env),
-        "testimonials.html": TestimonialsHtmlGenerator(jinja_env=jinja_env),
-        "hero.html": HeroHtmlGenerator(jinja_env=jinja_env),
-        "contact-form.html": ContactFormHtmlGenerator(jinja_env=jinja_env),
-        "dna-visualizer.html": DnaVisualizerHtmlGenerator(jinja_env=jinja_env), # Added generator
+        block_name: GeneratorClass(jinja_env=jinja_env)
+        for block_name, GeneratorClass in HTML_GENERATOR_REGISTRY.items()
     }
 
     # Create and run the orchestrator

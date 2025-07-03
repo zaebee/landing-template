@@ -56,7 +56,7 @@
 
 ---
 
-# Project Development Notes for AI Agents
+## Project Development Notes for AI Agents
 
 ## Styling Approach (SADS Experiment)
 
@@ -69,4 +69,5 @@ This project uses a hybrid styling system:
   - To modify the appearance of these SADS components, you will primarily edit their HTML `data-sads-*` attributes.
   - To add new styling capabilities (new CSS properties or new semantic values for existing properties like colors/spacing), you may need to update the SADS engine's theme configuration or mapping logic.
   - **Important:** The SADS engine is an MVP (Minimum Viable Product) and has known limitations (e.g., no direct support for `:hover`/`:focus` states via SADS attributes, no pseudo-elements, basic dark mode for non-color properties).
-  - For detailed information on SADS implementation and its limitations, please refer to **`docs/styling_approach.md`**.
+
+  - # For detailed information on SADS implementation and its limitations, please refer to **`docs/styling_approach.md`**
