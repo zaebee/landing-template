@@ -274,8 +274,8 @@ The diagram illustrates the data flow and component interactions within the `bui
    - **Replace Placeholder**: Injects the generated block HTML into the block's template (where placeholders like `{{portfolio_items}}` are defined).
    - **Translate Block Content**: Uses `DefaultTranslationProvider` to translate any `data-i18n` tags within the combined block content.
 
-6. **Output (Green Node)**:
-    * **`index_lang.html`**: The final, fully assembled, and translated HTML pages for each supported language (e.g., `index.html`, `index_es.html`).
+8. **Output (Green Node)**:
+   - **`index_lang.html`**: The final, fully assembled, and translated HTML pages for each supported language (e.g., `index.html`, `index_es.html`).
 
 This modular, service-oriented architecture allows for clear separation of concerns: data loading, translation, HTML generation for specific blocks, and overall page assembly are handled by distinct components, orchestrated by `BuildOrchestrator`.
 This setup ensures that data handling is strongly typed and structured, improving maintainability and reducing potential errors. The build process is configuration-driven and supports internationalization.

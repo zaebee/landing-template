@@ -64,6 +64,7 @@ This project uses a hybrid styling system:
 
 - **Header & Footer:** Styled with traditional CSS located in their component directories (`templates/components/header/header.css`, etc.).
 - **Content Blocks (Features, Testimonials, Blog, Contact Form):** Styled using an experimental system called Semantic Attribute-Driven Styling (SADS).
+
   - Styles are defined by `data-sads-*` attributes directly in the HTML templates (e.g., `templates/components/features/features.html`).
   - A JavaScript engine (`public/js/sads-style-engine.js`) parses these attributes and dynamically generates CSS rules.
   - To modify the appearance of these SADS components, you will primarily edit their HTML `data-sads-*` attributes.

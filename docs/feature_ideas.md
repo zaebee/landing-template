@@ -108,12 +108,12 @@ The table below offers a quick glance at all proposed features, their intended f
 
   - **Configuration (`public/config.json`)**: - Add an `analytics` object, e.g.:
     `json
-      "analytics": {
-        "provider": "google_analytics", // or "plausible", "none"
-        "tracking_id": "UA-XXXXX-Y", // for GA
-        "domain": "yourdomain.com" // for Plausible
-      }
-      `
+  "analytics": {
+    "provider": "google_analytics", // or "plausible", "none"
+    "tracking_id": "UA-XXXXX-Y", // for GA
+    "domain": "yourdomain.com" // for Plausible
+  }
+  `
 
 - **Build Script (`build.py`)**:
   - In `assemble_translated_page` (or a similar function that constructs the final HTML), check the `analytics` config.
@@ -226,7 +226,6 @@ The table below offers a quick glance at all proposed features, their intended f
             }
             ```
 
-
 - **Data (`data/site_meta.json` or similar)**:
   - A new JSON file to hold site-wide default social meta tags, structured according to `SocialMetaTags`.
   - Potentially extend `hero_item.json` or other page-specific data files to include an optional `social_meta_tags` field if per-page customization beyond simple title/description is desired for specific blocks that might define a "page". For initial implementation, site-wide defaults applied to each generated index page would be simpler.
@@ -259,16 +258,16 @@ The table below offers a quick glance at all proposed features, their intended f
 
   - **Configuration (`public/config.json`)**: - Add a `theme` object:
     `json
-      "theme": {
-        "name": "dark", // or "light", "custom"
-        "settings": { // Optional, for "custom" theme
-          "primary_color": "#1a73e8",
-          "secondary_color": "#f0f0f0",
-          "background_color": "#121212",
-          "text_color": "#e8eaed"
-        }
-      }
-      `
+  "theme": {
+    "name": "dark", // or "light", "custom"
+    "settings": { // Optional, for "custom" theme
+      "primary_color": "#1a73e8",
+      "secondary_color": "#f0f0f0",
+      "background_color": "#121212",
+      "text_color": "#e8eaed"
+    }
+  }
+  `
     =======
 
   - **Configuration (`public/config.json`)**:
@@ -290,19 +289,20 @@ The table below offers a quick glance at all proposed features, their intended f
 > > > > > > > main
 
 - **CSS**:
+
   - Define CSS variables in `public/style.css` for common elements (e.g., `--primary-color`, `--background-color`, `--text-color`).
   - Create alternative theme stylesheets (e.g., `public/themes/dark.css`, `public/themes/light.css`) that override these variables or provide entirely different styles.
 
 - **Build Script (`build.py`)**:
   <<<<<<< HEAD - In `BuildOrchestrator.build_all_languages()` or `DefaultPageBuilder.assemble_translated_page()`: - Read the `theme` configuration from `app_config`. - If `theme.name` points to a predefined theme, inject a `<link>` tag for the corresponding theme CSS file (e.g., `<link rel="stylesheet" href="themes/dark.css">`) into the `<head>`. - Alternatively, if `theme.settings` are provided, generate a `<style>` block in the `<head>` that defines the CSS variables:
   `html
-        <style>
-          :root {
-            --primary-color: #1a73e8;
-            /* ... other variables ... */
-          }
-        </style>
-        ` - Add a class to the `<body>` tag, e.g., `<body class="theme-dark">`
+      <style>
+        :root {
+          --primary-color: #1a73e8;
+          /* ... other variables ... */
+        }
+      </style>
+      ` - Add a class to the `<body>` tag, e.g., `<body class="theme-dark">`
   =======
 
       - In `BuildOrchestrator.build_all_languages()` or `DefaultPageBuilder.assemble_translated_page()`:
