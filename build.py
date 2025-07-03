@@ -30,11 +30,11 @@ from build_protocols.data_loading import InMemoryDataCache, JsonProtoDataLoader
 from build_protocols.html_generation import (
     BlogHtmlGenerator,
     ContactFormHtmlGenerator,
+    DnaVisualizerHtmlGenerator,  # Added import
     FeaturesHtmlGenerator,
     HeroHtmlGenerator,
     PortfolioHtmlGenerator,
     TestimonialsHtmlGenerator,
-    DnaVisualizerHtmlGenerator, # Added import
 )
 from build_protocols.interfaces import (
     AppConfigManager,
