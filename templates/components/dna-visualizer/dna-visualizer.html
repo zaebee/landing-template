@@ -1,0 +1,23 @@
+<div 
+  class="dna-sequence-block" 
+  data-sads-component="dna-visualizer"
+  {# 
+    The data-sequence attribute will provide the DNA string for the JS.
+    If dna_sequence_data is passed from the build system and has a sequence_string, use it.
+    Otherwise, provide a default or example sequence.
+    For initial setup, we can hardcode an example here if not using server-side data yet for this.
+    Example: data-sequence="ATGCGTTA"
+  #}
+  {% if dna_sequence_data and dna_sequence_data.sequence_string %}
+  data-sequence="{{ dna_sequence_data.sequence_string }}"
+  {% else %}
+  data-sequence="GATTACA" {# Default example sequence if none provided from server #}
+  {% endif %}
+>
+  <h3 class="dna-sequence-title" data-i18n="dna_visualizer_title" data-sads-element="title">
+    {{ translations.get('dna_visualizer_title', 'DNA Sequence') }}
+  </h3>
+  <div class="dna-sequence" data-sads-element="sequence-container" data-sads-layout-type="flex" data-sads-flex-direction="row" data-sads-gap="xxs">
+    <!-- Nucleotides will be dynamically injected here by dna-visualizer.js -->
+  </div>
+</div>
