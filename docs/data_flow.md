@@ -114,9 +114,9 @@ graph TD
     C_PROTO[Input: proto/*.proto] --> D_PROTOC[Tool: protoc];
     D_PROTOC --> E_STUBS[Generated: generated/*.py];
     E_STUBS --> DATA_LOADER[Service: JsonProtoDataLoader];
-    F_BLOCKS[Input: blocks/*.html] --> ORCHESTRATOR;
+    F_BLOCKS[Input: templates/components/*/*.html] --> ORCHESTRATOR;
     G_LOCALES[Input: public/locales/*.json] --> TRANS_PROVIDER[Service: DefaultTranslationProvider];
-    H_BASE_HTML[Input: index.html Base Template] --> PAGE_BUILDER[Service: DefaultPageBuilder];
+    H_BASE_HTML[Input: templates/base.html Base Template] --> PAGE_BUILDER[Service: DefaultPageBuilder];
 
     DATA_LOADER -- Protobuf Objects --> DATA_CACHE[Service: InMemoryDataCache];
     DATA_CACHE -- Cached Data --> ORCHESTRATOR;
@@ -207,9 +207,9 @@ The diagram illustrates the data flow and component interactions within the `bui
     * **`public/config.json`**: Main configuration file (site settings, languages, blocks to use).
     * **`data/*.json`**: JSON files containing content for dynamic blocks (e.g., hero text, portfolio items).
     * **`proto/*.proto`**: Protocol Buffer definitions that define the schema for the data in `data/*.json`.
-    * **`blocks/*.html`**: HTML template files for individual content blocks.
+    * **`templates/components/*/*.html`**: HTML template files for individual content components.
     * **`public/locales/*.json`**: JSON files with translations for different languages.
-    * **`index.html` (Base Template)**: The main HTML file providing the overall page structure (header, footer).
+    * **`templates/base.html` (Base Template)**: The main HTML file providing the overall page structure.
 
 2. **Initial Processing & Tools**:
     * **`protoc` (Orange Node)**: The Protocol Buffer compiler. It processes `.proto` files.
@@ -219,8 +219,8 @@ The diagram illustrates the data flow and component interactions within the `bui
     * **`JsonProtoDataLoader`**: Reads JSON data from `data/*.json`, validates it against the Protobuf stubs (`generated/*.py`), and converts it into Python Protobuf objects.
     * **`InMemoryDataCache`**: Stores the loaded Protobuf objects in memory to avoid redundant loading.
     * **`DefaultTranslationProvider`**: Loads translations from `public/locales/*.json` and provides functions to translate text and HTML content.
-    * **`DefaultPageBuilder`**: Manages the overall HTML page structure. It extracts header/footer from the base `index.html` and assembles the final page with processed blocks.
-    * **`HtmlBlockGenerators` (e.g., `HeroHtmlGenerator`, `PortfolioHtmlGenerator`)**: A collection of classes, each responsible for generating the specific HTML for a type of content block (e.g., rendering portfolio items into HTML).
+    * **`DefaultPageBuilder`**: Manages the overall HTML page structure. It uses the base `templates/base.html` and assembles the final page with processed component HTML.
+    * **`HtmlBlockGenerators` (e.g., `HeroHtmlGenerator`, `PortfolioHtmlGenerator`)**: A collection of classes, each responsible for generating the specific HTML for a type of content component (e.g., rendering portfolio items into HTML using templates from `templates/components/`).
 
 4. **`BuildOrchestrator` (Dark Blue Node)**: The central component in `build.py`.
     * It initializes and coordinates all services.
@@ -234,12 +234,11 @@ The diagram illustrates the data flow and component interactions within the `bui
         * **Assemble Full Page**: Uses `DefaultPageBuilder` to combine the translated header, footer, and the assembled main content into a complete HTML page.
         * **Write Output HTML**: Saves the generated page to a file (e.g., `index_en.html`).
 
-5. **Assemble Main Content Per Language (Light Grey Subgraph)**: This process is executed by `BuildOrchestrator` for each block within each language.
-    * **Load Block Template**: Reads the HTML template for the current block from `blocks/`.
-    * **Get Cached Data**: Retrieves the relevant Protobuf data for this block from `InMemoryDataCache`.
-    * **Generate HTML for Block**: Passes the data and translations to the appropriate `HtmlBlockGenerator` (e.g., `PortfolioHtmlGenerator`) to produce the HTML for that specific block.
-    * **Replace Placeholder**: Injects the generated block HTML into the block's template (where placeholders like `{{portfolio_items}}` are defined).
-    * **Translate Block Content**: Uses `DefaultTranslationProvider` to translate any `data-i18n` tags within the combined block content.
+5. **Assemble Main Content Per Language (Light Grey Subgraph)**: This process is executed by `BuildOrchestrator` for each component specified in `config.json`.
+    * **Load Component Template**: `HtmlBlockGenerator` loads its specific template from `templates/components/<component_name>/<component_name>.html`.
+    * **Get Cached Data**: Retrieves the relevant Protobuf data for this component from `InMemoryDataCache`.
+    * **Generate HTML for Component**: Passes the data and translations to the appropriate `HtmlBlockGenerator` to produce the HTML for that specific component.
+    * **Translate Component Content**: Jinja templates within components use the `translations` object to directly include translated strings. Further `data-i18n` tags for client-side translation might also be present.
 
 6. **Output (Green Node)**:
     * **`index_lang.html`**: The final, fully assembled, and translated HTML pages for each supported language (e.g., `index.html`, `index_es.html`).
