@@ -23,6 +23,14 @@ if generated_dir not in sys.path:
 
 # Application-specific imports (Protobuf and services)
 # Generated Protobuf message class imports
+from generated.blog_post_pb2 import BlogPost
+from generated.contact_form_config_pb2 import ContactFormConfig
+from generated.feature_item_pb2 import FeatureItem
+from generated.hero_item_pb2 import HeroItem
+from generated.nav_item_pb2 import Navigation
+from generated.portfolio_item_pb2 import PortfolioItem
+from generated.testimonial_item_pb2 import TestimonialItem
+
 from build_protocols.config_management import DefaultAppConfigManager
 from build_protocols.data_loading import InMemoryDataCache, JsonProtoDataLoader
 from build_protocols.html_generation import (
@@ -44,13 +52,6 @@ from build_protocols.interfaces import (
 )
 from build_protocols.page_assembly import DefaultPageBuilder
 from build_protocols.translation import DefaultTranslationProvider
-from generated.blog_post_pb2 import BlogPost
-from generated.contact_form_config_pb2 import ContactFormConfig
-from generated.feature_item_pb2 import FeatureItem
-from generated.hero_item_pb2 import HeroItem
-from generated.nav_item_pb2 import Navigation
-from generated.portfolio_item_pb2 import PortfolioItem
-from generated.testimonial_item_pb2 import TestimonialItem
 
 
 class BuildOrchestrator:

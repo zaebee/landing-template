@@ -1,0 +1,5 @@
+# Ignore HTML files with complex Jinja templating that confuse the Prettier parser
+templates/components/blog/blog.html
+templates/components/contact-form/contact-form.html
+templates/components/features/features.html
+templates/components/testimonials/testimonials.html
