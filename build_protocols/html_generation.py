@@ -142,7 +142,7 @@ class TestimonialsHtmlGenerator(BaseHtmlGenerator):
 
 
 @register_html_generator(
-    block_name="features.html", template_to_render="blocks/features.html"
+    block_name="features.html", template_to_render="components/features/features.html"
 )  # data_key="items" is default
 class FeaturesHtmlGenerator(BaseHtmlGenerator):
     """Generates HTML for a list of feature items using Jinja2."""

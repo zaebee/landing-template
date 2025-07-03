@@ -96,6 +96,11 @@ class TestBuildScript(unittest.TestCase):
             os.path.join(self.test_root_dir, "templates", "components", "blog"),
             exist_ok=True,
         )
+        # Ensure directories for component-specific templates also exist for tests
+        os.makedirs(
+            os.path.join(self.test_root_dir, "templates", "components", "features"),
+            exist_ok=True,
+        )
 
     def _instantiate_services(self) -> None:
         """Instantiates common service components used in tests."""
@@ -394,6 +399,19 @@ class TestBuildScript(unittest.TestCase):
 """
         with open(
             os.path.join(dummy_blocks_dir, "features.html"), "w", encoding="utf-8"
+        ) as f:
+            f.write(features_template_content)
+        # Also create the SADS version of features.html for the test_generate_features_html
+        # as BlogHtmlGenerator now points to "components/features/features.html"
+        dummy_components_features_dir = os.path.join(
+            self.test_root_dir, "templates", "components", "features"
+        )
+        # The content can be the same as features_template_content for now,
+        # as test_generate_features_html assertions are content-based.
+        with open(
+            os.path.join(dummy_components_features_dir, "features.html"),
+            "w",
+            encoding="utf-8",
         ) as f:
             f.write(features_template_content)
 
