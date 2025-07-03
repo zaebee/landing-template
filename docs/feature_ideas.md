@@ -108,12 +108,12 @@ The table below offers a quick glance at all proposed features, their intended f
 
   - **Configuration (`public/config.json`)**: - Add an `analytics` object, e.g.:
     `json
-  "analytics": {
-    "provider": "google_analytics", // or "plausible", "none"
-    "tracking_id": "UA-XXXXX-Y", // for GA
-    "domain": "yourdomain.com" // for Plausible
-  }
-  `
+"analytics": {
+  "provider": "google_analytics", // or "plausible", "none"
+  "tracking_id": "UA-XXXXX-Y", // for GA
+  "domain": "yourdomain.com" // for Plausible
+}
+`
 
 - **Build Script (`build.py`)**:
 
