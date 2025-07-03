@@ -15,333 +15,273 @@
 
     <title>Simple Landing Page</title>
     <link href="public/style.css" rel="stylesheet" />
-
   </head>
   <body>
     <header>
-  <nav>
-    <div class="logo">
-      <a href="#" data-i18n="logo_text"
-        >Logo</a
+      <nav>
+        <div class="logo">
+          <a href="#" data-i18n="logo_text">Logo</a>
+        </div>
+        <button
+          aria-expanded="false"
+          aria-label="Toggle menu"
+          class="hamburger-menu"
+        >
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+        </button>
+        <div class="nav-items">
+          <ul>
+            <li>
+              <a href="#" data-i18n="nav_home">Home</a>
+            </li>
+
+            <li>
+              <a href="#features" data-i18n="nav_features">Features</a>
+            </li>
+
+            <li>
+              <a href="#testimonials" data-i18n="nav_testimonials"
+                >Testimonials</a
+              >
+            </li>
+
+            <li>
+              <a href="#portfolio" data-i18n="nav_portfolio">Portfolio</a>
+            </li>
+
+            <li>
+              <a href="#blog" data-i18n="nav_blog">Blog</a>
+            </li>
+          </ul>
+          <button aria-label="Switch to Dark Mode" id="dark-mode-toggle">
+            🌙
+          </button>
+          <div id="language-switcher">
+            <button data-lang="en">EN</button>
+            <button data-lang="es">ES</button>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h1>hero_title_v1</h1>
+        <p>hero_subtitle_v1</p>
+        <a href="#signup" class="cta-button">hero_cta_v1</a>
+        <!-- Selected variation: hero_v1 -->
+      </section>
+      <section
+        class="features"
+        id="features"
+        data-aos="fade-up"
+        data-aos-delay="100"
       >
-    </div>
-    <button
-      aria-expanded="false"
-      aria-label="Toggle menu"
-      class="hamburger-menu"
-    >
-      <span class="hamburger-bar"></span>
-      <span class="hamburger-bar"></span>
-      <span class="hamburger-bar"></span>
-    </button>
-    <div class="nav-items">
-      <ul>
+        <h2 data-i18n="features_title">Our Features</h2>
+        <div class="feature-list">
+          <div class="feature-item">
+            <h3>Feature One</h3>
+            <p>Description of feature one.</p>
+          </div>
 
-        <li>
-          <a href="#" data-i18n="nav_home"
-            >Home</a
+          <div class="feature-item">
+            <h3>Feature Two</h3>
+            <p>Description of feature two.</p>
+          </div>
+
+          <div class="feature-item">
+            <h3>Feature Three</h3>
+            <p>Description of feature three.</p>
+          </div>
+        </div>
+      </section>
+      <section class="testimonials" id="testimonials">
+        <h2 data-i18n="testimonials_title">What Our Users Say</h2>
+        <div class="testimonial-list">
+          <div class="testimonial-item">
+            <img
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
+              alt="User 1 Photo"
+            />
+            <p>
+              "This is the best service I have ever used. Highly recommended!"
+            </p>
+            <h4>- Jane Doe</h4>
+          </div>
+
+          <div class="testimonial-item">
+            <img
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
+              alt="User 2 Photo"
+            />
+            <p>
+              "Amazing features and incredible support. My business has grown
+              significantly."
+            </p>
+            <h4>- John Smith</h4>
+          </div>
+
+          <div class="testimonial-item">
+            <img
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
+              alt="User 3 Photo"
+            />
+            <p>
+              "A game-changer for our workflow. Simple, effective, and
+              reliable."
+            </p>
+            <h4>- Alice Brown</h4>
+          </div>
+        </div>
+      </section>
+      <section class="portfolio" id="portfolio">
+        <h2 data-i18n="portfolio_title">Our Work</h2>
+        <div class="portfolio-grid">
+          <div class="portfolio-item" id="project1">
+            <img
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
+              alt="Portfolio image"
+            />
+            <h3>Project Alpha</h3>
+            <p>Description for Project Alpha.</p>
+          </div>
+
+          <div class="portfolio-item" id="project2">
+            <img
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
+              alt="Portfolio image"
+            />
+            <h3>Project Beta</h3>
+            <p>Description for Project Beta.</p>
+          </div>
+
+          <div class="portfolio-item" id="project3">
+            <img
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
+              alt="Portfolio image"
+            />
+            <h3>Project Gamma</h3>
+            <p>Description for Project Gamma.</p>
+          </div>
+
+          <div class="portfolio-item" id="project4">
+            <img
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
+              alt="Portfolio image"
+            />
+            <h3>Project Delta</h3>
+            <p>Description for Project Delta.</p>
+          </div>
+        </div>
+      </section>
+      <section class="blog" id="blog">
+        <h2 data-i18n="blog_title">Latest Posts</h2>
+        <div class="blog-list">
+          <div class="blog-item" id="post1">
+            <h3>Alpha Post Title</h3>
+            <p>Excerpt for Alpha blog post...</p>
+            <a href="#post1-link" class="read-more">Read Alpha Post</a>
+          </div>
+
+          <div class="blog-item" id="post2">
+            <h3>Beta Post Title</h3>
+            <p>Excerpt for Beta blog post...</p>
+            <a href="#post2-link" class="read-more">Read Beta Post</a>
+          </div>
+
+          <div class="blog-item" id="post3">
+            <h3>Gamma Post Title</h3>
+            <p>Excerpt for Gamma blog post...</p>
+            <a href="#post3-link" class="read-more">Read Gamma Post</a>
+          </div>
+        </div>
+      </section>
+      <section class="contact-form" id="contact">
+        <h2 data-i18n="contact_title">Contact Us</h2>
+        <form
+          id="contactForm"
+          method="POST"
+          action="https://formspree.io/f/xgvyddyg"
+          data-form-action-url="https://formspree.io/f/xgvyddyg"
+          data-success-message="Message sent successfully! Thank you."
+          data-error-message="Oops! Something went wrong. Please try again."
+        >
+          <label for="name" data-i18n="contact_name_label">Name:</label>
+          <input type="text" id="name" name="name" required />
+
+          <label for="email" data-i18n="contact_email_label">Email:</label>
+          <input type="email" id="email" name="email" required />
+
+          <label for="message" data-i18n="contact_message_label"
+            >Message:</label
           >
-        </li>
+          <textarea id="message" name="message" rows="4" required></textarea>
 
-        <li>
-          <a href="#features" data-i18n="nav_features"
-            >Features</a
-          >
-        </li>
+          <button type="submit" data-i18n="contact_send_button">
+            Send Message
+          </button>
+          <div id="contactFormStatus" role="status"></div>
+        </form>
+      </section>
 
-        <li>
-          <a href="#testimonials" data-i18n="nav_testimonials"
-            >Testimonials</a
-          >
-        </li>
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const form = document.getElementById("contactForm");
+          if (form) {
+            const statusDiv = document.getElementById("contactFormStatus");
+            // These are now read from the form's data attributes, which are set by Jinja2
+            const actionUrl = form.dataset.formActionUrl;
+            const successMessage = form.dataset.successMessage;
+            const errorMessage = form.dataset.errorMessage;
 
-        <li>
-          <a href="#portfolio" data-i18n="nav_portfolio"
-            >Portfolio</a
-          >
-        </li>
+            form.addEventListener("submit", function (event) {
+              event.preventDefault();
+              const formData = new FormData(form);
+              statusDiv.textContent = "";
+              statusDiv.classList.remove("success", "error");
 
-        <li>
-          <a href="#blog" data-i18n="nav_blog"
-            >Blog</a
-          >
-        </li>
-
-      </ul>
-      <button aria-label="Switch to Dark Mode" id="dark-mode-toggle">🌙</button>
-      <div id="language-switcher">
-        <button data-lang="en">EN</button>
-        <button data-lang="es">ES</button>
-      </div>
-    </div>
-  </nav>
-</header>
-
-    <main><section class="hero">
-
-  <h1>hero_title_v1</h1>
-  <p>hero_subtitle_v1</p>
-  <a href="#signup" class="cta-button"
-    >hero_cta_v1</a
-  >
-  <!-- Selected variation: hero_v1 -->
-
-</section>
-<section class="features" id="features" data-aos="fade-up" data-aos-delay="100">
-  <h2 data-i18n="features_title">
-    Our Features
-  </h2>
-  <div class="feature-list">
-
-    <div class="feature-item">
-
-      <h3>
-        Feature One
-      </h3>
-      <p>
-        Description of feature one.
-      </p>
-    </div>
-
-    <div class="feature-item">
-
-      <h3>
-        Feature Two
-      </h3>
-      <p>
-        Description of feature two.
-      </p>
-    </div>
-
-    <div class="feature-item">
-
-      <h3>
-        Feature Three
-      </h3>
-      <p>
-        Description of feature three.
-      </p>
-    </div>
-
-  </div>
-</section>
-<section class="testimonials" id="testimonials">
-  <h2 data-i18n="testimonials_title">
-    What Our Users Say
-  </h2>
-  <div class="testimonial-list">
-
-    <div class="testimonial-item">
-      <img
-        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
-        alt="User 1 Photo"
-      />
-      <p>"This is the best service I have ever used. Highly recommended!"</p>
-      <h4>- Jane Doe</h4>
-    </div>
-
-    <div class="testimonial-item">
-      <img
-        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
-        alt="User 2 Photo"
-      />
-      <p>"Amazing features and incredible support. My business has grown significantly."</p>
-      <h4>- John Smith</h4>
-    </div>
-
-    <div class="testimonial-item">
-      <img
-        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
-        alt="User 3 Photo"
-      />
-      <p>"A game-changer for our workflow. Simple, effective, and reliable."</p>
-      <h4>- Alice Brown</h4>
-    </div>
-
-  </div>
-</section>
-<section class="portfolio" id="portfolio">
-  <h2 data-i18n="portfolio_title">
-    Our Work
-  </h2>
-  <div class="portfolio-grid">
-
-    <div class="portfolio-item" id="project1">
-      <img
-        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
-        alt="Portfolio image"
-      />
-      <h3>
-        Project Alpha
-      </h3>
-      <p>
-        Description for Project Alpha.
-      </p>
-    </div>
-
-    <div class="portfolio-item" id="project2">
-      <img
-        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
-        alt="Portfolio image"
-      />
-      <h3>
-        Project Beta
-      </h3>
-      <p>
-        Description for Project Beta.
-      </p>
-    </div>
-
-    <div class="portfolio-item" id="project3">
-      <img
-        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
-        alt="Portfolio image"
-      />
-      <h3>
-        Project Gamma
-      </h3>
-      <p>
-        Description for Project Gamma.
-      </p>
-    </div>
-
-    <div class="portfolio-item" id="project4">
-      <img
-        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
-        alt="Portfolio image"
-      />
-      <h3>
-        Project Delta
-      </h3>
-      <p>
-        Description for Project Delta.
-      </p>
-    </div>
-
-  </div>
-</section>
-<section class="blog" id="blog">
-  <h2 data-i18n="blog_title">
-    Latest Posts
-  </h2>
-  <div class="blog-list">
-
-    <div class="blog-item" id="post1">
-      <h3>Alpha Post Title</h3>
-      <p>Excerpt for Alpha blog post...</p>
-      <a href="#post1-link" class="read-more"
-        >Read Alpha Post</a
-      >
-    </div>
-
-    <div class="blog-item" id="post2">
-      <h3>Beta Post Title</h3>
-      <p>Excerpt for Beta blog post...</p>
-      <a href="#post2-link" class="read-more"
-        >Read Beta Post</a
-      >
-    </div>
-
-    <div class="blog-item" id="post3">
-      <h3>Gamma Post Title</h3>
-      <p>Excerpt for Gamma blog post...</p>
-      <a href="#post3-link" class="read-more"
-        >Read Gamma Post</a
-      >
-    </div>
-
-  </div>
-</section>
-<section class="contact-form" id="contact">
-  <h2 data-i18n="contact_title">
-    Contact Us
-  </h2>
-  <form
-    id="contactForm"
-    method="POST"
-    action="https://formspree.io/f/xgvyddyg"
-    data-form-action-url="https://formspree.io/f/xgvyddyg"
-    data-success-message="Message sent successfully! Thank you."
-    data-error-message="Oops! Something went wrong. Please try again."
-  >
-    <label for="name" data-i18n="contact_name_label"
-      >Name:</label
-    >
-    <input type="text" id="name" name="name" required />
-
-    <label for="email" data-i18n="contact_email_label"
-      >Email:</label
-    >
-    <input type="email" id="email" name="email" required />
-
-    <label for="message" data-i18n="contact_message_label"
-      >Message:</label
-    >
-    <textarea id="message" name="message" rows="4" required></textarea>
-
-    <button type="submit" data-i18n="contact_send_button">
-      Send Message
-    </button>
-    <div id="contactFormStatus" role="status"></div>
-  </form>
-</section>
-
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById("contactForm");
-    if (form) {
-      const statusDiv = document.getElementById("contactFormStatus");
-      // These are now read from the form's data attributes, which are set by Jinja2
-      const actionUrl = form.dataset.formActionUrl;
-      const successMessage = form.dataset.successMessage;
-      const errorMessage = form.dataset.errorMessage;
-
-      form.addEventListener("submit", function (event) {
-        event.preventDefault();
-        const formData = new FormData(form);
-        statusDiv.textContent = "";
-        statusDiv.classList.remove("success", "error");
-
-        fetch(actionUrl, {
-          method: "POST",
-          body: formData,
-          headers: {
-            Accept: "application/json",
-          },
-        })
-          .then((response) => {
-            if (response.ok) {
-              statusDiv.textContent = successMessage;
-              statusDiv.classList.add("success");
-              form.reset();
-            } else {
-              response.json().then((data) => {
-                if (Object.hasOwn(data, "errors")) {
-                  statusDiv.textContent = data["errors"]
-                    .map((error) => error["message"])
-                    .join(", ");
-                } else {
+              fetch(actionUrl, {
+                method: "POST",
+                body: formData,
+                headers: {
+                  Accept: "application/json",
+                },
+              })
+                .then((response) => {
+                  if (response.ok) {
+                    statusDiv.textContent = successMessage;
+                    statusDiv.classList.add("success");
+                    form.reset();
+                  } else {
+                    response.json().then((data) => {
+                      if (Object.hasOwn(data, "errors")) {
+                        statusDiv.textContent = data["errors"]
+                          .map((error) => error["message"])
+                          .join(", ");
+                      } else {
+                        statusDiv.textContent = errorMessage;
+                      }
+                      statusDiv.classList.add("error");
+                    });
+                  }
+                })
+                .catch((error) => {
                   statusDiv.textContent = errorMessage;
-                }
-                statusDiv.classList.add("error");
-              });
-            }
-          })
-          .catch((error) => {
-            statusDiv.textContent = errorMessage;
-            statusDiv.classList.add("error");
-          });
-      });
-    }
-  });
-</script></main>
+                  statusDiv.classList.add("error");
+                });
+            });
+          }
+        });
+      </script>
+    </main>
 
     <footer>
-  <p data-i18n="footer_text">
-    &amp;copy; 2024 Simple Landing Page. All rights reserved.
-  </p>
-</footer>
+      <p data-i18n="footer_text">
+        &amp;copy; 2024 Simple Landing Page. All rights reserved.
+      </p>
+    </footer>
     <script>
       // Dark Mode Toggle
       const darkModeToggle = document.getElementById("dark-mode-toggle");
@@ -495,6 +435,5 @@
         });
       }
     </script>
-
   </body>
 </html>
