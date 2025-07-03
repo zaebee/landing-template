@@ -12,7 +12,14 @@ The table below offers a quick glance at all proposed features, their intended f
 | :------------------------------------ | :---------------------------------------------------------------------------- | :------- | :----- | :----- |
 | Dynamic Sitemap Generation            | Automatically create `sitemap.xml` for improved SEO discoverability.          | High     | High   | Medium |
 | Automated Image Optimization          | Optimize images (compress, convert format) during build for performance.      | High     | High   | Medium |
+| Feature                               | Summary                                                                       | Priority | Impact | Effort |
+| :------------------------------------ | :---------------------------------------------------------------------------- | :------- | :----- | :----- |
+| Dynamic Sitemap Generation            | Automatically create `sitemap.xml` for improved SEO discoverability.          | High     | High   | Medium |
+| Automated Image Optimization          | Optimize images (compress, convert format) during build for performance.      | High     | High   | Medium |
 | Basic Analytics Integration           | Easily embed analytics tracking snippets (e.g., Google Analytics) via config. | High     | Medium | Low    |
+| Versioned Static Assets (CSS/JS)      | Append content hash/timestamp to static asset URLs for cache busting.         | High     | Medium | Low    |
+| A/B Testing for Hero Section          | Randomly select hero content at build time for simple A/B tests.              | Medium   | Medium | Medium |
+| Customizable Social Media Meta Tags   | Define Open Graph/Twitter tags for richer social media sharing.               | Medium   | Medium | Medium |
 | Versioned Static Assets (CSS/JS)      | Append content hash/timestamp to static asset URLs for cache busting.         | High     | Medium | Low    |
 | A/B Testing for Hero Section          | Randomly select hero content at build time for simple A/B tests.              | Medium   | Medium | Medium |
 | Customizable Social Media Meta Tags   | Define Open Graph/Twitter tags for richer social media sharing.               | Medium   | Medium | Medium |
@@ -70,20 +77,20 @@ The table below offers a quick glance at all proposed features, their intended f
             }
             ```
 
-  - **Build Script (`build.py`)**:
-    - Create a new service, e.g., `ImageOptimizer`.
-    - During data loading or just before HTML generation for blocks containing images (Hero, Portfolio, Testimonials):
-      - Identify image paths from Protobuf messages (e.g., `Image.src`).
-      - If optimization is enabled:
-        - Construct a new path for the optimized image in `image_optimization.output_dir`.
-        - If the optimized image doesn't exist or the source is newer:
-          - Use the chosen library to open the source image, resize (optional, could be another config), convert format (e.g., to WebP), and save it to the output directory with specified quality.
-        - Update the `src` field in the Protobuf message _in memory_ to point to the optimized image path.
-    - The HTML generation functions would then use these updated paths.
-  - **File Structure**: Original images might reside in `public/images/` (or specified in data files), and optimized versions would be saved to `public/optimized_images/`. The `.gitignore` should be updated to ignore the `optimized_images` directory.
-  - **Considerations**:
-    - Handling of external image URLs (skip optimization or attempt to download and optimize).
-    - Caching of optimized images to avoid reprocessing unchanged images.
+- **Build Script (`build.py`)**:
+  - Create a new service, e.g., `ImageOptimizer`.
+  - During data loading or just before HTML generation for blocks containing images (Hero, Portfolio, Testimonials):
+    - Identify image paths from Protobuf messages (e.g., `Image.src`).
+    - If optimization is enabled:
+      - Construct a new path for the optimized image in `image_optimization.output_dir`.
+      - If the optimized image doesn't exist or the source is newer:
+        - Use the chosen library to open the source image, resize (optional, could be another config), convert format (e.g., to WebP), and save it to the output directory with specified quality.
+      - Update the `src` field in the Protobuf message _in memory_ to point to the optimized image path.
+  - The HTML generation functions would then use these updated paths.
+- **File Structure**: Original images might reside in `public/images/` (or specified in data files), and optimized versions would be saved to `public/optimized_images/`. The `.gitignore` should be updated to ignore the `optimized_images` directory.
+- **Considerations**:
+  - Handling of external image URLs (skip optimization or attempt to download and optimize).
+  - Caching of optimized images to avoid reprocessing unchanged images.
 
 ---
 
@@ -99,22 +106,22 @@ The table below offers a quick glance at all proposed features, their intended f
   - Can be easily toggled on or off.
 - **Implementation Sketch**:
 
-  - **Configuration (`public/config.json`)**:
+  - **Configuration (`public/config.json`)**: - Add an `analytics` object, e.g.:
 
-    - Add an `analytics` object, e.g.:
+        ```json
+          "analytics": {
+            "provider": "google_analytics", // or "plausible", "none"
+            "tracking_id": "UA-XXXXX-Y", // for GA
+            "domain": "yourdomain.com" // for Plausible
+          }
+          ```
 
-            ```json
-            "analytics": {
-              "provider": "google_analytics", // or "plausible", "none"
-              "tracking_id": "UA-XXXXX-Y", // for GA
-              "domain": "yourdomain.com" // for Plausible
-            }
-            ```
+- **Build Script (`build.py`)**:
 
-  - **Build Script (`build.py`)**:
-    - In `assemble_translated_page` (or a similar function that constructs the final HTML), check the `analytics` config.
-    - If a provider is specified and configured, inject the appropriate JavaScript snippet into the `<head>` or near the closing `</body>` tag of each HTML page. The snippet would be a template string with placeholders for `tracking_id` or `domain`.
-  - **HTML Structure**: Ensure the base HTML template (`index.html`) has a clear placeholder or is structured so the script can easily inject the analytics snippet (e.g., before `</head>` or `</body>`).
+  - In `assemble_translated_page` (or a similar function that constructs the final HTML), check the `analytics` config.
+  - If a provider is specified and configured, inject the appropriate JavaScript snippet into the `<head>` or near the closing `</body>` tag of each HTML page. The snippet would be a template string with placeholders for `tracking_id` or `domain`.
+
+- **HTML Structure**: Ensure the base HTML template (`index.html`) has a clear placeholder or is structured so the script can easily inject the analytics snippet (e.g., before `</head>` or `</body>`).
 
 ---
 
@@ -156,12 +163,27 @@ The table below offers a quick glance at all proposed features, their intended f
             }
             ```
 
-  - **Helper Function**: A utility function `get_asset_version(file_path, method)` could be created to compute the version string.
+- **Helper Function**: A utility function `get_asset_version(file_path, method)` could be created to compute the version string.
 
 ---
 
 ### 5. A/B Testing for Hero Section
 
+- **Priority**: Medium
+- **Impact**: Medium
+- **Effort**: Medium
+- **Concept**: Allow content creators to define multiple versions of the hero section's content (headline, sub-headline, call-to-action text and link). At build time, one of these variations is randomly selected and injected into the generated HTML pages.
+- **Benefits**:
+  - Enables simple A/B testing of different messaging for the hero section to see which might lead to better engagement or conversion (though tracking would need to be implemented separately).
+  - Allows for easy rotation of hero content without manual HTML edits if multiple valid options exist.
+- **Implementation Sketch**:
+  - **Protobuf**: `hero_item.proto` was modified. `HeroItemContent` now defines the structure for a single variation (title, subtitle, CTA, `variation_id`). `HeroItem` now contains a list (`repeated`) of `HeroItemContent` messages and a `default_variation_id`.
+  - **Data**: `data/hero_item.json` was updated to provide a list of hero content variations. Each variation has a unique `variation_id`.
+  - **Build Script**: `build.py`'s `generate_hero_html` function was updated. It now loads the `HeroItem` data (which includes all variations). It then uses the `random.choice()` method to select one `HeroItemContent` variation from the list. The content of this selected variation is used to populate the hero block. A comment indicating the selected `variation_id` is added to the HTML for easier debugging or identification.
+  - **Future Enhancements**:
+    - Could be extended to allow selection based on an environment variable or a build parameter for more deterministic control over which variation is built.
+    - Client-side selection (e.g., via JavaScript) could also be an option for true runtime A/B testing, but this would require more significant changes and potentially a more complex data structure or client-side logic. The current implementation is build-time selection.
+    - Integration with analytics to track performance of each variation.
 - **Priority**: Medium
 - **Impact**: Medium
 - **Effort**: Medium
@@ -207,20 +229,20 @@ The table below offers a quick glance at all proposed features, their intended f
             }
             ```
 
-  - **Data (`data/site_meta.json` or similar)**:
-    - A new JSON file to hold site-wide default social meta tags, structured according to `SocialMetaTags`.
-    - Potentially extend `hero_item.json` or other page-specific data files to include an optional `social_meta_tags` field if per-page customization beyond simple title/description is desired for specific blocks that might define a "page". For initial implementation, site-wide defaults applied to each generated index page would be simpler.
-  - **Configuration (`public/config.json`)**:
-    - Reference the new `site_meta.json` data file.
-    - Possibly add a flag to enable/disable this feature.
-  - **Build Script (`build.py`)**:
-    - Load the default social meta tags.
-    - In `assemble_translated_page` (or where the `<head>` is constructed):
-      - Retrieve translated values for title, description from the social meta tags data.
-      - Construct and inject `<meta>` tags for Open Graph (e.g., `og:title`, `og:description`, `og:image`, `og:url`, `og:type`) and Twitter Card (e.g., `twitter:card`, `twitter:title`, `twitter:description`, `twitter:image`).
-      - The `og:url` would be the canonical URL for the page being generated.
-      - `og:type` could be defaulted to "website".
-      - If a page-specific title/description is available (e.g. from Hero block), it could override the default social meta tags for title/description.
+- **Data (`data/site_meta.json` or similar)**:
+  - A new JSON file to hold site-wide default social meta tags, structured according to `SocialMetaTags`.
+  - Potentially extend `hero_item.json` or other page-specific data files to include an optional `social_meta_tags` field if per-page customization beyond simple title/description is desired for specific blocks that might define a "page". For initial implementation, site-wide defaults applied to each generated index page would be simpler.
+- **Configuration (`public/config.json`)**:
+  - Reference the new `site_meta.json` data file.
+  - Possibly add a flag to enable/disable this feature.
+- **Build Script (`build.py`)**:
+  - Load the default social meta tags.
+  - In `assemble_translated_page` (or where the `<head>` is constructed):
+    - Retrieve translated values for title, description from the social meta tags data.
+    - Construct and inject `<meta>` tags for Open Graph (e.g., `og:title`, `og:description`, `og:image`, `og:url`, `og:type`) and Twitter Card (e.g., `twitter:card`, `twitter:title`, `twitter:description`, `twitter:image`).
+    - The `og:url` would be the canonical URL for the page being generated.
+    - `og:type` could be defaulted to "website".
+    - If a page-specific title/description is available (e.g. from Hero block), it could override the default social meta tags for title/description.
 
 ---
 
@@ -252,29 +274,29 @@ The table below offers a quick glance at all proposed features, their intended f
             }
             ```
 
-  - **CSS**:
-    - Define CSS variables in `public/style.css` for common elements (e.g., `--primary-color`, `--background-color`, `--text-color`).
-    - Create alternative theme stylesheets (e.g., `public/themes/dark.css`, `public/themes/light.css`) that override these variables or provide entirely different styles.
-  - **Build Script (`build.py`)**:
+- **CSS**:
 
-    - In `BuildOrchestrator.build_all_languages()` or `DefaultPageBuilder.assemble_translated_page()`:
+  - Define CSS variables in `public/style.css` for common elements (e.g., `--primary-color`, `--background-color`, `--text-color`).
+  - Create alternative theme stylesheets (e.g., `public/themes/dark.css`, `public/themes/light.css`) that override these variables or provide entirely different styles.
 
-      - Read the `theme` configuration from `app_config`.
-      - If `theme.name` points to a predefined theme, inject a `<link>` tag for the corresponding theme CSS file (e.g., `<link rel="stylesheet" href="themes/dark.css">`) into the `<head>`.
-      - Alternatively, if `theme.settings` are provided, generate a `<style>` block in the `<head>` that defines the CSS variables:
+- **Build Script (`build.py`)**: - In `BuildOrchestrator.build_all_languages()` or `DefaultPageBuilder.assemble_translated_page()`:
 
-                ```html
-                <style>
-                  :root {
-                    --primary-color: #1a73e8;
-                    /* ... other variables ... */
-                  }
-                </style>
-                ```
+        - Read the `theme` configuration from `app_config`.
+        - If `theme.name` points to a predefined theme, inject a `<link>` tag for the corresponding theme CSS file (e.g., `<link rel="stylesheet" href="themes/dark.css">`) into the `<head>`.
+        - Alternatively, if `theme.settings` are provided, generate a `<style>` block in the `<head>` that defines the CSS variables:
 
-      - Add a class to the `<body>` tag, e.g., `<body class="theme-dark">`.
+                  ```html
+                  <style>
+                    :root {
+                      --primary-color: #1a73e8;
+                      /* ... other variables ... */
+                    }
+                  </style>
+                  ```
 
-  - **HTML Structure**: Ensure HTML elements use classes or CSS variables that can be targeted by themes.
+        - Add a class to the `<body>` tag, e.g., `<body class="theme-dark">`.
+
+- **HTML Structure**: Ensure HTML elements use classes or CSS variables that can be targeted by themes.
 
 ---
 

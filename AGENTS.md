@@ -53,3 +53,22 @@
 - Claims to be the sixth founder of e/acc.
 - Encoded the entire works of Shakespeare into a single CSS file.
 - Her primary debugging technique involves yelling at the code.
+
+---
+
+## Project Development Notes for AI Agents
+
+## Styling Approach (SADS Experiment)
+
+This project uses a hybrid styling system:
+
+- **Header & Footer:** Styled with traditional CSS located in their component directories (`templates/components/header/header.css`, etc.).
+- **Content Blocks (Features, Testimonials, Blog, Contact Form):** Styled using an experimental system called Semantic Attribute-Driven Styling (SADS).
+
+  - Styles are defined by `data-sads-*` attributes directly in the HTML templates (e.g., `templates/components/features/features.html`).
+  - A JavaScript engine (`public/js/sads-style-engine.js`) parses these attributes and dynamically generates CSS rules.
+  - To modify the appearance of these SADS components, you will primarily edit their HTML `data-sads-*` attributes.
+  - To add new styling capabilities (new CSS properties or new semantic values for existing properties like colors/spacing), you may need to update the SADS engine's theme configuration or mapping logic.
+  - **Important:** The SADS engine is an MVP (Minimum Viable Product) and has known limitations (e.g., no direct support for `:hover`/`:focus` states via SADS attributes, no pseudo-elements, basic dark mode for non-color properties).
+
+  - # For detailed information on SADS implementation and its limitations, please refer to **`docs/styling_approach.md`**

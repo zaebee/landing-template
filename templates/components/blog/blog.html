@@ -1,0 +1,88 @@
+<section
+    data-sads-component="blog"
+    id="blog" {# Keep ID for potential deep linking #}
+    data-sads-padding="xl"
+    data-sads-text-align="center"
+    data-sads-bg-color="blog-section-bg"
+>
+  <h2
+    data-sads-element="title"
+    data-i18n="blog_title"
+    data-sads-margin-bottom="xl"
+    data-sads-font-size="xl"
+    data-sads-text-color="text-primary"
+  >
+    {{ translations.get('blog_title', 'Latest Posts') }}
+  </h2>
+  <div
+    data-sads-element="list"
+    data-sads-display="flex" {# Assuming layout-type="flex" implies display:flex; making it explicit #}
+    data-sads-flex-wrap="wrap"
+    data-sads-flex-justify="space-around" {# Or 'center' if items should group centrally before wrapping #}
+    data-sads-gap="m"
+    data-sads-max-width="content-container"
+    data-sads-margin="custom:0 auto" {# Standard centering block element with max-width #}
+    data-sads-responsive-rules='[
+        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "flexAlignItems": "center"}}
+    ]'
+  >
+    {% for post in items %}
+    <article {# Changed div to article for semantic correctness #}
+        data-sads-element="item"
+        id="{{ post.id if post.id else ('post-' ~ loop.index) }}" {# Ensure unique ID, fallback if post.id is missing #}
+        data-sads-bg-color="blog-item-bg"
+        data-sads-padding="l"
+        data-sads-border-radius="m"
+        data-sads-shadow="subtle" {# SADS Limitation: Dark mode shadow is not distinct from light mode via theme key. #}
+        data-sads-flex-basis="third-gap-m" {# Desktop: 3 items per row with 'm' gap accounted for in theme value #}
+        data-sads-text-align="left"
+        data-sads-box-sizing="border-box" {# Good practice for flex items with padding/border #}
+        data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+        ]'
+        {# SADS Limitation: Cannot style :last-child to remove margin-bottom on mobile. This would require either:
+             1. JS to add a specific class/attribute to the last item for SADS to target, or
+             2. A small global CSS rule for this specific case if SADS cannot handle it.
+             Given SADS current design, option 2 is more straightforward if this is critical.
+             Example global CSS:
+             @media (max-width: 768px) {
+                .sads-id-xxxx:last-child { // Assuming sads-id-xxxx is the class for items
+                    margin-bottom: 0 !important;
+                }
+             }
+             Alternatively, the SADS engine could be extended to support :last-child if such features are planned.
+        #}
+    >
+      <h3
+        data-sads-element="item-title"
+        data-sads-margin-top="none"
+        data-sads-text-color="text-accent"
+        data-sads-font-size="l" {# Default h3 size might be large, confirm from original CSS if specific #}
+      >
+        {{ translations.get(post.title.key, post.title.key) }}
+      </h3>
+      <p
+        data-sads-element="item-excerpt"
+        data-sads-font-size="s"
+        data-sads-text-color="text-secondary"
+        data-sads-margin-bottom="m"
+      >
+        {{ translations.get(post.excerpt.key, post.excerpt.key) }}
+      </p>
+      <a
+        data-sads-element="read-more-link"
+        href="{{ post.cta.uri }}"
+        data-sads-display="inline-block"
+        data-sads-text-color="text-accent"
+        data-sads-text-decoration="none"
+        data-sads-font-weight="bold"
+        {# TODO: SADS engine does not yet support hover:text-decoration:underline #}
+      >
+        {{ translations.get(post.cta.text.key, post.cta.text.key) }}</a
+      >
+    </article>
+    {% else %}
+    <!-- No blog posts provided -->
+    {% endfor %}
+  </div>
+</section>
