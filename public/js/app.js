@@ -1,47 +1,51 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Assuming sadsDefaultTheme is globally available from sads-default-theme.js
-    // and SADSEngine is globally available from sads-style-engine.js
-    if (typeof SADSEngine === 'undefined') {
-        console.error('SADS: SADSEngine not found. Make sure sads-style-engine.js is loaded.');
-        return;
-    }
+document.addEventListener("DOMContentLoaded", () => {
+  // Assuming sadsDefaultTheme is globally available from sads-default-theme.js
+  // and SADSEngine is globally available from sads-style-engine.js
+  if (typeof SADSEngine === "undefined") {
+    console.error(
+      "SADS: SADSEngine not found. Make sure sads-style-engine.js is loaded."
+    );
+    return;
+  }
 
-    let themeConfig = {};
-    if (typeof sadsDefaultTheme !== 'undefined') {
-        themeConfig = sadsDefaultTheme;
-    } else {
-        console.warn('SADS: sadsDefaultTheme not found. Using empty theme for engine initialization.');
-    }
+  let themeConfig = {};
+  if (typeof sadsDefaultTheme !== "undefined") {
+    themeConfig = sadsDefaultTheme;
+  } else {
+    console.warn(
+      "SADS: sadsDefaultTheme not found. Using empty theme for engine initialization."
+    );
+  }
 
-    const sadsEngine = new SADSEngine(themeConfig);
+  const sadsEngine = new SADSEngine(themeConfig);
 
-    const sadsComponents = document.querySelectorAll('[data-sads-component]');
-    sadsComponents.forEach(component => {
-        sadsEngine.applyStylesTo(component);
+  const sadsComponents = document.querySelectorAll("[data-sads-component]");
+  sadsComponents.forEach((component) => {
+    sadsEngine.applyStylesTo(component);
+  });
+
+  // Optional: Expose a function to re-apply styles if components are added dynamically
+  // and also for dark mode toggling.
+  window.sadsRefreshStyles = () => {
+    // Re-initialize the engine or update its theme if necessary before re-applying
+    // For this version, applyStylesTo should re-evaluate based on current body class for dark mode
+    const currentEngine = new SADSEngine(themeConfig); // Re-create to get fresh dark mode check
+    document.querySelectorAll("[data-sads-component]").forEach((component) => {
+      currentEngine.applyStylesTo(component);
     });
+  };
 
-    // Optional: Expose a function to re-apply styles if components are added dynamically
-    // and also for dark mode toggling.
-    window.sadsRefreshStyles = () => {
-        // Re-initialize the engine or update its theme if necessary before re-applying
-        // For this version, applyStylesTo should re-evaluate based on current body class for dark mode
-        const currentEngine = new SADSEngine(themeConfig); // Re-create to get fresh dark mode check
-        document.querySelectorAll('[data-sads-component]').forEach(component => {
-            currentEngine.applyStylesTo(component);
-        });
-    };
-
-    console.log('SADS: Engine initialized and styles applied to components.');
+  console.log("SADS: Engine initialized and styles applied to components.");
 });
 
 // Dark mode toggle functionality
 function toggleDarkMode() {
-    document.body.classList.toggle('dark-mode');
-    // Re-apply SADS styles as theme values might change based on dark mode
-    if (window.sadsRefreshStyles) {
-        window.sadsRefreshStyles(); // This will re-apply all SADS rules
-    }
-    console.log('SADS: Dark mode toggled. Styles refreshed.');
+  document.body.classList.toggle("dark-mode");
+  // Re-apply SADS styles as theme values might change based on dark mode
+  if (window.sadsRefreshStyles) {
+    window.sadsRefreshStyles(); // This will re-apply all SADS rules
+  }
+  console.log("SADS: Dark mode toggled. Styles refreshed.");
 }
 
 // Example: Make toggleDarkMode globally available for manual testing or attaching to a button

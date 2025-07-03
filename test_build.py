@@ -787,8 +787,8 @@ class TestBuildScript(unittest.TestCase):
         mock_gen_features_html,
         mock_gen_blog_html,
         mock_gen_portfolio_html,
-        mock_bundle_js, # Added mock_bundle_js
-        mock_bundle_css, # Added mock_bundle_css
+        mock_bundle_js,  # Added mock_bundle_js
+        mock_bundle_css,  # Added mock_bundle_css
         mock_assemble_page,
         # mock_extract_parts, # Removed as the method is no longer patched
         mock_generate_lang_config,
