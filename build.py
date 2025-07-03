@@ -9,6 +9,8 @@ import sys
 from typing import Any, Dict, List, Optional
 
 from google.protobuf.message import Message
+from google.protobuf import descriptor_pool
+from google.protobuf.message_factory import GetMessageClass
 from jinja2 import Environment, FileSystemLoader
 
 # Ensure the project root (and thus 'generated' directory) is in the Python path
@@ -60,6 +62,7 @@ class BuildOrchestrator:
     This class coordinates the loading of configurations, data, and translations,
     and then assembles HTML pages for each supported language.
     """
+    PROTO_PACKAGE_NAME = "website_content.v1"
 
     def __init__(
         self,
@@ -166,27 +169,29 @@ class BuildOrchestrator:
         )
         default_lang: str = self.app_config.get("default_lang", "en")
 
-        # Mapping of message type names (from config) to actual protobuf classes
-        proto_message_types = {
-            "PortfolioItem": PortfolioItem,
-            "BlogPost": BlogPost,
-            "FeatureItem": FeatureItem,
-            "TestimonialItem": TestimonialItem,
-            "HeroItem": HeroItem,
-            "ContactFormConfig": ContactFormConfig,
-            "Navigation": Navigation, # Added for completeness, though not in block_data_loaders
-        }
-
         # Get block data loader configuration from app_config
         block_loaders_config_raw = self.app_config.get("block_data_loaders", {})
 
         # Resolve message_type_name to actual message_type class
         dynamic_data_loaders_config_resolved = {}
+        pool = descriptor_pool.Default()
+
         for block_name, config_item in block_loaders_config_raw.items():
             message_type_name = config_item.get("message_type_name")
-            message_type_class = proto_message_types.get(message_type_name)
-            if not message_type_class:
-                print(f"Warning: Unknown message_type_name '{message_type_name}' for block '{block_name}'. Skipping.")
+            if not message_type_name:
+                print(f"Warning: Missing 'message_type_name' for block '{block_name}'. Skipping.")
+                continue
+
+            full_message_name = f"{self.PROTO_PACKAGE_NAME}.{message_type_name}"
+            descriptor = pool.FindMessageTypeByName(full_message_name)
+
+            if descriptor is None:
+                print(f"Warning: Could not find protobuf message type '{full_message_name}' for block '{block_name}'. Ensure .proto files are compiled and imported. Skipping.")
+                continue
+
+            message_type_class = GetMessageClass(descriptor)
+            if not message_type_class: # Should not happen if descriptor is found
+                print(f"Warning: Could not get message class for '{full_message_name}' for block '{block_name}'. Skipping.")
                 continue
 
             # Create a new config dict for resolved types to avoid modifying original app_config
