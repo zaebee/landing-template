@@ -25,7 +25,7 @@ if generated_dir not in sys.path:
 
 # Application-specific imports (Protobuf and services)
 # Generated Protobuf message class imports
-from build_protocols.asset_bundling import DefaultAssetBundler # Updated import
+from build_protocols.asset_bundling import DefaultAssetBundler  # Updated import
 from build_protocols.config_management import DefaultAppConfigManager
 from build_protocols.data_loading import InMemoryDataCache, JsonProtoDataLoader
 from build_protocols.html_generation import (
@@ -39,7 +39,7 @@ from build_protocols.html_generation import (
 )
 from build_protocols.interfaces import (
     AppConfigManager,
-    AssetBundler, # Added AssetBundler interface
+    AssetBundler,  # Added AssetBundler interface
     DataCache,
     DataLoader,
     HtmlBlockGenerator,
@@ -74,7 +74,7 @@ class BuildOrchestrator:
         data_cache: DataCache[Message],
         page_builder: PageBuilder,
         html_generators: Dict[str, HtmlBlockGenerator],
-        asset_bundler: AssetBundler, # Added asset_bundler
+        asset_bundler: AssetBundler,  # Added asset_bundler
     ):
         """Initializes the BuildOrchestrator with necessary service components.
 
@@ -98,7 +98,7 @@ class BuildOrchestrator:
         self.data_cache = data_cache
         self.page_builder = page_builder
         self.html_generators = html_generators
-        self.asset_bundler = asset_bundler # Store asset_bundler instance
+        self.asset_bundler = asset_bundler  # Store asset_bundler instance
 
         self.app_config: Dict[str, Any] = {}
         self.nav_proto_data: Optional[Navigation] = None
@@ -116,11 +116,9 @@ class BuildOrchestrator:
         # The DataLoader is generic (Message), but here we expect Navigation.
         # A type: ignore is used as the generic loader's signature doesn't
         # specifically guarantee Navigation without more complex generics.
-        self.nav_proto_data = (
-            self.data_loader.load_dynamic_single_item_data(
-                nav_data_file,
-                Navigation,  # type: ignore
-            )
+        self.nav_proto_data = self.data_loader.load_dynamic_single_item_data(
+            nav_data_file,
+            Navigation,  # type: ignore
         )
 
     def _process_language(
@@ -136,10 +134,8 @@ class BuildOrchestrator:
 
         self._generate_language_specific_config(lang, translations)
 
-        assembled_main_content = (
-            self._assemble_main_content_for_lang(
-                lang, translations, dynamic_data_loaders_config
-            )
+        assembled_main_content = self._assemble_main_content_for_lang(
+            lang, translations, dynamic_data_loaders_config
         )
 
         page_title = translations.get("page_title_default", "Simple Landing Page")
@@ -152,7 +148,7 @@ class BuildOrchestrator:
             main_content=assembled_main_content,
             navigation_items=navigation_items,
             page_title=page_title,
-            app_config=self.app_config, # Pass app_config
+            app_config=self.app_config,  # Pass app_config
         )
 
         output_filename = f"index_{lang}.html"
@@ -207,25 +203,34 @@ class BuildOrchestrator:
         dynamic_data_loaders_config_resolved = {}
         for block_name, config_item in block_loaders_config_raw.items():
             message_type_name = config_item.get("message_type_name")
-            message_type_class = None # Default to None
+            message_type_class = None  # Default to None
 
-            if message_type_name: # If a message_type_name is provided
+            if message_type_name:  # If a message_type_name is provided
                 message_type_class = proto_message_types.get(message_type_name)
                 if not message_type_class:
-                    print(f"Warning: Unknown message_type_name '{message_type_name}' provided for block '{block_name}'. Skipping data loading for this block.")
+                    print(
+                        f"Warning: Unknown message_type_name '{message_type_name}' provided for block '{block_name}'. Skipping data loading for this block."
+                    )
                     # We still add it to resolved_item_config so it can be processed by a generator if one exists
                     # The generator will receive no data or handle this case.
                     resolved_item_config = config_item.copy()
-                    resolved_item_config["message_type"] = None # Indicate no valid type
-                    dynamic_data_loaders_config_resolved[block_name] = resolved_item_config
-                    continue # Skip to next item in block_loaders_config_raw
+                    resolved_item_config["message_type"] = (
+                        None  # Indicate no valid type
+                    )
+                    dynamic_data_loaders_config_resolved[block_name] = (
+                        resolved_item_config
+                    )
+                    continue  # Skip to next item in block_loaders_config_raw
             # If message_type_name was empty, or if it was valid and message_type_class was found:
             resolved_item_config = config_item.copy()
-            resolved_item_config["message_type"] = message_type_class # Will be None if message_type_name was empty or invalid but allowed
+            resolved_item_config["message_type"] = (
+                message_type_class  # Will be None if message_type_name was empty or invalid but allowed
+            )
             dynamic_data_loaders_config_resolved[block_name] = resolved_item_config
 
         self.data_cache.preload_data(
-            dynamic_data_loaders_config_resolved, self.data_loader # data_loader and cache should handle message_type being None
+            dynamic_data_loaders_config_resolved,
+            self.data_loader,  # data_loader and cache should handle message_type being None
         )
 
         os.makedirs("public/generated_configs", exist_ok=True)
@@ -234,17 +239,21 @@ class BuildOrchestrator:
         processed_nav_items = []
         if self.nav_proto_data:
             for item in self.nav_proto_data.items:
-                processed_nav_items.append({
-                    "label": {"key": item.label.key}, # Pass the key for translation in template
-                    "href": item.href,
-                    "animation_hint": item.animation_hint
-                })
+                processed_nav_items.append(
+                    {
+                        "label": {
+                            "key": item.label.key
+                        },  # Pass the key for translation in template
+                        "href": item.href,
+                        "animation_hint": item.animation_hint,
+                    }
+                )
 
         for lang in supported_langs:
             self._process_language(
                 lang=lang,
                 default_lang=default_lang,
-                dynamic_data_loaders_config=dynamic_data_loaders_config_resolved, # Use resolved config
+                dynamic_data_loaders_config=dynamic_data_loaders_config_resolved,  # Use resolved config
                 navigation_items=processed_nav_items,
             )
 
@@ -265,17 +274,13 @@ class BuildOrchestrator:
         # This method prints errors to stdout rather than raising an IOError
         # directly to allow the build process to continue for other languages
         # if one configuration file fails to write.
-        lang_specific_config = (
-            self.app_config_manager.generate_language_config(
-                base_config=self.app_config,
-                nav_data=self.nav_proto_data,
-                translations=translations,
-                lang=lang,
-            )
+        lang_specific_config = self.app_config_manager.generate_language_config(
+            base_config=self.app_config,
+            nav_data=self.nav_proto_data,
+            translations=translations,
+            lang=lang,
         )
-        generated_config_path = (
-            f"public/generated_configs/config_{lang}.json"
-        )
+        generated_config_path = f"public/generated_configs/config_{lang}.json"
         try:
             with open(generated_config_path, "w", encoding="utf-8") as config_file:
                 json.dump(
@@ -487,7 +492,7 @@ def main() -> None:
         translation_provider=translation_provider_instance,
         jinja_env=jinja_env,  # Pass env to PageBuilder
     )
-    asset_bundler_instance = DefaultAssetBundler() # Instantiate AssetBundler
+    asset_bundler_instance = DefaultAssetBundler()  # Instantiate AssetBundler
 
     # Map block filenames to their specific HTML generator instances
     # Pass jinja_env to each generator
@@ -498,7 +503,9 @@ def main() -> None:
         "testimonials.html": TestimonialsHtmlGenerator(jinja_env=jinja_env),
         "hero.html": HeroHtmlGenerator(jinja_env=jinja_env),
         "contact-form.html": ContactFormHtmlGenerator(jinja_env=jinja_env),
-        "dna-visualizer.html": DnaVisualizerHtmlGenerator(jinja_env=jinja_env), # Added generator
+        "dna-visualizer.html": DnaVisualizerHtmlGenerator(
+            jinja_env=jinja_env
+        ),  # Added generator
     }
 
     # Create and run the orchestrator
@@ -509,7 +516,7 @@ def main() -> None:
         data_cache=data_cache_instance,
         page_builder=page_builder_instance,
         html_generators=html_generator_instances,
-        asset_bundler=asset_bundler_instance, # Pass AssetBundler instance
+        asset_bundler=asset_bundler_instance,  # Pass AssetBundler instance
     )
     orchestrator.build_all_languages()
 

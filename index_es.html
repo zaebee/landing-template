@@ -15,758 +15,706 @@
 
     <title>Simple Landing Page</title>
     <link href="public/dist/main.css" rel="stylesheet" />
-
   </head>
   <body>
     <header>
-  <nav>
-    <div class="logo">
-      <a href="#" data-i18n="logo_text"
-        >Logo ES</a
+      <nav>
+        <div class="logo">
+          <a href="#" data-i18n="logo_text">Logo ES</a>
+        </div>
+        <button
+          aria-expanded="false"
+          aria-label="Alternar menú"
+          class="hamburger-menu"
+        >
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+        </button>
+        <div class="nav-items">
+          <ul>
+            <li>
+              <a href="#" data-i18n="nav_home">Inicio</a>
+            </li>
+
+            <li>
+              <a href="#features" data-i18n="nav_features">Características</a>
+            </li>
+
+            <li>
+              <a href="#testimonials" data-i18n="nav_testimonials"
+                >Testimonios</a
+              >
+            </li>
+
+            <li>
+              <a href="#portfolio" data-i18n="nav_portfolio">Portafolio</a>
+            </li>
+
+            <li>
+              <a href="#blog" data-i18n="nav_blog">Blog</a>
+            </li>
+          </ul>
+          <button
+            aria-label="Alternar Modo Oscuro"
+            id="dark-mode-toggle"
+          ></button>
+          <div id="language-switcher">
+            <button data-lang="en">EN</button>
+
+            <button data-lang="es">ES</button>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h1>hero_title_v1</h1>
+        <p>hero_subtitle_v1</p>
+        <a href="#signup" class="cta-button">hero_cta_v1</a>
+        <!-- Selected variation: hero_v1 -->
+      </section>
+      <div
+        class="dna-sequence-block"
+        data-sads-component="dna-visualizer"
+        data-sequence="GATTACA"
       >
-    </div>
-    <button
-      aria-expanded="false"
-      aria-label="Alternar menú"
-
-      class="hamburger-menu"
-    >
-      <span class="hamburger-bar"></span>
-      <span class="hamburger-bar"></span>
-      <span class="hamburger-bar"></span>
-    </button>
-    <div class="nav-items">
-      <ul>
-
-        <li>
-          <a href="#" data-i18n="nav_home"
-            >Inicio</a
-          >
-        </li>
-
-        <li>
-          <a href="#features" data-i18n="nav_features"
-            >Características</a
-          >
-        </li>
-
-        <li>
-          <a href="#testimonials" data-i18n="nav_testimonials"
-            >Testimonios</a
-          >
-        </li>
-
-        <li>
-          <a href="#portfolio" data-i18n="nav_portfolio"
-            >Portafolio</a
-          >
-        </li>
-
-        <li>
-          <a href="#blog" data-i18n="nav_blog"
-            >Blog</a
-          >
-        </li>
-
-      </ul>
-      <button
-        aria-label="Alternar Modo Oscuro"
-        id="dark-mode-toggle"
-      >
-
-      </button>
-      <div id="language-switcher">
-
-        <button data-lang="en">EN</button>
-
-        <button data-lang="es">ES</button>
-
+        <h3
+          class="dna-sequence-title"
+          data-i18n="dna_visualizer_title"
+          data-sads-element="title"
+        >
+          DNA Sequence
+        </h3>
+        <div
+          class="dna-sequence"
+          data-sads-element="sequence-container"
+          data-sads-layout-type="flex"
+          data-sads-flex-direction="row"
+          data-sads-gap="xxs"
+        >
+          <!-- Nucleotides will be dynamically injected here by dna-visualizer.js -->
+        </div>
       </div>
-    </div>
-  </nav>
-</header>
-
-    <main><section class="hero">
-
-  <h1>hero_title_v1</h1>
-  <p>hero_subtitle_v1</p>
-  <a href="#signup" class="cta-button"
-    >hero_cta_v1</a
-  >
-  <!-- Selected variation: hero_v1 -->
-
-</section>
-<div
-  class="dna-sequence-block"
-  data-sads-component="dna-visualizer"
-
-
-  data-sequence="GATTACA"
-
->
-  <h3 class="dna-sequence-title" data-i18n="dna_visualizer_title" data-sads-element="title">
-    DNA Sequence
-  </h3>
-  <div class="dna-sequence" data-sads-element="sequence-container" data-sads-layout-type="flex" data-sads-flex-direction="row" data-sads-gap="xxs">
-    <!-- Nucleotides will be dynamically injected here by dna-visualizer.js -->
-  </div>
-</div>
-<section
-    data-sads-component="features"
-    id="features"
-    data-aos="fade-up"
-    data-aos-delay="100"
-    data-sads-padding="xxl"
-    data-sads-text-align="center"
-    data-sads-bg-color="surface"
->
-  <h2
-    data-sads-element="title"
-    data-i18n="features_title"
-    data-sads-margin-bottom="xl"
-    data-sads-font-size="xl"
-  >
-    Nuestras Características
-  </h2>
-  <div
-    data-sads-element="list"
-    data-sads-layout-type="flex"
-    data-sads-flex-wrap="wrap"
-    data-sads-flex-justify="space-around"
-    data-sads-gap="m"
-    data-sads-max-width="content-container"
-    data-sads-margin="auto"
-    data-sads-responsive-rules='[
+      <section
+        data-sads-component="features"
+        id="features"
+        data-aos="fade-up"
+        data-aos-delay="100"
+        data-sads-padding="xxl"
+        data-sads-text-align="center"
+        data-sads-bg-color="surface"
+      >
+        <h2
+          data-sads-element="title"
+          data-i18n="features_title"
+          data-sads-margin-bottom="xl"
+          data-sads-font-size="xl"
+        >
+          Nuestras Características
+        </h2>
+        <div
+          data-sads-element="list"
+          data-sads-layout-type="flex"
+          data-sads-flex-wrap="wrap"
+          data-sads-flex-justify="space-around"
+          data-sads-gap="m"
+          data-sads-max-width="content-container"
+          data-sads-margin="auto"
+          data-sads-responsive-rules='[
         {"breakpoint": "mobile", "styles": {"flexDirection": "column"}}
     ]'
-  >
-
-    <div
-        data-sads-element="item"
-        data-sads-bg-color="surface-accent"
-        data-sads-padding="l"
-        data-sads-border-radius="m"
-        data-sads-shadow="subtle"
-        data-sads-flex-basis="third-gap-m"
-
-        data-sads-text-align="left"
-        data-sads-responsive-rules='[
+        >
+          <div
+            data-sads-element="item"
+            data-sads-bg-color="surface-accent"
+            data-sads-padding="l"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-flex-basis="third-gap-m"
+            data-sads-text-align="left"
+            data-sads-responsive-rules='[
             {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
         ]'
+          >
+            <h3
+              data-sads-element="item-title"
+              data-sads-margin-top="none"
+              data-sads-text-color="text-accent"
+              data-sads-font-size="l"
+            >
+              Característica Uno
+            </h3>
+            <p
+              data-sads-element="item-description"
+              data-sads-font-size="default"
+            >
+              Descripción de la característica uno.
+            </p>
+          </div>
 
-    >
-
-      <h3
-        data-sads-element="item-title"
-        data-sads-margin-top="none"
-        data-sads-text-color="text-accent"
-        data-sads-font-size="l"
-      >
-        Característica Uno
-      </h3>
-      <p
-        data-sads-element="item-description"
-        data-sads-font-size="default"
-      >
-        Descripción de la característica uno.
-      </p>
-    </div>
-
-    <div
-        data-sads-element="item"
-        data-sads-bg-color="surface-accent"
-        data-sads-padding="l"
-        data-sads-border-radius="m"
-        data-sads-shadow="subtle"
-        data-sads-flex-basis="third-gap-m"
-
-        data-sads-text-align="left"
-        data-sads-responsive-rules='[
+          <div
+            data-sads-element="item"
+            data-sads-bg-color="surface-accent"
+            data-sads-padding="l"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-flex-basis="third-gap-m"
+            data-sads-text-align="left"
+            data-sads-responsive-rules='[
             {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
         ]'
+          >
+            <h3
+              data-sads-element="item-title"
+              data-sads-margin-top="none"
+              data-sads-text-color="text-accent"
+              data-sads-font-size="l"
+            >
+              Característica Dos
+            </h3>
+            <p
+              data-sads-element="item-description"
+              data-sads-font-size="default"
+            >
+              Descripción de la característica dos.
+            </p>
+          </div>
 
-    >
-
-      <h3
-        data-sads-element="item-title"
-        data-sads-margin-top="none"
-        data-sads-text-color="text-accent"
-        data-sads-font-size="l"
-      >
-        Característica Dos
-      </h3>
-      <p
-        data-sads-element="item-description"
-        data-sads-font-size="default"
-      >
-        Descripción de la característica dos.
-      </p>
-    </div>
-
-    <div
-        data-sads-element="item"
-        data-sads-bg-color="surface-accent"
-        data-sads-padding="l"
-        data-sads-border-radius="m"
-        data-sads-shadow="subtle"
-        data-sads-flex-basis="third-gap-m"
-
-        data-sads-text-align="left"
-        data-sads-responsive-rules='[
+          <div
+            data-sads-element="item"
+            data-sads-bg-color="surface-accent"
+            data-sads-padding="l"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-flex-basis="third-gap-m"
+            data-sads-text-align="left"
+            data-sads-responsive-rules='[
             {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
         ]'
-
-    >
-
-      <h3
-        data-sads-element="item-title"
-        data-sads-margin-top="none"
-        data-sads-text-color="text-accent"
-        data-sads-font-size="l"
-      >
-        Característica Tres
-      </h3>
-      <p
-        data-sads-element="item-description"
-        data-sads-font-size="default"
-      >
-        Descripción of la característica tres.
-      </p>
-    </div>
-
-  </div>
-</section>
-<section
-    data-sads-component="testimonials"
-    id="testimonials"
-    data-sads-padding="xl"
-    data-sads-text-align="center"
-    data-sads-bg-color="surface-accent"
->
-  <h2
-    data-sads-element="title"
-    data-i18n="testimonials_title"
-    data-sads-margin-bottom="xl"
-    data-sads-font-size="xl"
-    data-sads-text-color="text-primary"
-  >
-    Lo Que Dicen Nuestros Usuarios
-  </h2>
-  <div
-    data-sads-element="list"
-    data-sads-layout-type="flex"
-    data-sads-flex-wrap="wrap"
-    data-sads-flex-justify="space-around"
-    data-sads-gap="m"
-    data-sads-max-width="content-container"
-    data-sads-margin="custom:0 auto"
-    data-sads-responsive-rules='[{"breakpoint": "mobile", "styles": {"flexDirection": "column"}}]'
-  >
-
-    <div
-        data-sads-element="item"
-        data-sads-bg-color="surface"
-        data-sads-padding="l"
-        data-sads-border-radius="m"
-        data-sads-shadow="subtle"
-        data-sads-flex-basis="third-gap-m"
-
+          >
+            <h3
+              data-sads-element="item-title"
+              data-sads-margin-top="none"
+              data-sads-text-color="text-accent"
+              data-sads-font-size="l"
+            >
+              Característica Tres
+            </h3>
+            <p
+              data-sads-element="item-description"
+              data-sads-font-size="default"
+            >
+              Descripción of la característica tres.
+            </p>
+          </div>
+        </div>
+      </section>
+      <section
+        data-sads-component="testimonials"
+        id="testimonials"
+        data-sads-padding="xl"
         data-sads-text-align="center"
-        data-sads-responsive-rules='[
+        data-sads-bg-color="surface-accent"
+      >
+        <h2
+          data-sads-element="title"
+          data-i18n="testimonials_title"
+          data-sads-margin-bottom="xl"
+          data-sads-font-size="xl"
+          data-sads-text-color="text-primary"
+        >
+          Lo Que Dicen Nuestros Usuarios
+        </h2>
+        <div
+          data-sads-element="list"
+          data-sads-layout-type="flex"
+          data-sads-flex-wrap="wrap"
+          data-sads-flex-justify="space-around"
+          data-sads-gap="m"
+          data-sads-max-width="content-container"
+          data-sads-margin="custom:0 auto"
+          data-sads-responsive-rules='[{"breakpoint": "mobile", "styles": {"flexDirection": "column"}}]'
+        >
+          <div
+            data-sads-element="item"
+            data-sads-bg-color="surface"
+            data-sads-padding="l"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-flex-basis="third-gap-m"
+            data-sads-text-align="center"
+            data-sads-responsive-rules='[
             {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
         ]'
+          >
+            <img
+              data-sads-element="item-image"
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
+              alt="Foto del Usuario 1"
+              data-sads-border-radius="custom:50%"
+              data-sads-width="custom:80px"
+              data-sads-height="custom:80px"
+              data-sads-object-fit="cover"
+              data-sads-margin-bottom="m"
+              data-sads-border-width="custom:3px"
+              data-sads-border-style="solid"
+              data-sads-border-color="border-accent"
+            />
+            <p
+              data-sads-element="item-text"
+              data-sads-font-style="italic"
+              data-sads-text-color="text-secondary"
+              data-sads-margin-bottom="m"
+            >
+              "Este es el mejor servicio que he usado. ¡Muy recomendado!"
+            </p>
+            <h4
+              data-sads-element="item-author"
+              data-sads-margin-top="none"
+              data-sads-text-color="text-primary"
+              data-sads-font-weight="bold"
+            >
+              - Jane Doe
+            </h4>
+          </div>
 
-    >
-      <img
-        data-sads-element="item-image"
-        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
-        alt="Foto del Usuario 1"
-        data-sads-border-radius="custom:50%"
-        data-sads-width="custom:80px"
-        data-sads-height="custom:80px"
-        data-sads-object-fit="cover"
-        data-sads-margin-bottom="m"
-        data-sads-border-width="custom:3px"
-        data-sads-border-style="solid"
-        data-sads-border-color="border-accent"
-      />
-      <p
-        data-sads-element="item-text"
-        data-sads-font-style="italic"
-        data-sads-text-color="text-secondary"
-        data-sads-margin-bottom="m"
-      >
-        "Este es el mejor servicio que he usado. ¡Muy recomendado!"
-      </p>
-      <h4
-        data-sads-element="item-author"
-        data-sads-margin-top="none"
-        data-sads-text-color="text-primary"
-        data-sads-font-weight="bold"
-      >
-        - Jane Doe
-      </h4>
-    </div>
+          <div
+            data-sads-element="item"
+            data-sads-bg-color="surface"
+            data-sads-padding="l"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-flex-basis="third-gap-m"
+            data-sads-text-align="center"
+            data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+        ]'
+          >
+            <img
+              data-sads-element="item-image"
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
+              alt="Foto del Usuario 2"
+              data-sads-border-radius="custom:50%"
+              data-sads-width="custom:80px"
+              data-sads-height="custom:80px"
+              data-sads-object-fit="cover"
+              data-sads-margin-bottom="m"
+              data-sads-border-width="custom:3px"
+              data-sads-border-style="solid"
+              data-sads-border-color="border-accent"
+            />
+            <p
+              data-sads-element="item-text"
+              data-sads-font-style="italic"
+              data-sads-text-color="text-secondary"
+              data-sads-margin-bottom="m"
+            >
+              "Características increíbles y un soporte espectacular. Mi negocio
+              ha crecido significativamente."
+            </p>
+            <h4
+              data-sads-element="item-author"
+              data-sads-margin-top="none"
+              data-sads-text-color="text-primary"
+              data-sads-font-weight="bold"
+            >
+              - John Smith
+            </h4>
+          </div>
 
-    <div
-        data-sads-element="item"
-        data-sads-bg-color="surface"
-        data-sads-padding="l"
-        data-sads-border-radius="m"
-        data-sads-shadow="subtle"
-        data-sads-flex-basis="third-gap-m"
+          <div
+            data-sads-element="item"
+            data-sads-bg-color="surface"
+            data-sads-padding="l"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-flex-basis="third-gap-m"
+            data-sads-text-align="center"
+            data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+        ]'
+          >
+            <img
+              data-sads-element="item-image"
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
+              alt="Foto del Usuario 3"
+              data-sads-border-radius="custom:50%"
+              data-sads-width="custom:80px"
+              data-sads-height="custom:80px"
+              data-sads-object-fit="cover"
+              data-sads-margin-bottom="m"
+              data-sads-border-width="custom:3px"
+              data-sads-border-style="solid"
+              data-sads-border-color="border-accent"
+            />
+            <p
+              data-sads-element="item-text"
+              data-sads-font-style="italic"
+              data-sads-text-color="text-secondary"
+              data-sads-margin-bottom="m"
+            >
+              "Un cambio de juego para nuestro flujo de trabajo. Simple,
+              efectivo y confiable."
+            </p>
+            <h4
+              data-sads-element="item-author"
+              data-sads-margin-top="none"
+              data-sads-text-color="text-primary"
+              data-sads-font-weight="bold"
+            >
+              - Alice Brown
+            </h4>
+          </div>
+        </div>
+      </section>
+      <section class="portfolio" id="portfolio">
+        <h2 data-i18n="portfolio_title">Nuestro Trabajo</h2>
+        <div class="portfolio-grid">
+          <div class="portfolio-item" id="project1">
+            <img
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
+              alt="Portfolio image"
+            />
+            <h3>Proyecto Alfa</h3>
+            <p>Descripción del Proyecto Alfa.</p>
+          </div>
 
+          <div class="portfolio-item" id="project2">
+            <img
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
+              alt="Portfolio image"
+            />
+            <h3>Proyecto Beta</h3>
+            <p>Descripción del Proyecto Beta.</p>
+          </div>
+
+          <div class="portfolio-item" id="project3">
+            <img
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
+              alt="Portfolio image"
+            />
+            <h3>Proyecto Gama</h3>
+            <p>Descripción del Proyecto Gama.</p>
+          </div>
+
+          <div class="portfolio-item" id="project4">
+            <img
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
+              alt="Portfolio image"
+            />
+            <h3>Proyecto Delta</h3>
+            <p>Descripción del Proyecto Delta.</p>
+          </div>
+        </div>
+      </section>
+      <section
+        data-sads-component="blog"
+        id="blog"
+        data-sads-padding="xl"
         data-sads-text-align="center"
-        data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
-        ]'
-
-    >
-      <img
-        data-sads-element="item-image"
-        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
-        alt="Foto del Usuario 2"
-        data-sads-border-radius="custom:50%"
-        data-sads-width="custom:80px"
-        data-sads-height="custom:80px"
-        data-sads-object-fit="cover"
-        data-sads-margin-bottom="m"
-        data-sads-border-width="custom:3px"
-        data-sads-border-style="solid"
-        data-sads-border-color="border-accent"
-      />
-      <p
-        data-sads-element="item-text"
-        data-sads-font-style="italic"
-        data-sads-text-color="text-secondary"
-        data-sads-margin-bottom="m"
+        data-sads-bg-color="blog-section-bg"
       >
-        "Características increíbles y un soporte espectacular. Mi negocio ha crecido significativamente."
-      </p>
-      <h4
-        data-sads-element="item-author"
-        data-sads-margin-top="none"
-        data-sads-text-color="text-primary"
-        data-sads-font-weight="bold"
-      >
-        - John Smith
-      </h4>
-    </div>
-
-    <div
-        data-sads-element="item"
-        data-sads-bg-color="surface"
-        data-sads-padding="l"
-        data-sads-border-radius="m"
-        data-sads-shadow="subtle"
-        data-sads-flex-basis="third-gap-m"
-
-        data-sads-text-align="center"
-        data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
-        ]'
-
-    >
-      <img
-        data-sads-element="item-image"
-        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
-        alt="Foto del Usuario 3"
-        data-sads-border-radius="custom:50%"
-        data-sads-width="custom:80px"
-        data-sads-height="custom:80px"
-        data-sads-object-fit="cover"
-        data-sads-margin-bottom="m"
-        data-sads-border-width="custom:3px"
-        data-sads-border-style="solid"
-        data-sads-border-color="border-accent"
-      />
-      <p
-        data-sads-element="item-text"
-        data-sads-font-style="italic"
-        data-sads-text-color="text-secondary"
-        data-sads-margin-bottom="m"
-      >
-        "Un cambio de juego para nuestro flujo de trabajo. Simple, efectivo y confiable."
-      </p>
-      <h4
-        data-sads-element="item-author"
-        data-sads-margin-top="none"
-        data-sads-text-color="text-primary"
-        data-sads-font-weight="bold"
-      >
-        - Alice Brown
-      </h4>
-    </div>
-
-  </div>
-</section>
-<section class="portfolio" id="portfolio">
-  <h2 data-i18n="portfolio_title">
-    Nuestro Trabajo
-  </h2>
-  <div class="portfolio-grid">
-
-    <div class="portfolio-item" id="project1">
-      <img
-        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
-        alt="Portfolio image"
-      />
-      <h3>
-        Proyecto Alfa
-      </h3>
-      <p>
-        Descripción del Proyecto Alfa.
-      </p>
-    </div>
-
-    <div class="portfolio-item" id="project2">
-      <img
-        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
-        alt="Portfolio image"
-      />
-      <h3>
-        Proyecto Beta
-      </h3>
-      <p>
-        Descripción del Proyecto Beta.
-      </p>
-    </div>
-
-    <div class="portfolio-item" id="project3">
-      <img
-        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
-        alt="Portfolio image"
-      />
-      <h3>
-        Proyecto Gama
-      </h3>
-      <p>
-        Descripción del Proyecto Gama.
-      </p>
-    </div>
-
-    <div class="portfolio-item" id="project4">
-      <img
-        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
-        alt="Portfolio image"
-      />
-      <h3>
-        Proyecto Delta
-      </h3>
-      <p>
-        Descripción del Proyecto Delta.
-      </p>
-    </div>
-
-  </div>
-</section>
-<section
-    data-sads-component="blog"
-    id="blog"
-    data-sads-padding="xl"
-    data-sads-text-align="center"
-    data-sads-bg-color="blog-section-bg"
->
-  <h2
-    data-sads-element="title"
-    data-i18n="blog_title"
-    data-sads-margin-bottom="xl"
-    data-sads-font-size="xl"
-    data-sads-text-color="text-primary"
-  >
-    Últimas Publicaciones
-  </h2>
-  <div
-    data-sads-element="list"
-    data-sads-display="flex"
-    data-sads-flex-wrap="wrap"
-    data-sads-flex-justify="space-around"
-    data-sads-gap="m"
-    data-sads-max-width="content-container"
-    data-sads-margin="custom:0 auto"
-    data-sads-responsive-rules='[
+        <h2
+          data-sads-element="title"
+          data-i18n="blog_title"
+          data-sads-margin-bottom="xl"
+          data-sads-font-size="xl"
+          data-sads-text-color="text-primary"
+        >
+          Últimas Publicaciones
+        </h2>
+        <div
+          data-sads-element="list"
+          data-sads-display="flex"
+          data-sads-flex-wrap="wrap"
+          data-sads-flex-justify="space-around"
+          data-sads-gap="m"
+          data-sads-max-width="content-container"
+          data-sads-margin="custom:0 auto"
+          data-sads-responsive-rules='[
         {"breakpoint": "mobile", "styles": {"flexDirection": "column", "flexAlignItems": "center"}}
     ]'
-  >
-
-    <article
-        data-sads-element="item"
-        id="post1"
-        data-sads-bg-color="blog-item-bg"
-        data-sads-padding="l"
-        data-sads-border-radius="m"
-        data-sads-shadow="subtle"
-        data-sads-flex-basis="third-gap-m"
-        data-sads-text-align="left"
-        data-sads-box-sizing="border-box"
-        data-sads-responsive-rules='[
+        >
+          <article
+            data-sads-element="item"
+            id="post1"
+            data-sads-bg-color="blog-item-bg"
+            data-sads-padding="l"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-flex-basis="third-gap-m"
+            data-sads-text-align="left"
+            data-sads-box-sizing="border-box"
+            data-sads-responsive-rules='[
             {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
         ]'
+          >
+            <h3
+              data-sads-element="item-title"
+              data-sads-margin-top="none"
+              data-sads-text-color="text-accent"
+              data-sads-font-size="l"
+            >
+              Título de la Publicación Alfa
+            </h3>
+            <p
+              data-sads-element="item-excerpt"
+              data-sads-font-size="s"
+              data-sads-text-color="text-secondary"
+              data-sads-margin-bottom="m"
+            >
+              Extracto de la publicación Alfa del blog...
+            </p>
+            <a
+              data-sads-element="read-more-link"
+              href="#post1-link"
+              data-sads-display="inline-block"
+              data-sads-text-color="text-accent"
+              data-sads-text-decoration="none"
+              data-sads-font-weight="bold"
+            >
+              Leer Publicación Alfa</a
+            >
+          </article>
 
-    >
-      <h3
-        data-sads-element="item-title"
-        data-sads-margin-top="none"
-        data-sads-text-color="text-accent"
-        data-sads-font-size="l"
-      >
-        Título de la Publicación Alfa
-      </h3>
-      <p
-        data-sads-element="item-excerpt"
-        data-sads-font-size="s"
-        data-sads-text-color="text-secondary"
-        data-sads-margin-bottom="m"
-      >
-        Extracto de la publicación Alfa del blog...
-      </p>
-      <a
-        data-sads-element="read-more-link"
-        href="#post1-link"
-        data-sads-display="inline-block"
-        data-sads-text-color="text-accent"
-        data-sads-text-decoration="none"
-        data-sads-font-weight="bold"
-
-      >
-        Leer Publicación Alfa</a
-      >
-    </article>
-
-    <article
-        data-sads-element="item"
-        id="post2"
-        data-sads-bg-color="blog-item-bg"
-        data-sads-padding="l"
-        data-sads-border-radius="m"
-        data-sads-shadow="subtle"
-        data-sads-flex-basis="third-gap-m"
-        data-sads-text-align="left"
-        data-sads-box-sizing="border-box"
-        data-sads-responsive-rules='[
+          <article
+            data-sads-element="item"
+            id="post2"
+            data-sads-bg-color="blog-item-bg"
+            data-sads-padding="l"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-flex-basis="third-gap-m"
+            data-sads-text-align="left"
+            data-sads-box-sizing="border-box"
+            data-sads-responsive-rules='[
             {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
         ]'
+          >
+            <h3
+              data-sads-element="item-title"
+              data-sads-margin-top="none"
+              data-sads-text-color="text-accent"
+              data-sads-font-size="l"
+            >
+              Título de la Publicación Beta
+            </h3>
+            <p
+              data-sads-element="item-excerpt"
+              data-sads-font-size="s"
+              data-sads-text-color="text-secondary"
+              data-sads-margin-bottom="m"
+            >
+              Extracto de la publicación Beta del blog...
+            </p>
+            <a
+              data-sads-element="read-more-link"
+              href="#post2-link"
+              data-sads-display="inline-block"
+              data-sads-text-color="text-accent"
+              data-sads-text-decoration="none"
+              data-sads-font-weight="bold"
+            >
+              Leer Publicación Beta</a
+            >
+          </article>
 
-    >
-      <h3
-        data-sads-element="item-title"
-        data-sads-margin-top="none"
-        data-sads-text-color="text-accent"
-        data-sads-font-size="l"
-      >
-        Título de la Publicación Beta
-      </h3>
-      <p
-        data-sads-element="item-excerpt"
-        data-sads-font-size="s"
-        data-sads-text-color="text-secondary"
-        data-sads-margin-bottom="m"
-      >
-        Extracto de la publicación Beta del blog...
-      </p>
-      <a
-        data-sads-element="read-more-link"
-        href="#post2-link"
-        data-sads-display="inline-block"
-        data-sads-text-color="text-accent"
-        data-sads-text-decoration="none"
-        data-sads-font-weight="bold"
-
-      >
-        Leer Publicación Beta</a
-      >
-    </article>
-
-    <article
-        data-sads-element="item"
-        id="post3"
-        data-sads-bg-color="blog-item-bg"
-        data-sads-padding="l"
-        data-sads-border-radius="m"
-        data-sads-shadow="subtle"
-        data-sads-flex-basis="third-gap-m"
-        data-sads-text-align="left"
-        data-sads-box-sizing="border-box"
-        data-sads-responsive-rules='[
+          <article
+            data-sads-element="item"
+            id="post3"
+            data-sads-bg-color="blog-item-bg"
+            data-sads-padding="l"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-flex-basis="third-gap-m"
+            data-sads-text-align="left"
+            data-sads-box-sizing="border-box"
+            data-sads-responsive-rules='[
             {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
         ]'
-
-    >
-      <h3
-        data-sads-element="item-title"
-        data-sads-margin-top="none"
-        data-sads-text-color="text-accent"
-        data-sads-font-size="l"
+          >
+            <h3
+              data-sads-element="item-title"
+              data-sads-margin-top="none"
+              data-sads-text-color="text-accent"
+              data-sads-font-size="l"
+            >
+              Título de la Publicación Gama
+            </h3>
+            <p
+              data-sads-element="item-excerpt"
+              data-sads-font-size="s"
+              data-sads-text-color="text-secondary"
+              data-sads-margin-bottom="m"
+            >
+              Extracto de la publicación Gama del blog...
+            </p>
+            <a
+              data-sads-element="read-more-link"
+              href="#post3-link"
+              data-sads-display="inline-block"
+              data-sads-text-color="text-accent"
+              data-sads-text-decoration="none"
+              data-sads-font-weight="bold"
+            >
+              Leer Publicación Gama</a
+            >
+          </article>
+        </div>
+      </section>
+      <section
+        data-sads-component="contact-form"
+        id="contact"
+        data-sads-padding="xl"
+        data-sads-bg-color="contact-section-bg"
+        data-sads-text-align="center"
       >
-        Título de la Publicación Gama
-      </h3>
-      <p
-        data-sads-element="item-excerpt"
-        data-sads-font-size="s"
-        data-sads-text-color="text-secondary"
-        data-sads-margin-bottom="m"
-      >
-        Extracto de la publicación Gama del blog...
-      </p>
-      <a
-        data-sads-element="read-more-link"
-        href="#post3-link"
-        data-sads-display="inline-block"
-        data-sads-text-color="text-accent"
-        data-sads-text-decoration="none"
-        data-sads-font-weight="bold"
+        <h2
+          data-sads-element="title"
+          data-i18n="contact_title"
+          data-sads-margin-bottom="xl"
+          data-sads-font-size="xl"
+          data-sads-text-color="text-primary"
+        >
+          Contáctanos
+        </h2>
+        <form
+          data-sads-element="form"
+          id="contactForm"
+          method="POST"
+          action="https://formspree.io/f/xgvyddyg"
+          data-form-action-url="https://formspree.io/f/xgvyddyg"
+          data-success-message="¡Mensaje enviado con éxito! Gracias."
+          data-error-message="¡Ups! Algo salió mal. Por favor, inténtalo de nuevo."
+          data-sads-max-width="custom:600px"
+          data-sads-margin="custom:0 auto"
+          data-sads-bg-color="contact-form-bg"
+          data-sads-padding="xl"
+          data-sads-border-radius="m"
+          data-sads-shadow="subtle"
+        >
+          <label
+            data-sads-element="label"
+            for="name"
+            data-i18n="contact_name_label"
+            data-sads-display="block"
+            data-sads-margin-bottom="s"
+            data-sads-text-align="left"
+            data-sads-font-weight="bold"
+            data-sads-text-color="text-primary"
+            >Nombre:</label
+          >
+          <input
+            data-sads-element="text-input"
+            type="text"
+            id="name"
+            name="name"
+            required
+            data-sads-width="custom:100%"
+            data-sads-padding="input"
+            data-sads-margin-bottom="m"
+            data-sads-border-width="custom:1px"
+            data-sads-border-style="solid"
+            data-sads-border-color="input-border-color"
+            data-sads-border-radius="s"
+            data-sads-box-sizing="border-box"
+            data-sads-bg-color="input-bg-color"
+            data-sads-text-color="text-primary"
+          />
 
-      >
-        Leer Publicación Gama</a
-      >
-    </article>
+          <label
+            data-sads-element="label"
+            for="email"
+            data-i18n="contact_email_label"
+            data-sads-display="block"
+            data-sads-margin-bottom="s"
+            data-sads-text-align="left"
+            data-sads-font-weight="bold"
+            data-sads-text-color="text-primary"
+            >Correo Electrónico:</label
+          >
+          <input
+            data-sads-element="email-input"
+            type="email"
+            id="email"
+            name="email"
+            required
+            data-sads-width="custom:100%"
+            data-sads-padding="input"
+            data-sads-margin-bottom="m"
+            data-sads-border-width="custom:1px"
+            data-sads-border-style="solid"
+            data-sads-border-color="input-border-color"
+            data-sads-border-radius="s"
+            data-sads-box-sizing="border-box"
+            data-sads-bg-color="input-bg-color"
+            data-sads-text-color="text-primary"
+          />
 
-  </div>
-</section>
-<section
-    data-sads-component="contact-form"
-    id="contact"
-    data-sads-padding="xl"
-    data-sads-bg-color="contact-section-bg"
-    data-sads-text-align="center"
->
-  <h2
-    data-sads-element="title"
-    data-i18n="contact_title"
-    data-sads-margin-bottom="xl"
-    data-sads-font-size="xl"
-    data-sads-text-color="text-primary"
-  >
-    Contáctanos
-  </h2>
-  <form
-    data-sads-element="form"
-    id="contactForm"
-    method="POST"
-    action="https://formspree.io/f/xgvyddyg"
-    data-form-action-url="https://formspree.io/f/xgvyddyg"
-    data-success-message="¡Mensaje enviado con éxito! Gracias."
-    data-error-message="¡Ups! Algo salió mal. Por favor, inténtalo de nuevo."
-    data-sads-max-width="custom:600px"
-    data-sads-margin="custom:0 auto"
-    data-sads-bg-color="contact-form-bg"
-    data-sads-padding="xl"
-    data-sads-border-radius="m"
-    data-sads-shadow="subtle"
->
-    <label
-        data-sads-element="label"
-        for="name"
-        data-i18n="contact_name_label"
-        data-sads-display="block"
-        data-sads-margin-bottom="s"
-        data-sads-text-align="left"
-        data-sads-font-weight="bold"
-        data-sads-text-color="text-primary"
-      >Nombre:</label
-    >
-    <input
-        data-sads-element="text-input"
-        type="text" id="name" name="name" required
-        data-sads-width="custom:100%"
-        data-sads-padding="input"
-        data-sads-margin-bottom="m"
-        data-sads-border-width="custom:1px"
-        data-sads-border-style="solid"
-        data-sads-border-color="input-border-color"
-        data-sads-border-radius="s"
-        data-sads-box-sizing="border-box"
-        data-sads-bg-color="input-bg-color"
-        data-sads-text-color="text-primary"
-    />
+          <label
+            data-sads-element="label"
+            for="message"
+            data-i18n="contact_message_label"
+            data-sads-display="block"
+            data-sads-margin-bottom="s"
+            data-sads-text-align="left"
+            data-sads-font-weight="bold"
+            data-sads-text-color="text-primary"
+            >Mensaje:</label
+          >
+          <textarea
+            data-sads-element="textarea-input"
+            id="message"
+            name="message"
+            rows="4"
+            required
+            data-sads-width="custom:100%"
+            data-sads-padding="input"
+            data-sads-margin-bottom="m"
+            data-sads-border-width="custom:1px"
+            data-sads-border-style="solid"
+            data-sads-border-color="input-border-color"
+            data-sads-border-radius="s"
+            data-sads-box-sizing="border-box"
+            data-sads-bg-color="input-bg-color"
+            data-sads-text-color="text-primary"
+            data-sads-resize="vertical"
+          ></textarea>
 
-    <label
-        data-sads-element="label"
-        for="email"
-        data-i18n="contact_email_label"
-        data-sads-display="block"
-        data-sads-margin-bottom="s"
-        data-sads-text-align="left"
-        data-sads-font-weight="bold"
-        data-sads-text-color="text-primary"
-      >Correo Electrónico:</label
-    >
-    <input
-        data-sads-element="email-input"
-        type="email" id="email" name="email" required
-        data-sads-width="custom:100%"
-        data-sads-padding="input"
-        data-sads-margin-bottom="m"
-        data-sads-border-width="custom:1px"
-        data-sads-border-style="solid"
-        data-sads-border-color="input-border-color"
-        data-sads-border-radius="s"
-        data-sads-box-sizing="border-box"
-        data-sads-bg-color="input-bg-color"
-        data-sads-text-color="text-primary"
-    />
-
-    <label
-        data-sads-element="label"
-        for="message"
-        data-i18n="contact_message_label"
-        data-sads-display="block"
-        data-sads-margin-bottom="s"
-        data-sads-text-align="left"
-        data-sads-font-weight="bold"
-        data-sads-text-color="text-primary"
-      >Mensaje:</label
-    >
-    <textarea
-        data-sads-element="textarea-input"
-        id="message" name="message" rows="4" required
-        data-sads-width="custom:100%"
-        data-sads-padding="input"
-        data-sads-margin-bottom="m"
-        data-sads-border-width="custom:1px"
-        data-sads-border-style="solid"
-        data-sads-border-color="input-border-color"
-        data-sads-border-radius="s"
-        data-sads-box-sizing="border-box"
-        data-sads-bg-color="input-bg-color"
-        data-sads-text-color="text-primary"
-        data-sads-resize="vertical"
-    ></textarea>
-
-    <button
-        data-sads-element="button"
-        type="submit"
-        data-i18n="contact_send_button"
-        data-sads-display="inline-block"
-        data-sads-bg-color="button-primary-bg-color"
-        data-sads-text-color="button-primary-text-color"
-        data-sads-padding="custom:10px 20px"
-        data-sads-border-style="none"
-        data-sads-border-radius="s"
-        data-sads-cursor="pointer"
-        data-sads-font-size="m"
-        data-sads-font-weight="bold"
-        data-sads-transition="custom:background-color 0.3s ease"
-
-      >
-      Enviar Mensaje
-    </button>
-    <div
-        data-sads-element="form-status"
-        id="contactFormStatus"
-        role="status"
-        data-sads-margin-top="m"
-
-    ></div>
-  </form>
-</section></main>
+          <button
+            data-sads-element="button"
+            type="submit"
+            data-i18n="contact_send_button"
+            data-sads-display="inline-block"
+            data-sads-bg-color="button-primary-bg-color"
+            data-sads-text-color="button-primary-text-color"
+            data-sads-padding="custom:10px 20px"
+            data-sads-border-style="none"
+            data-sads-border-radius="s"
+            data-sads-cursor="pointer"
+            data-sads-font-size="m"
+            data-sads-font-weight="bold"
+            data-sads-transition="custom:background-color 0.3s ease"
+          >
+            Enviar Mensaje
+          </button>
+          <div
+            data-sads-element="form-status"
+            id="contactFormStatus"
+            role="status"
+            data-sads-margin-top="m"
+          ></div>
+        </form>
+      </section>
+    </main>
 
     <footer>
-  <p data-i18n="footer_text">
-    &copy; 2024 Página de Destino Simple. Todos los derechos reservados.
-  </p>
-</footer>
+      <p data-i18n="footer_text">
+        &copy; 2024 Página de Destino Simple. Todos los derechos reservados.
+      </p>
+    </footer>
     <script src="public/dist/main.js" defer></script>
-
   </body>
 </html>
