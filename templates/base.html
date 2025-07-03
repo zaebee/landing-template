@@ -15,16 +15,25 @@
     {% endblock head_meta %}
     <title>{{ title | default('Simple Landing Page') }}</title>
     <link href="public/style.css" rel="stylesheet" />
-    {% block head_extra %}{% endblock head_extra %}
+    <link href="public/dist/main.css" rel="stylesheet" />
+    {# Assuming main.css is the bundled CSS #} {% block head_extra %}{% endblock
+    head_extra %}
   </head>
   <body>
     {% include "blocks/header.html" %}
 
     <main>{{ main_content | safe }}</main>
 
-    {% include "blocks/footer.html" %} {% block scripts %}
+    {% include "blocks/footer.html" %} {# Bundled JavaScript including SADS
+    engine, theme, app.js, and component JS #}
+    <script src="public/dist/main.js" defer></script>
+
+    {% block scripts %} {# Specific inline scripts or page-specific JS can go
+    here if not part of the bundle #} {# The main application logic including
+    SADS initialization is now in public/js/app.js, which is part of main.js
+    bundle #}
     <script>
-      // Dark Mode Toggle
+      // Dark Mode Toggle logic from original base.html (ensure it doesn't conflict with app.js if SADS re-init is added there)
       const darkModeToggle = document.getElementById("dark-mode-toggle");
       const body = document.body;
       let currentTranslations = {};
