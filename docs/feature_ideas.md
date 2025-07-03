@@ -107,7 +107,7 @@ The table below offers a quick glance at all proposed features, their intended f
 - **Implementation Sketch**:
 
   - **Configuration (`public/config.json`)**: - Add an `analytics` object, e.g.:
-
+        
         ```json
           "analytics": {
             "provider": "google_analytics", // or "plausible", "none"
@@ -279,7 +279,9 @@ The table below offers a quick glance at all proposed features, their intended f
   - Define CSS variables in `public/style.css` for common elements (e.g., `--primary-color`, `--background-color`, `--text-color`).
   - Create alternative theme stylesheets (e.g., `public/themes/dark.css`, `public/themes/light.css`) that override these variables or provide entirely different styles.
 
-- **Build Script (`build.py`)**: - In `BuildOrchestrator.build_all_languages()` or `DefaultPageBuilder.assemble_translated_page()`:
+- **Build Script (`build.py`)**:
+
+      - In `BuildOrchestrator.build_all_languages()` or `DefaultPageBuilder.assemble_translated_page()`:
 
         - Read the `theme` configuration from `app_config`.
         - If `theme.name` points to a predefined theme, inject a `<link>` tag for the corresponding theme CSS file (e.g., `<link rel="stylesheet" href="themes/dark.css">`) into the `<head>`.
