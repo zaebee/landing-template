@@ -1,32 +1,69 @@
 <section
     data-sads-component="features"
-    id="features" {# Keep ID for potential deep linking and original AOS styling #}
+    id="features"
     data-aos="fade-up"
     data-aos-delay="100"
-    data-sads-padding="xl"
+    data-sads-padding="xxl" {# 4rem was original, using xxl as per themeConfig example, or could use 'custom:4rem' #}
     data-sads-text-align="center"
-    data-sads-bg-color="section-bg" {# Assuming a generic section background color key #}
+    data-sads-bg-color="surface" {# Light: #fff, Dark: #1f1f1f - Engine handles dark mode mapping #}
 >
   <h2
     data-sads-element="title"
     data-i18n="features_title"
-    data-sads-margin-bottom="xl"
-    data-sads-font-size="xl"
-    data-sads-text-color="text-primary"
+    data-sads-margin-bottom="xl" {# 2rem #}
+    data-sads-font-size="xl" {# 2rem #}
   >
-    {{ translations.get('features_title', 'Features') }} {# Assuming translations similar to blog component #}
+    {{ translations.get('features_title', 'Features') }}
   </h2>
   <div
     data-sads-element="list"
-    class="feature-list" {# Keep class if build.py or other JS relies on it #}
-    data-sads-display="flex"
+    data-sads-layout-type="flex"
     data-sads-flex-wrap="wrap"
     data-sads-flex-justify="space-around"
-    data-sads-gap="m"
+    data-sads-gap="m" {# 20px ~ 1rem or 1.25rem. Theme's 'm' is 1rem. Original gap: 20px. Let's use 'm' for 1rem. If 20px is critical, use custom or add 'l' for 1.25rem (20px) #}
     data-sads-max-width="content-container"
-    data-sads-margin="custom:0 auto" {# Centering the list container #}
+    data-sads-margin="auto" {# For margin: 0 auto; assuming engine handles combined values or we use margin-horizontal #}
+    data-sads-responsive-rules='[
+        {"breakpoint": "mobile", "styles": {"flexDirection": "column"}}
+    ]'
   >
-    <!-- Feature items will be dynamically injected here by build.py -->
-    {{feature_items}}
+    {% for item_data in items %} {# Renamed item to item_data to avoid conflict with SADS 'item' element name if it were a keyword #}
+    <div
+        data-sads-element="item"
+        data-sads-bg-color="surface-accent" {# Light: #f9f9f9, Dark: #2a2a2a #}
+        data-sads-padding="l" {# 1.5rem #}
+        data-sads-border-radius="m" {# 8px #}
+        data-sads-shadow="subtle" {# 0 2px 5px rgb(0 0 0 / 10%) #}
+        data-sads-flex-basis="third-gap-m" {# calc(33.333% - 1rem) assuming 1rem (medium) gap. Original was 20px gap, (33.333% - 40px) - this needs careful theme definition or direct value #}
+        {# data-sads-box-sizing="border-box" /* This should be a global reset ideally */ #}
+        data-sads-text-align="left"
+        data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+        ]'
+        {# TODO: Handle :last-child margin-bottom:0 for mobile. SADS engine needs to support pseudo-selectors or a utility attribute #}
+    >
+      {% if item_data.icon and item_data.icon.svg_content %}
+      <div data-sads-element="item-icon" data-sads-margin-bottom="s"> {# Assuming a small margin for icon #}
+        {{ item_data.icon.svg_content | safe }}
+      </div>
+      {% endif %}
+      <h3
+        data-sads-element="item-title"
+        data-sads-margin-top="none"
+        data-sads-text-color="text-accent" {# Light: #007bff, Dark: #0af #}
+        data-sads-font-size="l" {# Assuming h3 is large, adjust if needed #}
+      >
+        {{ translations.get(item_data.content.title.key, item_data.content.title.key) }}
+      </h3>
+      <p
+        data-sads-element="item-description"
+        data-sads-font-size="default"
+      >
+        {{ translations.get(item_data.content.description.key, item_data.content.description.key) }}
+      </p>
+    </div>
+    {% else %}
+    <!-- No feature items provided -->
+    {% endfor %}
   </div>
 </section>

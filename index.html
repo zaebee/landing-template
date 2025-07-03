@@ -17,7 +17,6 @@
     <link href="public/style.css" rel="stylesheet" />
     <link href="public/dist/main.css" rel="stylesheet" />
   </head>
-
   <body>
     <header>
       <nav>
@@ -76,26 +75,116 @@
         <!-- Selected variation: hero_v1 -->
       </section>
       <section
-        class="features"
+        data-sads-component="features"
         id="features"
         data-aos="fade-up"
         data-aos-delay="100"
+        data-sads-padding="xxl"
+        data-sads-text-align="center"
+        data-sads-bg-color="surface"
       >
-        <h2 data-i18n="features_title">Our Features</h2>
-        <div class="feature-list">
-          <div class="feature-item">
-            <h3>Feature One</h3>
-            <p>Description of feature one.</p>
+        <h2
+          data-sads-element="title"
+          data-i18n="features_title"
+          data-sads-margin-bottom="xl"
+          data-sads-font-size="xl"
+        >
+          Our Features
+        </h2>
+        <div
+          data-sads-element="list"
+          data-sads-layout-type="flex"
+          data-sads-flex-wrap="wrap"
+          data-sads-flex-justify="space-around"
+          data-sads-gap="m"
+          data-sads-max-width="content-container"
+          data-sads-margin="auto"
+          data-sads-responsive-rules='[
+        {"breakpoint": "mobile", "styles": {"flexDirection": "column"}}
+    ]'
+        >
+          <div
+            data-sads-element="item"
+            data-sads-bg-color="surface-accent"
+            data-sads-padding="l"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-flex-basis="third-gap-m"
+            data-sads-text-align="left"
+            data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+        ]'
+          >
+            <h3
+              data-sads-element="item-title"
+              data-sads-margin-top="none"
+              data-sads-text-color="text-accent"
+              data-sads-font-size="l"
+            >
+              Feature One
+            </h3>
+            <p
+              data-sads-element="item-description"
+              data-sads-font-size="default"
+            >
+              Description of feature one.
+            </p>
           </div>
 
-          <div class="feature-item">
-            <h3>Feature Two</h3>
-            <p>Description of feature two.</p>
+          <div
+            data-sads-element="item"
+            data-sads-bg-color="surface-accent"
+            data-sads-padding="l"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-flex-basis="third-gap-m"
+            data-sads-text-align="left"
+            data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+        ]'
+          >
+            <h3
+              data-sads-element="item-title"
+              data-sads-margin-top="none"
+              data-sads-text-color="text-accent"
+              data-sads-font-size="l"
+            >
+              Feature Two
+            </h3>
+            <p
+              data-sads-element="item-description"
+              data-sads-font-size="default"
+            >
+              Description of feature two.
+            </p>
           </div>
 
-          <div class="feature-item">
-            <h3>Feature Three</h3>
-            <p>Description of feature three.</p>
+          <div
+            data-sads-element="item"
+            data-sads-bg-color="surface-accent"
+            data-sads-padding="l"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-flex-basis="third-gap-m"
+            data-sads-text-align="left"
+            data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+        ]'
+          >
+            <h3
+              data-sads-element="item-title"
+              data-sads-margin-top="none"
+              data-sads-text-color="text-accent"
+              data-sads-font-size="l"
+            >
+              Feature Three
+            </h3>
+            <p
+              data-sads-element="item-description"
+              data-sads-font-size="default"
+            >
+              Description of feature three.
+            </p>
           </div>
         </div>
       </section>
@@ -418,159 +507,5 @@
       </p>
     </footer>
     <script src="public/dist/main.js" defer></script>
-
-    <script>
-      // Dark Mode Toggle logic from original base.html (ensure it doesn't conflict with app.js if SADS re-init is added there)
-      const darkModeToggle = document.getElementById("dark-mode-toggle");
-      const body = document.body;
-      let currentTranslations = {};
-
-      async function fetchTranslations(lang) {
-        try {
-          const response = await fetch(`public/locales/${lang}.json`);
-          if (!response.ok) {
-            console.error(
-              `Could not load ${lang}.json: ${response.statusText}`
-            );
-            return null;
-          }
-          return await response.json();
-        } catch (error) {
-          console.error(`Error fetching ${lang}.json:`, error);
-          return null;
-        }
-      }
-
-      function applyTranslations(translations) {
-        if (!translations) return;
-        currentTranslations = translations;
-        document.querySelectorAll("[data-i18n]").forEach((element) => {
-          const key = element.getAttribute("data-i18n");
-          if (translations[key] && element.id !== "dark-mode-toggle") {
-            element.textContent = translations[key];
-          }
-        });
-        updateDarkModeButtonIcon();
-      }
-
-      function updateDarkModeButtonIcon() {
-        const isDarkMode = body.classList.contains("dark-mode");
-        if (isDarkMode) {
-          darkModeToggle.textContent = "☀️";
-          darkModeToggle.setAttribute(
-            "aria-label",
-            currentTranslations["light_mode_toggle"] || "Switch to Light Mode"
-          );
-        } else {
-          darkModeToggle.textContent = "🌙";
-          darkModeToggle.setAttribute(
-            "aria-label",
-            currentTranslations["dark_mode_toggle"] || "Switch to Dark Mode"
-          );
-        }
-      }
-
-      async function setLanguage(lang) {
-        const translations = await fetchTranslations(lang);
-        if (translations) {
-          applyTranslations(translations);
-          localStorage.setItem("language", lang);
-          document.documentElement.lang = lang;
-
-          document
-            .querySelectorAll("#language-switcher button")
-            .forEach((btn) => {
-              btn.classList.remove("active");
-              if (btn.getAttribute("data-lang") === lang) {
-                btn.classList.add("active");
-              }
-            });
-        }
-      }
-
-      if (localStorage.getItem("darkMode") === "enabled") {
-        body.classList.add("dark-mode");
-      }
-
-      darkModeToggle.addEventListener("click", () => {
-        body.classList.toggle("dark-mode");
-        if (body.classList.contains("dark-mode")) {
-          localStorage.setItem("darkMode", "enabled");
-        } else {
-          localStorage.setItem("darkMode", "disabled");
-        }
-        updateDarkModeButtonIcon();
-      });
-
-      const languageSwitcher = document.getElementById("language-switcher");
-      if (languageSwitcher) {
-        languageSwitcher.addEventListener("click", (event) => {
-          const button = event.target.closest("button[data-lang]");
-          if (button) {
-            const lang = button.getAttribute("data-lang");
-            setLanguage(lang);
-          }
-        });
-      }
-
-      async function initializeApp() {
-        const preferredLang = localStorage.getItem("language") || "en";
-        document.documentElement.lang = preferredLang;
-
-        await setLanguage(preferredLang);
-      }
-
-      initializeApp();
-
-      const hamburgerMenu = document.querySelector(".hamburger-menu");
-      const navItemsContainer = document.querySelector(".nav-items");
-
-      if (hamburgerMenu && navItemsContainer) {
-        hamburgerMenu.addEventListener("click", () => {
-          navItemsContainer.classList.toggle("active");
-          const isExpanded = navItemsContainer.classList.contains("active");
-          hamburgerMenu.setAttribute("aria-expanded", isExpanded);
-        });
-      }
-
-      const contactForm = document.querySelector(".contact-form form");
-      if (contactForm) {
-        contactForm.addEventListener("submit", function (event) {
-          const name = document.getElementById("name").value.trim();
-          const email = document.getElementById("email").value.trim();
-          const message = document.getElementById("message").value.trim();
-          let isValid = true;
-          let errors = [];
-
-          if (name === "") {
-            isValid = false;
-            errors.push("Name is required.");
-          }
-
-          if (email === "") {
-            isValid = false;
-            errors.push("Email is required.");
-          } else {
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailPattern.test(email)) {
-              isValid = false;
-              errors.push("Please enter a valid email address.");
-            }
-          }
-
-          if (message === "") {
-            isValid = false;
-            errors.push("Message is required.");
-          }
-
-          if (!isValid) {
-            event.preventDefault();
-            alert(
-              "Please correct the following errors:\n\n" + errors.join("\n")
-            );
-          }
-        });
-      }
-    </script>
   </body>
 </html>
