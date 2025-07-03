@@ -1,6 +1,7 @@
 {
   "blocks": [
     "hero.html",
+    "dna-visualizer.html",
     "features.html",
     "testimonials.html",
     "portfolio.html",
@@ -39,6 +40,11 @@
     "contact-form.html": {
       "data_file": "data/contact_form_config.json",
       "message_type_name": "ContactFormConfig",
+      "is_list": false
+    },
+    "dna-visualizer.html": {
+      "data_file": "data/dna.json",
+      "message_type_name": "None",
       "is_list": false
     }
   }

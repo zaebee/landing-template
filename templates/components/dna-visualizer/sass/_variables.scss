@@ -1,0 +1,49 @@
+// SASS variables for DNA visualizer
+// Colors
+$dna-border-color: #eee;
+$dna-title-color: #333;
+$dna-sequence-bg-color: #f8f8f8;
+$nucleotide-default-bg-color: #ddd;
+$nucleotide-default-text-color: #333;
+
+// Nucleotide specific colors map
+$nucleotide-colors: (
+  a: (
+    bg: #ff5733, // Vibrant Red/Orange
+    text: #fff
+  ),
+  t: (
+    bg: #33CFFF, // Bright Blue
+    text: #fff
+  ),
+  g: (
+    bg: #33ff57, // Bright Green
+    text: #000
+  ),
+  c: (
+    bg: #FFC300, // Bright Yellow
+    text: #000
+  ),
+  unknown: (
+    bg: #808080, // Grey
+    text: #fff
+  )
+);
+
+// Spacing
+$dna-block-padding: 1rem;
+$dna-block-margin-bottom: 1rem;
+$dna-title-margin-bottom: 0.75rem;
+$dna-sequence-padding: 0.5rem;
+$dna-sequence-gap: 2px; // This is a fallback, SADS might override
+
+// Font
+$nucleotide-font-family: monospace;
+
+// Border radius
+$dna-block-border-radius: 4px;
+$dna-sequence-border-radius: 4px;
+$nucleotide-border-radius: 3px;
+
+// Box shadow
+$nucleotide-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);

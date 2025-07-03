@@ -1,0 +1,81 @@
+/* Portfolio Component CSS */
+.portfolio {
+  padding: 2rem;
+  text-align: center;
+  background-color: #fff; /* Light background for the section */
+}
+
+.portfolio h2 {
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  color: #333;
+}
+
+.portfolio .portfolio-grid {
+  /* Scoped */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+.portfolio .portfolio-item {
+  /* Scoped */
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
+  overflow: hidden; /* Ensures image corners are rounded if image is direct child */
+  text-align: left;
+}
+
+.portfolio .portfolio-item img {
+  /* Scoped */
+  width: 100%;
+  height: auto;
+  display: block;
+  border-bottom: 1px solid #eee; /* Optional: adds a line between img and text */
+}
+
+.portfolio .portfolio-item h3 {
+  /* Scoped */
+  margin: 1rem 1rem 0.5rem;
+  color: #007bff;
+}
+
+.portfolio .portfolio-item p {
+  /* Scoped */
+  margin: 0 1rem 1rem;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+/* Dark Mode for Portfolio */
+body.dark-mode .portfolio {
+  background-color: #2a2a2a; /* Dark background for the section */
+}
+
+body.dark-mode .portfolio h2 {
+  color: #e0e0e0;
+}
+
+body.dark-mode .portfolio .portfolio-item {
+  /* Scoped */
+  background: #1f1f1f; /* Darker item background */
+  box-shadow: 0 2px 5px rgb(255 255 255 / 5%);
+}
+
+body.dark-mode .portfolio .portfolio-item img {
+  /* Scoped */
+  border-bottom: 1px solid #333;
+}
+
+body.dark-mode .portfolio .portfolio-item h3 {
+  /* Scoped */
+  color: #0af; /* Lighter blue for dark mode */
+}
+
+body.dark-mode .portfolio .portfolio-item p {
+  /* Scoped */
+  color: #bbb; /* Lighter text for dark mode */
+}

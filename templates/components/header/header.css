@@ -1,0 +1,262 @@
+/* Header & Navigation */
+.hamburger-menu {
+  display: none; /* Hidden by default, shown in media query */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  margin-left: auto; /* Pushes it to the right if nav is flex row */
+}
+
+.hamburger-menu .hamburger-bar {
+  display: block;
+  width: 25px;
+  height: 3px;
+  background-color: #fff; /* Will be overridden by dark mode if body.dark-mode is set */
+  margin: 5px 0;
+  transition: 0.4s;
+}
+
+/* Dark mode style for hamburger bars */
+/* Note: This relies on body.dark-mode. If header becomes truly isolated,
+   this might need a different approach or the header component itself
+   getting a dark-mode class. For now, keep as is. */
+body.dark-mode .hamburger-menu .hamburger-bar {
+  background-color: #e0e0e0;
+}
+
+header {
+  background: #333;
+  color: #fff;
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+header nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1100px;
+  margin: auto;
+  padding: 0 20px;
+}
+
+.nav-items {
+  display: flex;
+  align-items: center;
+}
+
+#dark-mode-toggle {
+  /* Assuming this ID remains within the header component */
+  margin-left: 20px;
+  padding: 8px 12px;
+  background-color: #fff;
+  color: #333;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#dark-mode-toggle:hover {
+  background-color: #e6e6e6;
+}
+
+/* Logo style */
+header .logo a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* Navigation list styles */
+header ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+}
+
+header ul li {
+  margin-left: 20px;
+}
+
+header ul li a {
+  color: #fff;
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+header ul li a:hover {
+  background-color: #555;
+  color: #fff;
+  text-decoration: none;
+}
+
+/* Style for an 'active' navigation link - can be set by JavaScript if desired */
+header ul li a.active-nav-link {
+  /* This class might be set by JS */
+  background-color: #007bff;
+  color: #fff;
+}
+
+/* Language Switcher Styles */
+/* Assuming #language-switcher remains within the header component */
+#language-switcher {
+  margin-left: 20px;
+  display: flex;
+  align-items: center;
+}
+
+#language-switcher button {
+  padding: 8px 12px;
+  background-color: #fff;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-left: 5px;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+#language-switcher button:first-child {
+  margin-left: 0;
+}
+
+#language-switcher button:hover {
+  background-color: #e6e6e6;
+}
+
+#language-switcher button.active {
+  /* This class will be set by JS */
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
+/* === Dark Mode Overrides for Header === */
+body.dark-mode header {
+  background: #1f1f1f;
+  color: #e0e0e0;
+}
+
+body.dark-mode header ul li a,
+body.dark-mode header .logo a {
+  color: #e0e0e0;
+}
+
+body.dark-mode header ul li a:hover {
+  background-color: #444;
+  color: #e0e0e0;
+}
+
+body.dark-mode header ul li a.active-nav-link {
+  background-color: #0af;
+  color: #121212;
+}
+
+body.dark-mode #dark-mode-toggle {
+  background-color: #333;
+  color: #e0e0e0;
+  border: 1px solid #555;
+}
+
+body.dark-mode #dark-mode-toggle:hover {
+  background-color: #444;
+}
+
+body.dark-mode #language-switcher button {
+  background-color: #333;
+  color: #e0e0e0;
+  border: 1px solid #555;
+}
+
+body.dark-mode #language-switcher button:hover {
+  background-color: #444;
+}
+
+body.dark-mode #language-switcher button.active {
+  background-color: #0af;
+  color: #121212;
+  border-color: #0af;
+}
+
+/* === Responsive Adjustments for Header === */
+@media (width <= 768px) {
+  header nav {
+    /* flex-direction: column; */ /* Keep it row for logo and hamburger */
+    justify-content: space-between; /* Ensure logo is to the left and hamburger to the right */
+    align-items: center;
+    position: relative; /* For absolute positioning of nav-items */
+  }
+
+  .hamburger-menu {
+    display: block; /* Show hamburger on mobile */
+    /* order: 3; */ /* Not strictly needed if it's the last item in flex order */
+    /* margin-left: 15px; */ /* Let space-between handle positioning */
+  }
+
+  .nav-items {
+    display: none; /* Hide nav items by default on mobile */
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    position: absolute;
+    top: 100%; /* Position below the header */
+    left: 0;
+    background-color: #333; /* Match header background */
+    padding: 10px 0;
+    z-index: 999; /* Ensure it's above other content */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+
+  .nav-items.active {
+    /* This class will be toggled by JS */
+    display: flex; /* Show nav items when active */
+  }
+
+  body.dark-mode .nav-items {
+    background-color: #1f1f1f; /* Dark mode background for dropdown */
+  }
+
+  header ul {
+    margin-top: 0; /* Reset margin as nav-items handles top margin */
+    margin-bottom: 10px; /* Space below nav links */
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  header ul li {
+    margin: 8px 0; /* Increased vertical margin for touch targets */
+  }
+
+  #dark-mode-toggle {
+    margin-top: 10px; /* Space above the toggle */
+    margin-left: 0; /* Reset margin from desktop view */
+    width: auto; /* Allow button to size to content or specific width if desired */
+    padding: 10px 15px; /* Slightly larger for touch */
+  }
+
+  #language-switcher {
+    margin-top: 15px; /* Space above the switchers */
+    margin-left: 0; /* Reset margin from desktop view */
+    flex-direction: row; /* Keep buttons in a row */
+    justify-content: center; /* Center buttons within the switcher */
+    width: 100%; /* Allow switcher to take width if buttons need to wrap (less likely here) */
+  }
+
+  #language-switcher button {
+    padding: 10px 15px; /* Slightly larger for touch */
+    margin: 0 5px; /* Adjust horizontal margin between buttons */
+  }
+}

@@ -1,144 +1,77 @@
 {
-    "blocks": [
-        "hero.html",
-        "features.html",
-        "testimonials.html",
-        "portfolio.html",
-        "blog.html",
-        "contact-form.html"
-    ],
-    "navigation_data_file": "data/navigation.json",
-    "supported_langs": [
-        "en",
-        "es"
-    ],
-    "default_lang": "en",
-    "block_data_loaders": {
-        "portfolio.html": {
-            "data_file": "data/portfolio_items.json",
-            "message_type_name": "PortfolioItem",
-            "is_list": true
-        },
-        "blog.html": {
-            "data_file": "data/blog_posts.json",
-            "message_type_name": "BlogPost",
-            "is_list": true
-        },
-        "features.html": {
-            "data_file": "data/feature_items.json",
-            "message_type_name": "FeatureItem",
-            "is_list": true
-        },
-        "testimonials.html": {
-            "data_file": "data/testimonial_items.json",
-            "message_type_name": "TestimonialItem",
-            "is_list": true
-        },
-        "hero.html": {
-            "data_file": "data/hero_item.json",
-            "message_type_name": "HeroItem",
-            "is_list": false
-        },
-        "contact-form.html": {
-            "data_file": "data/contact_form_config.json",
-            "message_type_name": "ContactFormConfig",
-            "is_list": false
-        }
+  "blocks": [
+    "hero.html",
+    "dna-visualizer.html",
+    "features.html",
+    "testimonials.html",
+    "portfolio.html",
+    "blog.html",
+    "contact-form.html"
+  ],
+  "navigation_data_file": "data/navigation.json",
+  "supported_langs": ["en", "es"],
+  "default_lang": "en",
+  "block_data_loaders": {
+    "portfolio.html": {
+      "data_file": "data/portfolio_items.json",
+      "message_type_name": "PortfolioItem",
+      "is_list": true
     },
-    "navigation": [
-        {
-            "label_i18n_key": "nav_home",
-            "label": "Home",
-            "href": "#"
-        },
-        {
-            "label_i18n_key": "nav_features",
-            "label": "Features",
-            "href": "#features"
-        },
-        {
-            "label_i18n_key": "nav_testimonials",
-            "label": "Testimonials",
-            "href": "#testimonials"
-        },
-        {
-            "label_i18n_key": "nav_portfolio",
-            "label": "Portfolio",
-            "href": "#portfolio"
-        },
-        {
-            "label_i18n_key": "nav_blog",
-            "label": "Blog",
-            "href": "#blog"
-        }
-    ],
-    "current_lang": "en",
-    "ui_strings": {
-        "hero_title": "Welcome to Our Landing Page",
-        "hero_subtitle": "This is a simple hero section to grab attention.",
-        "hero_cta": "Learn More",
-        "features_title": "Our Features",
-        "feature_one_title": "Feature One",
-        "feature_one_desc": "Description of feature one.",
-        "feature_two_title": "Feature Two",
-        "feature_two_desc": "Description of feature two.",
-        "feature_three_title": "Feature Three",
-        "feature_three_desc": "Description of feature three.",
-        "contact_title": "Contact Us",
-        "contact_name_label": "Name:",
-        "contact_email_label": "Email:",
-        "contact_message_label": "Message:",
-        "contact_send_button": "Send Message",
-        "testimonials_title": "What Our Users Say",
-        "testimonial_one_text": "This is the best service I have ever used. Highly recommended!",
-        "testimonial_one_author": "- Jane Doe",
-        "testimonial_two_text": "Amazing features and incredible support. My business has grown significantly.",
-        "testimonial_two_author": "- John Smith",
-        "testimonial_three_text": "A game-changer for our workflow. Simple, effective, and reliable.",
-        "testimonial_three_author": "- Alice Brown",
-        "testimonial_one_alt": "User 1 Photo",
-        "testimonial_two_alt": "User 2 Photo",
-        "testimonial_three_alt": "User 3 Photo",
-        "portfolio_title": "Our Work",
-        "project_one_title": "Project One",
-        "project_one_desc": "A brief description of project one.",
-        "project_two_title": "Project Two",
-        "project_two_desc": "A brief description of project two.",
-        "project_three_title": "Project Three",
-        "project_three_desc": "A brief description of project three.",
-        "project_four_title": "Project Four",
-        "project_four_desc": "A brief description of project four.",
-        "project_alpha_title": "Project Alpha",
-        "project_alpha_desc": "Description for Project Alpha.",
-        "project_beta_title": "Project Beta",
-        "project_beta_desc": "Description for Project Beta.",
-        "project_gamma_title": "Project Gamma",
-        "project_gamma_desc": "Description for Project Gamma.",
-        "project_delta_title": "Project Delta",
-        "project_delta_desc": "Description for Project Delta.",
-        "blog_title": "Latest Posts",
-        "blog_post_alpha_title": "Alpha Post Title",
-        "blog_post_alpha_excerpt": "Excerpt for Alpha blog post...",
-        "blog_post_alpha_cta": "Read Alpha Post",
-        "blog_post_beta_title": "Beta Post Title",
-        "blog_post_beta_excerpt": "Excerpt for Beta blog post...",
-        "blog_post_beta_cta": "Read Beta Post",
-        "blog_post_gamma_title": "Gamma Post Title",
-        "blog_post_gamma_excerpt": "Excerpt for Gamma blog post...",
-        "blog_post_gamma_cta": "Read Gamma Post",
-        "nav_home": "Home",
-        "nav_features": "Features",
-        "nav_testimonials": "Testimonials",
-        "nav_portfolio": "Portfolio",
-        "nav_blog": "Blog",
-        "dark_mode_toggle": "Toggle Dark Mode",
-        "light_mode_toggle": "Toggle Light Mode",
-        "theme_light_button": "Light Theme",
-        "theme_dark_button": "Dark Theme",
-        "footer_text": "&copy; 2024 Simple Landing Page. All rights reserved.",
-        "contact_form_success": "Message sent successfully! Thank you.",
-        "contact_form_error": "Oops! Something went wrong. Please try again.",
-        "logo_text": "Logo",
-        "toggle_menu_label": "Toggle menu"
+    "blog.html": {
+      "data_file": "data/blog_posts.json",
+      "message_type_name": "BlogPost",
+      "is_list": true
+    },
+    "features.html": {
+      "data_file": "data/feature_items.json",
+      "message_type_name": "FeatureItem",
+      "is_list": true
+    },
+    "testimonials.html": {
+      "data_file": "data/testimonial_items.json",
+      "message_type_name": "TestimonialItem",
+      "is_list": true
+    },
+    "hero.html": {
+      "data_file": "data/hero_item.json",
+      "message_type_name": "HeroItem",
+      "is_list": false
+    },
+    "contact-form.html": {
+      "data_file": "data/contact_form_config.json",
+      "message_type_name": "ContactFormConfig",
+      "is_list": false
+    },
+    "dna-visualizer.html": {
+      "data_file": "data/dna.json",
+      "message_type_name": "None",
+      "is_list": false
+    }
+  },
+  "navigation": [
+    {
+      "label_i18n_key": "nav_home",
+      "label": "Home",
+      "href": "#"
+    },
+    {
+      "label_i18n_key": "nav_features",
+      "label": "Features",
+      "href": "#features"
+    },
+    {
+      "label_i18n_key": "nav_testimonials",
+      "label": "Testimonials",
+      "href": "#testimonials"
+    },
+    {
+      "label_i18n_key": "nav_portfolio",
+      "label": "Portfolio",
+      "href": "#portfolio"
+    },
+    {
+      "label_i18n_key": "nav_blog",
+      "label": "Blog",
+      "href": "#blog"
     }
 }

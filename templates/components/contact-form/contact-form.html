@@ -1,0 +1,137 @@
+<section
+    data-sads-component="contact-form"
+    id="contact" {# Keep ID for deep linking #}
+    data-sads-padding="xl"
+    data-sads-bg-color="contact-section-bg"
+    data-sads-text-align="center"
+>
+  <h2
+    data-sads-element="title"
+    data-i18n="contact_title"
+    data-sads-margin-bottom="xl"
+    data-sads-font-size="xl"
+    data-sads-text-color="text-primary"
+  >
+    {{ translations.get('contact_title', 'Contact Us') }}
+  </h2>
+  <form
+    data-sads-element="form"
+    id="contactForm" {# Keep ID for JS #}
+    method="POST"
+    action="{{ config.form_action_uri if config and config.form_action_uri else '#' }}"
+    data-form-action-url="{{ config.form_action_uri if config and config.form_action_uri else '#' }}" {# For JS #}
+    data-success-message="{{ translations.get(config.success_message_key, 'Message sent!') if config else 'Message sent!' }}" {# For JS #}
+    data-error-message="{{ translations.get(config.error_message_key, 'Error sending message.') if config else 'Error sending message.' }}" {# For JS #}
+    data-sads-max-width="custom:600px"
+    data-sads-margin="custom:0 auto"
+    data-sads-bg-color="contact-form-bg"
+    data-sads-padding="xl"
+    data-sads-border-radius="m"
+    data-sads-shadow="subtle" {# Note: dark mode shadow will be same as light for MVP #}
+>
+    <label
+        data-sads-element="label"
+        for="name"
+        data-i18n="contact_name_label"
+        data-sads-display="block"
+        data-sads-margin-bottom="s"
+        data-sads-text-align="left"
+        data-sads-font-weight="bold"
+        data-sads-text-color="text-primary"
+      >{{ translations.get('contact_name_label', 'Name:') }}</label
+    >
+    <input
+        data-sads-element="text-input" {# More specific element type #}
+        type="text" id="name" name="name" required
+        data-sads-width="custom:100%" {# Corrected from "full" #}
+        data-sads-padding="input"
+        data-sads-margin-bottom="m"
+        data-sads-border-width="custom:1px"
+        data-sads-border-style="solid"
+        data-sads-border-color="input-border-color"
+        data-sads-border-radius="s"
+        data-sads-box-sizing="border-box" {# Assuming this is needed if not global #}
+        data-sads-bg-color="input-bg-color"
+        data-sads-text-color="text-primary"
+    />
+
+    <label
+        data-sads-element="label"
+        for="email"
+        data-i18n="contact_email_label"
+        data-sads-display="block"
+        data-sads-margin-bottom="s"
+        data-sads-text-align="left"
+        data-sads-font-weight="bold"
+        data-sads-text-color="text-primary"
+      >{{ translations.get('contact_email_label', 'Email:') }}</label
+    >
+    <input
+        data-sads-element="email-input" {# More specific element type #}
+        type="email" id="email" name="email" required
+        data-sads-width="custom:100%" {# Corrected from "full" #}
+        data-sads-padding="input"
+        data-sads-margin-bottom="m"
+        data-sads-border-width="custom:1px"
+        data-sads-border-style="solid"
+        data-sads-border-color="input-border-color"
+        data-sads-border-radius="s"
+        data-sads-box-sizing="border-box"
+        data-sads-bg-color="input-bg-color"
+        data-sads-text-color="text-primary"
+    />
+
+    <label
+        data-sads-element="label"
+        for="message"
+        data-i18n="contact_message_label"
+        data-sads-display="block"
+        data-sads-margin-bottom="s"
+        data-sads-text-align="left"
+        data-sads-font-weight="bold"
+        data-sads-text-color="text-primary"
+      >{{ translations.get('contact_message_label', 'Message:') }}</label
+    >
+    <textarea
+        data-sads-element="textarea-input" {# More specific element type #}
+        id="message" name="message" rows="4" required
+        data-sads-width="custom:100%" {# Corrected from "full" #}
+        data-sads-padding="input"
+        data-sads-margin-bottom="m"
+        data-sads-border-width="custom:1px"
+        data-sads-border-style="solid"
+        data-sads-border-color="input-border-color"
+        data-sads-border-radius="s"
+        data-sads-box-sizing="border-box"
+        data-sads-bg-color="input-bg-color"
+        data-sads-text-color="text-primary"
+        data-sads-resize="vertical"
+    ></textarea>
+
+    <button
+        data-sads-element="button"
+        type="submit"
+        data-i18n="contact_send_button"
+        data-sads-display="inline-block"
+        data-sads-bg-color="button-primary-bg-color"
+        data-sads-text-color="button-primary-text-color"
+        data-sads-padding="custom:10px 20px"
+        data-sads-border-style="none"
+        data-sads-border-radius="s"
+        data-sads-cursor="pointer"
+        data-sads-font-size="m"
+        data-sads-font-weight="bold"
+        data-sads-transition="custom:background-color 0.3s ease"
+        {# Note: hover styles not applied by SADS MVP #}
+      >
+      {{ translations.get('contact_send_button', 'Send Message') }}
+    </button>
+    <div
+        data-sads-element="form-status"
+        id="contactFormStatus"
+        role="status"
+        data-sads-margin-top="m"
+        {# Basic styling for status div, can be enhanced #}
+    ></div>
+  </form>
+</section>

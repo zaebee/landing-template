@@ -39,6 +39,7 @@ Thumbs.db
 # Build output
 dist/
 build/
+public/dist/
 *.egg-info/
 *.egg
 

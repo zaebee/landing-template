@@ -13,6 +13,8 @@ from google.protobuf import descriptor_pool
 from google.protobuf.message_factory import GetMessageClass
 from jinja2 import Environment, FileSystemLoader
 
+from generated.common_pb2 import I18nString
+
 # Ensure the project root (and thus 'generated' directory) is in the Python path
 # This allows for direct execution of this script.
 project_root = os.path.dirname(os.path.abspath(__file__))
@@ -34,6 +36,7 @@ from build_protocols.html_generation import (
     HeroHtmlGenerator,
     PortfolioHtmlGenerator,
     TestimonialsHtmlGenerator,
+    DnaVisualizerHtmlGenerator, # Added import
 )
 from build_protocols.interfaces import (
     AppConfigManager,
@@ -98,6 +101,116 @@ class BuildOrchestrator:
         self.app_config: Dict[str, Any] = {}
         self.nav_proto_data: Optional[Navigation] = None
 
+    def _bundle_component_css(self) -> None:
+        """Finds all component CSS files and bundles them into a single file."""
+        print("Bundling component CSS files...")
+        component_css_dir = os.path.join(project_root, "templates", "components")
+        output_dir = os.path.join(project_root, "public", "dist")
+        output_file_path = os.path.join(output_dir, "main.css")
+
+        os.makedirs(output_dir, exist_ok=True)
+        css_contents = []
+
+        for component_name in os.listdir(component_css_dir):
+            component_dir_path = os.path.join(component_css_dir, component_name)
+            if os.path.isdir(component_dir_path):
+                css_file_path = os.path.join(component_dir_path, f"{component_name}.css")
+                if os.path.exists(css_file_path):
+                    try:
+                        with open(css_file_path, "r", encoding="utf-8") as f:
+                            css_contents.append(f.read())
+                        print(f"Read CSS from: {css_file_path}")
+                    except IOError as e:
+                        print(f"Error reading CSS file {css_file_path}: {e}")
+
+        if not css_contents:
+            print("No component CSS files found to bundle.")
+            # Create an empty main.css if no components have CSS
+            # to avoid missing file errors if base.html links to it.
+            try:
+                with open(output_file_path, "w", encoding="utf-8") as f:
+                    f.write("/* No component CSS found or bundled. */")
+                print(f"Created empty CSS bundle: {output_file_path}")
+            except IOError as e:
+                print(f"Error creating empty CSS bundle {output_file_path}: {e}")
+            return
+
+        try:
+            with open(output_file_path, "w", encoding="utf-8") as outfile:
+                outfile.write("\n\n/* --- Component CSS Bundle --- */\n\n")
+                for content in css_contents:
+                    outfile.write(content)
+                    outfile.write("\n\n/* --- End of component CSS --- */\n\n")
+            print(f"Successfully bundled CSS to: {output_file_path}")
+        except IOError as e:
+            print(f"Error writing bundled CSS to {output_file_path}: {e}")
+
+    def _bundle_component_js(self) -> None:
+        """Finds all component JS files and shared JS, bundles them."""
+        print("Bundling JavaScript files...")
+        js_files_to_bundle = []
+
+        # 1. Component-specific JS
+        component_js_dir = os.path.join(project_root, "templates", "components")
+        for component_name in os.listdir(component_js_dir):
+            component_dir_path = os.path.join(component_js_dir, component_name)
+            if os.path.isdir(component_dir_path):
+                js_file_path = os.path.join(component_dir_path, f"{component_name}.js")
+                if os.path.exists(js_file_path):
+                    js_files_to_bundle.append(js_file_path)
+                    print(f"Found component JS: {js_file_path}")
+
+        # 2. Shared/Global JS
+        shared_js_dir = os.path.join(project_root, "public", "js")
+
+        # Prioritize SADS engine, then app.js, then component JS
+        sads_engine_path = os.path.join(shared_js_dir, "sads-style-engine.js")
+        if os.path.exists(sads_engine_path):
+            js_files_to_bundle.insert(0, sads_engine_path)
+            print(f"Found SADS Engine JS: {sads_engine_path}")
+
+        app_js_path = os.path.join(shared_js_dir, "app.js")
+        if os.path.exists(app_js_path):
+            # Insert after SADS engine if present, otherwise at the beginning
+            insert_idx = 1 if sads_engine_path in js_files_to_bundle else 0
+            js_files_to_bundle.insert(insert_idx, app_js_path)
+            print(f"Found shared App JS: {app_js_path}")
+
+        output_dir = os.path.join(project_root, "public", "dist")
+        output_file_path = os.path.join(output_dir, "main.js")
+        os.makedirs(output_dir, exist_ok=True)
+
+        if not js_files_to_bundle:
+            print("No JavaScript files found to bundle.")
+            try:
+                with open(output_file_path, "w", encoding="utf-8") as f:
+                    f.write("// No JavaScript files found or bundled.")
+                print(f"Created empty JS bundle: {output_file_path}")
+            except IOError as e:
+                print(f"Error creating empty JS bundle {output_file_path}: {e}")
+            return
+
+        js_contents = []
+        for file_path in js_files_to_bundle:
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    js_contents.append(f.read())
+            except IOError as e:
+                print(f"Error reading JS file {file_path}: {e}")
+
+        try:
+            with open(output_file_path, "w", encoding="utf-8") as outfile:
+                outfile.write("\n// --- JavaScript Bundle --- //\n\n")
+                for i, content in enumerate(js_contents):
+                    original_path = js_files_to_bundle[i]
+                    outfile.write(f"\n// --- Source: {os.path.basename(original_path)} --- //\n")
+                    outfile.write(content)
+                    outfile.write("\n// --- End Source --- //\n\n")
+            print(f"Successfully bundled JavaScript to: {output_file_path}")
+        except IOError as e:
+            print(f"Error writing bundled JavaScript to {output_file_path}: {e}")
+
+
     def load_initial_configurations(self) -> None:
         """Loads base configurations like app config and navigation data.
 
@@ -147,6 +260,7 @@ class BuildOrchestrator:
             main_content=assembled_main_content,
             navigation_items=navigation_items,
             page_title=page_title,
+            app_config=self.app_config, # Pass app_config
         )
 
         output_filename = f"index_{lang}.html"
@@ -163,6 +277,8 @@ class BuildOrchestrator:
         supported language to generate the respective HTML output.
         """
         self.load_initial_configurations()
+        self._bundle_component_css() # Bundle CSS
+        self._bundle_component_js() # Bundle JS
 
         supported_langs: List[str] = self.app_config.get(
             "supported_langs", ["en", "es"]
@@ -178,29 +294,25 @@ class BuildOrchestrator:
 
         for block_name, config_item in block_loaders_config_raw.items():
             message_type_name = config_item.get("message_type_name")
-            if not message_type_name:
-                print(f"Warning: Missing 'message_type_name' for block '{block_name}'. Skipping.")
-                continue
+            message_type_class = None # Default to None
 
-            full_message_name = f"{self.PROTO_PACKAGE_NAME}.{message_type_name}"
-            descriptor = pool.FindMessageTypeByName(full_message_name)
-
-            if descriptor is None:
-                print(f"Warning: Could not find protobuf message type '{full_message_name}' for block '{block_name}'. Ensure .proto files are compiled and imported. Skipping.")
-                continue
-
-            message_type_class = GetMessageClass(descriptor)
-            if not message_type_class: # Should not happen if descriptor is found
-                print(f"Warning: Could not get message class for '{full_message_name}' for block '{block_name}'. Skipping.")
-                continue
-
-            # Create a new config dict for resolved types to avoid modifying original app_config
+            if message_type_name: # If a message_type_name is provided
+                message_type_class = proto_message_types.get(message_type_name)
+                if not message_type_class:
+                    print(f"Warning: Unknown message_type_name '{message_type_name}' provided for block '{block_name}'. Skipping data loading for this block.")
+                    # We still add it to resolved_item_config so it can be processed by a generator if one exists
+                    # The generator will receive no data or handle this case.
+                    resolved_item_config = config_item.copy()
+                    resolved_item_config["message_type"] = None # Indicate no valid type
+                    dynamic_data_loaders_config_resolved[block_name] = resolved_item_config
+                    continue # Skip to next item in block_loaders_config_raw
+            # If message_type_name was empty, or if it was valid and message_type_class was found:
             resolved_item_config = config_item.copy()
-            resolved_item_config["message_type"] = message_type_class
+            resolved_item_config["message_type"] = message_type_class # Will be None if message_type_name was empty or invalid but allowed
             dynamic_data_loaders_config_resolved[block_name] = resolved_item_config
 
         self.data_cache.preload_data(
-            dynamic_data_loaders_config_resolved, self.data_loader
+            dynamic_data_loaders_config_resolved, self.data_loader # data_loader and cache should handle message_type being None
         )
 
         os.makedirs("public/generated_configs", exist_ok=True)
@@ -472,6 +584,7 @@ def main() -> None:
         "testimonials.html": TestimonialsHtmlGenerator(jinja_env=jinja_env),
         "hero.html": HeroHtmlGenerator(jinja_env=jinja_env),
         "contact-form.html": ContactFormHtmlGenerator(jinja_env=jinja_env),
+        "dna-visualizer.html": DnaVisualizerHtmlGenerator(jinja_env=jinja_env), # Added generator
     }
 
     # Create and run the orchestrator

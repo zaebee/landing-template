@@ -44,7 +44,7 @@ class PortfolioHtmlGenerator(HtmlBlockGenerator):
         """
         if not data:
             return ""
-        template = self.jinja_env.get_template("blocks/portfolio.html")
+        template = self.jinja_env.get_template("components/portfolio/portfolio.html") # Updated path
         return str(template.render(items=data, translations=translations))
 
 
@@ -68,7 +68,7 @@ class TestimonialsHtmlGenerator(HtmlBlockGenerator):
         """
         if not data:
             return ""
-        template = self.jinja_env.get_template("blocks/testimonials.html")
+        template = self.jinja_env.get_template("components/testimonials/testimonials.html") # Updated path
         return str(template.render(items=data, translations=translations))
 
 
@@ -90,7 +90,7 @@ class FeaturesHtmlGenerator(HtmlBlockGenerator):
         """
         if not data:
             return ""
-        template = self.jinja_env.get_template("blocks/features.html")
+        template = self.jinja_env.get_template("components/features/features.html") # Updated path
         return str(template.render(items=data, translations=translations))
 
 
@@ -129,7 +129,7 @@ class HeroHtmlGenerator(HtmlBlockGenerator):
         if not selected_variation: # Already know data.variations is not empty from the guard clause
             selected_variation = random.choice(data.variations)
 
-        template = self.jinja_env.get_template("blocks/hero.html")
+        template = self.jinja_env.get_template("components/hero/hero.html") # Updated path
         # The template expects `hero_item` as the context variable for the selected variation
         return str(
             template.render(hero_item=selected_variation, translations=translations)
@@ -156,7 +156,7 @@ class ContactFormHtmlGenerator(HtmlBlockGenerator):
         """
         if not data:
             return ""
-        template = self.jinja_env.get_template("blocks/contact-form.html")
+        template = self.jinja_env.get_template("components/contact-form/contact-form.html") # Updated path
         # The template expects `config` for the ContactFormConfig data
         return str(template.render(config=data, translations=translations))
 
@@ -179,5 +179,32 @@ class BlogHtmlGenerator(HtmlBlockGenerator):
         """
         if not data:
             return ""
-        template = self.jinja_env.get_template("blocks/blog.html")
+        template = self.jinja_env.get_template("components/blog/blog.html") # Updated path
         return str(template.render(items=data, translations=translations))
+
+
+class DnaVisualizerHtmlGenerator(HtmlBlockGenerator):
+    """Generates HTML for the DNA visualizer component using Jinja2."""
+
+    def __init__(self, jinja_env: Environment):
+        self.jinja_env = jinja_env
+
+    def generate_html(
+        self, data: Optional[None], translations: Translations # No data expected for now
+    ) -> str:
+        """Generates HTML markup for the DNA visualizer.
+
+        Args:
+            data: Currently unused. Expected to be None.
+            translations: A dictionary containing translations.
+
+        Returns:
+            An HTML string representing the DNA visualizer.
+        """
+        # For now, data is not used, but the signature requires it.
+        # Future enhancements might pass DNA sequence data here.
+        template = self.jinja_env.get_template("components/dna-visualizer/dna-visualizer.html")
+        # Pass any necessary context. For now, only translations.
+        # If the component expects specific data (e.g. a dna_sequence variable),
+        # it would be passed here.
+        return str(template.render(translations=translations, dna_sequence_data=None)) # Pass dna_sequence_data as None for now
