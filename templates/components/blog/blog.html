@@ -16,28 +16,42 @@
   </h2>
   <div
     data-sads-element="list"
-    data-sads-layout-type="flex"
+    data-sads-display="flex" {# Assuming layout-type="flex" implies display:flex; making it explicit #}
     data-sads-flex-wrap="wrap"
-    data-sads-flex-justify="space-around"
+    data-sads-flex-justify="space-around" {# Or 'center' if items should group centrally before wrapping #}
     data-sads-gap="m"
     data-sads-max-width="content-container"
-    data-sads-margin="custom:0 auto"
-    data-sads-responsive-rules='[{"breakpoint": "mobile", "styles": {"flexDirection": "column"}}]'
+    data-sads-margin="custom:0 auto" {# Standard centering block element with max-width #}
+    data-sads-responsive-rules='[
+        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "flexAlignItems": "center"}}
+    ]'
   >
     {% for post in items %}
-    <div
+    <article {# Changed div to article for semantic correctness #}
         data-sads-element="item"
-        id="{{ post.id if post.id else '' }}" {# Keep ID if used by data #}
+        id="{{ post.id if post.id else ('post-' ~ loop.index) }}" {# Ensure unique ID, fallback if post.id is missing #}
         data-sads-bg-color="blog-item-bg"
         data-sads-padding="l"
         data-sads-border-radius="m"
-        data-sads-shadow="subtle" {# Note: dark mode shadow will be same as light for MVP #}
-        data-sads-flex-basis="third-gap-m"
+        data-sads-shadow="subtle" {# SADS Limitation: Dark mode shadow is not distinct from light mode via theme key. #}
+        data-sads-flex-basis="third-gap-m" {# Desktop: 3 items per row with 'm' gap accounted for in theme value #}
         data-sads-text-align="left"
+        data-sads-box-sizing="border-box" {# Good practice for flex items with padding/border #}
         data-sads-responsive-rules='[
             {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
         ]'
-        {# TODO: Handle :last-child margin-bottom:0 for mobile via SADS #}
+        {# SADS Limitation: Cannot style :last-child to remove margin-bottom on mobile. This would require either:
+             1. JS to add a specific class/attribute to the last item for SADS to target, or
+             2. A small global CSS rule for this specific case if SADS cannot handle it.
+             Given SADS current design, option 2 is more straightforward if this is critical.
+             Example global CSS:
+             @media (max-width: 768px) {
+                .sads-id-xxxx:last-child { // Assuming sads-id-xxxx is the class for items
+                    margin-bottom: 0 !important;
+                }
+             }
+             Alternatively, the SADS engine could be extended to support :last-child if such features are planned.
+        #}
     >
       <h3
         data-sads-element="item-title"
@@ -66,7 +80,7 @@
       >
         {{ translations.get(post.cta.text.key, post.cta.text.key) }}</a
       >
-    </div>
+    </article>
     {% else %}
     <!-- No blog posts provided -->
     {% endfor %}
