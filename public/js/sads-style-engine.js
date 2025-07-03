@@ -1,50 +1,37 @@
 // SADS (Semantic Attribute-Driven Styling) Engine v0.1.2
 
 class SADSEngine {
-    constructor(themeConfig = {}) {
-        this.theme = this._initializeTheme(themeConfig);
+    constructor(customThemeConfig = {}, externalDefaultTheme = null) {
+        // Use externalDefaultTheme if provided, otherwise try to use global sadsDefaultTheme
+        // This provides flexibility in how the default theme is loaded.
+        const baseTheme = externalDefaultTheme || (typeof sadsDefaultTheme !== 'undefined' ? sadsDefaultTheme : {});
+        if (Object.keys(baseTheme).length === 0) {
+            console.warn("SADS: Default theme not found or empty. Engine might not work as expected.");
+        }
+        this.theme = this._initializeTheme(baseTheme, customThemeConfig);
         this.dynamicStyleSheet = this._createDynamicStyleSheet();
         this.ruleCounter = 0;
         console.log("SADS Engine Initialized. Theme:", this.theme);
     }
 
-    _initializeTheme(customThemeConfig) {
-        const defaultConfig = {
-            colors: {
-                'surface': '#FFFFFF', 'surface-dark': '#2a2a2a',
-                'surface-accent': '#f9f9f9', 'surface-accent-dark': '#1f1f1f',
-                'text-primary': '#333333', 'text-primary-dark': '#e0e0e0',
-                'text-accent': '#007bff', 'text-accent-dark': '#0af',
-                'transparent': 'transparent',
-                'text-secondary': '#555555', 'text-secondary-dark': '#bbbbbb',
-                'border-accent': '#007bff', 'border-accent-dark': '#0af', // Aliased to text-accent
-                'blog-section-bg': '#e9ecef', 'blog-section-bg-dark': '#2a2a2a',
-                'blog-item-bg': '#ffffff', 'blog-item-bg-dark': '#1f1f1f',
-                'contact-section-bg': '#e9ecef', 'contact-section-bg-dark': '#2a2a2a',
-                'contact-form-bg': '#ffffff', 'contact-form-bg-dark': '#1f1f1f',
-                'input-border-color': '#cccccc', 'input-border-color-dark': '#555555',
-                'input-bg-color': '#ffffff', 'input-bg-color-dark': '#333333',
-                'button-primary-bg-color': '#28a745', 'button-primary-bg-color-dark': '#1a73e8',
-                'button-primary-text-color': '#ffffff',
-            },
-            spacing: { 'none': '0', 'xs': '0.25rem', 's': '0.5rem', 'm': '1rem', 'l': '1.5rem', 'xl': '2rem', 'xxl': '4rem', 'auto': 'auto', 'input': '0.75rem' },
-            fontSize: { 'default': '1rem', 's': '0.9rem', 'm': '1rem', 'l': '1.5rem', 'xl': '2rem', 'xxl': '2.5rem' },
-            fontWeight: { 'normal': '400', 'bold': '700' },
-            borderRadius: { 'none': '0', 's': '4px', 'm': '8px', 'l': '16px' },
-            shadow: { 'none': 'none', 'subtle': '0 2px 5px rgba(0,0,0,0.1)', 'medium': '0 4px 10px rgba(0,0,0,0.15)' },
-            maxWidth: { 'content-container': '1100px', 'full': '100%' },
-            breakpoints: { 'mobile': '(max-width: 768px)' },
-            flexBasis: { 'auto': 'auto', 'full': '100%', 'third-gap-m': 'calc(33.333% - 1rem)' }, // Example: calc(33.333% - var(--gap-m))
-            objectFit: { 'cover': 'cover', 'contain': 'contain', 'fill': 'fill', 'scale-down': 'scale-down', 'none': 'none' },
-            fontStyle: { 'normal': 'normal', 'italic': 'italic', 'oblique': 'oblique' },
-            borderStyle: { 'none': 'none', 'solid': 'solid', 'dashed': 'dashed', 'dotted': 'dotted' }
-        };
+    _initializeTheme(defaultConfig, customThemeConfig) {
+        // Deep clone defaultConfig to prevent modification of the original object
+        const clonedDefaultConfig = JSON.parse(JSON.stringify(defaultConfig));
 
         // Ensure aliases are correctly set up if they depend on other default values
-        defaultConfig.colors['border-accent'] = defaultConfig.colors['text-accent'];
-        defaultConfig.colors['border-accent-dark'] = defaultConfig.colors['text-accent-dark'];
+        // These aliases are based on the structure of sadsDefaultTheme.js
+        if (clonedDefaultConfig.colors && clonedDefaultConfig.colors['text-accent']) {
+            clonedDefaultConfig.colors['border-accent'] = clonedDefaultConfig.colors['text-accent'];
+        } else {
+            console.warn("SADS: 'text-accent' not found in default theme colors for 'border-accent' alias.");
+        }
+        if (clonedDefaultConfig.colors && clonedDefaultConfig.colors['text-accent-dark']) {
+            clonedDefaultConfig.colors['border-accent-dark'] = clonedDefaultConfig.colors['text-accent-dark'];
+        } else {
+            // It's okay if text-accent-dark is not present, border-accent-dark might not be used or defined directly
+        }
 
-        return this._deepMergeThemes(defaultConfig, customThemeConfig);
+        return this._deepMergeThemes(clonedDefaultConfig, customThemeConfig);
     }
 
     _deepMergeThemes(base, custom) {
