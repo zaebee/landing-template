@@ -17,7 +17,7 @@ import unittest
 from typing import Any, Dict  # For type hinting self.dummy_config
 from unittest import mock
 
-from google.protobuf import json_format
+from google.protobuf.json_format import ParseDict
 from google.protobuf.message import Message  # Explicit import for T = TypeVar bound
 from jinja2 import Environment, FileSystemLoader
 
@@ -750,7 +750,7 @@ class TestBuildScript(unittest.TestCase):
     def test_generate_hero_html(self):
         """Test generation of hero HTML with HeroHtmlGenerator."""
         hero_item_instance = HeroItem()
-        json_format.ParseDict(self.hero_item_data, hero_item_instance)
+        ParseDict(self.hero_item_data, hero_item_instance)
         translations = self.en_translations  # Use full translations from setUp
 
         with mock.patch(
@@ -785,6 +785,8 @@ class TestBuildScript(unittest.TestCase):
     @mock.patch("build.DefaultAppConfigManager.generate_language_config")
     # @mock.patch("build.DefaultPageBuilder.extract_base_html_parts") # This method is no longer used directly by the orchestrator
     @mock.patch("build.DefaultPageBuilder.assemble_translated_page")
+    @mock.patch("build.DefaultAssetBundler.bundle_css")
+    @mock.patch("build.DefaultAssetBundler.bundle_js")
     @mock.patch("build_protocols.html_generation.PortfolioHtmlGenerator.generate_html")
     @mock.patch("build_protocols.html_generation.BlogHtmlGenerator.generate_html")
     @mock.patch("build_protocols.html_generation.FeaturesHtmlGenerator.generate_html")
@@ -805,6 +807,8 @@ class TestBuildScript(unittest.TestCase):
         mock_gen_features_html,
         mock_gen_blog_html,
         mock_gen_portfolio_html,
+        mock_bundle_js,  # Added mock_bundle_js
+        mock_bundle_css,  # Added mock_bundle_css
         mock_assemble_page,
         # mock_extract_parts, # Removed as the method is no longer patched
         mock_generate_lang_config,
@@ -822,6 +826,10 @@ class TestBuildScript(unittest.TestCase):
             self.en_translations if lang == "en" else self.es_translations
         )
         mock_translate_content.side_effect = lambda content, translations: content
+
+        # Mock asset bundler outputs
+        mock_bundle_css.return_value = os.path.join("public", "dist", "main.css")
+        mock_bundle_js.return_value = os.path.join("public", "dist", "main.js")
 
         mock_portfolio_item = PortfolioItem(id="p1", details={"title": {"key": "ptk"}})
         mock_blog_post = BlogPost(id="b1", title={"key": "btk"})
