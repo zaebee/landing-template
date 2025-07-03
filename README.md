@@ -6,7 +6,8 @@ This project provides a flexible and configurable system for generating static l
 
 The core functionality revolves around a Python build script (`build.py`) that assembles HTML pages (e.g., `index.html`, `index_es.html`) from:
 
-*   **HTML Block Templates**: Located in the `blocks/` directory, these are snippets for different sections of a page (hero, features, portfolio, etc.).
+*   **HTML Component Templates**: Located in `templates/components/<component_name>/` (e.g., `features.html`, `header.html`), these are Jinja2 templates for different sections and parts of a page.
+*   **Styling**: A hybrid approach is used. Header and Footer use traditional component-specific CSS. Content blocks (Features, Testimonials, Blog, Contact Form) use an experimental Semantic Attribute-Driven Styling (SADS) system where styles are defined by `data-sads-*` attributes in HTML and processed by a JavaScript engine. All CSS (traditional and SADS-generated) is applied. See `docs/styling_approach.md` for details.
 *   **Configuration**: `public/config.json` defines which blocks to include, their order, supported languages, and other site-wide settings.
 *   **Dynamic Data**: Content for blocks (text, images, links) is stored in JSON files within the `data/` directory. These files adhere to schemas defined by Protocol Buffers.
 *   **Translations**: Locale strings for internationalization are managed in `public/locales/`.
@@ -61,7 +62,7 @@ The website generation involves two main steps:
     This command runs the main `python build.py` script. The script performs the following actions:
     *   Reads the main configuration from `public/config.json`.
     *   Loads dynamic content from `data/*.json` files, validating it against the generated Protobuf structures.
-    *   Loads HTML templates from `blocks/`.
+    *   Loads HTML component templates from `templates/components/`.
     *   For each supported language:
         *   Loads translations from `public/locales/{lang}.json`.
         *   Generates HTML for each content block, populating it with data and translating text.
@@ -78,9 +79,9 @@ You can customize various aspects of the generated site:
 ### Content Blocks
 
 *   **Adding a New Block:**
-    1.  Create an HTML file for your block in the `blocks/` directory (e.g., `my-custom-block.html`).
-    2.  Add the desired HTML structure to this file. You can use `data-i18n="key"` attributes for translatable text and placeholders like `{{my_block_data}}` if the block requires dynamic content.
-    3.  Update `public/config.json` by adding the filename to the `blocks` array in the desired order.
+    1.  Create an HTML file for your block in `templates/components/<your-block-name>/<your-block-name>.html` (e.g., `templates/components/my-custom-block/my-custom-block.html`).
+    2.  Add the desired HTML structure. For SADS-styled blocks, use `data-sads-*` attributes. For traditional CSS, create a corresponding CSS file.
+    3.  Update `public/config.json` by adding the block's template name (e.g., `my-custom-block.html`) to the `blocks` array in the desired order.
     4.  If the block uses dynamic data:
         *   Define a Protobuf message for its data structure in a new `.proto` file or an existing one.
         *   Create a corresponding JSON data file in `data/`.
@@ -91,11 +92,11 @@ You can customize various aspects of the generated site:
         *   Remember to run `npm run generate-proto` after adding/modifying `.proto` files.
 
 *   **Removing a Block:**
-    1.  Remove the block's filename from the `blocks` array in `public/config.json`.
-    2.  Optionally, delete the HTML file from `blocks/` and any associated data/proto files if no longer needed.
+    1.  Remove the block's template name from the `blocks` array in `public/config.json`.
+    2.  Optionally, delete the HTML template file from `templates/components/<your-block-name>/` and any associated CSS, data, or proto files if no longer needed.
 
 *   **Reordering Blocks:**
-    1.  Change the order of block filenames in the `blocks` array in `public/config.json`.
+    1.  Change the order of block template names in the `blocks` array in `public/config.json`.
 
 ### Site Configuration
 
@@ -118,7 +119,12 @@ Modify `public/config.json` to change:
 
 ### Styles
 
-*   Modify `public/style.css` to change the visual appearance of the site.
+The project uses a hybrid styling approach:
+*   **Header & Footer:** Modify their respective CSS files in `templates/components/header/header.css` and `templates/components/footer/footer.css`.
+*   **Content Blocks (Features, Testimonials, Blog, Contact Form):** These use an experimental Semantic Attribute-Driven Styling (SADS) system. Styles are primarily controlled by `data-sads-*` attributes in their HTML templates (`templates/components/<block_name>/<block_name>.html`) and the SADS engine logic in `public/js/sads-style-engine.js`.
+*   **Global Base Styles:** Minimal global styles are in `public/style.css`.
+*   All traditional CSS is bundled into `public/dist/main.css`. SADS styles are injected dynamically.
+*   Refer to `docs/styling_approach.md` for a detailed explanation.
 
 After making any of these changes, **always run `npm run build`** to regenerate the HTML files and see your updates.
 

@@ -13,12 +13,12 @@ All final CSS (from traditional components and SADS-generated styles) is effecti
 
 ## 1. Traditional CSS Components (Header, Footer)
 
-* **Structure:**
-  * HTML Templates: Located in `templates/components/header/header.html` and `templates/components/footer/footer.html`.
-  * CSS Stylesheets: Corresponding CSS files are `templates/components/header/header.css` and `templates/components/footer/footer.css`.
-* **Styling:** These components are styled using standard CSS rules within their dedicated files. Class names may follow conventions like BEM, or be directly scoped.
-* **Bundling:** The CSS from these component files is bundled into `public/dist/main.css` by the build process.
-* **Modification:** To change the style of the Header or Footer, edit their respective `.css` files.
+*   **Structure:**
+    *   HTML Templates: Located in `templates/components/header/header.html` and `templates/components/footer/footer.html`.
+    *   CSS Stylesheets: Corresponding CSS files are `templates/components/header/header.css` and `templates/components/footer/footer.css`.
+*   **Styling:** These components are styled using standard CSS rules within their dedicated files. Class names may follow conventions like BEM, or be directly scoped.
+*   **Bundling:** The CSS from these component files is bundled into `public/dist/main.css` by the build process.
+*   **Modification:** To change the style of the Header or Footer, edit their respective `.css` files.
 
 ## 2. Semantic Attribute-Driven Styling (SADS) (Experimental)
 
