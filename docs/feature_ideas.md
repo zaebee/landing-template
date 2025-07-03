@@ -107,7 +107,6 @@ The table below offers a quick glance at all proposed features, their intended f
 - **Implementation Sketch**:
 
   - **Configuration (`public/config.json`)**: - Add an `analytics` object, e.g.:
-        
         ```json
           "analytics": {
             "provider": "google_analytics", // or "plausible", "none"
