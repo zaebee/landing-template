@@ -32,6 +32,7 @@ from build_protocols.html_generation import (
     HeroHtmlGenerator,
     PortfolioHtmlGenerator,
     TestimonialsHtmlGenerator,
+    DnaVisualizerHtmlGenerator, # Added import
 )
 from build_protocols.interfaces import (
     AppConfigManager,
@@ -297,18 +298,25 @@ class BuildOrchestrator:
         dynamic_data_loaders_config_resolved = {}
         for block_name, config_item in block_loaders_config_raw.items():
             message_type_name = config_item.get("message_type_name")
-            message_type_class = proto_message_types.get(message_type_name)
-            if not message_type_class:
-                print(f"Warning: Unknown message_type_name '{message_type_name}' for block '{block_name}'. Skipping.")
-                continue
+            message_type_class = None # Default to None
 
-            # Create a new config dict for resolved types to avoid modifying original app_config
+            if message_type_name: # If a message_type_name is provided
+                message_type_class = proto_message_types.get(message_type_name)
+                if not message_type_class:
+                    print(f"Warning: Unknown message_type_name '{message_type_name}' provided for block '{block_name}'. Skipping data loading for this block.")
+                    # We still add it to resolved_item_config so it can be processed by a generator if one exists
+                    # The generator will receive no data or handle this case.
+                    resolved_item_config = config_item.copy()
+                    resolved_item_config["message_type"] = None # Indicate no valid type
+                    dynamic_data_loaders_config_resolved[block_name] = resolved_item_config
+                    continue # Skip to next item in block_loaders_config_raw
+            # If message_type_name was empty, or if it was valid and message_type_class was found:
             resolved_item_config = config_item.copy()
-            resolved_item_config["message_type"] = message_type_class
+            resolved_item_config["message_type"] = message_type_class # Will be None if message_type_name was empty or invalid but allowed
             dynamic_data_loaders_config_resolved[block_name] = resolved_item_config
 
         self.data_cache.preload_data(
-            dynamic_data_loaders_config_resolved, self.data_loader
+            dynamic_data_loaders_config_resolved, self.data_loader # data_loader and cache should handle message_type being None
         )
 
         os.makedirs("public/generated_configs", exist_ok=True)
@@ -580,6 +588,7 @@ def main() -> None:
         "testimonials.html": TestimonialsHtmlGenerator(jinja_env=jinja_env),
         "hero.html": HeroHtmlGenerator(jinja_env=jinja_env),
         "contact-form.html": ContactFormHtmlGenerator(jinja_env=jinja_env),
+        "dna-visualizer.html": DnaVisualizerHtmlGenerator(jinja_env=jinja_env), # Added generator
     }
 
     # Create and run the orchestrator
