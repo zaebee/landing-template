@@ -15,6 +15,7 @@ from jinja2 import Environment
 
 # Generated protobuf message types
 from generated.blog_post_pb2 import BlogPost
+from generated.common_pb2 import I18nString # Added import
 from generated.contact_form_config_pb2 import ContactFormConfig
 from generated.feature_item_pb2 import FeatureItem
 from generated.hero_item_pb2 import HeroItem, HeroItemContent
@@ -190,12 +191,12 @@ class DnaVisualizerHtmlGenerator(HtmlBlockGenerator):
         self.jinja_env = jinja_env
 
     def generate_html(
-        self, data: Optional[None], translations: Translations # No data expected for now
+        self, data: Optional[I18nString], translations: Translations # data/dna.json is parsed as I18nString
     ) -> str:
         """Generates HTML markup for the DNA visualizer.
 
         Args:
-            data: Currently unused. Expected to be None.
+            data: An I18nString message, potentially from dna.json. Currently unused for sequence.
             translations: A dictionary containing translations.
 
         Returns:

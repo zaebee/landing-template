@@ -20,8 +20,8 @@ from google.protobuf.message import Message
 
 from .interfaces import DataCache, DataLoader, T
 
-# Configure basic logging
-logging.basicConfig(level=logging.INFO)
+# Basic logging is configured in the main build.py script.
+# This logger will inherit that configuration.
 logger = logging.getLogger(__name__)
 
 

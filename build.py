@@ -4,6 +4,7 @@ using a class-based approach with protocols.
 """
 
 import json
+import logging # Added
 import os
 import sys
 from typing import Any, Dict, List, Optional
@@ -12,6 +13,17 @@ from google.protobuf.message import Message
 from jinja2 import Environment, FileSystemLoader
 
 from generated.common_pb2 import I18nString
+
+# Configure basic logging
+# It's often good to do this early.
+# For a library, you wouldn't typically call basicConfig directly,
+# but for an application script, it's common.
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s"
+)
+logger = logging.getLogger(__name__)
+
 
 # Ensure the project root (and thus 'generated' directory) is in the Python path
 # This allows for direct execution of this script.
@@ -116,20 +128,20 @@ class BuildOrchestrator:
                     try:
                         with open(css_file_path, "r", encoding="utf-8") as f:
                             css_contents.append(f.read())
-                        print(f"Read CSS from: {css_file_path}")
+                        logger.info(f"Read CSS from: {css_file_path}")
                     except IOError as e:
-                        print(f"Error reading CSS file {css_file_path}: {e}")
+                        logger.error(f"Error reading CSS file {css_file_path}: {e}")
 
         if not css_contents:
-            print("No component CSS files found to bundle.")
+            logger.info("No component CSS files found to bundle.")
             # Create an empty main.css if no components have CSS
             # to avoid missing file errors if base.html links to it.
             try:
                 with open(output_file_path, "w", encoding="utf-8") as f:
                     f.write("/* No component CSS found or bundled. */")
-                print(f"Created empty CSS bundle: {output_file_path}")
+                logger.info(f"Created empty CSS bundle: {output_file_path}")
             except IOError as e:
-                print(f"Error creating empty CSS bundle {output_file_path}: {e}")
+                logger.error(f"Error creating empty CSS bundle {output_file_path}: {e}")
             return
 
         try:
@@ -138,13 +150,13 @@ class BuildOrchestrator:
                 for content in css_contents:
                     outfile.write(content)
                     outfile.write("\n\n/* --- End of component CSS --- */\n\n")
-            print(f"Successfully bundled CSS to: {output_file_path}")
+            logger.info(f"Successfully bundled CSS to: {output_file_path}")
         except IOError as e:
-            print(f"Error writing bundled CSS to {output_file_path}: {e}")
+            logger.error(f"Error writing bundled CSS to {output_file_path}: {e}")
 
     def _bundle_component_js(self) -> None:
         """Finds all component JS files and shared JS, bundles them."""
-        print("Bundling JavaScript files...")
+        logger.info("Bundling JavaScript files...")
         js_files_to_bundle = []
 
         # 1. Component-specific JS
@@ -155,7 +167,7 @@ class BuildOrchestrator:
                 js_file_path = os.path.join(component_dir_path, f"{component_name}.js")
                 if os.path.exists(js_file_path):
                     js_files_to_bundle.append(js_file_path)
-                    print(f"Found component JS: {js_file_path}")
+                    logger.info(f"Found component JS: {js_file_path}")
 
         # 2. Shared/Global JS
         shared_js_dir = os.path.join(project_root, "public", "js")
@@ -169,18 +181,18 @@ class BuildOrchestrator:
         sads_default_theme_path = os.path.join(shared_js_dir, "sads-default-theme.js")
         if os.path.exists(sads_default_theme_path):
             js_files_to_bundle.insert(0, sads_default_theme_path)
-            print(f"Found SADS Default Theme JS: {sads_default_theme_path}")
+            logger.info(f"Found SADS Default Theme JS: {sads_default_theme_path}")
         else:
-            print(f"Warning: SADS Default Theme JS not found at {sads_default_theme_path}")
+            logger.warning(f"SADS Default Theme JS not found at {sads_default_theme_path}")
 
         sads_engine_path = os.path.join(shared_js_dir, "sads-style-engine.js")
         if os.path.exists(sads_engine_path):
             # Insert after default theme if present, otherwise at the beginning
             insert_idx = 1 if sads_default_theme_path in js_files_to_bundle else 0
             js_files_to_bundle.insert(insert_idx, sads_engine_path)
-            print(f"Found SADS Engine JS: {sads_engine_path}")
+            logger.info(f"Found SADS Engine JS: {sads_engine_path}")
         else:
-            print(f"Warning: SADS Engine JS not found at {sads_engine_path}")
+            logger.warning(f"SADS Engine JS not found at {sads_engine_path}")
 
         app_js_path = os.path.join(shared_js_dir, "app.js")
         if os.path.exists(app_js_path):
@@ -191,22 +203,22 @@ class BuildOrchestrator:
             if sads_engine_path in js_files_to_bundle:
                 insert_idx +=1
             js_files_to_bundle.insert(insert_idx, app_js_path)
-            print(f"Found shared App JS: {app_js_path}")
+            logger.info(f"Found shared App JS: {app_js_path}")
         else:
-            print(f"Warning: App JS not found at {app_js_path}")
+            logger.warning(f"App JS not found at {app_js_path}")
 
         output_dir = os.path.join(project_root, "public", "dist")
         output_file_path = os.path.join(output_dir, "main.js")
         os.makedirs(output_dir, exist_ok=True)
 
         if not js_files_to_bundle:
-            print("No JavaScript files found to bundle.")
+            logger.info("No JavaScript files found to bundle.")
             try:
                 with open(output_file_path, "w", encoding="utf-8") as f:
                     f.write("// No JavaScript files found or bundled.")
-                print(f"Created empty JS bundle: {output_file_path}")
+                logger.info(f"Created empty JS bundle: {output_file_path}")
             except IOError as e:
-                print(f"Error creating empty JS bundle {output_file_path}: {e}")
+                logger.error(f"Error creating empty JS bundle {output_file_path}: {e}")
             return
 
         js_contents = []
@@ -215,7 +227,7 @@ class BuildOrchestrator:
                 with open(file_path, "r", encoding="utf-8") as f:
                     js_contents.append(f.read())
             except IOError as e:
-                print(f"Error reading JS file {file_path}: {e}")
+                logger.error(f"Error reading JS file {file_path}: {e}")
 
         try:
             with open(output_file_path, "w", encoding="utf-8") as outfile:
@@ -225,9 +237,9 @@ class BuildOrchestrator:
                     outfile.write(f"\n// --- Source: {os.path.basename(original_path)} --- //\n")
                     outfile.write(content)
                     outfile.write("\n// --- End Source --- //\n\n")
-            print(f"Successfully bundled JavaScript to: {output_file_path}")
+            logger.info(f"Successfully bundled JavaScript to: {output_file_path}")
         except IOError as e:
-            print(f"Error writing bundled JavaScript to {output_file_path}: {e}")
+            logger.error(f"Error writing bundled JavaScript to {output_file_path}: {e}")
 
 
     def load_initial_configurations(self) -> None:
@@ -258,7 +270,7 @@ class BuildOrchestrator:
         navigation_items: List[Dict[str, Any]],
     ) -> None:
         """Processes and builds the page for a single language."""
-        print(f"Processing language: {lang}")
+        logger.info(f"Processing language: {lang}")
         translations = self.translation_provider.load_translations(lang)
 
         self._generate_language_specific_config(lang, translations)
@@ -328,7 +340,7 @@ class BuildOrchestrator:
             if message_type_name: # If a message_type_name is provided
                 message_type_class = proto_message_types.get(message_type_name)
                 if not message_type_class:
-                    print(f"Warning: Unknown message_type_name '{message_type_name}' provided for block '{block_name}'. Skipping data loading for this block.")
+                    logger.warning(f"Unknown message_type_name '{message_type_name}' provided for block '{block_name}'. Skipping data loading for this block.")
                     # We still add it to resolved_item_config so it can be processed by a generator if one exists
                     # The generator will receive no data or handle this case.
                     resolved_item_config = config_item.copy()
@@ -364,7 +376,7 @@ class BuildOrchestrator:
                 navigation_items=processed_nav_items,
             )
 
-        print("Build process complete.")
+        logger.info("Build process complete.")
 
     def _generate_language_specific_config(
         self, lang: str, translations: Translations
@@ -400,10 +412,9 @@ class BuildOrchestrator:
                     indent=4,
                     ensure_ascii=False,
                 )
-            print(f"Generated language-specific config: {generated_config_path}")
+            logger.info(f"Generated language-specific config: {generated_config_path}")
         except IOError as e:
-            # Consider logging this error instead of just printing.
-            print(
+            logger.error(
                 f"Error writing language-specific config "
                 f"{generated_config_path}: {e}"
             )
@@ -434,127 +445,78 @@ class BuildOrchestrator:
 
         for block_file_name in block_filenames:
             if not isinstance(block_file_name, str):
-                print(
-                    "Warning: Invalid block file entry in config: "
-                    f"{block_file_name}. Skipping."
+                logger.warning(
+                    f"Invalid block file entry in config: {block_file_name}. Skipping."
                 )
                 continue
 
             # The concept of reading block template content directly and replacing placeholders
             # is now handled by Jinja2 within each HtmlBlockGenerator.
             # The generators will use their Jinja environment to load templates from
-            # `templates/blocks/`
+            # `templates/components/*` (since `templates/blocks/` was removed)
             generated_html_for_block = ""
             try:
-                if (
-                    block_file_name in data_loaders_config
-                    and block_file_name in self.html_generators
-                ):
-                    loader_cfg = data_loaders_config[block_file_name]
-                    html_generator = self.html_generators[block_file_name]
-
-                    # Data loading remains the same
-                    data_items: Any = self.data_cache.get_item(loader_cfg["data_file"])
-                    if loader_cfg.get("is_list", True) and data_items is None:
-                        data_items = []
-                    elif not loader_cfg.get("is_list", True) and data_items is None:
-                        # For single items, if data_items is None, pass None to generator
-                        pass
-
-                    # HtmlBlockGenerator now handles its own template loading & rendering
-                    generated_html_for_block = html_generator.generate_html(
-                        data_items, translations
+                if block_file_name not in self.html_generators:
+                    # This case should ideally not happen if config is correct.
+                    # All blocks listed in app_config["blocks"] should have a
+                    # corresponding generator in self.html_generators.
+                    logger.error(
+                        f"Missing HTML generator for configured block: {block_file_name}. "
+                        "This block will be skipped. Please check build configuration."
                     )
+                    continue # Skip this block
+
+                if block_file_name not in data_loaders_config:
+                    # This could happen if a block doesn't need external data
+                    # but still needs a generator (e.g., for a static component template).
+                    # However, current design implies all configured blocks have data loaders.
+                    # If a block truly has no data, its data_loader config might specify
+                    # a "None" message_type or similar, leading to `data_items` being None.
+                    logger.warning(
+                        f"No data loader configuration found for block: {block_file_name}. "
+                        "Proceeding without dynamic data. Ensure this is intended."
+                    )
+                    # We can still proceed if the generator can handle missing data (e.g. `data_items=None`)
+                    # This depends on the specific generator's implementation.
+
+                loader_cfg = data_loaders_config.get(block_file_name, {}) # Get config or empty dict
+                html_generator = self.html_generators[block_file_name]
+
+                data_items: Any = None
+                data_file_path = loader_cfg.get("data_file")
+
+                if data_file_path: # Only try to load data if a data_file is specified
+                    data_items = self.data_cache.get_item(data_file_path)
+                    is_list_default = True # Default to true if 'is_list' is not in loader_cfg
+                    if "is_list" in loader_cfg:
+                        is_list_default = loader_cfg.get("is_list", True)
+
+                    if is_list_default and data_items is None:
+                        data_items = [] # Default to empty list for list types if no data found
+                    # For single items (not a list), if data_items is None from cache, it's passed as None.
                 else:
-                    # If block is not in html_generators, it might be a simple static block
-                    # This path needs clarification: for now, assume all configured blocks
-                    # have a generator. If not, we might need to read its content from
-                    # templates/blocks/ directly if it's purely static.
-                    # Or, this is an error in configuration.
-                    # For now, we'll just log a warning if a block has no generator.
-                    print(
-                        f"Warning: No HTML generator found for block: {block_file_name}. Skipping data injection."
-                    )
-                    # Attempt to read static block content if needed, but this wasn't the old behavior.
-                    # The old behavior relied on a placeholder for replacement.
-                    # With Jinja, if a block is purely static, its template would just be static HTML.
-                    # The current HtmlBlockGenerators expect data.
-                    # This logic branch might need to be removed or adapted if static blocks
-                    # without data are listed in app_config['blocks'].
-                    # For now, we assume blocks in app_config['blocks'] are dynamic and have generators.
-                    # If a block is purely static HTML, it should be part of the main base.html
-                    # or a Jinja include there, not processed via this loop.
+                    # If no data_file is specified for the block in config, pass None.
+                    # The generator must be able to handle this (e.g. render a static template part).
+                    logger.info(f"No data file specified for block '{block_file_name}'. Passing None as data.")
 
-                    # Fallback: try to load the block as a static template if no generator
-                    # This is a deviation, as the old code expected a generator to fill a placeholder.
-                    # If it's a static block, it would have been included directly.
-                    # This part might be an over-correction.
-                    # Let's stick to: if it's in 'blocks' config, it should have a generator.
-                    # If a block is purely static, it shouldn't be in 'blocks' config for this loop.
-                    # It should be part of the base.html or included there.
-                    # The original code read the file content and then potentially replaced a placeholder.
-                    # If no placeholder replacement, it used the content as is.
-                    # With Jinja generators, the generator IS the one loading the template.
-                    # So, if a block is in config, it MUST have a generator.
 
-                    # The old code would read the block file, then if no generator,
-                    # it would still try to translate the raw content.
-                    # Let's replicate that if no generator is found but block is in config.
-                    # This means the block is treated as mostly static HTML but with i18n tags.
-                    try:
-                        block_template_path = os.path.join(
-                            "templates", "blocks", block_file_name
-                        )  # new path
-                        with open(
-                            block_template_path, "r", encoding="utf-8"
-                        ) as block_file:
-                            static_block_content = block_file.read()
-                        generated_html_for_block = static_block_content
-                        print(
-                            f"Info: Treating block {block_file_name} as static HTML for translation only."
-                        )
-                    except FileNotFoundError:
-                        print(
-                            f"Warning: Static block file {block_file_name} not found. Skipping."
-                        )
-                        continue
+                # HtmlBlockGenerator handles its own template loading & rendering
+                generated_html_for_block = html_generator.generate_html(
+                    data_items, translations
+                )
 
-                # The translation of the entire block's generated HTML
-                # should ideally be handled by the Jinja templates themselves if they use
-                # the `translations` context properly.
-                # If `translate_html_content` is still needed here, it implies that
-                # the generated HTML from blocks might *still* contain {{i18n_key}} tags
-                # that Jinja didn't process (e.g. if they were part of string literals
-                # within the protobuf data that got directly embedded).
-                # This should be minimized; translations should occur within Jinja templates.
-                # For safety, we can keep it, but it might indicate a smell.
-                # The Jinja templates for blocks now receive `translations` object, so they *should*
-                # be doing all necessary translations.
-                # Let's assume the block HTML from generator is fully translated.
-                # If not, `translate_html_content` would be needed here.
-                # The original code did this translation *after* placeholder replacement.
-
-                # If HtmlBlockGenerator.generate_html already returns fully translated HTML
-                # (because Jinja templates use the `translations` object), then this
-                # `translate_html_content` call might be redundant or even harmful
-                # if it re-processes already translated content.
-                # Let's assume for now that generators output translated content.
-                # The `base.html` itself will handle its own i18n via client-side.
-                # Server-side translation of `base.html` structure is done by passing `translations` to its context.
-
-                # Decision: The individual block templates are responsible for their own translation
+                # The individual block templates are responsible for their own translation
                 # using the `translations` object passed to them.
                 # So, `generated_html_for_block` should be final.
                 blocks_html_parts.append(generated_html_for_block)
 
-            except FileNotFoundError:  # This would now be an issue with Jinja's loader
-                print(
-                    f"Warning: Template for block {block_file_name} not found by Jinja. Skipping."
+            except FileNotFoundError: # Should ideally be caught by Jinja's loader within the generator
+                logger.error(
+                    f"Template file not found for block {block_file_name} (Jinja loader issue). Skipping."
                 )
             except Exception as e:
-                print(
-                    f"Error processing block {block_file_name} for lang {lang}: "
-                    f"{e}. Skipping."
+                logger.exception( # Use logger.exception to include stack trace for unexpected errors
+                    f"Error processing block {block_file_name} for lang {lang}. Skipping."
                 )
 
         return "\n".join(blocks_html_parts)
@@ -571,13 +533,12 @@ class BuildOrchestrator:
         """
         # This method prints errors to stdout rather than raising an IOError
         # directly to allow the build process to continue if one file fails.
-        print(f"Writing {filename}")
+        logger.info(f"Writing {filename}")
         try:
             with open(filename, "w", encoding="utf-8") as output_file:
                 output_file.write(content)
         except IOError as e:
-            # Consider logging this error.
-            print(f"Error writing file {filename}: {e}")
+            logger.error(f"Error writing file {filename}: {e}")
 
 
 def main() -> None:
