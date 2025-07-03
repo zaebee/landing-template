@@ -9,40 +9,41 @@
  */
 function renderDnaSequence(container, sequence) {
   if (!container) {
-    console.error('DNA sequence container not found.');
+    console.error("DNA sequence container not found.");
     return;
   }
-  if (typeof sequence !== 'string') {
-    console.error('DNA sequence must be a string.');
-    container.innerHTML = '<p style="color: red;">Error: Invalid sequence data.</p>';
+  if (typeof sequence !== "string") {
+    console.error("DNA sequence must be a string.");
+    container.innerHTML =
+      '<p style="color: red;">Error: Invalid sequence data.</p>';
     return;
   }
 
-  container.innerHTML = ''; // Clear any existing content
+  container.innerHTML = ""; // Clear any existing content
 
   const upperSequence = sequence.toUpperCase();
 
   for (let i = 0; i < upperSequence.length; i++) {
     const nucleotideChar = upperSequence[i];
-    const span = document.createElement('span');
-    span.classList.add('nucleotide');
-    let typeClass = '';
+    const span = document.createElement("span");
+    span.classList.add("nucleotide");
+    let typeClass = "";
 
     switch (nucleotideChar) {
-      case 'A':
-        typeClass = 'nucleotide-a';
+      case "A":
+        typeClass = "nucleotide-a";
         break;
-      case 'T':
-        typeClass = 'nucleotide-t';
+      case "T":
+        typeClass = "nucleotide-t";
         break;
-      case 'G':
-        typeClass = 'nucleotide-g';
+      case "G":
+        typeClass = "nucleotide-g";
         break;
-      case 'C':
-        typeClass = 'nucleotide-c';
+      case "C":
+        typeClass = "nucleotide-c";
         break;
       default:
-        typeClass = 'nucleotide-unknown'; // Handle N, X, or other characters
+        typeClass = "nucleotide-unknown"; // Handle N, X, or other characters
         break;
     }
     span.classList.add(typeClass);
@@ -53,21 +54,32 @@ function renderDnaSequence(container, sequence) {
 
 // Example of how to initialize and use the function:
 // This part would typically run on DOMContentLoaded or be part of a component initialization logic.
-document.addEventListener('DOMContentLoaded', () => {
-  const dnaVisualizerElements = document.querySelectorAll('[data-sads-component="dna-visualizer"]');
-  dnaVisualizerElements.forEach(element => {
-    const sequenceContainer = element.querySelector('[data-sads-element="sequence-container"]');
+document.addEventListener("DOMContentLoaded", () => {
+  const dnaVisualizerElements = document.querySelectorAll(
+    '[data-sads-component="dna-visualizer"]'
+  );
+  dnaVisualizerElements.forEach((element) => {
+    const sequenceContainer = element.querySelector(
+      '[data-sads-element="sequence-container"]'
+    );
     // The 'data-sequence' attribute should be on the 'element' itself (the one with data-sads-component)
     const sequenceData = element.dataset.sequence;
 
-    if (sequenceContainer && typeof sequenceData === 'string') {
+    if (sequenceContainer && typeof sequenceData === "string") {
       renderDnaSequence(sequenceContainer, sequenceData);
-    } else if (sequenceContainer && !sequenceData) { // sequenceData might be undefined if attribute is missing
-      console.warn('DNA visualizer component found, but missing or invalid data-sequence attribute.', element);
+    } else if (sequenceContainer && !sequenceData) {
+      // sequenceData might be undefined if attribute is missing
+      console.warn(
+        "DNA visualizer component found, but missing or invalid data-sequence attribute.",
+        element
+      );
       // Optionally render a message or default sequence if data-sequence is missing
       // renderDnaSequence(sequenceContainer, "ERROR"); // Example: render an error sequence
     } else if (!sequenceContainer) {
-      console.error('DNA visualizer component found, but missing its sequence container element.', element);
+      console.error(
+        "DNA visualizer component found, but missing its sequence container element.",
+        element
+      );
     }
   });
 });

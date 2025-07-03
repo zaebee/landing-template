@@ -11,6 +11,8 @@ from typing import Any, Dict, List, Optional
 from google.protobuf.message import Message
 from jinja2 import Environment, FileSystemLoader
 
+from generated.common_pb2 import I18nString
+
 # Ensure the project root (and thus 'generated' directory) is in the Python path
 # This allows for direct execution of this script.
 project_root = os.path.dirname(os.path.abspath(__file__))
@@ -288,7 +290,8 @@ class BuildOrchestrator:
             "TestimonialItem": TestimonialItem,
             "HeroItem": HeroItem,
             "ContactFormConfig": ContactFormConfig,
-            "Navigation": Navigation, # Added for completeness, though not in block_data_loaders
+            "Navigation": Navigation,
+            "None": I18nString,
         }
 
         # Get block data loader configuration from app_config
