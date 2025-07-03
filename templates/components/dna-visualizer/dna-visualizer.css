@@ -46,7 +46,7 @@
 }
 
 .nucleotide-t {
-  background-color: #33cfff; /* Bright Blue */
+  background-color: #33CFFF; /* Bright Blue */
   color: #fff;
 }
 
@@ -56,7 +56,7 @@
 }
 
 .nucleotide-c {
-  background-color: #ffc300; /* Bright Yellow */
+  background-color: #FFC300; /* Bright Yellow */
   color: #000; /* Black text for better contrast on yellow */
 }
 
