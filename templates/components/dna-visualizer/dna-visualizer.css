@@ -1,0 +1,67 @@
+/* Basic styling for the DNA visualizer component */
+.dna-sequence-block {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid #eee; /* Light border for the block */
+  border-radius: 4px;
+}
+
+.dna-sequence-title {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  font-size: 1.25rem;
+  color: #333; /* Darker color for the title */
+}
+
+.dna-sequence {
+  /* Flex layout is handled by data-sads- attributes in the HTML,
+     but adding basic flex here for isolated testing and as a fallback. */
+  display: flex;
+  flex-direction: row;
+  gap: 2px; /* A small default gap, can be overridden by SADS xxs or similar */
+  min-height: 20px; /* Ensure the container has some height even if empty */
+  background-color: #f8f8f8; /* Slight background to see the container */
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+/* Placeholder for nucleotide styling - will be expanded in a later step */
+.nucleotide {
+  display: inline-block; /* Or flex-item if preferred by SADS for direct children */
+  padding: 0.5em 0.75em;
+  border-radius: 3px;
+  font-family: monospace;
+  font-weight: bold;
+  text-align: center;
+  min-width: 2em; /* Ensure a minimum width for each nucleotide block */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  background-color: #ddd; /* Default/fallback background */
+  color: #333; /* Default/fallback text color */
+}
+
+/* Specific styles for each nucleotide type */
+.nucleotide-a {
+  background-color: #FF5733; /* Vibrant Red/Orange */
+  color: #fff;
+}
+
+.nucleotide-t {
+  background-color: #33CFFF; /* Bright Blue */
+  color: #fff;
+}
+
+.nucleotide-g {
+  background-color: #33FF57; /* Bright Green */
+  color: #000; /* Black text for better contrast on light green */
+}
+
+.nucleotide-c {
+  background-color: #FFC300; /* Bright Yellow */
+  color: #000; /* Black text for better contrast on yellow */
+}
+
+/* Style for unknown or non-standard nucleotides if needed */
+.nucleotide-unknown {
+  background-color: #808080; /* Grey */
+  color: #fff;
+}
