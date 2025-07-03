@@ -154,8 +154,8 @@ graph TD
     ASSEMBLE_MAIN -- Iterates Blocks --> LOAD_BLOCK_TPL;
     LOAD_BLOCK_TPL --> GET_CACHED_DATA;
     GET_CACHED_DATA --> GEN_BLOCK_HTML;
-    GEN_BLOCK_HTML --> REPLACE_PLACEHOLDER[Jinja handles this];
-    REPLACE_PLACEHOLDER --> TRANSLATE_BLOCK[Jinja handles this];
+    # GEN_BLOCK_HTML --> REPLACE_PLACEHOLDER; # Jinja handles this
+    # REPLACE_PLACEHOLDER --> TRANSLATE_BLOCK; # Jinja handles this
 
     ASSEMBLE_MAIN -- Aggregated HTML Parts --> ASSEMBLE_PAGE;
     PAGE_BUILDER -- Provides Header/Footer --> ASSEMBLE_PAGE;
@@ -195,8 +195,8 @@ graph TD
     style LOAD_BLOCK_TPL fill:#whitesmoke,stroke:#333
     style GET_CACHED_DATA fill:#whitesmoke,stroke:#333
     style GEN_BLOCK_HTML fill:#whitesmoke,stroke:#333
-    style REPLACE_PLACEHOLDER fill:#whitesmoke,stroke:#333
-    style TRANSLATE_BLOCK fill:#whitesmoke,stroke:#333
+    # style REPLACE_PLACEHOLDER fill:#whitesmoke,stroke:#333 # Commented out as Jinja handles this
+    # style TRANSLATE_BLOCK fill:#whitesmoke,stroke:#333 # Commented out as Jinja handles this
 ```
 
 ### Explanation of Diagram
