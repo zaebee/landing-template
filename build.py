@@ -51,7 +51,6 @@ class BuildOrchestrator:
     This class coordinates the loading of configurations, data, and translations,
     and then assembles HTML pages for each supported language.
     """
-
     PROTO_PACKAGE_NAME = "website_content.v1"
 
     def __init__(
@@ -101,9 +100,11 @@ class BuildOrchestrator:
         # The DataLoader is generic (Message), but here we expect Navigation.
         # A type: ignore is used as the generic loader's signature doesn't
         # specifically guarantee Navigation without more complex generics.
-        self.nav_proto_data = self.data_loader.load_dynamic_single_item_data(
-            nav_data_file,
-            Navigation,  # type: ignore
+        self.nav_proto_data = (
+            self.data_loader.load_dynamic_single_item_data(
+                nav_data_file,
+                Navigation,  # type: ignore
+            )
         )
 
     def _process_language(
@@ -119,8 +120,10 @@ class BuildOrchestrator:
 
         self._generate_language_specific_config(lang, translations)
 
-        assembled_main_content = self._assemble_main_content_for_lang(
-            lang, translations, dynamic_data_loaders_config
+        assembled_main_content = (
+            self._assemble_main_content_for_lang(
+                lang, translations, dynamic_data_loaders_config
+            )
         )
 
         page_title = translations.get("page_title_default", "Simple Landing Page")
@@ -165,25 +168,19 @@ class BuildOrchestrator:
         for block_name, config_item in block_loaders_config_raw.items():
             message_type_name = config_item.get("message_type_name")
             if not message_type_name:
-                print(
-                    f"Warning: Missing 'message_type_name' for block '{block_name}'. Skipping."
-                )
+                print(f"Warning: Missing 'message_type_name' for block '{block_name}'. Skipping.")
                 continue
 
             full_message_name = f"{self.PROTO_PACKAGE_NAME}.{message_type_name}"
             descriptor = pool.FindMessageTypeByName(full_message_name)
 
             if descriptor is None:
-                print(
-                    f"Warning: Could not find protobuf message type '{full_message_name}' for block '{block_name}'. Ensure .proto files are compiled and imported. Skipping."
-                )
+                print(f"Warning: Could not find protobuf message type '{full_message_name}' for block '{block_name}'. Ensure .proto files are compiled and imported. Skipping.")
                 continue
 
             message_type_class = GetMessageClass(descriptor)
-            if not message_type_class:  # Should not happen if descriptor is found
-                print(
-                    f"Warning: Could not get message class for '{full_message_name}' for block '{block_name}'. Skipping."
-                )
+            if not message_type_class: # Should not happen if descriptor is found
+                print(f"Warning: Could not get message class for '{full_message_name}' for block '{block_name}'. Skipping.")
                 continue
 
             # Create a new config dict for resolved types to avoid modifying original app_config
@@ -201,21 +198,17 @@ class BuildOrchestrator:
         processed_nav_items = []
         if self.nav_proto_data:
             for item in self.nav_proto_data.items:
-                processed_nav_items.append(
-                    {
-                        "label": {
-                            "key": item.label.key
-                        },  # Pass the key for translation in template
-                        "href": item.href,
-                        "animation_hint": item.animation_hint,
-                    }
-                )
+                processed_nav_items.append({
+                    "label": {"key": item.label.key}, # Pass the key for translation in template
+                    "href": item.href,
+                    "animation_hint": item.animation_hint
+                })
 
         for lang in supported_langs:
             self._process_language(
                 lang=lang,
                 default_lang=default_lang,
-                dynamic_data_loaders_config=dynamic_data_loaders_config_resolved,  # Use resolved config
+                dynamic_data_loaders_config=dynamic_data_loaders_config_resolved, # Use resolved config
                 navigation_items=processed_nav_items,
             )
 
@@ -236,13 +229,17 @@ class BuildOrchestrator:
         # This method prints errors to stdout rather than raising an IOError
         # directly to allow the build process to continue for other languages
         # if one configuration file fails to write.
-        lang_specific_config = self.app_config_manager.generate_language_config(
-            base_config=self.app_config,
-            nav_data=self.nav_proto_data,
-            translations=translations,
-            lang=lang,
+        lang_specific_config = (
+            self.app_config_manager.generate_language_config(
+                base_config=self.app_config,
+                nav_data=self.nav_proto_data,
+                translations=translations,
+                lang=lang,
+            )
         )
-        generated_config_path = f"public/generated_configs/config_{lang}.json"
+        generated_config_path = (
+            f"public/generated_configs/config_{lang}.json"
+        )
         try:
             with open(generated_config_path, "w", encoding="utf-8") as config_file:
                 json.dump(
@@ -255,7 +252,8 @@ class BuildOrchestrator:
         except IOError as e:
             # Consider logging this error instead of just printing.
             print(
-                f"Error writing language-specific config {generated_config_path}: {e}"
+                f"Error writing language-specific config "
+                f"{generated_config_path}: {e}"
             )
 
     def _assemble_main_content_for_lang(
@@ -439,8 +437,7 @@ def main() -> None:
     """
     # Initialize Jinja2 Environment
     jinja_env = Environment(
-        loader=FileSystemLoader("templates"),
-        autoescape=True,  # Enable autoescaping
+        loader=FileSystemLoader("templates"), autoescape=True  # Enable autoescaping
     )
 
     # Instantiate service components with more descriptive names
