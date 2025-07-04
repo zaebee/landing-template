@@ -92,10 +92,10 @@ class BaseHtmlGenerator(HtmlBlockGenerator):
 
 
 @register_html_generator(
-    block_name="portfolio.html", template_to_render="blocks/portfolio.html"
+    block_name="portfolio.html", template_to_render="components/portfolio/portfolio.html"
 )  # data_key="items" is default
 class PortfolioHtmlGenerator(BaseHtmlGenerator):
-    """Generates HTML for a list of portfolio items using Jinja2."""
+    """Generates HTML for a list of portfolio items using Jinja2, utilizing SADS attributes."""
 
     # __init__ is inherited from BaseHtmlGenerator
 

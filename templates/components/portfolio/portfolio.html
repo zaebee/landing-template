@@ -1,0 +1,84 @@
+<section
+    data-sads-component="portfolio"
+    id="portfolio"
+    data-sads-padding="xl"
+    data-sads-text-align="center"
+    data-sads-bg-color="portfolio-section-bg" {# Assumes a theme key 'portfolio-section-bg' #}
+>
+  <h2
+    data-sads-element="title"
+    data-i18n="portfolio_title"
+    data-sads-margin-bottom="xl"
+    data-sads-font-size="xl"
+    data-sads-text-color="text-primary"
+  >
+    {{ translations.get('portfolio_title', 'Our Work') }}
+  </h2>
+  <div
+    data-sads-element="grid"
+    data-sads-display="grid"
+    data-sads-grid-template-columns="repeat(auto-fit, minmax(300px, 1fr))" {# Responsive grid columns #}
+    data-sads-gap="l" {# Gap between grid items #}
+    data-sads-max-width="content-container"
+    data-sads-margin="custom:0 auto" {# Center the grid container #}
+  >
+    {% for item in items %}
+    <article
+        data-sads-element="item"
+        id="{{ item.id if item.id else ('portfolio-' ~ loop.index) }}"
+        data-sads-bg-color="portfolio-item-bg" {# Assumes 'portfolio-item-bg' #}
+        data-sads-border-radius="m"
+        data-sads-shadow="subtle"
+        data-sads-padding="l"
+        data-sads-text-align="left"
+        data-sads-display="flex"
+        data-sads-flex-direction="column" {# Stack image and text vertically #}
+    >
+      {% if item.image and item.image.src %}
+      <img
+        data-sads-element="item-image"
+        src="{{ item.image.src }}"
+        alt="{{ translations.get(item.image.alt_text.key if item.image.alt_text else '', item.image.alt_text.key if item.image.alt_text else 'Portfolio image') }}"
+        data-sads-width="full"
+        data-sads-height="custom:200px" {# Fixed height for images, adjust as needed #}
+        data-sads-object-fit="cover"
+        data-sads-border-radius="s"
+        data-sads-margin-bottom="m"
+      />
+      {% endif %}
+      {% if item.details %}
+      <h3
+        data-sads-element="item-title"
+        data-sads-font-size="l"
+        data-sads-text-color="text-accent"
+        data-sads-margin-top="xs"
+        data-sads-margin-bottom="s"
+      >
+        {{ translations.get(item.details.title.key if item.details.title else '', item.details.title.key if item.details.title else 'Portfolio Title') }}
+      </h3>
+      <p
+        data-sads-element="item-description"
+        data-sads-font-size="s"
+        data-sads-text-color="text-secondary"
+        data-sads-flex-grow="1" {# Allow description to take available space #}
+        data-sads-margin-bottom="m"
+      >
+        {{ translations.get(item.details.description.key if item.details.description else '', item.details.description.key if item.details.description else 'Description here.') }}
+      </p>
+      {% endif %}
+      {# Add links or CTAs here if present in data structure in the future #}
+      {# Example:
+      {% if item.links %}
+        {% for link in item.links %}
+          <a href="{{link.url}}" data-sads-element="item-link">{{link.text_key | translate_key(translations)}}</a>
+        {% endfor %}
+      {% endif %}
+      #}
+    </article>
+    {% else %}
+    <p data-sads-element="no-items-message" data-sads-text-color="text-secondary">
+      {{ translations.get('portfolio_no_items', 'No portfolio items to display.') }}
+    </p>
+    {% endfor %}
+  </div>
+</section>
