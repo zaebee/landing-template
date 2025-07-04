@@ -4,25 +4,13 @@ This document outlines the hybrid styling strategy used in this project, combini
 
 ## Overview
 
-The project employs two main styling methods:
+The project (in its current experimental SADS-for-all setup) primarily uses an experimental styling system called Semantic Attribute-Driven Styling (SADS) for all components, including Header, Footer, and the main content blocks. The "AI" in "SADS AI experimental" is currently an aspirational term reflecting the goal of a more intelligent styling system; the existing engine is rule-based.
 
-1.  **Traditional CSS Components:** Used for global shell components like the Header and Footer.
-2.  **Semantic Attribute-Driven Styling (SADS):** An experimental, JavaScript-driven system used for the main content blocks (e.g., Features, Testimonials, Blog, Contact Form).
+SADS dynamically injects its styles into a `<style id="sads-dynamic-styles"></style>` tag in the document head. Any traditional CSS (e.g. from `public/style.css` or potentially component-specific CSS files if they were to be reintroduced) would also be applied.
 
-All final CSS (from traditional components and SADS-generated styles) is effectively applied to the page. Traditional CSS is bundled into `public/dist/main.css`. SADS dynamically injects its styles into a `<style id="sads-dynamic-styles"></style>` tag in the document head.
+## Semantic Attribute-Driven Styling (SADS) (Experimental)
 
-## 1. Traditional CSS Components (Header, Footer)
-
-- **Structure:**
-  - HTML Templates: Located in `templates/components/header/header.html` and `templates/components/footer/footer.html`.
-  - CSS Stylesheets: Corresponding CSS files are `templates/components/header/header.css` and `templates/components/footer/footer.css`.
-- **Styling:** These components are styled using standard CSS rules within their dedicated files.
-- **Bundling:** The CSS from these component files is bundled into `public/dist/main.css` by the build process (see `build.py` and `AssetBundler`).
-- **Modification:** To change the style of the Header or Footer, edit their respective `.css` files and rebuild using `npm run build`.
-
-## 2. Semantic Attribute-Driven Styling (SADS) (Experimental)
-
-SADS is used for the main content blocks like Features, Testimonials, Blog, and Contact Form.
+SADS is used for all components including Header, Footer, Features, Testimonials, Blog, and Contact Form in this experimental configuration.
 
 - **Concept:** Styling intent is declared directly on HTML elements using `data-sads-*` attributes, which are then processed by a JavaScript engine to generate CSS rules.
 - **HTML Templates:** Located in `templates/components/<component_name>/<component_name>.html` (e.g., `templates/components/features/features.html`).

@@ -373,9 +373,7 @@ class TestBuildScript(unittest.TestCase):
     def _create_dummy_block_files(self) -> None:
         """Creates dummy HTML block files in templates/blocks/ directory."""
         # The directory templates/blocks is created in _create_test_directories
-        dummy_blocks_dir = os.path.join(
-            "templates", "blocks"
-        )  # Relative to self.test_root_dir
+        # dummy_blocks_dir variable is no longer used as files are written directly to component paths.
 
         # For hero.html, matching the context from HeroHtmlGenerator (which uses data_key="item")
         # and test assertions.
@@ -389,7 +387,11 @@ class TestBuildScript(unittest.TestCase):
 </section>{% else %}<!-- Hero data not found or no variations -->{% endif %}
 """
         with open(
-            os.path.join(self.test_root_dir, "templates", "components", "hero", "hero.html"), "w", encoding="utf-8"
+            os.path.join(
+                self.test_root_dir, "templates", "components", "hero", "hero.html"
+            ),
+            "w",
+            encoding="utf-8",
         ) as f:
             f.write(hero_template_content)
 
@@ -449,7 +451,15 @@ class TestBuildScript(unittest.TestCase):
 </div>{% endif %}
 """
         with open(
-            os.path.join(self.test_root_dir, "templates", "components", "testimonials", "testimonials.html"), "w", encoding="utf-8"
+            os.path.join(
+                self.test_root_dir,
+                "templates",
+                "components",
+                "testimonials",
+                "testimonials.html",
+            ),
+            "w",
+            encoding="utf-8",
         ) as f:
             f.write(testimonials_template_content)
 
@@ -472,7 +482,15 @@ class TestBuildScript(unittest.TestCase):
 </div>{% endif %}
 """
         with open(
-            os.path.join(self.test_root_dir, "templates", "components", "portfolio", "portfolio.html"), "w", encoding="utf-8"
+            os.path.join(
+                self.test_root_dir,
+                "templates",
+                "components",
+                "portfolio",
+                "portfolio.html",
+            ),
+            "w",
+            encoding="utf-8",
         ) as f:
             f.write(portfolio_template_content)
 
@@ -518,7 +536,15 @@ class TestBuildScript(unittest.TestCase):
 </form>
 """
         with open(
-            os.path.join(self.test_root_dir, "templates", "components", "contact-form", "contact-form.html"), "w", encoding="utf-8"
+            os.path.join(
+                self.test_root_dir,
+                "templates",
+                "components",
+                "contact-form",
+                "contact-form.html",
+            ),
+            "w",
+            encoding="utf-8",
         ) as f:
             f.write(contact_form_template_content)
 
