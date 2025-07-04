@@ -101,6 +101,22 @@ class TestBuildScript(unittest.TestCase):
             os.path.join(self.test_root_dir, "templates", "components", "features"),
             exist_ok=True,
         )
+        os.makedirs(
+            os.path.join(self.test_root_dir, "templates", "components", "hero"),
+            exist_ok=True,
+        )
+        os.makedirs(
+            os.path.join(self.test_root_dir, "templates", "components", "portfolio"),
+            exist_ok=True,
+        )
+        os.makedirs(
+            os.path.join(self.test_root_dir, "templates", "components", "testimonials"),
+            exist_ok=True,
+        )
+        os.makedirs(
+            os.path.join(self.test_root_dir, "templates", "components", "contact-form"),
+            exist_ok=True,
+        )
 
     def _instantiate_services(self) -> None:
         """Instantiates common service components used in tests."""
@@ -361,21 +377,19 @@ class TestBuildScript(unittest.TestCase):
             "templates", "blocks"
         )  # Relative to self.test_root_dir
 
-        # For hero.html, matching the context from HeroHtmlGenerator and test assertions
+        # For hero.html, matching the context from HeroHtmlGenerator (which uses data_key="item")
+        # and test assertions.
+        # The "else" branch should only contain the comment for the test_generate_hero_html_none_item assertion.
         hero_template_content = """
-<section class="hero">
-    {% if hero_item %}
-    <h1>{{ translations[hero_item.title.key] }}</h1>
-    <p>{{ translations[hero_item.subtitle.key] }}</p>
-    <a href="{{ hero_item.cta.uri }}" class="cta-button">{{ translations[hero_item.cta.text.key] }}</a>
-    <!-- Selected variation: {{ hero_item.variation_id }} -->
-    {% else %}
-    <!-- Hero item data was None or empty in dummy template -->
-    {% endif %}
-</section>
+{% if item %}<section class="hero">
+    <h1>{{ translations[item.title.key] }}</h1>
+    <p>{{ translations[item.subtitle.key] }}</p>
+    <a href="{{ item.cta.uri }}" class="cta-button">{{ translations[item.cta.text.key] }}</a>
+    <!-- Selected variation: {{ item.variation_id }} -->
+</section>{% else %}<!-- Hero data not found or no variations -->{% endif %}
 """
         with open(
-            os.path.join(dummy_blocks_dir, "hero.html"), "w", encoding="utf-8"
+            os.path.join(self.test_root_dir, "templates", "components", "hero", "hero.html"), "w", encoding="utf-8"
         ) as f:
             f.write(hero_template_content)
 
@@ -388,32 +402,33 @@ class TestBuildScript(unittest.TestCase):
         # self.assertIn('<div class="feature-item">', html)
         # FeatureItem has content.title.key and content.description.key
         features_template_content = """
-<div>
+{% if items %}<div>
     {% for item in items %}
     <div class="feature-item">
         <h2>{{ translations[item.content.title.key] }}</h2>
         <p>{{ translations[item.content.description.key] }}</p>
     </div>
     {% endfor %}
-</div>
+</div>{% endif %}
 """
-        with open(
-            os.path.join(dummy_blocks_dir, "features.html"), "w", encoding="utf-8"
-        ) as f:
-            f.write(features_template_content)
-        # Also create the SADS version of features.html for the test_generate_features_html
-        # as BlogHtmlGenerator now points to "components/features/features.html"
+        # features.html is already created in templates/components/features/ by previous logic
+        # Ensure the old one in templates/blocks is not created if it was.
+        # The existing code for features.html already writes to components/features:
         dummy_components_features_dir = os.path.join(
             self.test_root_dir, "templates", "components", "features"
         )
-        # The content can be the same as features_template_content for now,
-        # as test_generate_features_html assertions are content-based.
         with open(
             os.path.join(dummy_components_features_dir, "features.html"),
             "w",
             encoding="utf-8",
         ) as f:
             f.write(features_template_content)
+        # Remove the creation from dummy_blocks_dir if it existed.
+        # The original code had:
+        # with open(os.path.join(dummy_blocks_dir, "features.html"), "w", encoding="utf-8") as f:
+        #    f.write(features_template_content)
+        # This line should be removed if present, or ensured it's not added back.
+        # For this diff, I am ensuring the components/features/features.html is the one being written to.
 
         # test_generate_testimonials_html asserts:
         # self.assertIn("Translated Testimonial Text", html)
@@ -423,7 +438,7 @@ class TestBuildScript(unittest.TestCase):
         # self.assertIn('<div class="testimonial-item">', html)
         # TestimonialItem has text.key, author.key, author_image.src, author_image.alt_text.key
         testimonials_template_content = """
-<div>
+{% if items %}<div>
     {% for item in items %}
     <div class="testimonial-item">
         <p>"{{ translations[item.text.key] }}"</p>
@@ -431,10 +446,10 @@ class TestBuildScript(unittest.TestCase):
         <img src="{{ item.author_image.src }}" alt="{{ translations[item.author_image.alt_text.key] }}" />
     </div>
     {% endfor %}
-</div>
+</div>{% endif %}
 """
         with open(
-            os.path.join(dummy_blocks_dir, "testimonials.html"), "w", encoding="utf-8"
+            os.path.join(self.test_root_dir, "templates", "components", "testimonials", "testimonials.html"), "w", encoding="utf-8"
         ) as f:
             f.write(testimonials_template_content)
 
@@ -446,7 +461,7 @@ class TestBuildScript(unittest.TestCase):
         # self.assertIn('id="p1"', html)
         # PortfolioItem has id, image.src, image.alt_text.key, details.title.key, details.description.key
         portfolio_template_content = """
-<div>
+{% if items %}<div>
     {% for item in items %}
     <div id="{{ item.id }}">
         <img src="{{ item.image.src }}" alt="{{ translations[item.image.alt_text.key] }}" />
@@ -454,10 +469,10 @@ class TestBuildScript(unittest.TestCase):
         <p>{{ translations[item.details.description.key] }}</p>
     </div>
     {% endfor %}
-</div>
+</div>{% endif %}
 """
         with open(
-            os.path.join(dummy_blocks_dir, "portfolio.html"), "w", encoding="utf-8"
+            os.path.join(self.test_root_dir, "templates", "components", "portfolio", "portfolio.html"), "w", encoding="utf-8"
         ) as f:
             f.write(portfolio_template_content)
 
@@ -469,7 +484,7 @@ class TestBuildScript(unittest.TestCase):
         # self.assertIn('id="b1"', html)
         # BlogPost has id, title.key, excerpt.key, cta.uri, cta.text.key
         blog_template_content = """
-<div>
+{% if items %}<div>
     {% for item in items %}
     <article id="{{ item.id }}">
         <h2>{{ translations[item.title.key] }}</h2>
@@ -477,20 +492,13 @@ class TestBuildScript(unittest.TestCase):
         <a href="{{ item.cta.uri }}">{{ translations[item.cta.text.key] }}</a>
     </article>
     {% endfor %}
-</div>
+</div>{% endif %}
 """
-        with open(
-            os.path.join(dummy_blocks_dir, "blog.html"), "w", encoding="utf-8"
-        ) as f:
-            f.write(blog_template_content)
-
-        # Also create the SADS version of blog.html for the test_generate_blog_html
-        # as BlogHtmlGenerator now points to "components/blog/blog.html"
+        # blog.html is already created in templates/components/blog/ by previous logic
+        # Ensure the old one in templates/blocks is not created.
         dummy_components_blog_dir = os.path.join(
             self.test_root_dir, "templates", "components", "blog"
         )
-        # The content can be the same as blog_template_content for now,
-        # as test_generate_blog_html assertions are content-based.
         with open(
             os.path.join(dummy_components_blog_dir, "blog.html"),
             "w",
@@ -510,7 +518,7 @@ class TestBuildScript(unittest.TestCase):
 </form>
 """
         with open(
-            os.path.join(dummy_blocks_dir, "contact-form.html"), "w", encoding="utf-8"
+            os.path.join(self.test_root_dir, "templates", "components", "contact-form", "contact-form.html"), "w", encoding="utf-8"
         ) as f:
             f.write(contact_form_template_content)
 

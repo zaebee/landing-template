@@ -18,50 +18,161 @@
     <link href="public/dist/main.css" rel="stylesheet" />
   </head>
   <body>
-    <header>
-      <nav>
-        <div class="logo">
-          <a href="#" data-i18n="logo_text">Logo ES</a>
+    <header
+      data-sads-component="header"
+      data-sads-bg-color="header-bg"
+      data-sads-padding="m 0"
+      data-sads-shadow="subtle"
+    >
+      <nav
+        data-sads-element="navbar"
+        data-sads-display="flex"
+        data-sads-flex-justify="space-between"
+        data-sads-flex-align-items="center"
+        data-sads-max-width="content-container"
+        data-sads-margin="custom:0 auto"
+        data-sads-padding="0 m"
+      >
+        <div data-sads-element="logo-container">
+          <a
+            href="#"
+            data-i18n="logo_text"
+            data-sads-element="logo-link"
+            data-sads-text-color="text-primary"
+            data-sads-text-decoration="none"
+            data-sads-font-weight="bold"
+            data-sads-font-size="l"
+          >
+            Logo ES
+          </a>
         </div>
+
         <button
+          data-sads-element="menu-toggle"
           aria-expanded="false"
           aria-label="Alternar menú"
           class="hamburger-menu"
+          data-sads-display="none"
+          data-sads-responsive-rules='[
+        {"breakpoint": "mobile", "styles": {"display": "block"}}
+      ]'
+          data-sads-button-variant="icon"
+          data-sads-text-color="text-primary"
         >
           <span class="hamburger-bar"></span>
           <span class="hamburger-bar"></span>
           <span class="hamburger-bar"></span>
         </button>
-        <div class="nav-items">
-          <ul>
-            <li>
-              <a href="#" data-i18n="nav_home">Inicio</a>
-            </li>
 
-            <li>
-              <a href="#features" data-i18n="nav_features">Características</a>
-            </li>
-
-            <li>
-              <a href="#testimonials" data-i18n="nav_testimonials"
-                >Testimonios</a
+        <div
+          data-sads-element="nav-items-container"
+          data-sads-display="flex"
+          data-sads-flex-align-items="center"
+          data-sads-gap="m"
+          data-sads-responsive-rules='[
+        {"breakpoint": "mobile", "styles": {"display": "none", "flexDirection": "column", "position": "absolute", "top": "custom:60px", "left": "0", "width": "full", "bg-color": "header-bg", "padding": "m", "shadow": "subtle", "gap": "s" }}
+      ]'
+        >
+          <ul
+            data-sads-element="nav-list"
+            data-sads-display="flex"
+            data-sads-gap="m"
+            data-sads-list-style="none"
+            data-sads-padding="none"
+            data-sads-margin="none"
+            data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexDirection": "column", "width": "full", "alignItems": "stretch", "gap": "s"}}
+        ]'
+          >
+            <li data-sads-element="nav-item">
+              <a
+                href="#"
+                data-i18n="nav_home"
+                data-sads-text-color="text-nav-link"
+                data-sads-text-decoration="none"
               >
+                Inicio
+              </a>
             </li>
 
-            <li>
-              <a href="#portfolio" data-i18n="nav_portfolio">Portafolio</a>
+            <li data-sads-element="nav-item">
+              <a
+                href="#features"
+                data-i18n="nav_features"
+                data-sads-text-color="text-nav-link"
+                data-sads-text-decoration="none"
+              >
+                Características
+              </a>
             </li>
 
-            <li>
-              <a href="#blog" data-i18n="nav_blog">Blog</a>
+            <li data-sads-element="nav-item">
+              <a
+                href="#testimonials"
+                data-i18n="nav_testimonials"
+                data-sads-text-color="text-nav-link"
+                data-sads-text-decoration="none"
+              >
+                Testimonios
+              </a>
+            </li>
+
+            <li data-sads-element="nav-item">
+              <a
+                href="#portfolio"
+                data-i18n="nav_portfolio"
+                data-sads-text-color="text-nav-link"
+                data-sads-text-decoration="none"
+              >
+                Portafolio
+              </a>
+            </li>
+
+            <li data-sads-element="nav-item">
+              <a
+                href="#blog"
+                data-i18n="nav_blog"
+                data-sads-text-color="text-nav-link"
+                data-sads-text-decoration="none"
+              >
+                Blog
+              </a>
             </li>
           </ul>
-          <button aria-label="Switch to Dark Mode" id="dark-mode-toggle">
+
+          <button
+            data-sads-element="dark-mode-toggle"
+            aria-label="Switch to Dark Mode"
+            id="dark-mode-toggle"
+            data-sads-button-variant="icon"
+            data-sads-text-color="text-primary"
+          >
             🌙
           </button>
-          <div id="language-switcher">
-            <button data-lang="en">EN</button>
-            <button data-lang="es">ES</button>
+
+          <div
+            data-sads-element="language-switcher"
+            id="language-switcher"
+            data-sads-display="flex"
+            data-sads-gap="s"
+            data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"width": "full", "justifyContent": "center"}}
+        ]'
+          >
+            <button
+              data-lang="en"
+              data-sads-button-variant="outline"
+              data-sads-padding="xs s"
+            >
+              EN
+            </button>
+            <button
+              data-lang="es"
+              data-sads-button-variant="outline"
+              data-sads-padding="xs s"
+            >
+              ES
+            </button>
           </div>
         </div>
       </nav>
@@ -772,34 +883,141 @@
           </article>
         </div>
       </section>
-      <section class="contact-form" id="contact">
-        <h2 data-i18n="contact_title">Contáctanos</h2>
-        <form
-          id="contactForm"
-          method="POST"
-          action="https://formspree.io/f/xgvyddyg"
-          data-form-action-url="https://formspree.io/f/xgvyddyg"
-          data-success-message="¡Mensaje enviado con éxito! Gracias."
-          data-error-message="¡Ups! Algo salió mal. Por favor, inténtalo de nuevo."
+      <section
+        data-sads-component="contact-form"
+        id="contact"
+        data-sads-padding="xl"
+        data-sads-bg-color="contact-form-section-bg"
+        data-sads-text-align="left"
+      >
+        <div
+          data-sads-element="container"
+          data-sads-max-width="custom:600px"
+          data-sads-margin="custom:0 auto"
+          data-sads-bg-color="contact-form-bg"
+          data-sads-padding="xl"
+          data-sads-border-radius="m"
+          data-sads-shadow="subtle"
         >
-          <label for="name" data-i18n="contact_name_label">Nombre:</label>
-          <input type="text" id="name" name="name" required />
-
-          <label for="email" data-i18n="contact_email_label"
-            >Correo Electrónico:</label
+          <h2
+            data-sads-element="title"
+            data-i18n="contact_title"
+            data-sads-font-size="xl"
+            data-sads-text-color="text-primary"
+            data-sads-margin-bottom="l"
+            data-sads-text-align="center"
           >
-          <input type="email" id="email" name="email" required />
-
-          <label for="message" data-i18n="contact_message_label"
-            >Mensaje:</label
+            Contáctanos
+          </h2>
+          <form
+            data-sads-element="form"
+            id="contactForm"
+            method="POST"
+            action="https://formspree.io/f/xgvyddyg"
+            data-form-action-url="https://formspree.io/f/xgvyddyg"
+            data-success-message="¡Mensaje enviado con éxito! Gracias."
+            data-error-message="¡Ups! Algo salió mal. Por favor, inténtalo de nuevo."
+            data-sads-display="flex"
+            data-sads-flex-direction="column"
+            data-sads-gap="m"
           >
-          <textarea id="message" name="message" rows="4" required></textarea>
+            <div>
+              <label
+                for="name"
+                data-i18n="contact_name_label"
+                data-sads-element="label"
+                data-sads-display="block"
+                data-sads-margin-bottom="xs"
+                data-sads-font-weight="bold"
+                data-sads-text-color="text-secondary"
+              >
+                Nombre:
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                required
+                data-sads-element="input"
+                data-sads-input-variant="default"
+                data-sads-width="full"
+                data-sads-padding="s"
+                data-sads-border-radius="s"
+              />
+            </div>
 
-          <button type="submit" data-i18n="contact_send_button">
-            Enviar Mensaje
-          </button>
-          <div id="contactFormStatus" role="status"></div>
-        </form>
+            <div>
+              <label
+                for="email"
+                data-i18n="contact_email_label"
+                data-sads-element="label"
+                data-sads-display="block"
+                data-sads-margin-bottom="xs"
+                data-sads-font-weight="bold"
+                data-sads-text-color="text-secondary"
+              >
+                Correo Electrónico:
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                data-sads-element="input"
+                data-sads-input-variant="default"
+                data-sads-width="full"
+                data-sads-padding="s"
+                data-sads-border-radius="s"
+              />
+            </div>
+
+            <div>
+              <label
+                for="message"
+                data-i18n="contact_message_label"
+                data-sads-element="label"
+                data-sads-display="block"
+                data-sads-margin-bottom="xs"
+                data-sads-font-weight="bold"
+                data-sads-text-color="text-secondary"
+              >
+                Mensaje:
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                rows="4"
+                required
+                data-sads-element="textarea"
+                data-sads-input-variant="default"
+                data-sads-width="full"
+                data-sads-padding="s"
+                data-sads-border-radius="s"
+              ></textarea>
+            </div>
+
+            <button
+              type="submit"
+              data-i18n="contact_send_button"
+              data-sads-element="button"
+              data-sads-button-variant="primary"
+              data-sads-width="full"
+              data-sads-padding="m"
+              data-sads-margin-top="m"
+            >
+              Enviar Mensaje
+            </button>
+            <div
+              data-sads-element="status-message"
+              id="contactFormStatus"
+              role="status"
+              data-sads-min-height="custom:1.5em"
+              data-sads-margin-top="s"
+              data-sads-text-align="center"
+              data-sads-font-size="s"
+            ></div>
+          </form>
+        </div>
       </section>
 
       <script>
@@ -807,7 +1025,6 @@
           const form = document.getElementById("contactForm");
           if (form) {
             const statusDiv = document.getElementById("contactFormStatus");
-            // These are now read from the form's data attributes, which are set by Jinja2
             const actionUrl = form.dataset.formActionUrl;
             const successMessage = form.dataset.successMessage;
             const errorMessage = form.dataset.errorMessage;
@@ -816,7 +1033,7 @@
               event.preventDefault();
               const formData = new FormData(form);
               statusDiv.textContent = "";
-              statusDiv.classList.remove("success", "error");
+              statusDiv.classList.remove("success", "error"); // Keep class-based styling for status messages for now
 
               fetch(actionUrl, {
                 method: "POST",
@@ -828,7 +1045,7 @@
                 .then((response) => {
                   if (response.ok) {
                     statusDiv.textContent = successMessage;
-                    statusDiv.classList.add("success");
+                    statusDiv.classList.add("success"); // JS adds 'success' class
                     form.reset();
                   } else {
                     response.json().then((data) => {
@@ -839,7 +1056,7 @@
                       } else {
                         statusDiv.textContent = errorMessage;
                       }
-                      statusDiv.classList.add("error");
+                      statusDiv.classList.add("error"); // JS adds 'error' class
                     });
                   }
                 })
@@ -853,10 +1070,29 @@
       </script>
     </main>
 
-    <footer>
-      <p data-i18n="footer_text">
-        &amp;copy; 2024 Página de Destino Simple. Todos los derechos reservados.
-      </p>
+    <footer
+      data-sads-component="footer"
+      data-sads-bg-color="footer-bg"
+      data-sads-text-color="text-footer"
+      data-sads-padding="l 0"
+      data-sads-text-align="center"
+      data-sads-margin-top="xl"
+    >
+      <div
+        data-sads-element="footer-content-container"
+        data-sads-max-width="content-container"
+        data-sads-margin="custom:0 auto"
+        data-sads-padding="0 m"
+      >
+        <p
+          data-sads-element="footer-text"
+          data-sads-font-size="s"
+          data-sads-margin="none"
+        >
+          &amp;copy; 2024 Página de Destino Simple. Todos los derechos
+          reservados.
+        </p>
+      </div>
     </footer>
     <script src="public/dist/main.js" defer></script>
   </body>

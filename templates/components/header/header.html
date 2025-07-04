@@ -1,31 +1,197 @@
-<header class="site-header">
-  <nav class="main-nav">
-    <div class="logo">
-      <a href="#" data-i18n="logo_text">{{ translations.get('logo_text', 'Logo') }}</a>
+<header
+  data-sads-component="header"
+  data-sads-bg-color="header-bg"
+  {#
+  Theme
+  key
+  for
+  header
+  background
+  #}
+  data-sads-padding="m 0"
+  {#
+  Vertical
+  padding,
+  no
+  horizontal
+  padding
+  to
+  allow
+  full
+  width
+  nav
+  content
+  #}
+  data-sads-shadow="subtle"
+>
+  <nav
+    data-sads-element="navbar"
+    data-sads-display="flex"
+    data-sads-flex-justify="space-between"
+    data-sads-flex-align-items="center"
+    data-sads-max-width="content-container"
+    {#
+    Assuming
+    a
+    theme
+    variable
+    for
+    max
+    content
+    width
+    #}
+    data-sads-margin="custom:0 auto"
+    {#
+    Center
+    the
+    nav
+    content
+    #}
+    data-sads-padding="0 m"
+    {#
+    Horizontal
+    padding
+    for
+    content
+    within
+    the
+    nav
+    #}
+  >
+    <div data-sads-element="logo-container">
+      <a
+        href="#"
+        data-i18n="logo_text"
+        data-sads-element="logo-link"
+        data-sads-text-color="text-primary"
+        data-sads-text-decoration="none"
+        data-sads-font-weight="bold"
+        data-sads-font-size="l"
+      >
+        {{ translations.get('logo_text', 'Logo') }}
+      </a>
     </div>
+
     <button
+      data-sads-element="menu-toggle"
       aria-expanded="false"
       aria-label="{{ translations.get('toggle_menu_label', 'Toggle menu') }}"
       class="hamburger-menu"
+      data-sads-display="none"
+      data-sads-responsive-rules='[
+        {"breakpoint": "mobile", "styles": {"display": "block"}}
+      ]'
+      data-sads-button-variant="icon"
+      data-sads-text-color="text-primary"
     >
+      {# Default: hide on larger screens #} {# Assuming SADS can style a basic
+      icon button look #} {# Keep class if specific CSS for hamburger animation
+      exists outside SADS & SADS can't do it #} {# Spans for hamburger bars
+      might need to be styled by the class if SADS can't do pseudo-elements or
+      complex child styling for them #}
       <span class="hamburger-bar"></span>
       <span class="hamburger-bar"></span>
       <span class="hamburger-bar"></span>
     </button>
-    <div class="nav-items">
-      <ul class="nav-list">
+
+    <div
+      data-sads-element="nav-items-container"
+      data-sads-display="flex"
+      data-sads-flex-align-items="center"
+      data-sads-gap="m"
+      data-sads-responsive-rules='[
+        {"breakpoint": "mobile", "styles": {"display": "none", "flexDirection": "column", "position": "absolute", "top": "custom:60px", "left": "0", "width": "full", "bg-color": "header-bg", "padding": "m", "shadow": "subtle", "gap": "s" }}
+      ]'
+    >
+      {# This mobile rule attempts to make a dropdown. A class like
+      'nav-items-container--active' toggled by JS would set display to flex for
+      mobile #}
+      <ul
+        data-sads-element="nav-list"
+        data-sads-display="flex"
+        data-sads-gap="m"
+        data-sads-list-style="none"
+        data-sads-padding="none"
+        data-sads-margin="none"
+        data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexDirection": "column", "width": "full", "alignItems": "stretch", "gap": "s"}}
+        ]'
+      >
         {% for item in navigation_items %}
-        <li class="nav-item">
-          <a href="{{ item.href }}" data-i18n="{{ item.label.key }}"
-            >{{ translations.get(item.label.key, item.label.key) }}</a
+        <li data-sads-element="nav-item">
+          <a
+            href="{{ item.href }}"
+            data-i18n="{{ item.label.key }}"
+            data-sads-text-color="text-nav-link"
+            {#
+            Theme
+            key
+            for
+            nav
+            link
+            color
+            #}
+            data-sads-text-decoration="none"
+            {#
+            data-sads-hover-text-decoration="underline"
+            -
+            SADS
+            limitation
+            #}
           >
+            {{ translations.get(item.label.key, item.label.key) }}
+          </a>
         </li>
         {% endfor %}
       </ul>
-      <button aria-label="Switch to Dark Mode" id="dark-mode-toggle" class="dark-mode-button">🌙</button>
-      <div id="language-switcher" class="language-buttons">
-        <button data-lang="en" class="lang-button">EN</button>
-        <button data-lang="es" class="lang-button">ES</button>
+
+      <button
+        data-sads-element="dark-mode-toggle"
+        aria-label="Switch to Dark Mode"
+        id="dark-mode-toggle"
+        {#
+        id
+        kept
+        for
+        JS
+        targeting
+        #}
+        data-sads-button-variant="icon"
+        data-sads-text-color="text-primary"
+      >
+        🌙
+      </button>
+
+      <div
+        data-sads-element="language-switcher"
+        id="language-switcher"
+        {#
+        id
+        kept
+        for
+        JS
+        targeting
+        #}
+        data-sads-display="flex"
+        data-sads-gap="s"
+        data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"width": "full", "justifyContent": "center"}}
+        ]'
+      >
+        <button
+          data-lang="en"
+          data-sads-button-variant="outline"
+          data-sads-padding="xs s"
+        >
+          EN
+        </button>
+        <button
+          data-lang="es"
+          data-sads-button-variant="outline"
+          data-sads-padding="xs s"
+        >
+          ES
+        </button>
       </div>
     </div>
   </nav>
