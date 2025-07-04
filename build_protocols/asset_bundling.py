@@ -81,35 +81,49 @@ class DefaultAssetBundler:  # Implements AssetBundler (structurally)
 
         # 2. Shared/Global JS
         shared_js_dir = os.path.join(project_root, "public", "js")
+        modules_dir = os.path.join(shared_js_dir, "modules")
 
-        sads_default_theme_path = os.path.join(shared_js_dir, "sads-default-theme.js")
-        sads_engine_path = os.path.join(shared_js_dir, "sads-style-engine.js")
-        app_js_path = os.path.join(shared_js_dir, "app.js")
+        # Define the order of shared and module JS files
+        # Modules are expected to use ES6 export/import, but for bundling they are simply concatenated.
+        # The `app.js` (orchestrator) should be last among these core files to ensure
+        # module contents are defined before app.js tries to use them (even if imports are hoisted).
+        # However, true ES6 module loading behavior in the browser is different from simple concatenation.
+        # For this script, concatenation order matters if modules define global objects or
+        # if app.js executes code at the top level that depends on modules being "loaded".
+        # Given current module structure (defining functions/vars, not immediate top-level execution
+        # that depends on others), this order should be fine for concatenation.
+        shared_js_paths_ordered = [
+            os.path.join(shared_js_dir, "sads-default-theme.js"),
+            os.path.join(shared_js_dir, "sads-style-engine.js"),
+            os.path.join(modules_dir, "eventBus.js"),
+            os.path.join(modules_dir, "darkMode.js"),
+            os.path.join(modules_dir, "translation.js"),
+            os.path.join(modules_dir, "sadsManager.js"),
+            os.path.join(shared_js_dir, "app.js"),  # Main orchestrator
+            os.path.join(
+                shared_js_dir, "headerInteractions.js"
+            ),  # Header-specific interactions
+        ]
 
-        # Ordered list for insertion
-        ordered_shared_js = []
-        if os.path.exists(sads_default_theme_path):
-            ordered_shared_js.append(sads_default_theme_path)
-            print(f"Found SADS Default Theme JS: {sads_default_theme_path}")
-        else:
-            print(
-                f"Warning: SADS Default Theme JS not found at {sads_default_theme_path}"
-            )
+        processed_shared_js = []
+        for path in shared_js_paths_ordered:
+            if os.path.exists(path):
+                processed_shared_js.append(path)
+                print(f"Found JS: {path}")
+            else:
+                # app.js is critical, others might be optional if project evolves
+                if os.path.basename(path) in [
+                    "app.js",
+                    "sads-style-engine.js",
+                    "sads-default-theme.js",
+                ]:
+                    print(f"ERROR: Critical JS file not found: {path}")
+                    # Depending on strictness, might want to return None or raise error
+                else:
+                    print(f"Warning: Optional JS file not found: {path}")
 
-        if os.path.exists(sads_engine_path):
-            ordered_shared_js.append(sads_engine_path)
-            print(f"Found SADS Engine JS: {sads_engine_path}")
-        else:
-            print(f"Warning: SADS Engine JS not found at {sads_engine_path}")
-
-        if os.path.exists(app_js_path):
-            ordered_shared_js.append(app_js_path)
-            print(f"Found shared App JS: {app_js_path}")
-        else:
-            print(f"Warning: App JS not found at {app_js_path}")
-
-        # Prepend shared JS to component JS
-        js_files_to_bundle = ordered_shared_js + js_files_to_bundle
+        # Prepend shared JS (now including modules in order) to component JS
+        js_files_to_bundle = processed_shared_js + js_files_to_bundle
 
         # output_dir is now passed as an argument
         output_file_path = os.path.join(output_dir, "main.js")
@@ -127,6 +141,7 @@ class DefaultAssetBundler:  # Implements AssetBundler (structurally)
                 return None
 
         js_contents: List[str] = []
+
         for file_path in js_files_to_bundle:
             try:
                 with open(file_path, "r", encoding="utf-8") as f:

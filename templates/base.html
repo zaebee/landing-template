@@ -16,6 +16,7 @@
     <title>{{ title | default:"Simple Landing Page" }}</title>
     <link href="public/style.css" rel="stylesheet" />
     <link href="public/dist/main.css" rel="stylesheet" />
+    <link rel="icon" href="public/favicon.svg" type="image/svg+xml" />
     {# Assuming main.css is the bundled CSS #}
     {% block head_extra %}
     {% endblock head_extra %}
@@ -28,7 +29,7 @@
     {% include "components/footer/footer.html" %}
     {# Bundled JavaScript #}
     {# including SADS engine, theme, app.js, and component JS #}
-    <script src="public/dist/main.js" defer></script>
+    <script type="module" src="public/dist/main.js" defer></script>
 
     {% block scripts %}
       {# Specific inline scripts or page-specific JS can go here if not part of the bundle #}

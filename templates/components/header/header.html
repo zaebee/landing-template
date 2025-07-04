@@ -91,7 +91,10 @@
             data-i18n="{{ item.label.key }}"
             data-sads-text-color="text-nav-link"
             data-sads-text-decoration="none"
-            data-sads-padding="xs s"
+            data-sads-padding-top="xs"
+            data-sads-padding-bottom="xs"
+            data-sads-padding-left="s"
+            data-sads-padding-right="s"
             data-sads-border-radius="s"
             data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
             {# data-sads-hover-text-decoration="underline" - SADS limitation for pseudo #}
@@ -110,8 +113,9 @@
         {# id kept for JS targeting #}
         data-sads-button-variant="icon"
         data-sads-text-color="text-primary"
+        data-sads-padding="xs" {# Consistent small padding for icon button via SADS #}
         data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"marginTop": "s", "marginLeft": "custom:0", "width": "auto", "padding": "s m"}}
+            {"breakpoint": "mobile", "styles": {"marginTop": "s", "marginLeft": "custom:0", "width": "auto", "padding": "s"}}
         ]'
       >
         🌙
@@ -130,6 +134,9 @@
         <button
           data-lang="en"
           data-sads-button-variant="outline"
+          data-sads-text-color="text-primary"
+          data-sads-bg-color="surface"
+          data-sads-border-color="input-border-color"
           data-sads-padding="xs s"
           data-sads-responsive-rules='[
             {"breakpoint": "mobile", "styles": {"padding": "s m"}}
@@ -140,6 +147,9 @@
         <button
           data-lang="es"
           data-sads-button-variant="outline"
+          data-sads-text-color="text-primary"
+          data-sads-bg-color="surface"
+          data-sads-border-color="input-border-color"
           data-sads-padding="xs s"
           data-sads-responsive-rules='[
             {"breakpoint": "mobile", "styles": {"padding": "s m"}}
