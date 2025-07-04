@@ -1,82 +1,72 @@
 <section
     data-sads-component="blog"
     id="blog" {# Keep ID for potential deep linking #}
-    data-sads-padding="xl"
+    data-sads-padding="xl" {# CSS: 2rem #}
     data-sads-text-align="center"
-    data-sads-bg-color="blog-section-bg"
+    data-sads-bg-color="blog-bg" {# Theme: #e9ecef light, #2a2a2a dark #}
 >
   <h2
     data-sads-element="title"
     data-i18n="blog_title"
-    data-sads-margin-bottom="xl"
-    data-sads-font-size="xl"
-    data-sads-text-color="text-primary"
+    data-sads-margin-bottom="xl" {# CSS: 2rem #}
+    data-sads-font-size="custom:2rem" {# CSS: 2rem #}
+    data-sads-text-color="blog-title-text" {# Theme: #333 light, #e0e0e0 dark #}
   >
     {{ translations.get('blog_title', 'Latest Posts') }}
   </h2>
   <div
     data-sads-element="list"
-    data-sads-display="flex" {# Assuming layout-type="flex" implies display:flex; making it explicit #}
+    data-sads-display="flex"
     data-sads-flex-wrap="wrap"
-    data-sads-flex-justify="space-around" {# Or 'center' if items should group centrally before wrapping #}
-    data-sads-gap="m"
-    data-sads-max-width="content-container"
-    data-sads-margin="custom:0 auto" {# Standard centering block element with max-width #}
+    data-sads-flex-justify="space-around"
+    data-sads-gap="custom:20px" {# CSS: 20px #}
+    data-sads-max-width="content-container" {# CSS: 1100px (theme) #}
+    data-sads-margin="custom:0 auto" {# CSS: margin auto #}
     data-sads-responsive-rules='[
-        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "flexAlignItems": "center"}}
+        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "gap": "custom:0", "alignItems": "center" }} {# Align items center if they are full width by default #}
     ]'
   >
     {% for post in items %}
-    <article {# Changed div to article for semantic correctness #}
+    <article
         data-sads-element="item"
-        id="{{ post.id if post.id else ('post-' ~ loop.index) }}" {# Ensure unique ID, fallback if post.id is missing #}
-        data-sads-bg-color="blog-item-bg"
-        data-sads-padding="l"
-        data-sads-border-radius="m"
-        data-sads-shadow="subtle" {# SADS Limitation: Dark mode shadow is not distinct from light mode via theme key. #}
-        data-sads-flex-basis="third-gap-m" {# Desktop: 3 items per row with 'm' gap accounted for in theme value #}
+        class="blog-item" {# Keep class for :last-child CSS rule #}
+        id="{{ post.id if post.id else ('post-' ~ loop.index) }}"
+        data-sads-bg-color="blog-item-bg" {# Theme: #fff light, #1f1f1f dark #}
+        data-sads-padding="custom:1.5rem" {# CSS: 1.5rem #}
+        data-sads-border-radius="custom:8px" {# CSS: 8px #}
+        data-sads-shadow="blog-item-shadow" {# Theme for specific shadow normal/dark #}
+        data-sads-flex-basis="custom:calc(33.333% - 40px)" {# CSS: calc(33.333% - 40px) #}
         data-sads-text-align="left"
-        data-sads-box-sizing="border-box" {# Good practice for flex items with padding/border #}
+        data-sads-box-sizing="border-box"
         data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px", "width": "full"}} {# Ensure full width on mobile if not by default from flexBasis #}
         ]'
-        {# SADS Limitation: Cannot style :last-child to remove margin-bottom on mobile. This would require either:
-             1. JS to add a specific class/attribute to the last item for SADS to target, or
-             2. A small global CSS rule for this specific case if SADS cannot handle it.
-             Given SADS current design, option 2 is more straightforward if this is critical.
-             Example global CSS:
-             @media (max-width: 768px) {
-                .sads-id-xxxx:last-child { // Assuming sads-id-xxxx is the class for items
-                    margin-bottom: 0 !important;
-                }
-             }
-             Alternatively, the SADS engine could be extended to support :last-child if such features are planned.
-        #}
+        {# The :last-child rule for marginBottom:0 will be in blog.css #}
     >
       <h3
         data-sads-element="item-title"
-        data-sads-margin-top="none"
-        data-sads-text-color="text-accent"
-        data-sads-font-size="l" {# Default h3 size might be large, confirm from original CSS if specific #}
+        data-sads-margin-top="none" {# CSS: margin-top: 0 #}
+        data-sads-text-color="blog-item-title-text" {# Theme: #007bff light, #0af dark #}
+        data-sads-font-size="l" {# Assuming 'l' is appropriate for h3 #}
       >
         {{ translations.get(post.title.key, post.title.key) }}
       </h3>
       <p
         data-sads-element="item-excerpt"
-        data-sads-font-size="s"
-        data-sads-text-color="text-secondary"
-        data-sads-margin-bottom="m"
+        data-sads-font-size="custom:0.9rem" {# CSS: font-size: 0.9rem #}
+        data-sads-text-color="blog-item-excerpt-text" {# Theme: #555 light, #bbb dark #}
+        data-sads-margin-bottom="m" {# CSS: margin-bottom: 1rem (assuming theme.m) #}
       >
         {{ translations.get(post.excerpt.key, post.excerpt.key) }}
       </p>
       <a
         data-sads-element="read-more-link"
+        class="read-more-link" {# Class for CSS hover styles #}
         href="{{ post.cta.uri }}"
-        data-sads-display="inline-block"
-        data-sads-text-color="text-accent"
-        data-sads-text-decoration="none"
-        data-sads-font-weight="bold"
-        {# TODO: SADS engine does not yet support hover:text-decoration:underline #}
+        data-sads-display="inline-block" {# CSS: display: inline-block #}
+        data-sads-text-color="blog-readmore-text" {# Theme: #007bff light, #0af dark #}
+        data-sads-text-decoration="none" {# CSS: text-decoration: none #}
+        data-sads-font-weight="bold" {# CSS: font-weight: bold #}
       >
         {{ translations.get(post.cta.text.key, post.cta.text.key) }}</a
       >

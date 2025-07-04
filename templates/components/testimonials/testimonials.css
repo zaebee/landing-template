@@ -1,0 +1,9 @@
+/* templates/components/testimonials/testimonials.css */
+
+/* Responsive adjustments for testimonial items */
+@media (width <= 768px) {
+  /* Remove margin from the last testimonial item in mobile view */
+  [data-sads-element="list"] > .testimonial-item:last-child {
+    margin-bottom: 0 !important; /* Override SADS responsive rule if it sets margin-bottom */
+  }
+}

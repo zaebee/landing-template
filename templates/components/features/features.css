@@ -1,0 +1,9 @@
+/* templates/components/features/features.css */
+
+/* Responsive adjustments for feature items */
+@media (width <= 768px) {
+  /* Remove margin from the last feature item in mobile view */
+  [data-sads-element="list"] > .feature-item:last-child {
+    margin-bottom: 0 !important; /* Override SADS responsive rule if it sets margin-bottom */
+  }
+}

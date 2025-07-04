@@ -1,0 +1,33 @@
+/* templates/components/contact-form/contact-form.css */
+
+/* Contact Form Submit Button Hover States */
+/* Using the class added to the button for specificity */
+.contact-submit-button:hover {
+  background-color: #218838 !important; /* Light mode hover - !important to override SADS if bg is also SADS controlled and too specific */
+}
+
+body.dark-mode .contact-submit-button:hover {
+  background-color: #1558b0 !important; /* Dark mode hover - !important to override SADS */
+}
+
+/* Input and Textarea Focus States */
+/* These selectors target by data-sads-element within the contact form component. */
+[data-sads-component="contact-form"] [data-sads-element="input"]:focus,
+[data-sads-component="contact-form"] [data-sads-element="textarea"]:focus {
+  outline: none;
+  /* It's often better to slightly change border color and add a box shadow for focus,
+     respecting the SADS-defined border color as a base if possible.
+     The SADS attributes define border-color="contact-input-border".
+     We can't easily reference that SADS theme value here directly.
+     So, we define explicit focus colors.
+  */
+  border-color: #007bff; /* Light mode focus border color */
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Light mode focus shadow */
+  /* Ensure other SADS properties like background/text color are not unintentionally overridden unless desired */
+}
+
+body.dark-mode [data-sads-component="contact-form"] [data-sads-element="input"]:focus,
+body.dark-mode [data-sads-component="contact-form"] [data-sads-element="textarea"]:focus {
+  border-color: #0af; /* Dark mode focus border color */
+  box-shadow: 0 0 0 0.2rem rgba(0, 170, 255, 0.25); /* Dark mode focus shadow */
+}

@@ -1,31 +1,32 @@
 <section
   data-sads-component="contact-form"
   id="contact" {# Keep ID for potential navigation #}
-  data-sads-padding="xl"
-  data-sads-bg-color="contact-form-section-bg" {# Theme key for section background #}
-  data-sads-text-align="left"
+  data-sads-padding="xl" {# CSS: 2rem #}
+  data-sads-bg-color="contact-section-bg" {# Theme: #e9ecef light, #2a2a2a dark #}
+  data-sads-text-align="center" {# CSS: text-align: center for the section block #}
 >
   <div
-    data-sads-element="container"
-    data-sads-max-width="custom:600px" {# Limit form width for better readability #}
-    data-sads-margin="custom:0 auto" {# Center the form container #}
-    data-sads-bg-color="contact-form-bg" {# Theme key for form background #}
-    data-sads-padding="xl"
-    data-sads-border-radius="m"
-    data-sads-shadow="subtle"
+    data-sads-element="container" {# This is the form wrapper div #}
+    data-sads-max-width="custom:600px" {# CSS: max-width: 600px #}
+    data-sads-margin="custom:0 auto" {# CSS: margin: auto #}
+    data-sads-bg-color="contact-form-inner-bg" {# Theme: #fff light, #1f1f1f dark #}
+    data-sads-padding="xl" {# CSS: padding: 2rem #}
+    data-sads-border-radius="custom:8px" {# CSS: border-radius: 8px #}
+    data-sads-shadow="contact-form-shadow" {# Theme: 0 2px 5px rgb(0 0 0 / 10%) light, 0 2px 5px rgb(255 255 255 / 10%) dark #}
   >
     <h2
       data-sads-element="title"
       data-i18n="contact_title"
-      data-sads-font-size="xl"
-      data-sads-text-color="text-primary"
-      data-sads-margin-bottom="l"
+      data-sads-font-size="custom:2rem" {# CSS: font-size: 2rem #}
+      data-sads-text-color="text-primary" {# Retaining existing, ensure theme supports dark mode #}
+      data-sads-margin-bottom="xl" {# CSS: margin-bottom: 2rem #}
       data-sads-text-align="center"
     >
       {{ translations.get('contact_title', 'Contact Us') }}
     </h2>
     <form
       data-sads-element="form"
+      class="contact-form-tag" {# Added class for CSS targeting if needed for submit hover #}
       id="contactForm" {# ID is used by the script #}
       method="POST"
       action="{{ config.form_action_uri if config and config.form_action_uri else '#' }}"
@@ -42,9 +43,10 @@
           data-i18n="contact_name_label"
           data-sads-element="label"
           data-sads-display="block"
-          data-sads-margin-bottom="xs"
+          data-sads-margin-bottom="xs" {# CSS: margin-bottom: 0.5rem #}
           data-sads-font-weight="bold"
-          data-sads-text-color="text-secondary"
+          data-sads-text-color="contact-label-text" {# Theme for label text, esp. for dark mode #}
+          data-sads-text-align="left"
         >
           {{ translations.get('contact_name_label', 'Name:') }}
         </label>
@@ -54,10 +56,15 @@
           name="name"
           required
           data-sads-element="input"
-          data-sads-input-variant="default" {# Assuming a SADS input style variant #}
-          data-sads-width="full"
-          data-sads-padding="s"
-          data-sads-border-radius="s"
+          data-sads-width="full" {# CSS: width: 100% #}
+          data-sads-padding="custom:0.75rem" {# CSS: padding: 0.75rem #}
+          data-sads-border-width="custom:1px" {# CSS: border: 1px solid #ccc #}
+          data-sads-border-style="solid"
+          data-sads-border-color="contact-input-border" {# Theme: #ccc light, #555 dark #}
+          data-sads-border-radius="custom:4px" {# CSS: border-radius: 4px #}
+          data-sads-box-sizing="border-box" {# CSS: box-sizing: border-box #}
+          data-sads-bg-color="contact-input-bg" {# Theme: input bg light (e.g. #fff), #333 dark #}
+          data-sads-text-color="contact-input-text" {# Theme: input text light (e.g. #333), #e0e0e0 dark #}
         />
       </div>
 
@@ -67,9 +74,10 @@
           data-i18n="contact_email_label"
           data-sads-element="label"
           data-sads-display="block"
-          data-sads-margin-bottom="xs"
+          data-sads-margin-bottom="xs" {# CSS: margin-bottom: 0.5rem #}
           data-sads-font-weight="bold"
-          data-sads-text-color="text-secondary"
+          data-sads-text-color="contact-label-text" {# Theme for label text, esp. for dark mode #}
+          data-sads-text-align="left"
         >
           {{ translations.get('contact_email_label', 'Email:') }}
         </label>
@@ -79,10 +87,15 @@
           name="email"
           required
           data-sads-element="input"
-          data-sads-input-variant="default"
-          data-sads-width="full"
-          data-sads-padding="s"
-          data-sads-border-radius="s"
+          data-sads-width="full" {# CSS: width: 100% #}
+          data-sads-padding="custom:0.75rem" {# CSS: padding: 0.75rem #}
+          data-sads-border-width="custom:1px" {# CSS: border: 1px solid #ccc #}
+          data-sads-border-style="solid"
+          data-sads-border-color="contact-input-border" {# Theme: #ccc light, #555 dark #}
+          data-sads-border-radius="custom:4px" {# CSS: border-radius: 4px #}
+          data-sads-box-sizing="border-box" {# CSS: box-sizing: border-box #}
+          data-sads-bg-color="contact-input-bg" {# Theme: input bg light (e.g. #fff), #333 dark #}
+          data-sads-text-color="contact-input-text" {# Theme: input text light (e.g. #333), #e0e0e0 dark #}
         />
       </div>
 
@@ -92,9 +105,10 @@
           data-i18n="contact_message_label"
           data-sads-element="label"
           data-sads-display="block"
-          data-sads-margin-bottom="xs"
+          data-sads-margin-bottom="xs" {# CSS: margin-bottom: 0.5rem #}
           data-sads-font-weight="bold"
-          data-sads-text-color="text-secondary"
+          data-sads-text-color="contact-label-text" {# Theme for label text, esp. for dark mode #}
+          data-sads-text-align="left"
         >
           {{ translations.get('contact_message_label', 'Message:') }}
         </label>
@@ -104,21 +118,34 @@
           rows="4"
           required
           data-sads-element="textarea"
-          data-sads-input-variant="default" {# Assuming SADS textarea style is similar to input #}
-          data-sads-width="full"
-          data-sads-padding="s"
-          data-sads-border-radius="s"
+          data-sads-width="full" {# CSS: width: 100% #}
+          data-sads-padding="custom:0.75rem" {# CSS: padding: 0.75rem #}
+          data-sads-border-width="custom:1px" {# CSS: border: 1px solid #ccc #}
+          data-sads-border-style="solid"
+          data-sads-border-color="contact-input-border" {# Theme: #ccc light, #555 dark #}
+          data-sads-border-radius="custom:4px" {# CSS: border-radius: 4px #}
+          data-sads-box-sizing="border-box" {# CSS: box-sizing: border-box #}
+          data-sads-bg-color="contact-input-bg" {# Theme: input bg light (e.g. #fff), #333 dark #}
+          data-sads-text-color="contact-input-text" {# Theme: input text light (e.g. #333), #e0e0e0 dark #}
+          data-sads-resize="vertical" {# CSS: resize: vertical #}
         ></textarea>
       </div>
 
       <button
         type="submit"
+        class="contact-submit-button" {# Class for CSS hover styles #}
         data-i18n="contact_send_button"
         data-sads-element="button"
-        data-sads-button-variant="primary" {# Assuming a SADS primary button style #}
-        data-sads-width="full"
-        data-sads-padding="m"
-        data-sads-margin-top="m"
+        data-sads-width="full" {# CSS: display: inline-block, but width full takes precedence #}
+        data-sads-padding="custom:10px 20px" {# CSS: padding: 10px 20px #}
+        data-sads-bg-color="contact-submit-bg" {# Theme: #28a745 light, #1a73e8 dark #}
+        data-sads-text-color="contact-submit-text" {# Theme: #fff light (dark could be inferred or set) #}
+        data-sads-border-style="none" {# CSS: border: none #}
+        data-sads-border-radius="custom:5px" {# CSS: border-radius: 5px #}
+        data-sads-cursor="pointer" {# CSS: cursor: pointer #}
+        data-sads-font-size="custom:1rem" {# CSS: font-size: 1rem #}
+        data-sads-font-weight="bold" {# CSS: font-weight: bold #}
+        data-sads-transition="custom:background-color 0.3s ease" {# CSS: transition #}
       >
         {{ translations.get('contact_send_button', 'Send Message') }}
       </button>

@@ -23,291 +23,22 @@ body {
   - Language Switcher styles (base in SADS, states in header.css)
 */
 
-/* Hero Section */
-.hero {
-  background: #007bff;
-  color: #fff;
-  padding: 4rem 2rem;
-  text-align: center;
-}
+/* Hero Section styles have been migrated to templates/components/hero/hero.html (SADS)
+   and templates/components/hero/hero.css (for hover states). */
 
-.hero h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-}
+/* Features Section styles have been migrated to templates/components/features/features.html (SADS)
+   and templates/components/features/features.css (for :last-child responsive). */
 
-.hero p {
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
-}
+/* Contact Form Section styles have been migrated to contact-form.html (SADS)
+   and contact-form.css (for hover/focus states). */
 
-.cta-button {
-  display: inline-block;
-  background: #fff;
-  color: #007bff;
-  padding: 10px 20px;
-  text-decoration: none;
-  border-radius: 5px;
-  font-weight: bold;
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
-}
+/* Testimonials Section styles have been migrated to testimonials.html (SADS)
+   and testimonials.css (for :last-child responsive). */
 
-.cta-button:hover {
-  background-color: #e6e6e6;
-  color: #0056b3;
-}
+/* Portfolio Section styles have been migrated to portfolio.html (SADS). */
 
-/* Features Section */
-.features {
-  padding: 2rem;
-  text-align: center;
-  background-color: #fff;
-}
-
-.features h2 {
-  margin-bottom: 2rem;
-  font-size: 2rem;
-}
-
-.feature-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  gap: 20px;
-  max-width: 1100px;
-  margin: auto;
-}
-
-.feature-item {
-  background: #f9f9f9;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
-  flex-basis: calc(33.333% - 40px); /* Adjust for gap */
-  box-sizing: border-box;
-  text-align: left;
-}
-
-.feature-item h3 {
-  margin-top: 0;
-  color: #007bff;
-}
-
-/* Contact Form Section */
-.contact-form {
-  padding: 2rem;
-  background-color: #e9ecef;
-  text-align: center;
-}
-
-.contact-form h2 {
-  margin-bottom: 2rem;
-  font-size: 2rem;
-}
-
-.contact-form form {
-  max-width: 600px;
-  margin: auto;
-  background: #fff;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
-}
-
-.contact-form label {
-  display: block;
-  margin-bottom: 0.5rem;
-  text-align: left;
-  font-weight: bold;
-}
-
-.contact-form input[type="text"],
-.contact-form input[type="email"],
-.contact-form textarea {
-  width: 100%;
-  padding: 0.75rem;
-  margin-bottom: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-
-.contact-form textarea {
-  resize: vertical;
-}
-
-.contact-form button[type="submit"] {
-  display: inline-block;
-  background: #28a745;
-  color: #fff;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-}
-
-.contact-form button[type="submit"]:hover {
-  background: #218838;
-}
-
-/* Testimonials Section */
-.testimonials {
-  padding: 2rem;
-  text-align: center;
-  background-color: #f9f9f9; /* Light background for the section */
-}
-
-.testimonials h2 {
-  margin-bottom: 2rem;
-  font-size: 2rem;
-  color: #333;
-}
-
-.testimonial-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  gap: 20px;
-  max-width: 1100px;
-  margin: auto;
-}
-
-.testimonial-item {
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
-  flex-basis: calc(33.333% - 40px); /* Adjust for gap */
-  box-sizing: border-box;
-  text-align: center;
-}
-
-.testimonial-item img {
-  border-radius: 50%;
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  margin-bottom: 1rem;
-  border: 3px solid #007bff;
-}
-
-.testimonial-item p {
-  font-style: italic;
-  color: #555;
-  margin-bottom: 1rem;
-}
-
-.testimonial-item h4 {
-  margin-top: 0;
-  color: #333;
-  font-weight: bold;
-}
-
-/* Portfolio Section */
-.portfolio {
-  padding: 2rem;
-  text-align: center;
-  background-color: #fff; /* Light background for the section */
-}
-
-.portfolio h2 {
-  margin-bottom: 2rem;
-  font-size: 2rem;
-  color: #333;
-}
-
-.portfolio-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-  max-width: 1100px;
-  margin: auto;
-}
-
-.portfolio-item {
-  background: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
-  overflow: hidden; /* Ensures image corners are rounded if image is direct child */
-  text-align: left;
-}
-
-.portfolio-item img {
-  width: 100%;
-  height: auto;
-  display: block;
-  border-bottom: 1px solid #eee; /* Optional: adds a line between img and text */
-}
-
-.portfolio-item h3 {
-  margin: 1rem 1rem 0.5rem;
-  color: #007bff;
-}
-
-.portfolio-item p {
-  margin: 0 1rem 1rem;
-  color: #555;
-  font-size: 0.9rem;
-}
-
-/* Blog Section */
-.blog {
-  padding: 2rem;
-  text-align: center;
-  background-color: #e9ecef; /* Similar to contact form for consistency */
-}
-
-.blog h2 {
-  margin-bottom: 2rem;
-  font-size: 2rem;
-  color: #333;
-}
-
-.blog-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  gap: 20px;
-  max-width: 1100px;
-  margin: auto;
-}
-
-.blog-item {
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
-  flex-basis: calc(33.333% - 40px); /* Adjust for gap */
-  box-sizing: border-box;
-  text-align: left;
-}
-
-.blog-item h3 {
-  margin-top: 0;
-  color: #007bff;
-}
-
-.blog-item p {
-  font-size: 0.9rem;
-  color: #555;
-  margin-bottom: 1rem;
-}
-
-.read-more {
-  display: inline-block;
-  color: #007bff;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.read-more:hover {
-  text-decoration: underline;
-}
+/* Blog Section styles have been migrated to blog.html (SADS)
+   and blog.css (for hover and :last-child responsive). */
 
 /* Language Switcher Styles have been moved to header.html (SADS) and header.css */
 
@@ -321,166 +52,31 @@ body.dark-mode {
 
 /* Dark Mode Overrides for Header elements have been moved to header.css or are handled by SADS theme */
 
-body.dark-mode .hero {
-  background: #0056b3; /* Darker blue */
-  color: #e0e0e0;
-}
+/* Dark Mode Hero Section styles are handled by SADS theme in hero.html
+   and dark mode hover states in hero.css. */
 
-body.dark-mode .cta-button {
-  background: #e0e0e0;
-  color: #121212;
-}
+/* Dark Mode Features Section styles are handled by SADS theme in features.html. */
 
-body.dark-mode .cta-button:hover {
-  background-color: #ccc;
-  color: #000;
-}
-
-body.dark-mode .features {
-  background-color: #1f1f1f;
-}
-
-body.dark-mode .feature-item {
-  background: #2a2a2a;
-  box-shadow: 0 2px 5px rgb(255 255 255 / 10%);
-}
-
-body.dark-mode .feature-item h3 {
-  color: #0af; /* Lighter blue for dark mode */
-}
-
-body.dark-mode .contact-form {
-  background-color: #2a2a2a;
-}
-
-body.dark-mode .contact-form form {
-  background: #1f1f1f;
-  box-shadow: 0 2px 5px rgb(255 255 255 / 10%);
-}
-
-body.dark-mode .contact-form label {
-  color: #e0e0e0;
-}
-
-body.dark-mode .contact-form input[type="text"],
-body.dark-mode .contact-form input[type="email"],
-body.dark-mode .contact-form textarea {
-  background-color: #333;
-  color: #e0e0e0;
-  border: 1px solid #555;
-}
-
-body.dark-mode .contact-form button[type="submit"] {
-  background: #1a73e8; /* Google blue */
-}
-
-body.dark-mode .contact-form button[type="submit"]:hover {
-  background: #1558b0;
-}
+/* Dark Mode Contact Form styles are handled by SADS theme in contact-form.html
+   and hover/focus states in contact-form.css. */
 
 /* body.dark-mode footer styles are handled by SADS theme */
 
 /* Dark mode styles for #dark-mode-toggle and #language-switcher buttons have been moved to header.css or are handled by SADS theme */
 
-/* Dark Mode for Testimonials */
-body.dark-mode .testimonials {
-  background-color: #1f1f1f; /* Dark background for the section in dark mode */
-}
+/* Dark Mode for Testimonials styles are handled by SADS theme in testimonials.html. */
 
-body.dark-mode .testimonials h2 {
-  color: #e0e0e0;
-}
+/* Dark Mode for Portfolio styles are handled by SADS theme in portfolio.html. */
 
-body.dark-mode .testimonial-item {
-  background: #2a2a2a; /* Darker item background */
-  box-shadow: 0 2px 5px rgb(255 255 255 / 10%);
-}
-
-body.dark-mode .testimonial-item img {
-  border-color: #0af; /* Lighter blue border for dark mode */
-}
-
-body.dark-mode .testimonial-item p {
-  color: #bbb; /* Lighter text for dark mode */
-}
-
-body.dark-mode .testimonial-item h4 {
-  color: #e0e0e0;
-}
-
-/* Dark Mode for Portfolio */
-body.dark-mode .portfolio {
-  background-color: #2a2a2a; /* Dark background for the section */
-}
-
-body.dark-mode .portfolio h2 {
-  color: #e0e0e0;
-}
-
-body.dark-mode .portfolio-item {
-  background: #1f1f1f; /* Darker item background */
-  box-shadow: 0 2px 5px rgb(255 255 255 / 5%);
-}
-
-body.dark-mode .portfolio-item img {
-  border-bottom: 1px solid #333;
-}
-
-body.dark-mode .portfolio-item h3 {
-  color: #0af; /* Lighter blue for dark mode */
-}
-
-body.dark-mode .portfolio-item p {
-  color: #bbb; /* Lighter text for dark mode */
-}
-
-/* Dark Mode for Blog Section */
-body.dark-mode .blog {
-  background-color: #2a2a2a; /* Dark background for the section */
-}
-
-body.dark-mode .blog h2 {
-  color: #e0e0e0;
-}
-
-body.dark-mode .blog-item {
-  background: #1f1f1f; /* Darker item background */
-  box-shadow: 0 2px 5px rgb(255 255 255 / 5%);
-}
-
-body.dark-mode .blog-item h3 {
-  color: #0af; /* Lighter blue for dark mode */
-}
-
-body.dark-mode .blog-item p {
-  color: #bbb; /* Lighter text for dark mode */
-}
-
-body.dark-mode .read-more {
-  color: #0af;
-}
+/* Dark Mode for Blog Section styles are handled by SADS theme in blog.html
+   and hover states in blog.css. */
 
 /* Responsive Adjustments */
 /* Header-related responsive styles have been moved to header.css or SADS attributes in header.html */
 @media (width <= 768px) {
   /* main { padding-top: ... } rule moved to header.css */
 
-  .feature-list,
-  .testimonial-list,
-  .blog-list {
-    flex-direction: column;
-  }
-
-  .feature-item,
-  .testimonial-item,
-  .blog-item {
-    flex-basis: 100%; /* Full width on smaller screens */
-    margin-bottom: 20px;
-  }
-
-  .feature-item:last-child,
-  .testimonial-item:last-child,
-  .blog-item:last-child {
-    margin-bottom: 0;
-  }
+  /* .feature-list and .feature-item responsive styles moved to SADS/features.css */
+  /* .testimonial-list and .testimonial-item responsive styles moved to SADS/testimonials.css */
+  /* .blog-list and .blog-item responsive styles moved to SADS/blog.css */
 }

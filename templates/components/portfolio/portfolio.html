@@ -1,67 +1,65 @@
 <section
     data-sads-component="portfolio"
     id="portfolio"
-    data-sads-padding="xl"
+    data-sads-padding="xl" {# CSS: 2rem #}
     data-sads-text-align="center"
-    data-sads-bg-color="portfolio-section-bg" {# Assumes a theme key 'portfolio-section-bg' #}
+    data-sads-bg-color="portfolio-bg" {# Theme: #fff light, #2a2a2a dark #}
 >
   <h2
     data-sads-element="title"
     data-i18n="portfolio_title"
-    data-sads-margin-bottom="xl"
-    data-sads-font-size="xl"
-    data-sads-text-color="text-primary"
+    data-sads-margin-bottom="xl" {# CSS: 2rem #}
+    data-sads-font-size="custom:2rem" {# CSS: 2rem #}
+    data-sads-text-color="portfolio-title-text" {# Theme: #333 light, #e0e0e0 dark #}
   >
     {{ translations.get('portfolio_title', 'Our Work') }}
   </h2>
   <div
     data-sads-element="grid"
     data-sads-display="grid"
-    data-sads-grid-template-columns="repeat(auto-fit, minmax(300px, 1fr))" {# Responsive grid columns #}
-    data-sads-gap="l" {# Gap between grid items #}
-    data-sads-max-width="content-container"
-    data-sads-margin="custom:0 auto" {# Center the grid container #}
+    data-sads-grid-template-columns="custom:repeat(auto-fit, minmax(280px, 1fr))" {# CSS: repeat(auto-fit, minmax(280px, 1fr)) #}
+    data-sads-gap="custom:20px" {# CSS: 20px #}
+    data-sads-max-width="content-container" {# CSS: 1100px (theme) #}
+    data-sads-margin="custom:0 auto" {# CSS: margin auto #}
   >
     {% for item in items %}
     <article
         data-sads-element="item"
         id="{{ item.id if item.id else ('portfolio-' ~ loop.index) }}"
-        data-sads-bg-color="portfolio-item-bg" {# Assumes 'portfolio-item-bg' #}
-        data-sads-border-radius="m"
-        data-sads-shadow="subtle"
-        data-sads-padding="l"
+        data-sads-bg-color="portfolio-item-bg" {# Theme: #f9f9f9 light, #1f1f1f dark #}
+        data-sads-border-radius="custom:8px" {# CSS: 8px #}
+        data-sads-shadow="portfolio-item-shadow" {# Theme specific shadow for normal/dark #}
+        data-sads-overflow="hidden" {# CSS: overflow: hidden #}
         data-sads-text-align="left"
-        data-sads-display="flex"
-        data-sads-flex-direction="column" {# Stack image and text vertically #}
+        {# Removed display:flex and padding from item, will apply margins to children #}
     >
       {% if item.image and item.image.src %}
       <img
         data-sads-element="item-image"
         src="{{ item.image.src }}"
         alt="{{ translations.get(item.image.alt_text.key if item.image.alt_text else '', item.image.alt_text.key if item.image.alt_text else 'Portfolio image') }}"
-        data-sads-width="full"
-        data-sads-height="custom:200px" {# Fixed height for images, adjust as needed #}
-        data-sads-object-fit="cover"
-        data-sads-border-radius="s"
-        data-sads-margin-bottom="m"
+        data-sads-width="full" {# CSS: width: 100% #}
+        data-sads-height="auto" {# CSS: height: auto #}
+        data-sads-display="block" {# CSS: display: block #}
+        data-sads-border-bottom-width="custom:1px"
+        data-sads-border-bottom-style="solid"
+        data-sads-border-bottom-color="portfolio-img-border" {# Theme: #eee light, #333 dark #}
       />
       {% endif %}
       {% if item.details %}
       <h3
         data-sads-element="item-title"
-        data-sads-font-size="l"
-        data-sads-text-color="text-accent"
-        data-sads-margin-top="xs"
-        data-sads-margin-bottom="s"
+        data-sads-margin="custom:1rem 1rem 0.5rem" {# CSS: margin: 1rem 1rem 0.5rem #}
+        data-sads-text-color="portfolio-item-heading-text" {# Theme: #007bff light, #0af dark #}
+        data-sads-font-size="l" {# Retaining existing, assuming appropriate size #}
       >
         {{ translations.get(item.details.title.key if item.details.title else '', item.details.title.key if item.details.title else 'Portfolio Title') }}
       </h3>
       <p
         data-sads-element="item-description"
-        data-sads-font-size="s"
-        data-sads-text-color="text-secondary"
-        data-sads-flex-grow="1" {# Allow description to take available space #}
-        data-sads-margin-bottom="m"
+        data-sads-margin="custom:0 1rem 1rem" {# CSS: margin: 0 1rem 1rem #}
+        data-sads-text-color="portfolio-item-para-text" {# Theme: #555 light, #bbb dark #}
+        data-sads-font-size="custom:0.9rem" {# CSS: font-size: 0.9rem #}
       >
         {{ translations.get(item.details.description.key if item.details.description else '', item.details.description.key if item.details.description else 'Description here.') }}
       </p>
