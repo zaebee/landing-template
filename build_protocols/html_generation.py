@@ -92,7 +92,8 @@ class BaseHtmlGenerator(HtmlBlockGenerator):
 
 
 @register_html_generator(
-    block_name="portfolio.html", template_to_render="components/portfolio/portfolio.html"
+    block_name="portfolio.html",
+    template_to_render="components/portfolio/portfolio.html",
 )  # data_key="items" is default
 class PortfolioHtmlGenerator(BaseHtmlGenerator):
     """Generates HTML for a list of portfolio items using Jinja2, utilizing SADS attributes."""
@@ -119,7 +120,8 @@ class PortfolioHtmlGenerator(BaseHtmlGenerator):
 
 
 @register_html_generator(
-    block_name="testimonials.html", template_to_render="components/testimonials/testimonials.html"
+    block_name="testimonials.html",
+    template_to_render="components/testimonials/testimonials.html",
 )  # data_key="items" is default
 class TestimonialsHtmlGenerator(BaseHtmlGenerator):
     """Generates HTML for a list of testimonial items using Jinja2, utilizing SADS attributes."""
@@ -184,9 +186,8 @@ class HeroHtmlGenerator(BaseHtmlGenerator):
         Returns:
             An HTML string for the hero section.
         """
-        if not data: # Simplified: if no data, the SADS template will handle it.
+        if not data:  # Simplified: if no data, the SADS template will handle it.
             return super().generate_html(None, translations)
-
 
         selected_variation: Optional[HeroItemContent] = None
 

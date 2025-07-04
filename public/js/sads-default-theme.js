@@ -59,12 +59,12 @@ const sadsDefaultTheme = {
   maxWidth: {
     "content-container-narrow": "800px",
     "content-container": "1100px",
-    "full": "100%"
+    full: "100%",
   },
   breakpoints: {
     mobile: "(max-width: 767px)", // Adjusted to not overlap with tablet
     tablet: "(min-width: 768px) and (max-width: 1023px)",
-    desktop: "(min-width: 1024px)"
+    desktop: "(min-width: 1024px)",
   },
   flexBasis: {
     auto: "auto",
