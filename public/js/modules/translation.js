@@ -56,9 +56,10 @@ async function _fetchTranslations(lang) {
  */
 function _applyTranslationsToDOM(translations) {
   if (!translations || Object.keys(translations).length === 0) {
-    console.warn("Attempted to apply empty or null translations to DOM.");
+    console.warn("[translation] Attempted to apply empty or null translations to DOM.");
     return;
   }
+  console.log("[translation] _applyTranslationsToDOM called with translations:", translations);
   currentTranslations = translations; // Update internal state
 
   document.querySelectorAll("[data-i18n]").forEach((element) => {
@@ -68,9 +69,10 @@ function _applyTranslationsToDOM(translations) {
     if (translations[key] && element.id !== "dark-mode-toggle") {
       element.textContent = translations[key];
     } else if (!translations[key] && element.id !== "dark-mode-toggle") {
-      console.warn(`Translation key "${key}" not found for element:`, element);
+      // console.warn(`[translation] Translation key "${key}" not found for element:`, element); // Original log
     }
   });
+  console.log("[translation] Finished applying translations to DOM.");
 }
 
 /**
@@ -80,6 +82,7 @@ function _applyTranslationsToDOM(translations) {
  * @private
  */
 function _dispatchStateAndLanguageChange(lang, currentDarkModeState) {
+  console.log(`[translation] _dispatchStateAndLanguageChange called. Lang: ${lang}, DM State: ${currentDarkModeState}`);
   /** @type {Partial<AppStateEventDetail>} */
   const appStateDetail = {
     translationsLoaded: true,
@@ -118,21 +121,23 @@ async function initTranslations(currentDarkModeState) {
  * @public
  */
 async function setLanguage(lang, currentDarkModeState, isInitialLoad = false) {
+  console.log(`[translation] setLanguage called. Lang: ${lang}, DM State: ${currentDarkModeState}, InitialLoad: ${isInitialLoad}`);
   if (!lang) {
-    console.error("setLanguage called with no language code provided.");
+    console.error("[translation] setLanguage called with no language code provided.");
     return;
   }
   const translations = await _fetchTranslations(lang);
+  console.log(`[translation] Fetched translations for ${lang}:`, translations);
   if (translations) {
     _applyTranslationsToDOM(translations);
     localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
     document.documentElement.lang = lang;
     _dispatchStateAndLanguageChange(lang, currentDarkModeState);
     if (!isInitialLoad) {
-      console.log(`Language set to: ${lang}`);
+      // console.log(`[translation] Language set to: ${lang}`); // Original log
     }
   } else {
-    console.error(`Failed to set language to "${lang}" - translations could not be loaded or were empty.`);
+    // console.error(`[translation] Failed to set language to "${lang}" - translations could not be loaded or were empty.`); // Original log
   }
 }
 
