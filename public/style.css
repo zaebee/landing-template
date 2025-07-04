@@ -110,14 +110,12 @@ body.dark-mode {
   display: block;
   width: 25px; /* Example width */
   height: 3px;  /* Example height */
-  background-color: #333; /* Fallback, should inherit from SADS text-color on parent button */
+  background-color: currentColor; /* Inherit color from parent button's text color (set by SADS) */
   border-radius: 3px;
   transition: all 0.3s ease-in-out;
 }
 
-body.dark-mode .hamburger-menu .hamburger-bar {
-  background-color: #e0e0e0; /* Fallback for dark mode, should inherit */
-}
+/* body.dark-mode .hamburger-menu .hamburger-bar rule is no longer needed as currentColor handles it */
 
 .hamburger-menu.hamburger-menu--active .hamburger-bar:nth-child(1) {
   transform: translateY(8px) rotate(45deg); /* Adjusted for 3px height + 2.5px spacing approx */
@@ -158,11 +156,16 @@ body.dark-mode #language-switcher button.active-lang {
 #dark-mode-toggle,
 #language-switcher button {
   cursor: pointer;
-  padding: 0.4rem 0.8rem; /* Default padding, SADS might override */
-  border: 1px solid #ccc; /* Default border */
-  background-color: #f8f9fa; /* Default light background */
-  color: #333;
-  border-radius: 4px; /* Default border-radius from theme 's' */
+  padding: 0.4rem 0.8rem; /* CSS padding for consistent button size, SADS data-sads-padding provides base but this can refine */
+  /* SADS attributes will now handle:
+     - border-color (via data-sads-border-color)
+     - background-color (via data-sads-bg-color)
+     - color (via data-sads-text-color)
+  */
+  /* border: 1px solid #ccc; */ /* Now handled by SADS data-sads-border-color */
+  /* background-color: #f8f9fa; */ /* Now handled by SADS data-sads-bg-color */
+  /* color: #333; */ /* Now handled by SADS data-sads-text-color */
+  border-radius: 4px; /* Default border-radius from theme 's', can be SADS attribute too if needed */
   transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
   line-height: 1; /* Ensure icon buttons don't have excessive line height */
   min-width: 40px; /* Ensure a minimum tap target size / width */
@@ -194,9 +197,10 @@ body.dark-mode #dark-mode-toggle {
 }
 
 body.dark-mode #language-switcher button {
-  background-color: #3e4a58; /* Darker background for buttons in dark mode */
-  border-color: #56677c;
-  color: #e0e0e0; /* Fallback - matches theme's text-primary-dark */
+  /* Base colors (bg, border, text) for dark mode are now handled by SADS attributes */
+  /* background-color: #3e4a58; */
+  /* border-color: #56677c; */
+  /* color: #e0e0e0; */
 }
 
 /* The #dark-mode-toggle specific dark mode styling for bg/border is removed as it's transparent.
