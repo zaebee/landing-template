@@ -28,18 +28,20 @@ Before you begin, ensure you have the following installed:
 
 1.  **Clone the repository (if you haven't already):**
 
-   ```bash
-   git clone <repository-url>
-   cd <repository-directory>
-   ```
+```bash
+git clone <repository-url>
+cd <repository-directory>
+```
 
 2.  **Install Go dependencies & tools:**
     The Go build script uses Go modules. Dependencies like Pongo2 will be downloaded automatically when you build or run the Go program (`go run main.go` or `go build`).
     Ensure you have the Go Protocol Buffer plugins installed:
+
     ```bash
     go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
     go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
     ```
+
     Make sure your `GOPATH/bin` or `HOME/go/bin` (if `GOPATH` is not set) is in your system's `PATH` so that `protoc` can find these plugins.
 
 3.  **Install Node.js development dependencies (for formatting, etc.):**

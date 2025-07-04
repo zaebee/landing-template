@@ -41,6 +41,7 @@ Go code (`.go` files) is linted using standard Go tools:
 - **`staticcheck`**: A more advanced static analysis tool that finds bugs, performance issues, and stylistic problems. (Installation: `go install honnef.co/go/tools/cmd/staticcheck@latest`)
 
 - **Configuration**:
+
   - These tools generally work with sensible defaults. Specific checks can sometimes be disabled via comments if necessary, but this should be rare.
 
 - **Running Linters**:
@@ -56,7 +57,7 @@ Go code (`.go` files) is linted using standard Go tools:
     ```
   - The `format.sh` script might also be updated to include `gofmt` or `goimports` for Go code formatting.
 
-*(The Python linting section below can be removed if no Python code remains in the project, or kept if utility scripts in Python are still used.)*
+_(The Python linting section below can be removed if no Python code remains in the project, or kept if utility scripts in Python are still used.)_
 
 ## Python Linting (Ruff & MyPy)
 
