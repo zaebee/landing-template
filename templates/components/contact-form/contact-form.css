@@ -1,29 +1,28 @@
 /* templates/components/contact-form/contact-form.css */
 
 /* Contact Form Submit Button Hover States */
-/* Using the class added to the button for specificity */
 .contact-submit-button:hover {
-  background-color: #218838 !important; /* Light mode hover - !important to override SADS if bg is also SADS controlled and too specific */
+  background-color: #004494 !important; /* Darker shade of theme's button-primary-bg (#0056b3) */
+  /* SADS applies a soft shadow; we might want to make it slightly more pronounced on hover */
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 1px 2px rgba(0, 0, 0, 0.08) !important;
 }
 
 body.dark-mode .contact-submit-button:hover {
-  background-color: #1558b0 !important; /* Dark mode hover - !important to override SADS */
+  background-color: #79bbff !important; /* Lighter shade of theme's button-primary-bg-dark (#58a6ff) */
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    0 1px 2px rgba(0, 0, 0, 0.15) !important;
 }
 
 /* Input and Textarea Focus States */
-/* These selectors target by data-sads-element within the contact form component. */
 [data-sads-component="contact-form"] [data-sads-element="input"]:focus,
 [data-sads-component="contact-form"] [data-sads-element="textarea"]:focus {
   outline: none;
-  /* It's often better to slightly change border color and add a box shadow for focus,
-     respecting the SADS-defined border color as a base if possible.
-     The SADS attributes define border-color="contact-input-border".
-     We can't easily reference that SADS theme value here directly.
-     So, we define explicit focus colors.
-  */
-  border-color: #007bff; /* Light mode focus border color */
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Light mode focus shadow */
-  /* Ensure other SADS properties like background/text color are not unintentionally overridden unless desired */
+  border-color: #0056b3; /* theme: text-accent */
+  box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.25); /* theme: focus-ring-color */
+  /* SADS handles bg-color, text-color, so no need to override unless desired */
 }
 
 body.dark-mode
@@ -32,6 +31,32 @@ body.dark-mode
 body.dark-mode
   [data-sads-component="contact-form"]
   [data-sads-element="textarea"]:focus {
-  border-color: #0af; /* Dark mode focus border color */
-  box-shadow: 0 0 0 0.2rem rgba(0, 170, 255, 0.25); /* Dark mode focus shadow */
+  border-color: #58a6ff; /* theme: text-accent-dark */
+  box-shadow: 0 0 0 0.2rem rgba(88, 166, 255, 0.35); /* theme: focus-ring-color-dark */
+}
+
+/* Status Message Styling */
+#contactFormStatus.success {
+  color: #0a3622; /* theme: success-text */
+  background-color: #d1e7dd; /* theme: success-bg */
+  border: 1px solid #a3cfbb; /* theme: success-border */
+  /* Padding and border-radius are set by SADS attributes on the element itself */
+}
+
+body.dark-mode #contactFormStatus.success {
+  color: #75b798; /* theme: success-text-dark */
+  background-color: #0f5132; /* theme: success-bg-dark */
+  border: 1px solid #198754; /* theme: success-border-dark */
+}
+
+#contactFormStatus.error {
+  color: #58151c; /* theme: error-text */
+  background-color: #f8d7da; /* theme: error-bg */
+  border: 1px solid #f1aeb5; /* theme: error-border */
+}
+
+body.dark-mode #contactFormStatus.error {
+  color: #ea868f; /* theme: error-text-dark */
+  background-color: #842029; /* theme: error-bg-dark */
+  border: 1px solid #dc3545; /* theme: error-border-dark */
 }

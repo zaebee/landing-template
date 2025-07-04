@@ -921,15 +921,16 @@
           data-sads-margin="custom:0 auto"
           data-sads-bg-color="contact-form-inner-bg"
           data-sads-padding="xl"
-          data-sads-border-radius="custom:8px"
-          data-sads-shadow="contact-form-shadow"
+          data-sads-border-radius="xl"
+          data-sads-shadow="medium"
         >
           <h2
             data-sads-element="title"
             data-i18n="contact_title"
-            data-sads-font-size="custom:2rem"
+            data-sads-font-size="xl"
+            data-sads-font-weight="semibold"
             data-sads-text-color="text-primary"
-            data-sads-margin-bottom="xl"
+            data-sads-margin-bottom="l"
             data-sads-text-align="center"
           >
             Contact Us
@@ -948,18 +949,23 @@
             data-sads-flex-direction="column"
             data-sads-gap="m"
           >
-            <div>
+            <div data-sads-margin-bottom="m">
               <label
                 for="name"
                 data-i18n="contact_name_label"
                 data-sads-element="label"
                 data-sads-display="block"
                 data-sads-margin-bottom="xs"
-                data-sads-font-weight="bold"
-                data-sads-text-color="contact-label-text"
+                data-sads-font-weight="medium"
+                data-sads-text-color="form-label-text"
                 data-sads-text-align="left"
+                data-sads-font-size="s"
               >
-                Name:
+                Name:<span
+                  data-sads-text-color="error-text"
+                  data-sads-margin-left="xxs"
+                  >*</span
+                >
               </label>
 
               <input
@@ -969,29 +975,35 @@
                 required
                 data-sads-element="input"
                 data-sads-width="full"
-                data-sads-padding="custom:0.75rem"
+                data-sads-padding="s-m"
                 data-sads-border-width="custom:1px"
                 data-sads-border-style="solid"
-                data-sads-border-color="contact-input-border"
-                data-sads-border-radius="custom:4px"
+                data-sads-border-color="form-input-border"
+                data-sads-border-radius="l"
                 data-sads-box-sizing="border-box"
-                data-sads-bg-color="contact-input-bg"
-                data-sads-text-color="contact-input-text"
+                data-sads-bg-color="form-input-bg"
+                data-sads-text-color="form-input-text"
+                data-sads-font-size="m"
               />
             </div>
 
-            <div>
+            <div data-sads-margin-bottom="m">
               <label
                 for="email"
                 data-i18n="contact_email_label"
                 data-sads-element="label"
                 data-sads-display="block"
                 data-sads-margin-bottom="xs"
-                data-sads-font-weight="bold"
-                data-sads-text-color="contact-label-text"
+                data-sads-font-weight="medium"
+                data-sads-text-color="form-label-text"
                 data-sads-text-align="left"
+                data-sads-font-size="s"
               >
-                Email:
+                Email:<span
+                  data-sads-text-color="error-text"
+                  data-sads-margin-left="xxs"
+                  >*</span
+                >
               </label>
 
               <input
@@ -1001,29 +1013,35 @@
                 required
                 data-sads-element="input"
                 data-sads-width="full"
-                data-sads-padding="custom:0.75rem"
+                data-sads-padding="s-m"
                 data-sads-border-width="custom:1px"
                 data-sads-border-style="solid"
-                data-sads-border-color="contact-input-border"
-                data-sads-border-radius="custom:4px"
+                data-sads-border-color="form-input-border"
+                data-sads-border-radius="l"
                 data-sads-box-sizing="border-box"
-                data-sads-bg-color="contact-input-bg"
-                data-sads-text-color="contact-input-text"
+                data-sads-bg-color="form-input-bg"
+                data-sads-text-color="form-input-text"
+                data-sads-font-size="m"
               />
             </div>
 
-            <div>
+            <div data-sads-margin-bottom="m">
               <label
                 for="message"
                 data-i18n="contact_message_label"
                 data-sads-element="label"
                 data-sads-display="block"
                 data-sads-margin-bottom="xs"
-                data-sads-font-weight="bold"
-                data-sads-text-color="contact-label-text"
+                data-sads-font-weight="medium"
+                data-sads-text-color="form-label-text"
                 data-sads-text-align="left"
+                data-sads-font-size="s"
               >
-                Message:
+                Message:<span
+                  data-sads-text-color="error-text"
+                  data-sads-margin-left="xxs"
+                  >*</span
+                >
               </label>
 
               <textarea
@@ -1033,14 +1051,15 @@
                 required
                 data-sads-element="textarea"
                 data-sads-width="full"
-                data-sads-padding="custom:0.75rem"
+                data-sads-padding="s-m"
                 data-sads-border-width="custom:1px"
                 data-sads-border-style="solid"
-                data-sads-border-color="contact-input-border"
-                data-sads-border-radius="custom:4px"
+                data-sads-border-color="form-input-border"
+                data-sads-border-radius="l"
                 data-sads-box-sizing="border-box"
-                data-sads-bg-color="contact-input-bg"
-                data-sads-text-color="contact-input-text"
+                data-sads-bg-color="form-input-bg"
+                data-sads-text-color="form-input-text"
+                data-sads-font-size="m"
                 data-sads-resize="vertical"
               ></textarea>
             </div>
@@ -1051,27 +1070,31 @@
               data-i18n="contact_send_button"
               data-sads-element="button"
               data-sads-width="full"
-              data-sads-padding="custom:10px 20px"
-              data-sads-bg-color="contact-submit-bg"
-              data-sads-text-color="contact-submit-text"
+              data-sads-padding="custom:0.625rem 1.5rem"
+              data-sads-bg-color="button-primary-bg"
+              data-sads-text-color="button-primary-text"
               data-sads-border-style="none"
-              data-sads-border-radius="custom:5px"
+              data-sads-border-radius="l"
               data-sads-cursor="pointer"
-              data-sads-font-size="custom:1rem"
-              data-sads-font-weight="bold"
-              data-sads-transition="custom:background-color 0.3s ease"
+              data-sads-font-size="m"
+              data-sads-font-weight="medium"
+              data-sads-transition="custom:background-color 0.2s ease, box-shadow 0.2s ease"
+              data-sads-shadow="soft"
             >
               Send Message
             </button>
 
             <div
-              data-sads-element="status-message"
               id="contactFormStatus"
+              data-sads-element="status-message"
               role="status"
               data-sads-min-height="custom:1.5em"
               data-sads-margin-top="s"
               data-sads-text-align="center"
               data-sads-font-size="s"
+              data-sads-padding="s"
+              data-sads-border-radius="m"
+              data-sads-text-color="text-secondary"
             ></div>
           </form>
         </div>
