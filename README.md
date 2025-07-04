@@ -4,7 +4,7 @@ This project provides a flexible and configurable system for generating static l
 
 ## Overview
 
-The core functionality revolves around a Python build script (`build.py`) that assembles HTML pages (e.g., `index.html`, `index_es.html`) from:
+The core functionality revolves around a Go build script (`main.go`) that assembles HTML pages (e.g., `index.html`, `index_es.html`) from:
 
 - **HTML Component Templates**: Located in `templates/components/<component_name>/` (e.g., `features.html`, `header.html`), these are Jinja2 templates for different sections and parts of a page.
 - **Styling**: (Experimental Setup) All components, including Header, Footer, and content blocks (Features, Testimonials, Blog, Contact Form), currently use an experimental Semantic Attribute-Driven Styling (SADS) system. Styles are defined by `data-sads-*` attributes in HTML and processed by a JavaScript engine. See `docs/styling_approach.md` for details.
@@ -19,51 +19,47 @@ The core functionality revolves around a Python build script (`build.py`) that a
 
 Before you begin, ensure you have the following installed:
 
-- **Python** (version 3.8+ recommended)
-- **Node.js** (for running npm scripts, primarily for Protocol Buffer generation)
-- **pip** (Python package installer)
+- **Go** (version 1.18+ recommended)
+- **Node.js** (for running npm scripts, e.g., `generate-proto`, `format`)
 - **npm** (Node package manager, usually comes with Node.js)
-- **Python** (version 3.8+ recommended)
-- **Node.js** (for running npm scripts, primarily for Protocol Buffer generation)
-- **pip** (Python package installer)
-- **npm** (Node package manager, usually comes with Node.js)
+- **Protocol Buffer Compiler (`protoc`)** (version 3+)
 
 ### Installation
 
-1. **Clone the repository (if you haven't already):**
+1.  **Clone the repository (if you haven't already):**
 
    ```bash
    git clone <repository-url>
    cd <repository-directory>
    ```
 
-2. **Install Python dependencies:**
-   This project uses `uv` for Python package management if available (as per `format.sh`), but `pip` with `requirements.txt` is the standard.
+2.  **Install Go dependencies & tools:**
+    The Go build script uses Go modules. Dependencies like Pongo2 will be downloaded automatically when you build or run the Go program (`go run main.go` or `go build`).
+    Ensure you have the Go Protocol Buffer plugins installed:
+    ```bash
+    go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+    ```
+    Make sure your `GOPATH/bin` or `HOME/go/bin` (if `GOPATH` is not set) is in your system's `PATH` so that `protoc` can find these plugins.
 
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-   For development, including tools for linting and type checking, also install development dependencies:
-
-   ```bash
-   pip install -r requirements-dev.txt
-   ```
-
-   _Note: Ensure `requirements.txt` includes `grpcio-tools` and `protobuf` for Protocol Buffer compilation._
+3.  **Install Node.js development dependencies (for formatting, etc.):**
+    This step is mainly for tools like Prettier used in `format.sh`.
+    ```bash
+    npm install
+    ```
 
 ### Build Process
 
 The website generation involves two main steps:
 
-1. **Generate Protocol Buffer Stubs:**
-   If you modify any `.proto` files or are setting up the project for the first time, you need to compile them into Python code.
+1. **Generate Protocol Buffer Stubs (Go):**
+   If you modify any `.proto` files or are setting up the project for the first time, you need to compile them into Go code.
 
    ```bash
    npm run generate-proto
    ```
 
-   This command executes `protoc` (the Protocol Buffer compiler) using the configurations in `package.json`. It generates Python files in the `generated/` directory, which `build.py` uses to handle structured data.
+   This command executes `protoc` (the Protocol Buffer compiler) using the configurations in `package.json`. It generates Go files in the `generated/go/` directory, which `main.go` uses to handle structured data.
 
 2. **Build the HTML Pages:**
    To generate or update `index.html` and its language-specific variants (e.g., `index_es.html`):
@@ -72,7 +68,7 @@ The website generation involves two main steps:
    npm run build
    ```
 
-   This command runs the main `python build.py` script. The script performs the following actions:
+   This command runs the main `go run main.go` script (or `main.exe` if compiled). The script performs the following actions:
 
    - Reads the main configuration from `public/config.json`.
    - Loads dynamic content from `data/*.json` files, validating it against the generated Protobuf structures.
@@ -84,7 +80,7 @@ The website generation involves two main steps:
      - Writes the final page to the root directory (e.g., `index.html`, `index_es.html`).
      - Generates a language-specific configuration file (e.g., `public/generated_configs/config_en.json`).
 
-   _A note on Protobuf imports in `build.py`_: The script modifies `sys.path` at runtime to include the `generated/` directory. This allows Python to find the auto-generated Protobuf modules.
+   _A note on Protobuf imports in `main.go`_: The Go script imports the generated protobuf package directly (e.g., `import pb "landing-page-generator/generated/go"`). Ensure your `go.mod` file correctly names the module (e.g., `module landing-page-generator`).
 
 ## Customization
 
@@ -100,10 +96,10 @@ You can customize various aspects of the generated site:
   4. If the block uses dynamic data:
      - Define a Protobuf message for its data structure in a new `.proto` file or an existing one.
      - Create a corresponding JSON data file in `data/`.
-     - Update `build.py`:
-       - Import the new Protobuf message.
-       - Add a configuration entry in `_get_dynamic_data_loaders_config()` within `BuildOrchestrator`.
-       - Create a new `HtmlBlockGenerator` class for your block in `build_protocols/html_generation.py` and add an instance to the `html_generators` dictionary in `build.py`.
+     - Update `main.go`:
+       - Ensure the new Protobuf message type is registered in the `protoRegistry` in `main.go`.
+       - If you're not using the `GenericBlockGenerator`, you might need to create a new specific `HtmlBlockGenerator` struct that implements the `HtmlBlockGenerator` interface and add an instance to the `htmlGenerators` map in `main()`. The `GenericBlockGenerator` should handle most cases if the Pongo2 template is set up correctly.
+       - Update `public/config.json`'s `block_data_loaders` section for your new block, specifying its `data_file`, `message_type_name`, and whether it `is_list`.
      - Remember to run `npm run generate-proto` after adding/modifying `.proto` files.
 
 - **Removing a Block:**

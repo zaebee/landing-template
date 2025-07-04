@@ -3,15 +3,15 @@
   "version": "1.0.0",
   "description": "Template web site with landing page to track telegram bot user source.",
   "scripts": {
-    "build": "python build.py",
+    "build": "go run main.go",
     "run": "python -m http.server",
-    "test": "python -m pytest",
+    "test": "echo \"No Go tests implemented yet\"",
     "lint:py": "ruff check . && mypy .",
     "lint:py:fix": "ruff check . --fix && mypy .",
     "format": "prettier --write \"**/*.{json,css,html,js,jsx,ts,tsx,md,mdx}\" && clang-format -i proto/*.proto",
     "lint": "npm run lint:py && npm run format && ruff format",
-    "generate-proto": "mkdir -p generated && python -m grpc_tools.protoc -I./proto --python_out=./generated --pyi_out=./generated ./proto/*.proto && touch generated/__init__.py",
-    "generate-proto-win": "python -m grpc_tools.protoc -I./proto --python_out=./generated --pyi_out=./generated ./proto/*.proto"
+    "generate-proto": "mkdir -p generated/go && protoc --go_out=./generated/go --go_opt=paths=source_relative --go-grpc_out=./generated/go --go-grpc_opt=paths=source_relative -I./proto ./proto/*.proto && touch generated/go/__init__.py",
+    "generate-proto-win": "mkdir -p generated\\go && protoc --go_out=./generated/go --go_opt=paths=source_relative --go-grpc_out=./generated/go --go-grpc_opt=paths=source_relative -I./proto ./proto/*.proto"
   },
   "keywords": [],
   "author": "",

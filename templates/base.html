@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ lang | default('en') }}">
+<html lang="{{ lang | default:"en" }}">
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -13,24 +13,27 @@
       name="keywords"
     />
     {% endblock head_meta %}
-    <title>{{ title | default('Simple Landing Page') }}</title>
+    <title>{{ title | default:"Simple Landing Page" }}</title>
     <link href="public/style.css" rel="stylesheet" />
     <link href="public/dist/main.css" rel="stylesheet" />
-    {# Assuming main.css is the bundled CSS #} {% block head_extra %}{% endblock
-    head_extra %}
+    {# Assuming main.css is the bundled CSS #}
+    {% block head_extra %}
+    {% endblock head_extra %}
   </head>
   <body>
     {% include "components/header/header.html" %}
 
     <main>{{ main_content | safe }}</main>
 
-    {% include "components/footer/footer.html" %} {# Bundled JavaScript
-    including SADS engine, theme, app.js, and component JS #}
+    {% include "components/footer/footer.html" %}
+    {# Bundled JavaScript #}
+    {# including SADS engine, theme, app.js, and component JS #}
     <script src="public/dist/main.js" defer></script>
 
-    {% block scripts %} {# Specific inline scripts or page-specific JS can go
-    here if not part of the bundle #} {# The main application logic including
-    SADS initialization is now in public/js/app.js, which is part of main.js
-    bundle #} {% endblock scripts %}
+    {% block scripts %}
+      {# Specific inline scripts or page-specific JS can go here if not part of the bundle #}
+      {# The main application logic including SADS initialization is now in public/js/app.js, #}
+      {# which is part of main.js bundle #}
+    {% endblock scripts %}
   </body>
 </html>
