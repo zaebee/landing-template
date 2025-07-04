@@ -248,6 +248,7 @@ class SADSEngine {
 
     const propertyMap = {
       "bg-color": "background-color",
+      "fill-color": "fill", // Added for SVG fill
       "text-color": "color",
       "font-size": "font-size",
       "font-weight": "font-weight",
