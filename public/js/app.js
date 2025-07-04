@@ -44,6 +44,48 @@ function applyTranslationsToDOM(translations) {
 }
 
 // --- Dark Mode ---
+
+// Function to update CSS Custom Properties for the logo based on theme
+function updateLogoCssVariables(isCurrentlyDarkMode) {
+  if (typeof sadsDefaultTheme === "undefined" || !sadsDefaultTheme.colors) {
+    console.warn(
+      "SADS: Default theme or colors not available for logo CSS variables."
+    );
+    return;
+  }
+
+  const colors = sadsDefaultTheme.colors;
+  const rootStyle = document.documentElement.style;
+
+  const logoColorMappings = {
+    "--logo-icon-primary": isCurrentlyDarkMode
+      ? colors["logoIconPrimary-dark"]
+      : colors["logoIconPrimary"],
+    "--logo-icon-accent1": isCurrentlyDarkMode
+      ? colors["logoIconAccent1-dark"]
+      : colors["logoIconAccent1"],
+    "--logo-icon-accent2": isCurrentlyDarkMode
+      ? colors["logoIconAccent2-dark"]
+      : colors["logoIconAccent2"],
+    "--logo-icon-arrow": isCurrentlyDarkMode
+      ? colors["logoIconArrow-dark"]
+      : colors["logoIconArrow"],
+    "--logo-text-color": isCurrentlyDarkMode
+      ? colors["logoTextColor-dark"]
+      : colors["logoTextColor"],
+  };
+
+  for (const [cssVar, colorValue] of Object.entries(logoColorMappings)) {
+    if (colorValue) {
+      rootStyle.setProperty(cssVar, colorValue);
+    } else {
+      console.warn(`SADS: Logo color value not found for ${cssVar} in theme.`);
+      // Optionally, remove the property or set a fallback
+      // rootStyle.removeProperty(cssVar);
+    }
+  }
+}
+
 function applyDarkModePreference() {
   if (isDarkMode) {
     body.classList.add("dark-mode");
@@ -59,6 +101,8 @@ function applyDarkModePreference() {
       },
     })
   );
+  // Update logo CSS variables whenever dark mode preference is applied
+  updateLogoCssVariables(isDarkMode);
 }
 
 window.handleDarkModeToggle = function () {

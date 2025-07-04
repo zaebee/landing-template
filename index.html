@@ -62,41 +62,52 @@
               role="img"
               style="vertical-align: middle"
             >
+              <style>
+                .logo-icon-primary-shape {
+                  fill: var(--logo-icon-primary, #4f46e5);
+                }
+                .logo-icon-accent1-shape {
+                  fill: var(--logo-icon-accent1, #6366f1);
+                }
+                .logo-icon-accent2-shape {
+                  fill: var(--logo-icon-accent2, #818cf8);
+                }
+                .logo-icon-arrow-shape {
+                  fill: var(--logo-icon-arrow, #ffffff);
+                }
+                .logo-text-element {
+                  fill: var(--logo-text-color, #1f2937);
+                  font-family: "Share Tech Mono", monospace;
+                  font-size: 20px;
+                }
+              </style>
               <g transform="translate(5,5)">
                 <rect
+                  class="logo-icon-primary-shape"
                   x="0"
                   y="10"
                   width="15"
                   height="15"
                   rx="3"
-                  data-sads-fill-color="logoIconPrimary"
                 />
                 <rect
+                  class="logo-icon-accent1-shape"
                   x="9"
                   y="1"
                   width="15"
                   height="15"
                   rx="3"
-                  data-sads-fill-color="logoIconAccent1"
                 />
                 <path
+                  class="logo-icon-accent2-shape"
                   d="M18 10 L28 0 L38 10 L28 20 Z"
-                  data-sads-fill-color="logoIconAccent2"
                 />
                 <path
+                  class="logo-icon-arrow-shape"
                   d="M24 18 L34 8 L24 13 L24 18 Z"
-                  data-sads-fill-color="logoIconArrow"
                 />
               </g>
-              <text
-                x="50"
-                y="27"
-                font-family="'Share Tech Mono', monospace"
-                font-size="20"
-                data-sads-fill-color="logoTextColor"
-              >
-                NeuroGen
-              </text>
+              <text class="logo-text-element" x="50" y="27">NeuroGen</text>
             </svg>
           </a>
         </div>
