@@ -21,7 +21,12 @@
     <header
       data-sads-component="header"
       data-sads-bg-color="header-bg"
+      data-sads-text-color="text-on-header-bg"
       data-sads-padding="m 0"
+      data-sads-position="sticky"
+      data-sads-top="custom:0"
+      data-sads-width="full"
+      data-sads-z-index="custom:1000"
       data-sads-shadow="subtle"
     >
       <nav
@@ -32,6 +37,9 @@
         data-sads-max-width="content-container"
         data-sads-margin="custom:0 auto"
         data-sads-padding="0 m"
+        data-sads-responsive-rules='[
+        {"breakpoint": "mobile", "styles": {"position": "relative"}}
+    ]'
       >
         <div data-sads-element="logo-container">
           <a
@@ -53,11 +61,13 @@
           aria-label="Alternar menú"
           class="hamburger-menu"
           data-sads-display="none"
-          data-sads-responsive-rules='[
-        {"breakpoint": "mobile", "styles": {"display": "block"}}
-      ]'
+          data-sads-responsive-rules='[ {"breakpoint": "mobile", "styles": {"display": "block"}} ]'
           data-sads-button-variant="icon"
           data-sads-text-color="text-primary"
+          data-sads-cursor="pointer"
+          data-sads-bg-color="transparent"
+          data-sads-border-style="none"
+          data-sads-padding="s"
         >
           <span class="hamburger-bar"></span>
           <span class="hamburger-bar"></span>
@@ -70,7 +80,7 @@
           data-sads-flex-align-items="center"
           data-sads-gap="m"
           data-sads-responsive-rules='[
-        {"breakpoint": "mobile", "styles": {"display": "none", "flexDirection": "column", "position": "absolute", "top": "custom:60px", "left": "0", "width": "full", "bg-color": "header-bg", "padding": "m", "shadow": "subtle", "gap": "s" }}
+        {"breakpoint": "mobile", "styles": {"display": "none", "flexDirection": "column", "position": "absolute", "top": "custom:60px", "left": "custom:0", "width": "full", "bg-color": "header-bg", "padding": "m", "shadow": "subtle", "gap": "s", "zIndex": "custom:999" }}
       ]'
         >
           <ul
@@ -90,6 +100,9 @@
                 data-i18n="nav_home"
                 data-sads-text-color="text-nav-link"
                 data-sads-text-decoration="none"
+                data-sads-padding="xs s"
+                data-sads-border-radius="s"
+                data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
               >
                 Inicio
               </a>
@@ -101,6 +114,9 @@
                 data-i18n="nav_features"
                 data-sads-text-color="text-nav-link"
                 data-sads-text-decoration="none"
+                data-sads-padding="xs s"
+                data-sads-border-radius="s"
+                data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
               >
                 Características
               </a>
@@ -112,6 +128,9 @@
                 data-i18n="nav_testimonials"
                 data-sads-text-color="text-nav-link"
                 data-sads-text-decoration="none"
+                data-sads-padding="xs s"
+                data-sads-border-radius="s"
+                data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
               >
                 Testimonios
               </a>
@@ -123,6 +142,9 @@
                 data-i18n="nav_portfolio"
                 data-sads-text-color="text-nav-link"
                 data-sads-text-decoration="none"
+                data-sads-padding="xs s"
+                data-sads-border-radius="s"
+                data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
               >
                 Portafolio
               </a>
@@ -134,6 +156,9 @@
                 data-i18n="nav_blog"
                 data-sads-text-color="text-nav-link"
                 data-sads-text-decoration="none"
+                data-sads-padding="xs s"
+                data-sads-border-radius="s"
+                data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
               >
                 Blog
               </a>
@@ -146,6 +171,9 @@
             id="dark-mode-toggle"
             data-sads-button-variant="icon"
             data-sads-text-color="text-primary"
+            data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"marginTop": "s", "marginLeft": "custom:0", "width": "auto", "padding": "s m"}}
+        ]'
           >
             🌙
           </button>
@@ -156,13 +184,16 @@
             data-sads-display="flex"
             data-sads-gap="s"
             data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"width": "full", "justifyContent": "center"}}
+            {"breakpoint": "mobile", "styles": {"width": "full", "justifyContent": "center", "marginTop": "m", "marginLeft": "custom:0"}}
         ]'
           >
             <button
               data-lang="en"
               data-sads-button-variant="outline"
               data-sads-padding="xs s"
+              data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"padding": "s m"}}
+          ]'
             >
               EN
             </button>
@@ -170,6 +201,9 @@
               data-lang="es"
               data-sads-button-variant="outline"
               data-sads-padding="xs s"
+              data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"padding": "s m"}}
+          ]'
             >
               ES
             </button>
@@ -181,10 +215,10 @@
     <main>
       <section
         data-sads-component="hero"
-        data-sads-padding="xl"
+        data-sads-padding="xxl xl"
         data-sads-text-align="center"
-        data-sads-bg-color="hero-section-bg"
-        data-sads-min-height="custom:75vh"
+        data-sads-bg-color="hero-bg"
+        data-sads-text-color="text-on-hero"
         data-sads-display="flex"
         data-sads-flex-direction="column"
         data-sads-flex-justify="center"
@@ -193,8 +227,7 @@
         <h1
           data-sads-element="title"
           data-i18n="hero_title_v1"
-          data-sads-font-size="xxl"
-          data-sads-text-color="text-hero-title"
+          data-sads-font-size="custom:2.5rem"
           data-sads-margin-bottom="m"
         >
           Welcome to Our Site
@@ -202,9 +235,8 @@
         <p
           data-sads-element="subtitle"
           data-i18n="hero_subtitle_v1"
-          data-sads-font-size="l"
-          data-sads-text-color="text-hero-subtitle"
-          data-sads-margin-bottom="l"
+          data-sads-font-size="custom:1.2rem"
+          data-sads-margin-bottom="xl"
           data-sads-max-width="custom:800px"
         >
           Discover amazing things.
@@ -212,14 +244,16 @@
 
         <a
           data-sads-element="cta-button"
+          class="cta-button"
           href="#signup"
-          data-sads-button-variant="primary"
-          data-sads-padding="m l"
+          data-sads-display="inline-block"
+          data-sads-padding="s l"
           data-sads-text-decoration="none"
           data-sads-font-weight="bold"
           data-sads-border-radius="s"
-          data-sads-bg-color="button-primary-bg"
-          data-sads-text-color="button-primary-text"
+          data-sads-bg-color="cta-hero-bg"
+          data-sads-text-color="cta-hero-text"
+          data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
         >
           Learn More
         </a>
@@ -229,15 +263,15 @@
         id="features"
         data-aos="fade-up"
         data-aos-delay="100"
-        data-sads-padding="xxl"
+        data-sads-padding="xl"
         data-sads-text-align="center"
-        data-sads-bg-color="surface"
+        data-sads-bg-color="features-bg"
       >
         <h2
           data-sads-element="title"
           data-i18n="features_title"
           data-sads-margin-bottom="xl"
-          data-sads-font-size="xl"
+          data-sads-font-size="custom:2rem"
         >
           Nuestras Características
         </h2>
@@ -246,29 +280,31 @@
           data-sads-display="flex"
           data-sads-flex-wrap="wrap"
           data-sads-flex-justify="space-around"
-          data-sads-gap="m"
+          data-sads-gap="custom:20px"
           data-sads-max-width="content-container"
-          data-sads-margin="auto"
+          data-sads-margin="custom:0 auto"
           data-sads-responsive-rules='[
-        {"breakpoint": "mobile", "styles": {"flexDirection": "column"}}
+        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "gap": "custom:0"}} 
     ]'
         >
           <div
             data-sads-element="item"
-            data-sads-bg-color="surface-accent"
-            data-sads-padding="l"
-            data-sads-border-radius="m"
-            data-sads-shadow="subtle"
-            data-sads-flex-basis="third-gap-m"
+            class="feature-item"
+            data-sads-bg-color="feature-item-bg"
+            data-sads-padding="custom:1.5rem"
+            data-sads-border-radius="custom:8px"
+            data-sads-shadow="feature-item-shadow"
+            data-sads-flex-basis="custom:calc(33.333% - 20px)"
+            data-sads-box-sizing="border-box"
             data-sads-text-align="left"
             data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px"}}
         ]'
           >
             <h3
               data-sads-element="item-title"
               data-sads-margin-top="none"
-              data-sads-text-color="text-accent"
+              data-sads-text-color="feature-item-title-text"
               data-sads-font-size="l"
             >
               Característica Uno
@@ -283,20 +319,22 @@
 
           <div
             data-sads-element="item"
-            data-sads-bg-color="surface-accent"
-            data-sads-padding="l"
-            data-sads-border-radius="m"
-            data-sads-shadow="subtle"
-            data-sads-flex-basis="third-gap-m"
+            class="feature-item"
+            data-sads-bg-color="feature-item-bg"
+            data-sads-padding="custom:1.5rem"
+            data-sads-border-radius="custom:8px"
+            data-sads-shadow="feature-item-shadow"
+            data-sads-flex-basis="custom:calc(33.333% - 20px)"
+            data-sads-box-sizing="border-box"
             data-sads-text-align="left"
             data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px"}}
         ]'
           >
             <h3
               data-sads-element="item-title"
               data-sads-margin-top="none"
-              data-sads-text-color="text-accent"
+              data-sads-text-color="feature-item-title-text"
               data-sads-font-size="l"
             >
               Característica Dos
@@ -311,20 +349,22 @@
 
           <div
             data-sads-element="item"
-            data-sads-bg-color="surface-accent"
-            data-sads-padding="l"
-            data-sads-border-radius="m"
-            data-sads-shadow="subtle"
-            data-sads-flex-basis="third-gap-m"
+            class="feature-item"
+            data-sads-bg-color="feature-item-bg"
+            data-sads-padding="custom:1.5rem"
+            data-sads-border-radius="custom:8px"
+            data-sads-shadow="feature-item-shadow"
+            data-sads-flex-basis="custom:calc(33.333% - 20px)"
+            data-sads-box-sizing="border-box"
             data-sads-text-align="left"
             data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px"}}
         ]'
           >
             <h3
               data-sads-element="item-title"
               data-sads-margin-top="none"
-              data-sads-text-color="text-accent"
+              data-sads-text-color="feature-item-title-text"
               data-sads-font-size="l"
             >
               Característica Tres
@@ -343,195 +383,185 @@
         id="testimonials"
         data-sads-padding="xl"
         data-sads-text-align="center"
-        data-sads-bg-color="testimonials-section-bg"
+        data-sads-bg-color="testimonials-bg"
       >
         <h2
           data-sads-element="title"
           data-i18n="testimonials_title"
           data-sads-margin-bottom="xl"
-          data-sads-font-size="xl"
-          data-sads-text-color="text-primary"
+          data-sads-font-size="custom:2rem"
+          data-sads-text-color="testimonials-title-text"
         >
           Lo Que Dicen Nuestros Usuarios
         </h2>
         <div
           data-sads-element="list"
           data-sads-display="flex"
-          data-sads-flex-direction="column"
-          data-sads-flex-align-items="center"
-          data-sads-gap="l"
+          data-sads-gap="custom:20px"
           data-sads-max-width="content-container"
           data-sads-margin="custom:0 auto"
           data-sads-responsive-rules='[
-        {"breakpoint": "tablet", "styles": {"flexDirection": "row", "flexWrap": "wrap", "flexJustify": "space-around", "alignItems": "stretch"}},
-        {"breakpoint": "desktop", "styles": {"flexDirection": "row", "flexWrap": "wrap", "flexJustify": "space-around", "alignItems": "stretch"}}
+        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "gap": "custom:0"}}, 
+        {"breakpoint": "tablet", "styles": {"flexDirection": "row", "flexWrap": "wrap", "flexJustify": "space-around", "alignItems": "stretch", "gap": "custom:20px"}},
+        {"breakpoint": "desktop", "styles": {"flexDirection": "row", "flexWrap": "wrap", "flexJustify": "space-around", "alignItems": "stretch", "gap": "custom:20px"}}
     ]'
         >
           <article
             data-sads-element="item"
+            class="testimonial-item"
             data-sads-bg-color="testimonial-item-bg"
-            data-sads-border-radius="m"
-            data-sads-shadow="subtle"
-            data-sads-padding="l"
-            data-sads-text-align="left"
+            data-sads-padding="custom:1.5rem"
+            data-sads-border-radius="custom:8px"
+            data-sads-shadow="testimonial-item-shadow"
+            data-sads-box-sizing="border-box"
+            data-sads-text-align="center"
             data-sads-display="flex"
             data-sads-flex-direction="column"
             data-sads-flex-basis="full"
             data-sads-responsive-rules='[
-            {"breakpoint": "tablet", "styles": {"flexBasis": "half-gap-l"}},
-            {"breakpoint": "desktop", "styles": {"flexBasis": "third-gap-l"}}
+            {"breakpoint": "mobile", "styles": {"marginBottom": "custom:20px"}},
+            {"breakpoint": "tablet", "styles": {"flexBasis": "custom:calc(50% - 10px)", "marginBottom": "custom:20px"}}, 
+            {"breakpoint": "desktop", "styles": {"flexBasis": "custom:calc(33.333% - 40px)", "marginBottom": "custom:20px"}} 
         ]'
           >
-            <blockquote
-              data-sads-element="quote"
+            <img
+              data-sads-element="author-image"
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
+              alt="Foto del Usuario 1"
+              data-sads-width="custom:80px"
+              data-sads-height="custom:80px"
+              data-sads-border-radius="circle"
+              data-sads-object-fit="cover"
+              data-sads-margin-bottom="m"
+              data-sads-border-width="custom:3px"
+              data-sads-border-style="solid"
+              data-sads-border-color="testimonial-img-border"
+              data-sads-margin="custom:0 auto 1rem auto"
+            />
+
+            <p
+              data-sads-element="quote-text"
+              data-sads-font-style="italic"
+              data-sads-text-color="testimonial-quote-text"
               data-sads-margin-bottom="m"
               data-sads-flex-grow="1"
             >
-              <p
-                data-sads-font-size="m"
-                data-sads-text-color="text-quote"
-                data-sads-line-height="relaxed"
-              >
-                "Este es el mejor servicio que he usado. ¡Muy recomendado!"
-              </p>
-            </blockquote>
-            <figcaption
-              data-sads-element="author-info"
-              data-sads-display="flex"
-              data-sads-flex-align-items="center"
-              data-sads-gap="m"
+              "Este es el mejor servicio que he usado. ¡Muy recomendado!"
+            </p>
+            <h4
+              data-sads-element="author-name"
+              data-sads-margin-top="none"
+              data-sads-font-weight="bold"
+              data-sads-text-color="testimonial-author-text"
             >
-              <img
-                data-sads-element="author-image"
-                src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
-                alt="Foto del Usuario 1"
-                data-sads-width="custom:60px"
-                data-sads-height="custom:60px"
-                data-sads-border-radius="circle"
-                data-sads-object-fit="cover"
-              />
-
-              <cite
-                data-sads-element="author-name"
-                data-sads-font-style="normal"
-                data-sads-font-weight="bold"
-                data-sads-text-color="text-accent"
-              >
-                - Jane Doe
-              </cite>
-            </figcaption>
+              - Jane Doe
+            </h4>
           </article>
 
           <article
             data-sads-element="item"
+            class="testimonial-item"
             data-sads-bg-color="testimonial-item-bg"
-            data-sads-border-radius="m"
-            data-sads-shadow="subtle"
-            data-sads-padding="l"
-            data-sads-text-align="left"
+            data-sads-padding="custom:1.5rem"
+            data-sads-border-radius="custom:8px"
+            data-sads-shadow="testimonial-item-shadow"
+            data-sads-box-sizing="border-box"
+            data-sads-text-align="center"
             data-sads-display="flex"
             data-sads-flex-direction="column"
             data-sads-flex-basis="full"
             data-sads-responsive-rules='[
-            {"breakpoint": "tablet", "styles": {"flexBasis": "half-gap-l"}},
-            {"breakpoint": "desktop", "styles": {"flexBasis": "third-gap-l"}}
+            {"breakpoint": "mobile", "styles": {"marginBottom": "custom:20px"}},
+            {"breakpoint": "tablet", "styles": {"flexBasis": "custom:calc(50% - 10px)", "marginBottom": "custom:20px"}}, 
+            {"breakpoint": "desktop", "styles": {"flexBasis": "custom:calc(33.333% - 40px)", "marginBottom": "custom:20px"}} 
         ]'
           >
-            <blockquote
-              data-sads-element="quote"
+            <img
+              data-sads-element="author-image"
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
+              alt="Foto del Usuario 2"
+              data-sads-width="custom:80px"
+              data-sads-height="custom:80px"
+              data-sads-border-radius="circle"
+              data-sads-object-fit="cover"
+              data-sads-margin-bottom="m"
+              data-sads-border-width="custom:3px"
+              data-sads-border-style="solid"
+              data-sads-border-color="testimonial-img-border"
+              data-sads-margin="custom:0 auto 1rem auto"
+            />
+
+            <p
+              data-sads-element="quote-text"
+              data-sads-font-style="italic"
+              data-sads-text-color="testimonial-quote-text"
               data-sads-margin-bottom="m"
               data-sads-flex-grow="1"
             >
-              <p
-                data-sads-font-size="m"
-                data-sads-text-color="text-quote"
-                data-sads-line-height="relaxed"
-              >
-                "Características increíbles y un soporte espectacular. Mi
-                negocio ha crecido significativamente."
-              </p>
-            </blockquote>
-            <figcaption
-              data-sads-element="author-info"
-              data-sads-display="flex"
-              data-sads-flex-align-items="center"
-              data-sads-gap="m"
+              "Características increíbles y un soporte espectacular. Mi negocio
+              ha crecido significativamente."
+            </p>
+            <h4
+              data-sads-element="author-name"
+              data-sads-margin-top="none"
+              data-sads-font-weight="bold"
+              data-sads-text-color="testimonial-author-text"
             >
-              <img
-                data-sads-element="author-image"
-                src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
-                alt="Foto del Usuario 2"
-                data-sads-width="custom:60px"
-                data-sads-height="custom:60px"
-                data-sads-border-radius="circle"
-                data-sads-object-fit="cover"
-              />
-
-              <cite
-                data-sads-element="author-name"
-                data-sads-font-style="normal"
-                data-sads-font-weight="bold"
-                data-sads-text-color="text-accent"
-              >
-                - John Smith
-              </cite>
-            </figcaption>
+              - John Smith
+            </h4>
           </article>
 
           <article
             data-sads-element="item"
+            class="testimonial-item"
             data-sads-bg-color="testimonial-item-bg"
-            data-sads-border-radius="m"
-            data-sads-shadow="subtle"
-            data-sads-padding="l"
-            data-sads-text-align="left"
+            data-sads-padding="custom:1.5rem"
+            data-sads-border-radius="custom:8px"
+            data-sads-shadow="testimonial-item-shadow"
+            data-sads-box-sizing="border-box"
+            data-sads-text-align="center"
             data-sads-display="flex"
             data-sads-flex-direction="column"
             data-sads-flex-basis="full"
             data-sads-responsive-rules='[
-            {"breakpoint": "tablet", "styles": {"flexBasis": "half-gap-l"}},
-            {"breakpoint": "desktop", "styles": {"flexBasis": "third-gap-l"}}
+            {"breakpoint": "mobile", "styles": {"marginBottom": "custom:20px"}},
+            {"breakpoint": "tablet", "styles": {"flexBasis": "custom:calc(50% - 10px)", "marginBottom": "custom:20px"}}, 
+            {"breakpoint": "desktop", "styles": {"flexBasis": "custom:calc(33.333% - 40px)", "marginBottom": "custom:20px"}} 
         ]'
           >
-            <blockquote
-              data-sads-element="quote"
+            <img
+              data-sads-element="author-image"
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
+              alt="Foto del Usuario 3"
+              data-sads-width="custom:80px"
+              data-sads-height="custom:80px"
+              data-sads-border-radius="circle"
+              data-sads-object-fit="cover"
+              data-sads-margin-bottom="m"
+              data-sads-border-width="custom:3px"
+              data-sads-border-style="solid"
+              data-sads-border-color="testimonial-img-border"
+              data-sads-margin="custom:0 auto 1rem auto"
+            />
+
+            <p
+              data-sads-element="quote-text"
+              data-sads-font-style="italic"
+              data-sads-text-color="testimonial-quote-text"
               data-sads-margin-bottom="m"
               data-sads-flex-grow="1"
             >
-              <p
-                data-sads-font-size="m"
-                data-sads-text-color="text-quote"
-                data-sads-line-height="relaxed"
-              >
-                "Un cambio de juego para nuestro flujo de trabajo. Simple,
-                efectivo y confiable."
-              </p>
-            </blockquote>
-            <figcaption
-              data-sads-element="author-info"
-              data-sads-display="flex"
-              data-sads-flex-align-items="center"
-              data-sads-gap="m"
+              "Un cambio de juego para nuestro flujo de trabajo. Simple,
+              efectivo y confiable."
+            </p>
+            <h4
+              data-sads-element="author-name"
+              data-sads-margin-top="none"
+              data-sads-font-weight="bold"
+              data-sads-text-color="testimonial-author-text"
             >
-              <img
-                data-sads-element="author-image"
-                src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
-                alt="Foto del Usuario 3"
-                data-sads-width="custom:60px"
-                data-sads-height="custom:60px"
-                data-sads-border-radius="circle"
-                data-sads-object-fit="cover"
-              />
-
-              <cite
-                data-sads-element="author-name"
-                data-sads-font-style="normal"
-                data-sads-font-weight="bold"
-                data-sads-text-color="text-accent"
-              >
-                - Alice Brown
-              </cite>
-            </figcaption>
+              - Alice Brown
+            </h4>
           </article>
         </div>
       </section>
@@ -540,22 +570,22 @@
         id="portfolio"
         data-sads-padding="xl"
         data-sads-text-align="center"
-        data-sads-bg-color="portfolio-section-bg"
+        data-sads-bg-color="portfolio-bg"
       >
         <h2
           data-sads-element="title"
           data-i18n="portfolio_title"
           data-sads-margin-bottom="xl"
-          data-sads-font-size="xl"
-          data-sads-text-color="text-primary"
+          data-sads-font-size="custom:2rem"
+          data-sads-text-color="portfolio-title-text"
         >
           Nuestro Trabajo
         </h2>
         <div
           data-sads-element="grid"
           data-sads-display="grid"
-          data-sads-grid-template-columns="repeat(auto-fit, minmax(300px, 1fr))"
-          data-sads-gap="l"
+          data-sads-grid-template-columns="custom:repeat(auto-fit, minmax(280px, 1fr))"
+          data-sads-gap="custom:20px"
           data-sads-max-width="content-container"
           data-sads-margin="custom:0 auto"
         >
@@ -563,39 +593,36 @@
             data-sads-element="item"
             id="project1"
             data-sads-bg-color="portfolio-item-bg"
-            data-sads-border-radius="m"
-            data-sads-shadow="subtle"
-            data-sads-padding="l"
+            data-sads-border-radius="custom:8px"
+            data-sads-shadow="portfolio-item-shadow"
+            data-sads-overflow="hidden"
             data-sads-text-align="left"
-            data-sads-display="flex"
-            data-sads-flex-direction="column"
           >
             <img
               data-sads-element="item-image"
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
               alt="project_alpha_alt"
               data-sads-width="full"
-              data-sads-height="custom:200px"
-              data-sads-object-fit="cover"
-              data-sads-border-radius="s"
-              data-sads-margin-bottom="m"
+              data-sads-height="auto"
+              data-sads-display="block"
+              data-sads-border-bottom-width="custom:1px"
+              data-sads-border-bottom-style="solid"
+              data-sads-border-bottom-color="portfolio-img-border"
             />
 
             <h3
               data-sads-element="item-title"
+              data-sads-margin="custom:1rem 1rem 0.5rem"
+              data-sads-text-color="portfolio-item-heading-text"
               data-sads-font-size="l"
-              data-sads-text-color="text-accent"
-              data-sads-margin-top="xs"
-              data-sads-margin-bottom="s"
             >
               Proyecto Alfa
             </h3>
             <p
               data-sads-element="item-description"
-              data-sads-font-size="s"
-              data-sads-text-color="text-secondary"
-              data-sads-flex-grow="1"
-              data-sads-margin-bottom="m"
+              data-sads-margin="custom:0 1rem 1rem"
+              data-sads-text-color="portfolio-item-para-text"
+              data-sads-font-size="custom:0.9rem"
             >
               Descripción del Proyecto Alfa.
             </p>
@@ -605,39 +632,36 @@
             data-sads-element="item"
             id="project2"
             data-sads-bg-color="portfolio-item-bg"
-            data-sads-border-radius="m"
-            data-sads-shadow="subtle"
-            data-sads-padding="l"
+            data-sads-border-radius="custom:8px"
+            data-sads-shadow="portfolio-item-shadow"
+            data-sads-overflow="hidden"
             data-sads-text-align="left"
-            data-sads-display="flex"
-            data-sads-flex-direction="column"
           >
             <img
               data-sads-element="item-image"
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
               alt="project_beta_alt"
               data-sads-width="full"
-              data-sads-height="custom:200px"
-              data-sads-object-fit="cover"
-              data-sads-border-radius="s"
-              data-sads-margin-bottom="m"
+              data-sads-height="auto"
+              data-sads-display="block"
+              data-sads-border-bottom-width="custom:1px"
+              data-sads-border-bottom-style="solid"
+              data-sads-border-bottom-color="portfolio-img-border"
             />
 
             <h3
               data-sads-element="item-title"
+              data-sads-margin="custom:1rem 1rem 0.5rem"
+              data-sads-text-color="portfolio-item-heading-text"
               data-sads-font-size="l"
-              data-sads-text-color="text-accent"
-              data-sads-margin-top="xs"
-              data-sads-margin-bottom="s"
             >
               Proyecto Beta
             </h3>
             <p
               data-sads-element="item-description"
-              data-sads-font-size="s"
-              data-sads-text-color="text-secondary"
-              data-sads-flex-grow="1"
-              data-sads-margin-bottom="m"
+              data-sads-margin="custom:0 1rem 1rem"
+              data-sads-text-color="portfolio-item-para-text"
+              data-sads-font-size="custom:0.9rem"
             >
               Descripción del Proyecto Beta.
             </p>
@@ -647,39 +671,36 @@
             data-sads-element="item"
             id="project3"
             data-sads-bg-color="portfolio-item-bg"
-            data-sads-border-radius="m"
-            data-sads-shadow="subtle"
-            data-sads-padding="l"
+            data-sads-border-radius="custom:8px"
+            data-sads-shadow="portfolio-item-shadow"
+            data-sads-overflow="hidden"
             data-sads-text-align="left"
-            data-sads-display="flex"
-            data-sads-flex-direction="column"
           >
             <img
               data-sads-element="item-image"
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
               alt="project_gamma_alt"
               data-sads-width="full"
-              data-sads-height="custom:200px"
-              data-sads-object-fit="cover"
-              data-sads-border-radius="s"
-              data-sads-margin-bottom="m"
+              data-sads-height="auto"
+              data-sads-display="block"
+              data-sads-border-bottom-width="custom:1px"
+              data-sads-border-bottom-style="solid"
+              data-sads-border-bottom-color="portfolio-img-border"
             />
 
             <h3
               data-sads-element="item-title"
+              data-sads-margin="custom:1rem 1rem 0.5rem"
+              data-sads-text-color="portfolio-item-heading-text"
               data-sads-font-size="l"
-              data-sads-text-color="text-accent"
-              data-sads-margin-top="xs"
-              data-sads-margin-bottom="s"
             >
               Proyecto Gama
             </h3>
             <p
               data-sads-element="item-description"
-              data-sads-font-size="s"
-              data-sads-text-color="text-secondary"
-              data-sads-flex-grow="1"
-              data-sads-margin-bottom="m"
+              data-sads-margin="custom:0 1rem 1rem"
+              data-sads-text-color="portfolio-item-para-text"
+              data-sads-font-size="custom:0.9rem"
             >
               Descripción del Proyecto Gama.
             </p>
@@ -689,39 +710,36 @@
             data-sads-element="item"
             id="project4"
             data-sads-bg-color="portfolio-item-bg"
-            data-sads-border-radius="m"
-            data-sads-shadow="subtle"
-            data-sads-padding="l"
+            data-sads-border-radius="custom:8px"
+            data-sads-shadow="portfolio-item-shadow"
+            data-sads-overflow="hidden"
             data-sads-text-align="left"
-            data-sads-display="flex"
-            data-sads-flex-direction="column"
           >
             <img
               data-sads-element="item-image"
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
               alt="project_delta_alt"
               data-sads-width="full"
-              data-sads-height="custom:200px"
-              data-sads-object-fit="cover"
-              data-sads-border-radius="s"
-              data-sads-margin-bottom="m"
+              data-sads-height="auto"
+              data-sads-display="block"
+              data-sads-border-bottom-width="custom:1px"
+              data-sads-border-bottom-style="solid"
+              data-sads-border-bottom-color="portfolio-img-border"
             />
 
             <h3
               data-sads-element="item-title"
+              data-sads-margin="custom:1rem 1rem 0.5rem"
+              data-sads-text-color="portfolio-item-heading-text"
               data-sads-font-size="l"
-              data-sads-text-color="text-accent"
-              data-sads-margin-top="xs"
-              data-sads-margin-bottom="s"
             >
               Proyecto Delta
             </h3>
             <p
               data-sads-element="item-description"
-              data-sads-font-size="s"
-              data-sads-text-color="text-secondary"
-              data-sads-flex-grow="1"
-              data-sads-margin-bottom="m"
+              data-sads-margin="custom:0 1rem 1rem"
+              data-sads-text-color="portfolio-item-para-text"
+              data-sads-font-size="custom:0.9rem"
             >
               Descripción del Proyecto Delta.
             </p>
@@ -733,14 +751,14 @@
         id="blog"
         data-sads-padding="xl"
         data-sads-text-align="center"
-        data-sads-bg-color="blog-section-bg"
+        data-sads-bg-color="blog-bg"
       >
         <h2
           data-sads-element="title"
           data-i18n="blog_title"
           data-sads-margin-bottom="xl"
-          data-sads-font-size="xl"
-          data-sads-text-color="text-primary"
+          data-sads-font-size="custom:2rem"
+          data-sads-text-color="blog-title-text"
         >
           Últimas Publicaciones
         </h2>
@@ -749,48 +767,50 @@
           data-sads-display="flex"
           data-sads-flex-wrap="wrap"
           data-sads-flex-justify="space-around"
-          data-sads-gap="m"
+          data-sads-gap="custom:20px"
           data-sads-max-width="content-container"
           data-sads-margin="custom:0 auto"
           data-sads-responsive-rules='[
-        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "flexAlignItems": "center"}}
+        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "gap": "custom:0", "alignItems": "center" }} 
     ]'
         >
           <article
             data-sads-element="item"
+            class="blog-item"
             id="post1"
             data-sads-bg-color="blog-item-bg"
-            data-sads-padding="l"
-            data-sads-border-radius="m"
-            data-sads-shadow="subtle"
-            data-sads-flex-basis="third-gap-m"
+            data-sads-padding="custom:1.5rem"
+            data-sads-border-radius="custom:8px"
+            data-sads-shadow="blog-item-shadow"
+            data-sads-flex-basis="custom:calc(33.333% - 40px)"
             data-sads-text-align="left"
             data-sads-box-sizing="border-box"
             data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px", "width": "full"}} 
         ]'
           >
             <h3
               data-sads-element="item-title"
               data-sads-margin-top="none"
-              data-sads-text-color="text-accent"
+              data-sads-text-color="blog-item-title-text"
               data-sads-font-size="l"
             >
               Título de la Publicación Alfa
             </h3>
             <p
               data-sads-element="item-excerpt"
-              data-sads-font-size="s"
-              data-sads-text-color="text-secondary"
+              data-sads-font-size="custom:0.9rem"
+              data-sads-text-color="blog-item-excerpt-text"
               data-sads-margin-bottom="m"
             >
               Extracto de la publicación Alfa del blog...
             </p>
             <a
               data-sads-element="read-more-link"
+              class="read-more-link"
               href="#post1-link"
               data-sads-display="inline-block"
-              data-sads-text-color="text-accent"
+              data-sads-text-color="blog-readmore-text"
               data-sads-text-decoration="none"
               data-sads-font-weight="bold"
             >
@@ -800,39 +820,41 @@
 
           <article
             data-sads-element="item"
+            class="blog-item"
             id="post2"
             data-sads-bg-color="blog-item-bg"
-            data-sads-padding="l"
-            data-sads-border-radius="m"
-            data-sads-shadow="subtle"
-            data-sads-flex-basis="third-gap-m"
+            data-sads-padding="custom:1.5rem"
+            data-sads-border-radius="custom:8px"
+            data-sads-shadow="blog-item-shadow"
+            data-sads-flex-basis="custom:calc(33.333% - 40px)"
             data-sads-text-align="left"
             data-sads-box-sizing="border-box"
             data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px", "width": "full"}} 
         ]'
           >
             <h3
               data-sads-element="item-title"
               data-sads-margin-top="none"
-              data-sads-text-color="text-accent"
+              data-sads-text-color="blog-item-title-text"
               data-sads-font-size="l"
             >
               Título de la Publicación Beta
             </h3>
             <p
               data-sads-element="item-excerpt"
-              data-sads-font-size="s"
-              data-sads-text-color="text-secondary"
+              data-sads-font-size="custom:0.9rem"
+              data-sads-text-color="blog-item-excerpt-text"
               data-sads-margin-bottom="m"
             >
               Extracto de la publicación Beta del blog...
             </p>
             <a
               data-sads-element="read-more-link"
+              class="read-more-link"
               href="#post2-link"
               data-sads-display="inline-block"
-              data-sads-text-color="text-accent"
+              data-sads-text-color="blog-readmore-text"
               data-sads-text-decoration="none"
               data-sads-font-weight="bold"
             >
@@ -842,39 +864,41 @@
 
           <article
             data-sads-element="item"
+            class="blog-item"
             id="post3"
             data-sads-bg-color="blog-item-bg"
-            data-sads-padding="l"
-            data-sads-border-radius="m"
-            data-sads-shadow="subtle"
-            data-sads-flex-basis="third-gap-m"
+            data-sads-padding="custom:1.5rem"
+            data-sads-border-radius="custom:8px"
+            data-sads-shadow="blog-item-shadow"
+            data-sads-flex-basis="custom:calc(33.333% - 40px)"
             data-sads-text-align="left"
             data-sads-box-sizing="border-box"
             data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px", "width": "full"}} 
         ]'
           >
             <h3
               data-sads-element="item-title"
               data-sads-margin-top="none"
-              data-sads-text-color="text-accent"
+              data-sads-text-color="blog-item-title-text"
               data-sads-font-size="l"
             >
               Título de la Publicación Gama
             </h3>
             <p
               data-sads-element="item-excerpt"
-              data-sads-font-size="s"
-              data-sads-text-color="text-secondary"
+              data-sads-font-size="custom:0.9rem"
+              data-sads-text-color="blog-item-excerpt-text"
               data-sads-margin-bottom="m"
             >
               Extracto de la publicación Gama del blog...
             </p>
             <a
               data-sads-element="read-more-link"
+              class="read-more-link"
               href="#post3-link"
               data-sads-display="inline-block"
-              data-sads-text-color="text-accent"
+              data-sads-text-color="blog-readmore-text"
               data-sads-text-decoration="none"
               data-sads-font-weight="bold"
             >
@@ -887,30 +911,31 @@
         data-sads-component="contact-form"
         id="contact"
         data-sads-padding="xl"
-        data-sads-bg-color="contact-form-section-bg"
-        data-sads-text-align="left"
+        data-sads-bg-color="contact-section-bg"
+        data-sads-text-align="center"
       >
         <div
           data-sads-element="container"
           data-sads-max-width="custom:600px"
           data-sads-margin="custom:0 auto"
-          data-sads-bg-color="contact-form-bg"
+          data-sads-bg-color="contact-form-inner-bg"
           data-sads-padding="xl"
-          data-sads-border-radius="m"
-          data-sads-shadow="subtle"
+          data-sads-border-radius="custom:8px"
+          data-sads-shadow="contact-form-shadow"
         >
           <h2
             data-sads-element="title"
             data-i18n="contact_title"
-            data-sads-font-size="xl"
+            data-sads-font-size="custom:2rem"
             data-sads-text-color="text-primary"
-            data-sads-margin-bottom="l"
+            data-sads-margin-bottom="xl"
             data-sads-text-align="center"
           >
             Contáctanos
           </h2>
           <form
             data-sads-element="form"
+            class="contact-form-tag"
             id="contactForm"
             method="POST"
             action="https://formspree.io/f/xgvyddyg"
@@ -929,7 +954,8 @@
                 data-sads-display="block"
                 data-sads-margin-bottom="xs"
                 data-sads-font-weight="bold"
-                data-sads-text-color="text-secondary"
+                data-sads-text-color="contact-label-text"
+                data-sads-text-align="left"
               >
                 Nombre:
               </label>
@@ -939,10 +965,15 @@
                 name="name"
                 required
                 data-sads-element="input"
-                data-sads-input-variant="default"
                 data-sads-width="full"
-                data-sads-padding="s"
-                data-sads-border-radius="s"
+                data-sads-padding="custom:0.75rem"
+                data-sads-border-width="custom:1px"
+                data-sads-border-style="solid"
+                data-sads-border-color="contact-input-border"
+                data-sads-border-radius="custom:4px"
+                data-sads-box-sizing="border-box"
+                data-sads-bg-color="contact-input-bg"
+                data-sads-text-color="contact-input-text"
               />
             </div>
 
@@ -954,7 +985,8 @@
                 data-sads-display="block"
                 data-sads-margin-bottom="xs"
                 data-sads-font-weight="bold"
-                data-sads-text-color="text-secondary"
+                data-sads-text-color="contact-label-text"
+                data-sads-text-align="left"
               >
                 Correo Electrónico:
               </label>
@@ -964,10 +996,15 @@
                 name="email"
                 required
                 data-sads-element="input"
-                data-sads-input-variant="default"
                 data-sads-width="full"
-                data-sads-padding="s"
-                data-sads-border-radius="s"
+                data-sads-padding="custom:0.75rem"
+                data-sads-border-width="custom:1px"
+                data-sads-border-style="solid"
+                data-sads-border-color="contact-input-border"
+                data-sads-border-radius="custom:4px"
+                data-sads-box-sizing="border-box"
+                data-sads-bg-color="contact-input-bg"
+                data-sads-text-color="contact-input-text"
               />
             </div>
 
@@ -979,7 +1016,8 @@
                 data-sads-display="block"
                 data-sads-margin-bottom="xs"
                 data-sads-font-weight="bold"
-                data-sads-text-color="text-secondary"
+                data-sads-text-color="contact-label-text"
+                data-sads-text-align="left"
               >
                 Mensaje:
               </label>
@@ -989,21 +1027,34 @@
                 rows="4"
                 required
                 data-sads-element="textarea"
-                data-sads-input-variant="default"
                 data-sads-width="full"
-                data-sads-padding="s"
-                data-sads-border-radius="s"
+                data-sads-padding="custom:0.75rem"
+                data-sads-border-width="custom:1px"
+                data-sads-border-style="solid"
+                data-sads-border-color="contact-input-border"
+                data-sads-border-radius="custom:4px"
+                data-sads-box-sizing="border-box"
+                data-sads-bg-color="contact-input-bg"
+                data-sads-text-color="contact-input-text"
+                data-sads-resize="vertical"
               ></textarea>
             </div>
 
             <button
               type="submit"
+              class="contact-submit-button"
               data-i18n="contact_send_button"
               data-sads-element="button"
-              data-sads-button-variant="primary"
               data-sads-width="full"
-              data-sads-padding="m"
-              data-sads-margin-top="m"
+              data-sads-padding="custom:10px 20px"
+              data-sads-bg-color="contact-submit-bg"
+              data-sads-text-color="contact-submit-text"
+              data-sads-border-style="none"
+              data-sads-border-radius="custom:5px"
+              data-sads-cursor="pointer"
+              data-sads-font-size="custom:1rem"
+              data-sads-font-weight="bold"
+              data-sads-transition="custom:background-color 0.3s ease"
             >
               Enviar Mensaje
             </button>

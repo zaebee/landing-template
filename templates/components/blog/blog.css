@@ -1,0 +1,21 @@
+/* templates/components/blog/blog.css */
+
+/* Read More Link Hover State */
+/* Targets the class .read-more-link specified in blog.html */
+.read-more-link:hover {
+  text-decoration: underline;
+}
+
+/* Dark mode for read more link hover is implicitly handled by SADS text color
+   and the text-decoration: underline; not changing color.
+   If specific hover color changes were needed for dark mode, they'd be added here.
+*/
+
+/* Responsive adjustments for blog items */
+@media (width <= 768px) {
+  /* Remove margin from the last blog item in mobile view */
+  /* Targets the class .blog-item specified in blog.html */
+  [data-sads-element="list"] > .blog-item:last-child {
+    margin-bottom: 0 !important; /* Override SADS responsive rule if it sets margin-bottom */
+  }
+}

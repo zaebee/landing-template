@@ -3,15 +3,15 @@
     id="features"
     data-aos="fade-up"
     data-aos-delay="100"
-    data-sads-padding="xxl" {# 4rem was original, using xxl as per themeConfig example, or could use 'custom:4rem' #}
+    data-sads-padding="xl" {# CSS: 2rem #}
     data-sads-text-align="center"
-    data-sads-bg-color="surface" {# Light: #fff, Dark: #1f1f1f - Engine handles dark mode mapping #}
+    data-sads-bg-color="features-bg" {# Theme: #fff light, #1f1f1f dark #}
 >
   <h2
     data-sads-element="title"
     data-i18n="features_title"
-    data-sads-margin-bottom="xl" {# 2rem #}
-    data-sads-font-size="xl" {# 2rem #}
+    data-sads-margin-bottom="xl" {# CSS: 2rem #}
+    data-sads-font-size="custom:2rem" {# CSS: 2rem #}
   >
     {{ translations.get('features_title', 'Features') }}
   </h2>
@@ -20,38 +20,39 @@
     data-sads-display="flex"
     data-sads-flex-wrap="wrap"
     data-sads-flex-justify="space-around"
-    data-sads-gap="m" {# 20px ~ 1rem or 1.25rem. Theme's 'm' is 1rem. Original gap: 20px. Let's use 'm' for 1rem. If 20px is critical, use custom or add 'l' for 1.25rem (20px) #}
-    data-sads-max-width="content-container"
-    data-sads-margin="auto" {# For margin: 0 auto; assuming engine handles combined values or we use margin-horizontal #}
+    data-sads-gap="custom:20px" {# CSS: 20px #}
+    data-sads-max-width="content-container" {# CSS: 1100px (theme variable) #}
+    data-sads-margin="custom:0 auto" {# CSS: auto (for horizontal centering) #}
     data-sads-responsive-rules='[
-        {"breakpoint": "mobile", "styles": {"flexDirection": "column"}}
+        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "gap": "custom:0"}} {# Remove gap for column layout if margin is on items #}
     ]'
   >
-    {% for item_data in items %} {# Renamed item to item_data to avoid conflict with SADS 'item' element name if it were a keyword #}
+    {% for item_data in items %}
     <div
         data-sads-element="item"
-        data-sads-bg-color="surface-accent" {# Light: #f9f9f9, Dark: #2a2a2a #}
-        data-sads-padding="l" {# 1.5rem #}
-        data-sads-border-radius="m" {# 8px #}
-        data-sads-shadow="subtle" {# 0 2px 5px rgb(0 0 0 / 10%) #}
-        data-sads-flex-basis="third-gap-m" {# calc(33.333% - 1rem) assuming 1rem (medium) gap. Original was 20px gap, (33.333% - 40px) - this needs careful theme definition or direct value #}
-        {# data-sads-box-sizing="border-box" /* This should be a global reset ideally */ #}
+        class="feature-item" {# Keep class for potential :last-child CSS rule #}
+        data-sads-bg-color="feature-item-bg" {# Theme: #f9f9f9 light, #2a2a2a dark #}
+        data-sads-padding="custom:1.5rem" {# CSS: 1.5rem #}
+        data-sads-border-radius="custom:8px" {# CSS: 8px #}
+        data-sads-shadow="feature-item-shadow" {# Theme: 0 2px 5px rgb(0 0 0 / 10%) light, 0 2px 5px rgb(255 255 255 / 10%) dark #}
+        data-sads-flex-basis="custom:calc(33.333% - 20px)" {# Adjusted for 20px gap. Original CSS was (33.333% - 40px) but this was based on items having margin, not gap on parent. If using gap, basis is simpler or direct percentage. Given space-around, flex-basis can be closer to 30-32% or use custom calc like this. For a 20px gap, if items are to share the space, (100% - 2*20px)/3 for 3 items. Let's try `custom:calc(33.333% - 14px)` as an approx for 20px gap or simply `custom:30%` and let space-around handle it. Sticking to a direct translation of original intent: (33.333% - 40px), assuming it was for margin compensation. If it's for gap, `calc( (100% - (2 * 20px) ) / 3 )` might be more accurate for 3 items per row. Let's use the original calc for now. #}
+        data-sads-box-sizing="border-box"
         data-sads-text-align="left"
         data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "m"}}
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px"}}
         ]'
-        {# TODO: Handle :last-child margin-bottom:0 for mobile. SADS engine needs to support pseudo-selectors or a utility attribute #}
+        {# The :last-child rule for marginBottom:0 will be in features.css #}
     >
       {% if item_data.icon and item_data.icon.svg_content %}
-      <div data-sads-element="item-icon" data-sads-margin-bottom="s"> {# Assuming a small margin for icon #}
+      <div data-sads-element="item-icon" data-sads-margin-bottom="s">
         {{ item_data.icon.svg_content | safe }}
       </div>
       {% endif %}
       <h3
         data-sads-element="item-title"
-        data-sads-margin-top="none"
-        data-sads-text-color="text-accent" {# Light: #007bff, Dark: #0af #}
-        data-sads-font-size="l" {# Assuming h3 is large, adjust if needed #}
+        data-sads-margin-top="none" {# CSS: margin-top: 0 #}
+        data-sads-text-color="feature-item-title-text" {# Theme: #007bff light, #0af dark #}
+        data-sads-font-size="l" {# Assuming h3 is large, adjust if needed. Original CSS for h3 was inside .feature-item but no specific font-size was on .features h2 vs .feature-item h3 #}
       >
         {{ translations.get(item_data.content.title.key, item_data.content.title.key) }}
       </h3>
