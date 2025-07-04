@@ -56,8 +56,16 @@ const sadsDefaultTheme = {
     subtle: "0 2px 5px rgba(0,0,0,0.1)",
     medium: "0 4px 10px rgba(0,0,0,0.15)",
   },
-  maxWidth: { "content-container": "1100px", full: "100%" },
-  breakpoints: { mobile: "(max-width: 768px)" },
+  maxWidth: {
+    "content-container-narrow": "800px",
+    "content-container": "1100px",
+    "full": "100%"
+  },
+  breakpoints: {
+    mobile: "(max-width: 767px)", // Adjusted to not overlap with tablet
+    tablet: "(min-width: 768px) and (max-width: 1023px)",
+    desktop: "(min-width: 1024px)"
+  },
   flexBasis: {
     auto: "auto",
     full: "100%",
