@@ -60,15 +60,12 @@
 
 ## Styling Approach (SADS Experiment)
 
-This project uses a hybrid styling system:
+In the current experimental setup, this project uses the Semantic Attribute-Driven Styling (SADS) system for **all components**, including Header, Footer, and content blocks (Features, Testimonials, Blog, Contact Form).
 
-- **Header & Footer:** Styled with traditional CSS located in their component directories (`templates/components/header/header.css`, etc.).
-- **Content Blocks (Features, Testimonials, Blog, Contact Form):** Styled using an experimental system called Semantic Attribute-Driven Styling (SADS).
+- Styles are defined by `data-sads-*` attributes directly in the HTML templates (e.g., `templates/components/features/features.html`).
+- A JavaScript engine (`public/js/sads-style-engine.js`) parses these attributes and dynamically generates CSS rules.
+- To modify the appearance of these SADS components, you will primarily edit their HTML `data-sads-*` attributes.
+- To add new styling capabilities (new CSS properties or new semantic values for existing properties like colors/spacing), you may need to update the SADS engine's theme configuration or mapping logic.
+- **Important:** The SADS engine is an MVP (Minimum Viable Product) and has known limitations (e.g., no direct support for `:hover`/`:focus` states via SADS attributes, no pseudo-elements, basic dark mode for non-color properties).
 
-  - Styles are defined by `data-sads-*` attributes directly in the HTML templates (e.g., `templates/components/features/features.html`).
-  - A JavaScript engine (`public/js/sads-style-engine.js`) parses these attributes and dynamically generates CSS rules.
-  - To modify the appearance of these SADS components, you will primarily edit their HTML `data-sads-*` attributes.
-  - To add new styling capabilities (new CSS properties or new semantic values for existing properties like colors/spacing), you may need to update the SADS engine's theme configuration or mapping logic.
-  - **Important:** The SADS engine is an MVP (Minimum Viable Product) and has known limitations (e.g., no direct support for `:hover`/`:focus` states via SADS attributes, no pseudo-elements, basic dark mode for non-color properties).
-
-  - # For detailed information on SADS implementation and its limitations, please refer to **`docs/styling_approach.md`**
+- # For detailed information on SADS implementation and its limitations, please refer to **`docs/styling_approach.md`**

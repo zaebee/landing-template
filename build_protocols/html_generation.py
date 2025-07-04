@@ -67,11 +67,6 @@ class BaseHtmlGenerator(HtmlBlockGenerator):
         Assumes 'template_to_render' and 'data_key_for_template' are set
         (usually by the @register_html_generator decorator on the subclass).
         """
-        if not data:
-            # This basic guard might need to be overridden by subclasses
-            # if they handle 'None' data differently (e.g. Hero, ContactForm)
-            return ""
-
         # Ensure template_to_render is set, which should be guaranteed by the decorator
         # and protocol, but a runtime check or better initialization could be added if needed.
         if (
@@ -92,7 +87,7 @@ class BaseHtmlGenerator(HtmlBlockGenerator):
 
 
 @register_html_generator(
-    block_name="portfolio.html",
+    block_name="components/portfolio/portfolio.html",
     template_to_render="components/portfolio/portfolio.html",
 )  # data_key="items" is default
 class PortfolioHtmlGenerator(BaseHtmlGenerator):
@@ -120,7 +115,7 @@ class PortfolioHtmlGenerator(BaseHtmlGenerator):
 
 
 @register_html_generator(
-    block_name="testimonials.html",
+    block_name="components/testimonials/testimonials.html",
     template_to_render="components/testimonials/testimonials.html",
 )  # data_key="items" is default
 class TestimonialsHtmlGenerator(BaseHtmlGenerator):
@@ -144,7 +139,8 @@ class TestimonialsHtmlGenerator(BaseHtmlGenerator):
 
 
 @register_html_generator(
-    block_name="features.html", template_to_render="components/features/features.html"
+    block_name="components/features/features.html",
+    template_to_render="components/features/features.html",
 )  # data_key="items" is default
 class FeaturesHtmlGenerator(BaseHtmlGenerator):
     """Generates HTML for a list of feature items using Jinja2."""
@@ -165,7 +161,7 @@ class FeaturesHtmlGenerator(BaseHtmlGenerator):
 
 
 @register_html_generator(
-    block_name="hero.html",
+    block_name="components/hero/hero.html",
     template_to_render="components/hero/hero.html",
     data_key="item",  # Match the variable name in the new template
 )
@@ -210,8 +206,8 @@ class HeroHtmlGenerator(BaseHtmlGenerator):
 
 
 @register_html_generator(
-    block_name="contact-form.html",
-    template_to_render="blocks/contact-form.html",
+    block_name="components/contact-form/contact-form.html",
+    template_to_render="components/contact-form/contact-form.html",
     data_key="config",
 )
 class ContactFormHtmlGenerator(BaseHtmlGenerator):
@@ -237,7 +233,8 @@ class ContactFormHtmlGenerator(BaseHtmlGenerator):
 
 
 @register_html_generator(
-    block_name="blog.html", template_to_render="components/blog/blog.html"
+    block_name="components/blog/blog.html",
+    template_to_render="components/blog/blog.html",
 )
 class BlogHtmlGenerator(BaseHtmlGenerator):
     """Generates HTML for a list of blog posts using Jinja2, utilizing SADS attributes."""

@@ -7,7 +7,7 @@ This project provides a flexible and configurable system for generating static l
 The core functionality revolves around a Python build script (`build.py`) that assembles HTML pages (e.g., `index.html`, `index_es.html`) from:
 
 - **HTML Component Templates**: Located in `templates/components/<component_name>/` (e.g., `features.html`, `header.html`), these are Jinja2 templates for different sections and parts of a page.
-- **Styling**: A hybrid approach is used. Header and Footer use traditional component-specific CSS. Content blocks (Features, Testimonials, Blog, Contact Form) use an experimental Semantic Attribute-Driven Styling (SADS) system where styles are defined by `data-sads-*` attributes in HTML and processed by a JavaScript engine. All CSS (traditional and SADS-generated) is applied. See `docs/styling_approach.md` for details.
+- **Styling**: (Experimental Setup) All components, including Header, Footer, and content blocks (Features, Testimonials, Blog, Contact Form), currently use an experimental Semantic Attribute-Driven Styling (SADS) system. Styles are defined by `data-sads-*` attributes in HTML and processed by a JavaScript engine. See `docs/styling_approach.md` for details.
 - **Configuration**: `public/config.json` defines which blocks to include, their order, supported languages, and other site-wide settings.
 - **Dynamic Data**: Content for blocks (text, images, links) is stored in JSON files within the `data/` directory. These files adhere to schemas defined by Protocol Buffers.
 - **Translations**: Locale strings for internationalization are managed in `public/locales/`.
@@ -142,13 +142,12 @@ Modify `public/config.json` to change:
 
 ### Styles
 
-The project uses a hybrid styling approach:
+(Experimental Setup) The project currently uses the Semantic Attribute-Driven Styling (SADS) system for all components:
 
-- **Header & Footer:** Modify their respective CSS files in `templates/components/header/header.css` and `templates/components/footer/footer.css`.
-- **Content Blocks (Features, Testimonials, Blog, Contact Form):** These use an experimental Semantic Attribute-Driven Styling (SADS) system. Styles are primarily controlled by `data-sads-*` attributes in their HTML templates (`templates/components/<block_name>/<block_name>.html`) and the SADS engine logic in `public/js/sads-style-engine.js`.
+- **All Components (Header, Footer, Features, Testimonials, Blog, Contact Form):** Styles are primarily controlled by `data-sads-*` attributes in their HTML templates (`templates/components/<component_name>/<component_name>.html`) and the SADS engine logic in `public/js/sads-style-engine.js`.
 - **Global Base Styles:** Minimal global styles are in `public/style.css`.
-- All traditional CSS is bundled into `public/dist/main.css`. SADS styles are injected dynamically.
-- Refer to `docs/styling_approach.md` for a detailed explanation.
+- SADS styles are injected dynamically. (Note: The `header.css` and `footer.css` files still exist but are not the primary styling mechanism in this experimental SADS setup; `public/dist/main.css` will bundle them if they contain styles, but SADS attributes in the HTML take precedence for SADS-controlled properties).
+- Refer to `docs/styling_approach.md` for a detailed explanation of SADS.
 
 After making any of these changes, **always run `npm run build`** to regenerate the HTML files and see your updates.
 
