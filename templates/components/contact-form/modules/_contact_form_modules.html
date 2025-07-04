@@ -1,0 +1,205 @@
+{# === Atoms === #} {% macro form_label(id, text_key, default_text,
+i18n_key_prefix='contact', sads_attrs=None, is_required=False) %} {% set _attrs
+= "" %} {% if sads_attrs %} {% for attr, value in sads_attrs.items() %} {% set
+_attrs = _attrs ~ ' data-sads-' ~ attr ~ '="' ~ value ~ '"' %} {% endfor %} {%
+endif %}
+<label
+  for="{{ id }}"
+  data-i18n="{{ i18n_key_prefix }}_{{ text_key }}_label"
+  data-sads-element="label"
+  data-sads-display="block"
+  data-sads-margin-bottom="xs"
+  data-sads-font-weight="medium"
+  data-sads-text-color="form-label-text"
+  data-sads-text-align="left"
+  data-sads-font-size="s"
+  {{
+  _attrs
+  |
+  safe
+  }}
+>
+  {{ translations.get(i18n_key_prefix + '_' + text_key + '_label', default_text)
+  }}{% if is_required %}<span
+    data-sads-text-color="error-text"
+    data-sads-margin-left="xxs"
+    >*</span
+  >{% endif %}
+</label>
+{% endmacro %} {% macro form_input(id, name, type="text", required=False,
+sads_attrs=None, value=None) %} {% set _attrs = "" %} {% if sads_attrs %} {% for
+attr, value in sads_attrs.items() %} {% set _attrs = _attrs ~ ' data-sads-' ~
+attr ~ '="' ~ value ~ '"' %} {% endfor %} {% endif %}
+<input
+  type="{{ type }}"
+  id="{{ id }}"
+  name="{{ name }}"
+  {%
+  if
+  required
+  %}
+  required{%
+  endif
+  %}{%
+  if
+  value
+  %}
+  value="{{ value }}"
+  {%
+  endif
+  %}
+  {%
+  if
+  type=""
+  ="email"
+  %}inputmode="email"
+  {%
+  endif
+  %}
+  itemprop="{{ 'email' if name == 'email' else ('name' if name == 'name' else '') }}"
+  data-sads-element="form-input-{{ name | replace('_', '-') }}"
+  data-sads-width="full"
+  data-sads-padding="s-m"
+  data-sads-border-width="custom:1px"
+  data-sads-border-style="solid"
+  data-sads-border-color="form-input-border"
+  data-sads-border-radius="l"
+  data-sads-box-sizing="border-box"
+  data-sads-bg-color="form-input-bg"
+  data-sads-text-color="form-input-text"
+  data-sads-font-size="m"
+  {{
+  _attrs
+  |
+  safe
+  }}
+/>
+{% endmacro %} {% macro form_textarea(id, name, rows=4, required=False,
+sads_attrs=None) %} {% set _attrs = "" %} {% if sads_attrs %} {% for attr, value
+in sads_attrs.items() %} {% set _attrs = _attrs ~ ' data-sads-' ~ attr ~ '="' ~
+value ~ '"' %} {% endfor %} {% endif %}
+<textarea
+  id="{{ id }}"
+  name="{{ name }}"
+  rows="{{ rows }}"
+  {%
+  if
+  required
+  %}
+  required{%
+  endif
+  %}
+  itemprop="text"
+  data-sads-element="form-textarea-{{ name | replace('_', '-') }}"
+  data-sads-width="full"
+  data-sads-padding="s-m"
+  data-sads-border-width="custom:1px"
+  data-sads-border-style="solid"
+  data-sads-border-color="form-input-border"
+  data-sads-border-radius="l"
+  data-sads-box-sizing="border-box"
+  data-sads-bg-color="form-input-bg"
+  data-sads-text-color="form-input-text"
+  data-sads-font-size="m"
+  data-sads-resize="vertical"
+  {{
+  _attrs
+  |
+  safe
+  }}
+></textarea>
+{% endmacro %} {% macro form_button(text_key, default_text, type="submit",
+i18n_key_prefix='contact', sads_attrs=None, css_class=None) %} {% set _attrs =
+"" %} {% if sads_attrs %} {% for attr, value in sads_attrs.items() %} {% set
+_attrs = _attrs ~ ' data-sads-' ~ attr ~ '="' ~ value ~ '"' %} {% endfor %} {%
+endif %}
+<button
+  type="{{ type }}"
+  {%
+  if
+  css_class
+  %}
+  class="{{ css_class }}"
+  {%
+  endif
+  %}
+  data-i18n="{{ i18n_key_prefix }}_{{ text_key }}_button"
+  data-sads-element="button"
+  data-sads-width="full"
+  data-sads-padding="custom:0.625rem 1.5rem"
+  data-sads-bg-color="button-primary-bg"
+  data-sads-text-color="button-primary-text"
+  data-sads-border-style="none"
+  data-sads-border-radius="l"
+  data-sads-cursor="pointer"
+  data-sads-font-size="m"
+  data-sads-font-weight="medium"
+  data-sads-transition="custom:background-color 0.2s ease, box-shadow 0.2s ease"
+  data-sads-shadow="soft"
+  {{
+  _attrs
+  |
+  safe
+  }}
+>
+  <span class="button-text"
+    >{{ translations.get(i18n_key_prefix + '_' + text_key + '_button',
+    default_text) }}</span
+  >
+  <span class="button-spinner" style="display: none"></span>
+</button>
+{% endmacro %} {% macro form_status_message(id, sads_attrs=None) %} {% set
+_attrs = "" %} {% if sads_attrs %} {% for attr, value in sads_attrs.items() %}
+{% set _attrs = _attrs ~ ' data-sads-' ~ attr ~ '="' ~ value ~ '"' %} {% endfor
+%} {% endif %}
+<div
+  id="{{ id }}"
+  data-sads-element="status-message"
+  role="status"
+  aria-live="polite"
+  data-sads-min-height="custom:1.5em"
+  data-sads-margin-top="s"
+  data-sads-text-align="center"
+  data-sads-font-size="s"
+  data-sads-padding="s"
+  data-sads-border-radius="m"
+  data-sads-text-color="text-secondary"
+  {{
+  _attrs
+  |
+  safe
+  }}
+></div>
+{% endmacro %} {# === Molecules === #} {% macro form_field(id, name,
+label_text_key, label_default_text, input_type="text", required=False, rows=4,
+sads_label_attrs=None, sads_input_attrs=None, i18n_key_prefix='contact') %}
+<div data-sads-margin-bottom="m">
+  {# Wrapper for label + input/textarea, added margin #} {{ form_label(id,
+  label_text_key, label_default_text, i18n_key_prefix=i18n_key_prefix,
+  sads_attrs=sads_label_attrs, is_required=required) }} {% if input_type ==
+  "textarea" %} {{ form_textarea(id, name, rows=rows, required=required,
+  sads_attrs=sads_input_attrs) }} {% else %} {{ form_input(id, name,
+  type=input_type, required=required, sads_attrs=sads_input_attrs) }} {% endif
+  %}
+</div>
+{% endmacro %} {% macro form_title(text_key, default_text,
+i18n_key_prefix='contact', sads_attrs=None) %} {% set _attrs = "" %} {% if
+sads_attrs %} {% for attr, value in sads_attrs.items() %} {% set _attrs = _attrs
+~ ' data-sads-' ~ attr ~ '="' ~ value ~ '"' %} {% endfor %} {% endif %}
+<h2
+  data-sads-element="title"
+  data-i18n="{{ i18n_key_prefix }}_{{ text_key }}"
+  data-sads-font-size="xl"
+  data-sads-font-weight="semibold"
+  data-sads-text-color="text-primary"
+  data-sads-margin-bottom="l"
+  data-sads-text-align="center"
+  {{
+  _attrs
+  |
+  safe
+  }}
+>
+  {{ translations.get(i18n_key_prefix + '_' + text_key, default_text) }}
+</h2>
+{% endmacro %}

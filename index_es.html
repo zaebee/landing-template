@@ -907,9 +907,12 @@
           </article>
         </div>
       </section>
+
       <section
         data-sads-component="contact-form"
         id="contact"
+        itemscope
+        itemtype="https://schema.org/ContactPage"
         data-sads-padding="xl"
         data-sads-bg-color="contact-section-bg"
         data-sads-text-align="center"
@@ -920,19 +923,34 @@
           data-sads-margin="custom:0 auto"
           data-sads-bg-color="contact-form-inner-bg"
           data-sads-padding="xl"
-          data-sads-border-radius="custom:8px"
-          data-sads-shadow="contact-form-shadow"
+          data-sads-border-radius="xl"
+          data-sads-shadow="medium"
         >
           <h2
             data-sads-element="title"
             data-i18n="contact_title"
-            data-sads-font-size="custom:2rem"
+            data-sads-font-size="xl"
+            data-sads-font-weight="semibold"
             data-sads-text-color="text-primary"
-            data-sads-margin-bottom="xl"
+            data-sads-margin-bottom="l"
             data-sads-text-align="center"
           >
             Contáctanos
           </h2>
+
+          <p
+            data-sads-element="subtitle"
+            data-sads-text-color="text-secondary"
+            data-sads-font-size="m"
+            data-sads-margin-bottom="l"
+            data-sads-max-width="custom:90%"
+            data-sads-margin-left="auto"
+            data-sads-margin-right="auto"
+            data-i18n="contact_subtitle"
+          >
+            Have a question or want to work together? Fill out the form below.
+          </p>
+
           <form
             data-sads-element="form"
             class="contact-form-tag"
@@ -946,96 +964,121 @@
             data-sads-flex-direction="column"
             data-sads-gap="m"
           >
-            <div>
+            <div data-sads-margin-bottom="m">
               <label
                 for="name"
                 data-i18n="contact_name_label"
                 data-sads-element="label"
                 data-sads-display="block"
                 data-sads-margin-bottom="xs"
-                data-sads-font-weight="bold"
-                data-sads-text-color="contact-label-text"
+                data-sads-font-weight="medium"
+                data-sads-text-color="form-label-text"
                 data-sads-text-align="left"
+                data-sads-font-size="s"
               >
-                Nombre:
+                Nombre:<span
+                  data-sads-text-color="error-text"
+                  data-sads-margin-left="xxs"
+                  >*</span
+                >
               </label>
+
               <input
                 type="text"
                 id="name"
                 name="name"
                 required
-                data-sads-element="input"
+                itemprop="name"
+                data-sads-element="form-input-name"
                 data-sads-width="full"
-                data-sads-padding="custom:0.75rem"
+                data-sads-padding="s-m"
                 data-sads-border-width="custom:1px"
                 data-sads-border-style="solid"
-                data-sads-border-color="contact-input-border"
-                data-sads-border-radius="custom:4px"
+                data-sads-border-color="form-input-border"
+                data-sads-border-radius="l"
                 data-sads-box-sizing="border-box"
-                data-sads-bg-color="contact-input-bg"
-                data-sads-text-color="contact-input-text"
+                data-sads-bg-color="form-input-bg"
+                data-sads-text-color="form-input-text"
+                data-sads-font-size="m"
               />
             </div>
 
-            <div>
+            <div data-sads-margin-bottom="m">
               <label
                 for="email"
                 data-i18n="contact_email_label"
                 data-sads-element="label"
                 data-sads-display="block"
                 data-sads-margin-bottom="xs"
-                data-sads-font-weight="bold"
-                data-sads-text-color="contact-label-text"
+                data-sads-font-weight="medium"
+                data-sads-text-color="form-label-text"
                 data-sads-text-align="left"
+                data-sads-font-size="s"
               >
-                Correo Electrónico:
+                Correo Electrónico:<span
+                  data-sads-text-color="error-text"
+                  data-sads-margin-left="xxs"
+                  >*</span
+                >
               </label>
+
               <input
                 type="email"
                 id="email"
                 name="email"
                 required
-                data-sads-element="input"
+                inputmode="email"
+                itemprop="email"
+                data-sads-element="form-input-email"
                 data-sads-width="full"
-                data-sads-padding="custom:0.75rem"
+                data-sads-padding="s-m"
                 data-sads-border-width="custom:1px"
                 data-sads-border-style="solid"
-                data-sads-border-color="contact-input-border"
-                data-sads-border-radius="custom:4px"
+                data-sads-border-color="form-input-border"
+                data-sads-border-radius="l"
                 data-sads-box-sizing="border-box"
-                data-sads-bg-color="contact-input-bg"
-                data-sads-text-color="contact-input-text"
+                data-sads-bg-color="form-input-bg"
+                data-sads-text-color="form-input-text"
+                data-sads-font-size="m"
               />
             </div>
 
-            <div>
+            <div data-sads-margin-bottom="m">
               <label
                 for="message"
                 data-i18n="contact_message_label"
                 data-sads-element="label"
                 data-sads-display="block"
                 data-sads-margin-bottom="xs"
-                data-sads-font-weight="bold"
-                data-sads-text-color="contact-label-text"
+                data-sads-font-weight="medium"
+                data-sads-text-color="form-label-text"
                 data-sads-text-align="left"
+                data-sads-font-size="s"
               >
-                Mensaje:
+                Mensaje:<span
+                  data-sads-text-color="error-text"
+                  data-sads-margin-left="xxs"
+                  >*</span
+                >
               </label>
+
               <textarea
                 id="message"
                 name="message"
                 rows="4"
                 required
-                data-sads-element="textarea"
+                itemprop="text"
+                data-sads-element="form-textarea-message"
                 data-sads-width="full"
-                data-sads-padding="custom:0.75rem"
+                data-sads-padding="s-m"
                 data-sads-border-width="custom:1px"
                 data-sads-border-style="solid"
-                data-sads-border-color="contact-input-border"
-                data-sads-border-radius="custom:4px"
+                data-sads-border-color="form-input-border"
+                data-sads-border-radius="l"
                 data-sads-box-sizing="border-box"
-                data-sads-bg-color="contact-input-bg"
-                data-sads-text-color="contact-input-text"
+                data-sads-bg-color="form-input-bg"
+                data-sads-text-color="form-input-text"
+                data-sads-font-size="m"
                 data-sads-resize="vertical"
               ></textarea>
             </div>
@@ -1046,26 +1089,33 @@
               data-i18n="contact_send_button"
               data-sads-element="button"
               data-sads-width="full"
-              data-sads-padding="custom:10px 20px"
-              data-sads-bg-color="contact-submit-bg"
-              data-sads-text-color="contact-submit-text"
+              data-sads-padding="custom:0.625rem 1.5rem"
+              data-sads-bg-color="button-primary-bg"
+              data-sads-text-color="button-primary-text"
               data-sads-border-style="none"
-              data-sads-border-radius="custom:5px"
+              data-sads-border-radius="l"
               data-sads-cursor="pointer"
-              data-sads-font-size="custom:1rem"
-              data-sads-font-weight="bold"
-              data-sads-transition="custom:background-color 0.3s ease"
+              data-sads-font-size="m"
+              data-sads-font-weight="medium"
+              data-sads-transition="custom:background-color 0.2s ease, box-shadow 0.2s ease"
+              data-sads-shadow="soft"
             >
-              Enviar Mensaje
+              <span class="button-text">Enviar Mensaje</span>
+              <span class="button-spinner" style="display: none"></span>
             </button>
+
             <div
-              data-sads-element="status-message"
               id="contactFormStatus"
+              data-sads-element="status-message"
               role="status"
+              aria-live="polite"
               data-sads-min-height="custom:1.5em"
               data-sads-margin-top="s"
               data-sads-text-align="center"
               data-sads-font-size="s"
+              data-sads-padding="s"
+              data-sads-border-radius="m"
+              data-sads-text-color="text-secondary"
             ></div>
           </form>
         </div>
@@ -1074,49 +1124,103 @@
       <script>
         document.addEventListener("DOMContentLoaded", function () {
           const form = document.getElementById("contactForm");
-          if (form) {
-            const statusDiv = document.getElementById("contactFormStatus");
-            const actionUrl = form.dataset.formActionUrl;
-            const successMessage = form.dataset.successMessage;
-            const errorMessage = form.dataset.errorMessage;
+          if (!form) return;
 
-            form.addEventListener("submit", function (event) {
-              event.preventDefault();
-              const formData = new FormData(form);
-              statusDiv.textContent = "";
-              statusDiv.classList.remove("success", "error"); // Keep class-based styling for status messages for now
+          const submitButton = form.querySelector(".contact-submit-button");
+          const buttonText = submitButton
+            ? submitButton.querySelector(".button-text")
+            : null;
+          const buttonSpinner = submitButton
+            ? submitButton.querySelector(".button-spinner")
+            : null;
+          const originalButtonText = buttonText ? buttonText.textContent : "";
+          const sendingButtonText = "Sending..."; // Get this from translations
 
-              fetch(actionUrl, {
-                method: "POST",
-                body: formData,
-                headers: {
-                  Accept: "application/json",
-                },
-              })
-                .then((response) => {
-                  if (response.ok) {
-                    statusDiv.textContent = successMessage;
-                    statusDiv.classList.add("success"); // JS adds 'success' class
-                    form.reset();
-                  } else {
-                    response.json().then((data) => {
-                      if (Object.hasOwn(data, "errors")) {
-                        statusDiv.textContent = data["errors"]
-                          .map((error) => error["message"])
-                          .join(", ");
-                      } else {
-                        statusDiv.textContent = errorMessage;
-                      }
-                      statusDiv.classList.add("error"); // JS adds 'error' class
-                    });
-                  }
-                })
-                .catch((error) => {
-                  statusDiv.textContent = errorMessage;
-                  statusDiv.classList.add("error");
-                });
-            });
+          const statusDiv = document.getElementById("contactFormStatus");
+          const actionUrl = form.dataset.formActionUrl;
+          const successMessage = form.dataset.successMessage;
+          const errorMessage = form.dataset.errorMessage;
+
+          const iconSuccess = `<svg viewBox="0 0 24 24" fill="currentColor" style="width: 1.2em; height: 1.2em; margin-right: 0.5em; vertical-align: middle;"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"></path></svg>`;
+          const iconError = `<svg viewBox="0 0 24 24" fill="currentColor" style="width: 1.2em; height: 1.2em; margin-right: 0.5em; vertical-align: middle;"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"></path></svg>`;
+
+          function showStatusMessage(message, type) {
+            statusDiv.innerHTML = ""; // Clear previous content
+            const icon = type === "success" ? iconSuccess : iconError;
+            const textNode = document.createTextNode(message);
+
+            // Create a temporary div to parse the icon SVG string
+            const tempDiv = document.createElement("div");
+            tempDiv.innerHTML = icon;
+            const iconNode = tempDiv.firstChild;
+
+            statusDiv.appendChild(iconNode);
+            statusDiv.appendChild(textNode);
+
+            statusDiv.classList.remove("success", "error", "visible");
+            statusDiv.classList.add(type);
+            // Trigger reflow to ensure animation plays
+            void statusDiv.offsetWidth;
+            statusDiv.classList.add("visible");
           }
+
+          form.addEventListener("submit", function (event) {
+            event.preventDefault();
+            const formData = new FormData(form);
+
+            // Reset status message
+            statusDiv.classList.remove("visible", "success", "error");
+            statusDiv.innerHTML = "";
+
+            // Update button state
+            if (submitButton) {
+              submitButton.disabled = true;
+              submitButton.classList.add("loading");
+              if (buttonText) buttonText.textContent = sendingButtonText;
+              if (buttonSpinner) buttonSpinner.style.display = "inline-block";
+            }
+
+            fetch(actionUrl, {
+              method: "POST",
+              body: formData,
+              headers: {
+                Accept: "application/json",
+              },
+            })
+              .then((response) => {
+                if (response.ok) {
+                  showStatusMessage(successMessage, "success");
+                  form.reset();
+                } else {
+                  response
+                    .json()
+                    .then((data) => {
+                      const message = Object.hasOwn(data, "errors")
+                        ? data["errors"]
+                            .map((error) => error["message"])
+                            .join(", ")
+                        : errorMessage;
+                      showStatusMessage(message, "error");
+                    })
+                    .catch(() => {
+                      showStatusMessage(errorMessage, "error");
+                    });
+                }
+              })
+              .catch((_) => {
+                // Corrected: Was ()_
+                showStatusMessage(errorMessage, "error");
+              })
+              .finally(() => {
+                // Restore button state
+                if (submitButton) {
+                  submitButton.disabled = false;
+                  submitButton.classList.remove("loading");
+                  if (buttonText) buttonText.textContent = originalButtonText;
+                  if (buttonSpinner) buttonSpinner.style.display = "none";
+                }
+              });
+          });
         });
       </script>
     </main>

@@ -1,29 +1,37 @@
+{% from "components/contact-form/modules/_contact_form_modules.html" import form_title, form_field, form_button, form_status_message with context %}
+
 <section
   data-sads-component="contact-form"
   id="contact" {# Keep ID for potential navigation #}
-  data-sads-padding="xl" {# CSS: 2rem #}
-  data-sads-bg-color="contact-section-bg" {# Theme: #e9ecef light, #2a2a2a dark #}
-  data-sads-text-align="center" {# CSS: text-align: center for the section block #}
+  itemscope itemtype="https://schema.org/ContactPage"
+  data-sads-padding="xl"
+  data-sads-bg-color="contact-section-bg"
+  data-sads-text-align="center"
 >
   <div
     data-sads-element="container" {# This is the form wrapper div #}
-    data-sads-max-width="custom:600px" {# CSS: max-width: 600px #}
-    data-sads-margin="custom:0 auto" {# CSS: margin: auto #}
-    data-sads-bg-color="contact-form-inner-bg" {# Theme: #fff light, #1f1f1f dark #}
-    data-sads-padding="xl" {# CSS: padding: 2rem #}
-    data-sads-border-radius="custom:8px" {# CSS: border-radius: 8px #}
-    data-sads-shadow="contact-form-shadow" {# Theme: 0 2px 5px rgb(0 0 0 / 10%) light, 0 2px 5px rgb(255 255 255 / 10%) dark #}
+    data-sads-max-width="custom:600px"
+    data-sads-margin="custom:0 auto"
+    data-sads-bg-color="contact-form-inner-bg" {# Theme: surface / surface-accent-dark #}
+    data-sads-padding="xl" {# Theme: 2rem #}
+    data-sads-border-radius="xl" {# Theme: 8px #}
+    data-sads-shadow="medium" {# Theme: medium shadow #}
   >
-    <h2
-      data-sads-element="title"
-      data-i18n="contact_title"
-      data-sads-font-size="custom:2rem" {# CSS: font-size: 2rem #}
-      data-sads-text-color="text-primary" {# Retaining existing, ensure theme supports dark mode #}
-      data-sads-margin-bottom="xl" {# CSS: margin-bottom: 2rem #}
-      data-sads-text-align="center"
+    {{ form_title(text_key='title', default_text='Contact Us') }}
+
+    <p
+      data-sads-element="subtitle"
+      data-sads-text-color="text-secondary"
+      data-sads-font-size="m"
+      data-sads-margin-bottom="l" {# Increased from m to l for more space before form #}
+      data-sads-max-width="custom:90%" {# Keep it slightly constrained #}
+      data-sads-margin-left="auto" {# Center the max-width block #}
+      data-sads-margin-right="auto" {# Center the max-width block #}
+      data-i18n="contact_subtitle"
     >
-      {{ translations.get('contact_title', 'Contact Us') }}
-    </h2>
+      {{ translations.get('contact_subtitle', 'Have a question or want to work together? Fill out the form below.') }}
+    </p>
+
     <form
       data-sads-element="form"
       class="contact-form-tag" {# Added class for CSS targeting if needed for submit hover #}
@@ -37,129 +45,12 @@
       data-sads-flex-direction="column"
       data-sads-gap="m"
     >
-      <div>
-        <label
-          for="name"
-          data-i18n="contact_name_label"
-          data-sads-element="label"
-          data-sads-display="block"
-          data-sads-margin-bottom="xs" {# CSS: margin-bottom: 0.5rem #}
-          data-sads-font-weight="bold"
-          data-sads-text-color="contact-label-text" {# Theme for label text, esp. for dark mode #}
-          data-sads-text-align="left"
-        >
-          {{ translations.get('contact_name_label', 'Name:') }}
-        </label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          required
-          data-sads-element="input"
-          data-sads-width="full" {# CSS: width: 100% #}
-          data-sads-padding="custom:0.75rem" {# CSS: padding: 0.75rem #}
-          data-sads-border-width="custom:1px" {# CSS: border: 1px solid #ccc #}
-          data-sads-border-style="solid"
-          data-sads-border-color="contact-input-border" {# Theme: #ccc light, #555 dark #}
-          data-sads-border-radius="custom:4px" {# CSS: border-radius: 4px #}
-          data-sads-box-sizing="border-box" {# CSS: box-sizing: border-box #}
-          data-sads-bg-color="contact-input-bg" {# Theme: input bg light (e.g. #fff), #333 dark #}
-          data-sads-text-color="contact-input-text" {# Theme: input text light (e.g. #333), #e0e0e0 dark #}
-        />
-      </div>
+      {{ form_field(id='name', name='name', label_text_key='name', label_default_text='Name:', required=True) }}
+      {{ form_field(id='email', name='email', label_text_key='email', label_default_text='Email:', input_type='email', required=True) }}
+      {{ form_field(id='message', name='message', label_text_key='message', label_default_text='Message:', input_type='textarea', required=True, rows=4) }}
 
-      <div>
-        <label
-          for="email"
-          data-i18n="contact_email_label"
-          data-sads-element="label"
-          data-sads-display="block"
-          data-sads-margin-bottom="xs" {# CSS: margin-bottom: 0.5rem #}
-          data-sads-font-weight="bold"
-          data-sads-text-color="contact-label-text" {# Theme for label text, esp. for dark mode #}
-          data-sads-text-align="left"
-        >
-          {{ translations.get('contact_email_label', 'Email:') }}
-        </label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          required
-          data-sads-element="input"
-          data-sads-width="full" {# CSS: width: 100% #}
-          data-sads-padding="custom:0.75rem" {# CSS: padding: 0.75rem #}
-          data-sads-border-width="custom:1px" {# CSS: border: 1px solid #ccc #}
-          data-sads-border-style="solid"
-          data-sads-border-color="contact-input-border" {# Theme: #ccc light, #555 dark #}
-          data-sads-border-radius="custom:4px" {# CSS: border-radius: 4px #}
-          data-sads-box-sizing="border-box" {# CSS: box-sizing: border-box #}
-          data-sads-bg-color="contact-input-bg" {# Theme: input bg light (e.g. #fff), #333 dark #}
-          data-sads-text-color="contact-input-text" {# Theme: input text light (e.g. #333), #e0e0e0 dark #}
-        />
-      </div>
-
-      <div>
-        <label
-          for="message"
-          data-i18n="contact_message_label"
-          data-sads-element="label"
-          data-sads-display="block"
-          data-sads-margin-bottom="xs" {# CSS: margin-bottom: 0.5rem #}
-          data-sads-font-weight="bold"
-          data-sads-text-color="contact-label-text" {# Theme for label text, esp. for dark mode #}
-          data-sads-text-align="left"
-        >
-          {{ translations.get('contact_message_label', 'Message:') }}
-        </label>
-        <textarea
-          id="message"
-          name="message"
-          rows="4"
-          required
-          data-sads-element="textarea"
-          data-sads-width="full" {# CSS: width: 100% #}
-          data-sads-padding="custom:0.75rem" {# CSS: padding: 0.75rem #}
-          data-sads-border-width="custom:1px" {# CSS: border: 1px solid #ccc #}
-          data-sads-border-style="solid"
-          data-sads-border-color="contact-input-border" {# Theme: #ccc light, #555 dark #}
-          data-sads-border-radius="custom:4px" {# CSS: border-radius: 4px #}
-          data-sads-box-sizing="border-box" {# CSS: box-sizing: border-box #}
-          data-sads-bg-color="contact-input-bg" {# Theme: input bg light (e.g. #fff), #333 dark #}
-          data-sads-text-color="contact-input-text" {# Theme: input text light (e.g. #333), #e0e0e0 dark #}
-          data-sads-resize="vertical" {# CSS: resize: vertical #}
-        ></textarea>
-      </div>
-
-      <button
-        type="submit"
-        class="contact-submit-button" {# Class for CSS hover styles #}
-        data-i18n="contact_send_button"
-        data-sads-element="button"
-        data-sads-width="full" {# CSS: display: inline-block, but width full takes precedence #}
-        data-sads-padding="custom:10px 20px" {# CSS: padding: 10px 20px #}
-        data-sads-bg-color="contact-submit-bg" {# Theme: #28a745 light, #1a73e8 dark #}
-        data-sads-text-color="contact-submit-text" {# Theme: #fff light (dark could be inferred or set) #}
-        data-sads-border-style="none" {# CSS: border: none #}
-        data-sads-border-radius="custom:5px" {# CSS: border-radius: 5px #}
-        data-sads-cursor="pointer" {# CSS: cursor: pointer #}
-        data-sads-font-size="custom:1rem" {# CSS: font-size: 1rem #}
-        data-sads-font-weight="bold" {# CSS: font-weight: bold #}
-        data-sads-transition="custom:background-color 0.3s ease" {# CSS: transition #}
-      >
-        {{ translations.get('contact_send_button', 'Send Message') }}
-      </button>
-      <div
-        data-sads-element="status-message"
-        id="contactFormStatus" {# ID is used by the script #}
-        role="status"
-        data-sads-min-height="custom:1.5em" {# Reserve space for message #}
-        data-sads-margin-top="s"
-        data-sads-text-align="center"
-        data-sads-font-size="s"
-        {# SADS could have attributes for success/error text colors e.g. data-sads-text-color-success, data-sads-text-color-error #}
-        {# These would be dynamically applied by JS if SADS supports it, or use classes as current script does #}
-      ></div>
+      {{ form_button(text_key='send', default_text='Send Message', css_class='contact-submit-button') }}
+      {{ form_status_message(id='contactFormStatus') }}
     </form>
   </div>
 </section>
@@ -169,48 +60,92 @@
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("contactForm");
-    if (form) {
-      const statusDiv = document.getElementById("contactFormStatus");
-      const actionUrl = form.dataset.formActionUrl;
-      const successMessage = form.dataset.successMessage;
-      const errorMessage = form.dataset.errorMessage;
+    if (!form) return;
 
-      form.addEventListener("submit", function (event) {
-        event.preventDefault();
-        const formData = new FormData(form);
-        statusDiv.textContent = "";
-        statusDiv.classList.remove("success", "error"); // Keep class-based styling for status messages for now
+    const submitButton = form.querySelector(".contact-submit-button");
+    const buttonText = submitButton ? submitButton.querySelector(".button-text") : null;
+    const buttonSpinner = submitButton ? submitButton.querySelector(".button-spinner") : null;
+    const originalButtonText = buttonText ? buttonText.textContent : "";
+    const sendingButtonText = "{{ translations.get('contact_sending_button', 'Sending...') }}"; // Get this from translations
 
-        fetch(actionUrl, {
-          method: "POST",
-          body: formData,
-          headers: {
-            Accept: "application/json",
-          },
-        })
-          .then((response) => {
-            if (response.ok) {
-              statusDiv.textContent = successMessage;
-              statusDiv.classList.add("success"); // JS adds 'success' class
-              form.reset();
-            } else {
-              response.json().then((data) => {
-                if (Object.hasOwn(data, "errors")) {
-                  statusDiv.textContent = data["errors"]
-                    .map((error) => error["message"])
-                    .join(", ");
-                } else {
-                  statusDiv.textContent = errorMessage;
-                }
-                statusDiv.classList.add("error"); // JS adds 'error' class
-              });
-            }
-          })
-          .catch((error) => {
-            statusDiv.textContent = errorMessage;
-            statusDiv.classList.add("error");
-          });
-      });
+    const statusDiv = document.getElementById("contactFormStatus");
+    const actionUrl = form.dataset.formActionUrl;
+    const successMessage = form.dataset.successMessage;
+    const errorMessage = form.dataset.errorMessage;
+
+    const iconSuccess = `<svg viewBox="0 0 24 24" fill="currentColor" style="width: 1.2em; height: 1.2em; margin-right: 0.5em; vertical-align: middle;"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"></path></svg>`;
+    const iconError = `<svg viewBox="0 0 24 24" fill="currentColor" style="width: 1.2em; height: 1.2em; margin-right: 0.5em; vertical-align: middle;"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"></path></svg>`;
+
+    function showStatusMessage(message, type) {
+      statusDiv.innerHTML = ""; // Clear previous content
+      const icon = type === "success" ? iconSuccess : iconError;
+      const textNode = document.createTextNode(message);
+
+      // Create a temporary div to parse the icon SVG string
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = icon;
+      const iconNode = tempDiv.firstChild;
+
+      statusDiv.appendChild(iconNode);
+      statusDiv.appendChild(textNode);
+
+      statusDiv.classList.remove("success", "error", "visible");
+      statusDiv.classList.add(type);
+      // Trigger reflow to ensure animation plays
+      void statusDiv.offsetWidth;
+      statusDiv.classList.add("visible");
     }
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const formData = new FormData(form);
+
+      // Reset status message
+      statusDiv.classList.remove("visible", "success", "error");
+      statusDiv.innerHTML = "";
+
+      // Update button state
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.classList.add("loading");
+        if (buttonText) buttonText.textContent = sendingButtonText;
+        if (buttonSpinner) buttonSpinner.style.display = "inline-block";
+      }
+
+      fetch(actionUrl, {
+        method: "POST",
+        body: formData,
+        headers: {
+          Accept: "application/json",
+        },
+      })
+      .then((response) => {
+        if (response.ok) {
+          showStatusMessage(successMessage, "success");
+          form.reset();
+        } else {
+          response.json().then((data) => {
+            const message = Object.hasOwn(data, "errors")
+              ? data["errors"].map((error) => error["message"]).join(", ")
+              : errorMessage;
+            showStatusMessage(message, "error");
+          }).catch(() => {
+            showStatusMessage(errorMessage, "error");
+          });
+        }
+      })
+      .catch(_ => { // Corrected: Was ()_
+        showStatusMessage(errorMessage, "error");
+      })
+      .finally(() => {
+        // Restore button state
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.classList.remove("loading");
+          if (buttonText) buttonText.textContent = originalButtonText;
+          if (buttonSpinner) buttonSpinner.style.display = "none";
+        }
+      });
+    });
   });
 </script>

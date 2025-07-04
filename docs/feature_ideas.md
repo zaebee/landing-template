@@ -327,23 +327,23 @@ The following ideas were generated during a recent analysis session. They are pr
 - **Effort**: Medium
 - **Concept**: Implement a user-facing dark mode toggle and/or respect the user's OS-level dark mode preference. This would primarily affect the SADS styling system, providing an alternative color scheme for users.
 - **Benefits**:
-    - Improves user experience by offering visual customization.
-    - Reduces eye strain in low-light environments.
-    - Respects user preferences for dark themes.
+  - Improves user experience by offering visual customization.
+  - Reduces eye strain in low-light environments.
+  - Respects user preferences for dark themes.
 - **Implementation Sketch**:
-    - **SADS Engine (`public/js/sads-style-engine.js`)**:
-        - Modify to detect OS preference via `window.matchMedia('(prefers-color-scheme: dark)')`.
-        - Implement logic to check a `localStorage` item (e.g., `themePreference = 'dark'/'light'`) for manual toggle state.
-        - Prioritize manual toggle over OS preference if set.
-    - **SADS Theme (`public/js/sads-default-theme.js`)**:
-        - Define dark mode color palettes within the theme configuration. This means providing dark alternatives for semantic color attributes (e.g., `bg-primary`, `text-main`, `border-accent`).
-        - The SADS engine would select the appropriate palette based on the determined mode.
-    - **UI Toggle (Optional but Recommended)**:
-        - Add a simple button/switch (e.g., in the header or footer) to `templates/components/header/header.html` or `templates/components/footer/footer.html`.
-        - JavaScript associated with this toggle would:
-            - Update the `localStorage` item.
-            - Trigger a re-application of styles by the SADS engine (e.g., by dispatching a custom event or calling a specific SADS function).
-    - **Initial Load**: On page load, the SADS engine applies the correct theme (dark/light) based on OS preference or stored toggle state.
+  - **SADS Engine (`public/js/sads-style-engine.js`)**:
+    - Modify to detect OS preference via `window.matchMedia('(prefers-color-scheme: dark)')`.
+    - Implement logic to check a `localStorage` item (e.g., `themePreference = 'dark'/'light'`) for manual toggle state.
+    - Prioritize manual toggle over OS preference if set.
+  - **SADS Theme (`public/js/sads-default-theme.js`)**:
+    - Define dark mode color palettes within the theme configuration. This means providing dark alternatives for semantic color attributes (e.g., `bg-primary`, `text-main`, `border-accent`).
+    - The SADS engine would select the appropriate palette based on the determined mode.
+  - **UI Toggle (Optional but Recommended)**:
+    - Add a simple button/switch (e.g., in the header or footer) to `templates/components/header/header.html` or `templates/components/footer/footer.html`.
+    - JavaScript associated with this toggle would:
+      - Update the `localStorage` item.
+      - Trigger a re-application of styles by the SADS engine (e.g., by dispatching a custom event or calling a specific SADS function).
+  - **Initial Load**: On page load, the SADS engine applies the correct theme (dark/light) based on OS preference or stored toggle state.
 
 ---
 
@@ -354,36 +354,36 @@ The following ideas were generated during a recent analysis session. They are pr
 - **Effort**: Medium
 - **Concept**: Automatically generate an Atom or RSS feed (e.g., `atom.xml`) for blog posts during the build process. This allows users and applications to subscribe to blog updates.
 - **Benefits**:
-    - Enables content syndication and subscription via feed readers.
-    - Improves content discoverability and reach.
-    - Provides a standard way for other services to ingest blog updates.
+  - Enables content syndication and subscription via feed readers.
+  - Improves content discoverability and reach.
+  - Provides a standard way for other services to ingest blog updates.
 - **Implementation Sketch**:
-    - **Configuration (`public/config.json`)**:
-        - Add `site_base_url` (e.g., "https://www.example.com") for absolute URLs in the feed.
-        - Add `feed_filename` (e.g., "atom.xml" or "rss.xml").
-        - Add `feed_title` and `feed_author` for feed metadata.
-    - **Protobuf (`proto/blog_post.proto`)**:
-        - Ensure `BlogPost` message has fields for:
-            - `id` (unique identifier for the post, can be derived from filename or a dedicated field).
-            - `publication_date` (ISO 8601 format).
-            - `summary` or `content_snippet`.
-            - `author_name` (optional, could fallback to site-wide author).
-    - **Build Script (`build.py`)**:
-        - Create a new service/function, e.g., `FeedGenerator`.
-        - This service would:
-            - Be called after all blog post data (`data/blog_posts.json`) is loaded.
-            - Iterate through the `BlogPost` items.
-            - Use Python's `xml.etree.ElementTree` or a library like `feedgen` to construct the XML structure for an Atom feed.
-            - Each blog post becomes an `<entry>`:
-                - `<title>`: Blog post title.
-                - `<id>`: Unique ID (e.g., `site_base_url + /blog/post_id`).
-                - `<link href>`: Absolute URL to the blog post (requires a way to link to individual posts, which might be a separate feature if posts aren't individual pages yet. If posts are part of a single page, link to that page with an anchor).
-                - `<updated>`: Publication date.
-                - `<summary>`: Blog post summary.
-                - `<author>`: Post author or site author.
-            - The main feed elements (`<feed>`, `<title>`, `<updated>`, `<author>`, `<id>`) would use data from `config.json`.
-        - Write the generated XML to the specified `feed_filename` in the root output directory.
-    - **Linking**: Add a `<link rel="alternate" type="application/atom+xml" href="/atom.xml">` tag to the `<head>` of HTML pages.
+  - **Configuration (`public/config.json`)**:
+    - Add `site_base_url` (e.g., "https://www.example.com") for absolute URLs in the feed.
+    - Add `feed_filename` (e.g., "atom.xml" or "rss.xml").
+    - Add `feed_title` and `feed_author` for feed metadata.
+  - **Protobuf (`proto/blog_post.proto`)**:
+    - Ensure `BlogPost` message has fields for:
+      - `id` (unique identifier for the post, can be derived from filename or a dedicated field).
+      - `publication_date` (ISO 8601 format).
+      - `summary` or `content_snippet`.
+      - `author_name` (optional, could fallback to site-wide author).
+  - **Build Script (`build.py`)**:
+    - Create a new service/function, e.g., `FeedGenerator`.
+    - This service would:
+      - Be called after all blog post data (`data/blog_posts.json`) is loaded.
+      - Iterate through the `BlogPost` items.
+      - Use Python's `xml.etree.ElementTree` or a library like `feedgen` to construct the XML structure for an Atom feed.
+      - Each blog post becomes an `<entry>`:
+        - `<title>`: Blog post title.
+        - `<id>`: Unique ID (e.g., `site_base_url + /blog/post_id`).
+        - `<link href>`: Absolute URL to the blog post (requires a way to link to individual posts, which might be a separate feature if posts aren't individual pages yet. If posts are part of a single page, link to that page with an anchor).
+        - `<updated>`: Publication date.
+        - `<summary>`: Blog post summary.
+        - `<author>`: Post author or site author.
+      - The main feed elements (`<feed>`, `<title>`, `<updated>`, `<author>`, `<id>`) would use data from `config.json`.
+    - Write the generated XML to the specified `feed_filename` in the root output directory.
+  - **Linking**: Add a `<link rel="alternate" type="application/atom+xml" href="/atom.xml">` tag to the `<head>` of HTML pages.
 
 ---
 
@@ -394,31 +394,31 @@ The following ideas were generated during a recent analysis session. They are pr
 - **Effort**: Low
 - **Concept**: Modify the existing contact form to construct and open a `mailto:` link when submitted. This provides a simple, backend-less way for users to send their message via their default email client.
 - **Benefits**:
-    - Makes the contact form functional on purely static hosting environments where no backend processing is available.
-    - Provides a basic way for site owners to receive inquiries.
+  - Makes the contact form functional on purely static hosting environments where no backend processing is available.
+  - Provides a basic way for site owners to receive inquiries.
 - **Implementation Sketch**:
-    - **Protobuf (`proto/contact_form_config.proto`)**:
-        - Add a `recipient_email` field to the `ContactFormConfig` message.
-    - **Data (`data/contact_form_config.json`)**:
-        - Update this file to include the `recipientEmail` (e.g., "contact@example.com").
-    - **JavaScript (`public/js/app.js` or a dedicated script for the contact form)**:
-        - Get the contact form element.
-        - Add an event listener for the `submit` event.
-        - Inside the event listener:
-            - Prevent the default form submission (`event.preventDefault()`).
-            - Retrieve the values from the form fields (name, email, message).
-            - Retrieve the `recipientEmail` from the loaded `contact_form_config.json` data (this data is already being loaded for the form's title/fields, so it should be accessible).
-            - Construct a `mailto:` URL. Example:
-              `const subject = encodeURIComponent("Contact Form Submission from " + nameField.value);`
-              `const body = encodeURIComponent(`Name: ${nameField.value}\\nEmail: ${emailField.value}\\nMessage: ${messageField.value}`);`
+  - **Protobuf (`proto/contact_form_config.proto`)**:
+    - Add a `recipient_email` field to the `ContactFormConfig` message.
+  - **Data (`data/contact_form_config.json`)**:
+    - Update this file to include the `recipientEmail` (e.g., "contact@example.com").
+  - **JavaScript (`public/js/app.js` or a dedicated script for the contact form)**:
+    - Get the contact form element.
+    - Add an event listener for the `submit` event.
+    - Inside the event listener:
+      - Prevent the default form submission (`event.preventDefault()`).
+      - Retrieve the values from the form fields (name, email, message).
+      - Retrieve the `recipientEmail` from the loaded `contact_form_config.json` data (this data is already being loaded for the form's title/fields, so it should be accessible).
+      - Construct a `mailto:` URL. Example:
+        `const subject = encodeURIComponent("Contact Form Submission from " + nameField.value);`
+        `const body = encodeURIComponent(`Name: ${nameField.value}\\nEmail: ${emailField.value}\\nMessage: ${messageField.value}`);`
               `window.location.href = \`mailto:${recipientEmail}?subject=${subject}&body=${body}\`;`
-    - **HTML (`templates/components/contact-form/contact-form.html`)**:
-        - No significant changes needed to the HTML structure itself, as the JavaScript will handle the submission. Ensure form fields have appropriate `id` attributes for easy selection in JS.
-        - The form's `action` and `method` attributes might become irrelevant or can be removed.
-    - **Considerations**:
-        - Character limits for `mailto:` URLs can be an issue for very long messages, though typically sufficient for contact forms.
-        - User experience: relies on the user having a correctly configured email client.
-        - No spam protection inherent to this method.
+  - **HTML (`templates/components/contact-form/contact-form.html`)**:
+    - No significant changes needed to the HTML structure itself, as the JavaScript will handle the submission. Ensure form fields have appropriate `id` attributes for easy selection in JS.
+    - The form's `action` and `method` attributes might become irrelevant or can be removed.
+  - **Considerations**:
+    - Character limits for `mailto:` URLs can be an issue for very long messages, though typically sufficient for contact forms.
+    - User experience: relies on the user having a correctly configured email client.
+    - No spam protection inherent to this method.
 
 ---
 
