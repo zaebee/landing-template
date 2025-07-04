@@ -174,24 +174,33 @@ body.dark-mode #language-switcher button.active-lang {
 
 /* Specific for dark mode toggle if it's meant to be more like an icon button */
 #dark-mode-toggle {
-  background-color: transparent; /* Override default if it's an icon button */
-  border: 1px solid transparent; /* No border for icon button unless desired */
+  background-color: transparent; /* Icon button typically has no background */
+  border: 1px solid transparent; /* No border for icon button unless explicitly desired */
   font-size: 1.2rem; /* Make icon slightly larger */
-  padding: 0.3rem 0.5rem; /* Adjust padding for icon button */
+  /* Padding is now handled by data-sads-padding="xs" in HTML */
+}
+
+/* Ensure language switcher buttons use SADS text color by default, or a themed color */
+#language-switcher button {
+  /* SADS `data-sads-text-color` is not set on these buttons in HTML, so they'd inherit from header or body. */
+  /* Let's use text-primary from theme as a default via CSS if SADS doesn't set it. */
+  /* color: var(--sads-color-text-primary); Not possible directly, use fallback or theme values */
+  color: #333; /* Fallback - matches theme's text-primary */
 }
 
 
-body.dark-mode #dark-mode-toggle,
+body.dark-mode #dark-mode-toggle {
+  /* text color for icon should come from data-sads-text-color="text-primary" which has a dark mode variant */
+}
+
 body.dark-mode #language-switcher button {
   background-color: #3e4a58; /* Darker background for buttons in dark mode */
   border-color: #56677c;
-  color: #e0e0e0;
+  color: #e0e0e0; /* Fallback - matches theme's text-primary-dark */
 }
 
-body.dark-mode #dark-mode-toggle {
-  background-color: transparent; /* Still transparent for icon button */
-  border-color: transparent;
-}
+/* The #dark-mode-toggle specific dark mode styling for bg/border is removed as it's transparent.
+   Its text color (the icon) will be handled by its data-sads-text-color="text-primary" attribute. */
 
 
 /* Hover/Focus states for header buttons */
