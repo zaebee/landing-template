@@ -1,27 +1,12 @@
 <header
   data-sads-component="header"
   data-sads-bg-color="header-bg"
-  {#
-  Theme
-  key
-  for
-  header
-  background
-  #}
+  data-sads-text-color="text-on-header-bg" {# Assuming this theme variable exists for general text like hamburger #}
   data-sads-padding="m 0"
-  {#
-  Vertical
-  padding,
-  no
-  horizontal
-  padding
-  to
-  allow
-  full
-  width
-  nav
-  content
-  #}
+  data-sads-position="sticky"
+  data-sads-top="custom:0"
+  data-sads-width="full"
+  data-sads-z-index="custom:1000"
   data-sads-shadow="subtle"
 >
   <nav
@@ -57,6 +42,9 @@
     the
     nav
     #}
+    data-sads-responsive-rules='[
+        {"breakpoint": "mobile", "styles": {"position": "relative"}}
+    ]'
   >
     <div data-sads-element="logo-container">
       <a
@@ -83,6 +71,10 @@
       ]'
       data-sads-button-variant="icon"
       data-sads-text-color="text-primary"
+      data-sads-cursor="pointer"
+      data-sads-bg-color="transparent"
+      data-sads-border-style="none"
+      data-sads-padding="s" {# From original global CSS: padding: 10px -> theme 's' or specific custom value #}
     >
       {# Default: hide on larger screens #} {# Assuming SADS can style a basic
       icon button look #} {# Keep class if specific CSS for hamburger animation
@@ -100,7 +92,7 @@
       data-sads-flex-align-items="center"
       data-sads-gap="m"
       data-sads-responsive-rules='[
-        {"breakpoint": "mobile", "styles": {"display": "none", "flexDirection": "column", "position": "absolute", "top": "custom:60px", "left": "0", "width": "full", "bg-color": "header-bg", "padding": "m", "shadow": "subtle", "gap": "s" }}
+        {"breakpoint": "mobile", "styles": {"display": "none", "flexDirection": "column", "position": "absolute", "top": "custom:60px", "left": "custom:0", "width": "full", "bg-color": "header-bg", "padding": "m", "shadow": "subtle", "gap": "s", "zIndex": "custom:999" }}
       ]'
     >
       {# This mobile rule attempts to make a dropdown. A class like
@@ -123,21 +115,12 @@
             href="{{ item.href }}"
             data-i18n="{{ item.label.key }}"
             data-sads-text-color="text-nav-link"
-            {#
-            Theme
-            key
-            for
-            nav
-            link
-            color
-            #}
             data-sads-text-decoration="none"
-            {#
-            data-sads-hover-text-decoration="underline"
-            -
-            SADS
-            limitation
-            #}
+            data-sads-padding="xs s"
+            data-sads-border-radius="s"
+            data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
+            {# data-sads-hover-text-decoration="underline" - SADS limitation for pseudo #}
+            {# data-sads-hover-bg-color="nav-link-hover-bg" - SADS limitation for pseudo #}
           >
             {{ translations.get(item.label.key, item.label.key) }}
           </a>
@@ -158,6 +141,9 @@
         #}
         data-sads-button-variant="icon"
         data-sads-text-color="text-primary"
+        data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"marginTop": "s", "marginLeft": "custom:0", "width": "auto", "padding": "s m"}}
+        ]'
       >
         🌙
       </button>
@@ -175,13 +161,16 @@
         data-sads-display="flex"
         data-sads-gap="s"
         data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"width": "full", "justifyContent": "center"}}
+            {"breakpoint": "mobile", "styles": {"width": "full", "justifyContent": "center", "marginTop": "m", "marginLeft": "custom:0"}}
         ]'
       >
         <button
           data-lang="en"
           data-sads-button-variant="outline"
           data-sads-padding="xs s"
+          data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"padding": "s m"}}
+          ]'
         >
           EN
         </button>
@@ -189,6 +178,9 @@
           data-lang="es"
           data-sads-button-variant="outline"
           data-sads-padding="xs s"
+          data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"padding": "s m"}}
+          ]'
         >
           ES
         </button>
