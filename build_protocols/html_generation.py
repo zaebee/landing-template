@@ -119,10 +119,10 @@ class PortfolioHtmlGenerator(BaseHtmlGenerator):
 
 
 @register_html_generator(
-    block_name="testimonials.html", template_to_render="blocks/testimonials.html"
+    block_name="testimonials.html", template_to_render="components/testimonials/testimonials.html"
 )  # data_key="items" is default
 class TestimonialsHtmlGenerator(BaseHtmlGenerator):
-    """Generates HTML for a list of testimonial items using Jinja2."""
+    """Generates HTML for a list of testimonial items using Jinja2, utilizing SADS attributes."""
 
     # __init__ is inherited
 
