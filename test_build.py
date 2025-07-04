@@ -17,14 +17,6 @@ import unittest
 from typing import Any, Dict  # For type hinting self.dummy_config
 from unittest import mock
 
-# Generated protobuf messages
-from generated.blog_post_pb2 import BlogPost
-from generated.contact_form_config_pb2 import ContactFormConfig
-from generated.feature_item_pb2 import FeatureItem
-from generated.hero_item_pb2 import HeroItem, HeroItemContent
-from generated.nav_item_pb2 import Navigation
-from generated.portfolio_item_pb2 import PortfolioItem
-from generated.testimonial_item_pb2 import TestimonialItem
 from google.protobuf import json_format
 from google.protobuf.message import Message  # Explicit import for T = TypeVar bound
 from jinja2 import Environment, FileSystemLoader
@@ -42,6 +34,15 @@ from build_protocols.html_generation import (
 )
 from build_protocols.interfaces import Translations
 from build_protocols.translation import DefaultTranslationProvider
+
+# Generated protobuf messages
+from generated.blog_post_pb2 import BlogPost
+from generated.contact_form_config_pb2 import ContactFormConfig
+from generated.feature_item_pb2 import FeatureItem
+from generated.hero_item_pb2 import HeroItem, HeroItemContent
+from generated.nav_item_pb2 import Navigation
+from generated.portfolio_item_pb2 import PortfolioItem
+from generated.testimonial_item_pb2 import TestimonialItem
 
 
 class TestBuildScript(unittest.TestCase):

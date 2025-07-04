@@ -10,10 +10,11 @@ contracts.
 
 from typing import Any, Dict, List, Optional, Protocol, Type, TypeVar, Union
 
-# Import specific generated types used in protocols for clarity.
-from generated.nav_item_pb2 import Navigation as NavigationProto
 from google.protobuf.message import Message
 from jinja2 import Environment  # Added for HtmlBlockGenerator.__init__
+
+# Import specific generated types used in protocols for clarity.
+from generated.nav_item_pb2 import Navigation as NavigationProto
 
 # --- Type Aliases and TypeVariables ---
 

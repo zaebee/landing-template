@@ -25,8 +25,6 @@ if generated_dir not in sys.path:
 
 # Application-specific imports (Protobuf and services)
 # Generated Protobuf message class imports
-from generated.nav_item_pb2 import Navigation
-
 from build_protocols.asset_bundling import DefaultAssetBundler  # Updated import
 from build_protocols.config_management import DefaultAppConfigManager
 from build_protocols.data_loading import InMemoryDataCache, JsonProtoDataLoader
@@ -45,6 +43,7 @@ from build_protocols.interfaces import (
 )
 from build_protocols.page_assembly import DefaultPageBuilder
 from build_protocols.translation import DefaultTranslationProvider
+from generated.nav_item_pb2 import Navigation
 
 
 class BuildOrchestrator:
