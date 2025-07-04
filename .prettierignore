@@ -10,5 +10,6 @@ templates/components/services/services.html
 templates/components/footer/footer.html
 templates/components/about/about.html
 templates/components/faq/faq.html
+templates/components/header/header.html
 templates/components/testimonials/testimonials.html
 templates/components/portfolio/portfolio.html

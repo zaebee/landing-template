@@ -73,6 +73,7 @@ The website generation involves two main steps:
    ```
 
    This command runs the main `python build.py` script. The script performs the following actions:
+
    - Reads the main configuration from `public/config.json`.
    - Loads dynamic content from `data/*.json` files, validating it against the generated Protobuf structures.
    - Loads HTML component templates from `templates/components/`.
@@ -92,6 +93,7 @@ You can customize various aspects of the generated site:
 ### Content Blocks
 
 - **Adding a New Block:**
+
   1. Create an HTML file for your block in `templates/components/<your-block-name>/<your-block-name>.html` (e.g., `templates/components/my-custom-block/my-custom-block.html`).
   2. Add the desired HTML structure. For SADS-styled blocks, use `data-sads-*` attributes. For traditional CSS, create a corresponding CSS file.
   3. Update `public/config.json` by adding the block's template name (e.g., `my-custom-block.html`) to the `blocks` array in the desired order.
@@ -105,6 +107,7 @@ You can customize various aspects of the generated site:
      - Remember to run `npm run generate-proto` after adding/modifying `.proto` files.
 
 - **Removing a Block:**
+
   1. Remove the block's template name from the `blocks` array in `public/config.json`.
   2. Optionally, delete the HTML template file from `templates/components/<your-block-name>/` and any associated CSS, data, or proto files if no longer needed.
 
