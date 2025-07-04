@@ -134,7 +134,7 @@
           });
         }
       })
-      .catch(()_ => {
+      .catch(_ => { // Corrected: Was ()_
         showStatusMessage(errorMessage, "error");
       })
       .finally(() => {

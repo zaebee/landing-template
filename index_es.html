@@ -1127,8 +1127,12 @@
           if (!form) return;
 
           const submitButton = form.querySelector(".contact-submit-button");
-          const buttonText = submitButton ? submitButton.querySelector(".button-text") : null;
-          const buttonSpinner = submitButton ? submitButton.querySelector(".button-spinner") : null;
+          const buttonText = submitButton
+            ? submitButton.querySelector(".button-text")
+            : null;
+          const buttonSpinner = submitButton
+            ? submitButton.querySelector(".button-spinner")
+            : null;
           const originalButtonText = buttonText ? buttonText.textContent : "";
           const sendingButtonText = "Sending..."; // Get this from translations
 
@@ -1146,7 +1150,7 @@
             const textNode = document.createTextNode(message);
 
             // Create a temporary div to parse the icon SVG string
-            const tempDiv = document.createElement('div');
+            const tempDiv = document.createElement("div");
             tempDiv.innerHTML = icon;
             const iconNode = tempDiv.firstChild;
 
@@ -1183,33 +1187,39 @@
                 Accept: "application/json",
               },
             })
-            .then((response) => {
-              if (response.ok) {
-                showStatusMessage(successMessage, "success");
-                form.reset();
-              } else {
-                response.json().then((data) => {
-                  const message = Object.hasOwn(data, "errors")
-                    ? data["errors"].map((error) => error["message"]).join(", ")
-                    : errorMessage;
-                  showStatusMessage(message, "error");
-                }).catch(() => {
-                  showStatusMessage(errorMessage, "error");
-                });
-              }
-            })
-            .catch(()_ => {
-              showStatusMessage(errorMessage, "error");
-            })
-            .finally(() => {
-              // Restore button state
-              if (submitButton) {
-                submitButton.disabled = false;
-                submitButton.classList.remove("loading");
-                if (buttonText) buttonText.textContent = originalButtonText;
-                if (buttonSpinner) buttonSpinner.style.display = "none";
-              }
-            });
+              .then((response) => {
+                if (response.ok) {
+                  showStatusMessage(successMessage, "success");
+                  form.reset();
+                } else {
+                  response
+                    .json()
+                    .then((data) => {
+                      const message = Object.hasOwn(data, "errors")
+                        ? data["errors"]
+                            .map((error) => error["message"])
+                            .join(", ")
+                        : errorMessage;
+                      showStatusMessage(message, "error");
+                    })
+                    .catch(() => {
+                      showStatusMessage(errorMessage, "error");
+                    });
+                }
+              })
+              .catch((_) => {
+                // Corrected: Was ()_
+                showStatusMessage(errorMessage, "error");
+              })
+              .finally(() => {
+                // Restore button state
+                if (submitButton) {
+                  submitButton.disabled = false;
+                  submitButton.classList.remove("loading");
+                  if (buttonText) buttonText.textContent = originalButtonText;
+                  if (buttonSpinner) buttonSpinner.style.display = "none";
+                }
+              });
           });
         });
       </script>
