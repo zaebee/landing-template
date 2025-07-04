@@ -1,0 +1,251 @@
+{# === Atoms === #} {% macro form_label(id, text_key, default_text,
+i18n_key_prefix='contact', sads_attrs=None) %}
+<label
+  for="{{ id }}"
+  data-i18n="{{ i18n_key_prefix }}_{{ text_key }}_label"
+  data-sads-element="label"
+  data-sads-display="block"
+  data-sads-margin-bottom="xs"
+  data-sads-font-weight="bold"
+  data-sads-text-color="contact-label-text"
+  data-sads-text-align="left"
+  {%
+  if
+  sads_attrs
+  %}
+  {%
+  for
+  attr,
+  value
+  in
+  sads_attrs.items()
+  %}
+  data-sads-{{
+  attr
+  }}="{{ value }}"
+  {%
+  endfor
+  %}
+  {%
+  endif
+  %}
+>
+  {{ translations.get(i18n_key_prefix + '_' + text_key + '_label', default_text)
+  }}
+</label>
+{% endmacro %} {% macro form_input(id, name, type="text", required=False,
+sads_attrs=None, value=None) %}
+<input
+  type="{{ type }}"
+  id="{{ id }}"
+  name="{{ name }}"
+  {%
+  if
+  required
+  %}required{%
+  endif
+  %}
+  {%
+  if
+  value
+  %}value="{{ value }}"
+  {%
+  endif
+  %}
+  data-sads-element="input"
+  data-sads-width="full"
+  data-sads-padding="custom:0.75rem"
+  data-sads-border-width="custom:1px"
+  data-sads-border-style="solid"
+  data-sads-border-color="contact-input-border"
+  data-sads-border-radius="custom:4px"
+  data-sads-box-sizing="border-box"
+  data-sads-bg-color="contact-input-bg"
+  data-sads-text-color="contact-input-text"
+  {%
+  if
+  sads_attrs
+  %}
+  {%
+  for
+  attr,
+  value
+  in
+  sads_attrs.items()
+  %}
+  data-sads-{{
+  attr
+  }}="{{ value }}"
+  {%
+  endfor
+  %}
+  {%
+  endif
+  %}
+/>
+{% endmacro %} {% macro form_textarea(id, name, rows=4, required=False,
+sads_attrs=None) %}
+<textarea
+  id="{{ id }}"
+  name="{{ name }}"
+  rows="{{ rows }}"
+  {%
+  if
+  required
+  %}required{%
+  endif
+  %}
+  data-sads-element="textarea"
+  data-sads-width="full"
+  data-sads-padding="custom:0.75rem"
+  data-sads-border-width="custom:1px"
+  data-sads-border-style="solid"
+  data-sads-border-color="contact-input-border"
+  data-sads-border-radius="custom:4px"
+  data-sads-box-sizing="border-box"
+  data-sads-bg-color="contact-input-bg"
+  data-sads-text-color="contact-input-text"
+  data-sads-resize="vertical"
+  {%
+  if
+  sads_attrs
+  %}
+  {%
+  for
+  attr,
+  value
+  in
+  sads_attrs.items()
+  %}
+  data-sads-{{
+  attr
+  }}="{{ value }}"
+  {%
+  endfor
+  %}
+  {%
+  endif
+  %}
+></textarea>
+{% endmacro %} {% macro form_button(text_key, default_text, type="submit",
+i18n_key_prefix='contact', sads_attrs=None, css_class=None) %}
+<button
+  type="{{ type }}"
+  {%
+  if
+  css_class
+  %}class="{{ css_class }}"
+  {%
+  endif
+  %}
+  data-i18n="{{ i18n_key_prefix }}_{{ text_key }}_button"
+  data-sads-element="button"
+  data-sads-width="full"
+  data-sads-padding="custom:10px 20px"
+  data-sads-bg-color="contact-submit-bg"
+  data-sads-text-color="contact-submit-text"
+  data-sads-border-style="none"
+  data-sads-border-radius="custom:5px"
+  data-sads-cursor="pointer"
+  data-sads-font-size="custom:1rem"
+  data-sads-font-weight="bold"
+  data-sads-transition="custom:background-color 0.3s ease"
+  {%
+  if
+  sads_attrs
+  %}
+  {%
+  for
+  attr,
+  value
+  in
+  sads_attrs.items()
+  %}
+  data-sads-{{
+  attr
+  }}="{{ value }}"
+  {%
+  endfor
+  %}
+  {%
+  endif
+  %}
+>
+  {{ translations.get(i18n_key_prefix + '_' + text_key + '_button',
+  default_text) }}
+</button>
+{% endmacro %} {% macro form_status_message(id, sads_attrs=None) %}
+<div
+  data-sads-element="status-message"
+  id="{{ id }}"
+  role="status"
+  data-sads-min-height="custom:1.5em"
+  data-sads-margin-top="s"
+  data-sads-text-align="center"
+  data-sads-font-size="s"
+  {%
+  if
+  sads_attrs
+  %}
+  {%
+  for
+  attr,
+  value
+  in
+  sads_attrs.items()
+  %}
+  data-sads-{{
+  attr
+  }}="{{ value }}"
+  {%
+  endfor
+  %}
+  {%
+  endif
+  %}
+></div>
+{% endmacro %} {# === Molecules === #} {% macro form_field(id, name,
+label_text_key, label_default_text, input_type="text", required=False, rows=4,
+sads_label_attrs=None, sads_input_attrs=None, i18n_key_prefix='contact') %}
+<div>
+  {# Wrapper for label + input/textarea #} {{ form_label(id, label_text_key,
+  label_default_text, i18n_key_prefix=i18n_key_prefix,
+  sads_attrs=sads_label_attrs) }} {% if input_type == "textarea" %} {{
+  form_textarea(id, name, rows=rows, required=required,
+  sads_attrs=sads_input_attrs) }} {% else %} {{ form_input(id, name,
+  type=input_type, required=required, sads_attrs=sads_input_attrs) }} {% endif
+  %}
+</div>
+{% endmacro %} {% macro form_title(text_key, default_text,
+i18n_key_prefix='contact', sads_attrs=None) %}
+<h2
+  data-sads-element="title"
+  data-i18n="{{ i18n_key_prefix }}_{{ text_key }}"
+  data-sads-font-size="custom:2rem"
+  data-sads-text-color="text-primary"
+  data-sads-margin-bottom="xl"
+  data-sads-text-align="center"
+  {%
+  if
+  sads_attrs
+  %}
+  {%
+  for
+  attr,
+  value
+  in
+  sads_attrs.items()
+  %}
+  data-sads-{{
+  attr
+  }}="{{ value }}"
+  {%
+  endfor
+  %}
+  {%
+  endif
+  %}
+>
+  {{ translations.get(i18n_key_prefix + '_' + text_key, default_text) }}
+</h2>
+{% endmacro %}
