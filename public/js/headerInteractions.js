@@ -4,39 +4,32 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Helper to console.log messages for this script
-  function logHeader(message, ...args) {
-    console.log('[headerInteractions]', message, ...args);
-  }
-
-  logHeader('Initializing header interactions...');
+  // console.log('[headerInteractions] Initializing header interactions...'); // Optional: keep for init confirmation
 
   // --- Dark Mode Toggle ---
   const darkModeToggleButton = document.getElementById('dark-mode-toggle');
   if (darkModeToggleButton) {
     darkModeToggleButton.addEventListener('click', () => {
-      logHeader('Dark mode toggle button clicked.');
+      // console.log('[headerInteractions] Dark mode toggle button clicked.'); // Debug log
       if (window.appGlobal && typeof window.appGlobal.handleDarkModeToggle === 'function') {
         window.appGlobal.handleDarkModeToggle();
       } else {
-        logHeader('Error: window.appGlobal.handleDarkModeToggle is not available.');
+        console.error('[headerInteractions] Error: window.appGlobal.handleDarkModeToggle is not available.'); // Keep error log
       }
     });
 
     // Listen for app state changes to update the toggle button's appearance
     document.addEventListener('appStateChanged', (event) => {
       if (typeof event.detail.darkMode === 'boolean') {
-        logHeader('appStateChanged event received for dark mode. New state:', event.detail.darkMode);
+        // console.log('[headerInteractions] appStateChanged event received for dark mode. New state:', event.detail.darkMode); // Debug log
         const isDark = event.detail.darkMode;
         darkModeToggleButton.textContent = isDark ? '☀️' : '🌙';
         darkModeToggleButton.setAttribute('aria-label', isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode');
-        // Potentially update a class for styling if needed, e.g., if SADS cannot style the icon change directly
-        // darkModeToggleButton.classList.toggle('dark-mode-active', isDark);
       }
     });
-    logHeader('Dark mode toggle listener attached.');
+    // console.log('[headerInteractions] Dark mode toggle listener attached.'); // Optional: keep for init confirmation
   } else {
-    logHeader('Dark mode toggle button (id="dark-mode-toggle") not found.');
+    console.warn('[headerInteractions] Dark mode toggle button (id="dark-mode-toggle") not found.'); // Keep warning
   }
 
   // --- Language Switcher ---
@@ -46,11 +39,11 @@ document.addEventListener('DOMContentLoaded', () => {
     langButtons.forEach(button => {
       button.addEventListener('click', (event) => {
         const lang = event.currentTarget.dataset.lang;
-        logHeader(`Language button clicked for lang: "${lang}"`);
+        // console.log(`[headerInteractions] Language button clicked for lang: "${lang}"`); // Debug log
         if (window.appGlobal && typeof window.appGlobal.setAppLanguage === 'function') {
           window.appGlobal.setAppLanguage(lang);
         } else {
-          logHeader('Error: window.appGlobal.setAppLanguage is not available.');
+          console.error('[headerInteractions] Error: window.appGlobal.setAppLanguage is not available.'); // Keep error log
         }
       });
     });
@@ -59,22 +52,20 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('languageChanged', (event) => {
       if (event.detail && event.detail.lang) {
         const currentLang = event.detail.lang;
-        logHeader('languageChanged event received. Current language:', currentLang);
+        // console.log('[headerInteractions] languageChanged event received. Current language:', currentLang); // Debug log
         langButtons.forEach(btn => {
           if (btn.dataset.lang === currentLang) {
-            // Example: Add an 'active' class or modify SADS attributes if possible
-            // For now, just log. Styling active state needs specific implementation.
-            btn.classList.add('active-lang'); // Add a generic class
-             logHeader(`Setting button for lang "${btn.dataset.lang}" to active.`);
+            btn.classList.add('active-lang');
+            // console.log(`[headerInteractions] Setting button for lang "${btn.dataset.lang}" to active.`); // Debug log
           } else {
             btn.classList.remove('active-lang');
           }
         });
       }
     });
-    logHeader(`Language switcher listeners attached to ${langButtons.length} buttons.`);
+    // console.log(`[headerInteractions] Language switcher listeners attached to ${langButtons.length} buttons.`); // Optional: keep
   } else {
-    logHeader('Language switcher (id="language-switcher") not found.');
+    console.warn('[headerInteractions] Language switcher (id="language-switcher") not found.'); // Keep warning
   }
 
   // --- Mobile Menu Toggle ---
@@ -83,23 +74,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (menuToggleButton && navItemsContainer) {
     menuToggleButton.addEventListener('click', () => {
-      logHeader('Hamburger menu button clicked.');
+      // console.log('[headerInteractions] Hamburger menu button clicked.'); // Debug log
       const isExpanded = menuToggleButton.getAttribute('aria-expanded') === 'true' || false;
       menuToggleButton.setAttribute('aria-expanded', !isExpanded);
-
-      // Toggle a class that controls visibility.
-      // The actual display change (none to flex/block) should be handled by CSS rules for this class.
-      // SADS responsive rules handle initial display:none for mobile. We need JS to toggle it on click.
-      navItemsContainer.classList.toggle('nav-items-container--active'); // For visibility
-      menuToggleButton.classList.toggle('hamburger-menu--active'); // For styling the hamburger icon (e.g., to an X)
-
-      logHeader(`Nav items container toggled. New expanded state: ${!isExpanded}. Classes:`, navItemsContainer.classList.toString());
+      navItemsContainer.classList.toggle('nav-items-container--active');
+      menuToggleButton.classList.toggle('hamburger-menu--active');
+      // console.log(`[headerInteractions] Nav items container toggled. New expanded state: ${!isExpanded}. Classes:`, navItemsContainer.classList.toString()); // Debug log
     });
-    logHeader('Mobile menu toggle listener attached.');
+    // console.log('[headerInteractions] Mobile menu toggle listener attached.'); // Optional: keep
   } else {
-    if (!menuToggleButton) logHeader('Hamburger menu button ("[data-sads-element="menu-toggle"].hamburger-menu") not found.');
-    if (!navItemsContainer) logHeader('Nav items container ("[data-sads-element="nav-items-container"]") not found.');
+    if (!menuToggleButton) console.warn('[headerInteractions] Hamburger menu button ("[data-sads-element="menu-toggle"].hamburger-menu") not found.'); // Keep warning
+    if (!navItemsContainer) console.warn('[headerInteractions] Nav items container ("[data-sads-element="nav-items-container"]") not found.'); // Keep warning
   }
 
-  logHeader('Header interactions initialization complete.');
+  // console.log('[headerInteractions] Header interactions initialization complete.'); // Optional: keep
 });

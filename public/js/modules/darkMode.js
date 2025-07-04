@@ -26,13 +26,11 @@ const DARK_MODE_STORAGE_KEY = "darkMode";
  * @private
  */
 function _applyDarkModePreferenceToDOM() {
-  console.log('[darkMode] _applyDarkModePreferenceToDOM called. isDarkModeEnabled:', isDarkModeEnabled);
   if (isDarkModeEnabled) {
     document.body.classList.add("dark-mode");
   } else {
     document.body.classList.remove("dark-mode");
   }
-  console.log('[darkMode] document.body.classList after change:', document.body.classList.toString());
 }
 
 /**
@@ -42,7 +40,6 @@ function _applyDarkModePreferenceToDOM() {
  * @private
  */
 function _dispatchStateChange(eventDetail) {
-  console.log('[darkMode] _dispatchStateChange called with detail:', eventDetail);
   document.dispatchEvent(
     new CustomEvent("appStateChanged", {
       detail: eventDetail,
@@ -61,7 +58,6 @@ function _dispatchStateChange(eventDetail) {
 function initDarkMode() {
   const storedPreference = localStorage.getItem(DARK_MODE_STORAGE_KEY);
   isDarkModeEnabled = storedPreference === "enabled";
-  console.log('[darkMode] initDarkMode. Stored preference:', storedPreference, 'isDarkModeEnabled set to:', isDarkModeEnabled);
   _applyDarkModePreferenceToDOM();
 
   // Dispatch initial dark mode state.
@@ -77,13 +73,11 @@ function initDarkMode() {
  * Updates localStorage, applies the change to the DOM, and dispatches an 'appStateChanged' event.
  */
 function toggleDarkMode() {
-  console.log('[darkMode] toggleDarkMode called. Current isDarkModeEnabled:', isDarkModeEnabled);
   isDarkModeEnabled = !isDarkModeEnabled;
-  console.log('[darkMode] New isDarkModeEnabled:', isDarkModeEnabled);
   localStorage.setItem(DARK_MODE_STORAGE_KEY, isDarkModeEnabled ? "enabled" : "disabled");
   _applyDarkModePreferenceToDOM();
   _dispatchStateChange({ darkMode: isDarkModeEnabled });
-  // console.log("Dark Mode Toggled. Enabled:", isDarkModeEnabled); // Original log
+  console.log("Dark Mode Toggled. Enabled:", isDarkModeEnabled); // Keep this informative log
 }
 
 /**

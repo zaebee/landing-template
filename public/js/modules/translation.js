@@ -59,7 +59,6 @@ function _applyTranslationsToDOM(translations) {
     console.warn("[translation] Attempted to apply empty or null translations to DOM.");
     return;
   }
-  console.log("[translation] _applyTranslationsToDOM called with translations:", translations);
   currentTranslations = translations; // Update internal state
 
   document.querySelectorAll("[data-i18n]").forEach((element) => {
@@ -72,7 +71,6 @@ function _applyTranslationsToDOM(translations) {
       // console.warn(`[translation] Translation key "${key}" not found for element:`, element); // Original log
     }
   });
-  console.log("[translation] Finished applying translations to DOM.");
 }
 
 /**
@@ -82,7 +80,6 @@ function _applyTranslationsToDOM(translations) {
  * @private
  */
 function _dispatchStateAndLanguageChange(lang, currentDarkModeState) {
-  console.log(`[translation] _dispatchStateAndLanguageChange called. Lang: ${lang}, DM State: ${currentDarkModeState}`);
   /** @type {Partial<AppStateEventDetail>} */
   const appStateDetail = {
     translationsLoaded: true,
@@ -121,13 +118,11 @@ async function initTranslations(currentDarkModeState) {
  * @public
  */
 async function setLanguage(lang, currentDarkModeState, isInitialLoad = false) {
-  console.log(`[translation] setLanguage called. Lang: ${lang}, DM State: ${currentDarkModeState}, InitialLoad: ${isInitialLoad}`);
   if (!lang) {
-    console.error("[translation] setLanguage called with no language code provided.");
+    console.error("setLanguage called with no language code provided."); // Kept error log
     return;
   }
   const translations = await _fetchTranslations(lang);
-  console.log(`[translation] Fetched translations for ${lang}:`, translations);
   if (translations) {
     _applyTranslationsToDOM(translations);
     localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
