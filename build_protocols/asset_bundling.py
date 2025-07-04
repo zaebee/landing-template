@@ -100,6 +100,7 @@ class DefaultAssetBundler:  # Implements AssetBundler (structurally)
             os.path.join(modules_dir, "translation.js"),
             os.path.join(modules_dir, "sadsManager.js"),
             os.path.join(shared_js_dir, "app.js"), # Main orchestrator
+            os.path.join(shared_js_dir, "headerInteractions.js"), # Header-specific interactions
         ]
 
         processed_shared_js = []
