@@ -49,14 +49,12 @@
     <div data-sads-element="logo-container">
       <a
         href="#"
-        data-i18n="logo_text"
         data-sads-element="logo-link"
-        data-sads-text-color="text-primary"
-        data-sads-text-decoration="none"
-        data-sads-font-weight="bold"
-        data-sads-font-size="l"
+        data-sads-text-decoration="none" {# Keep text-decoration none if desired for the link itself #}
+        {# Removed text-color, font-weight, font-size as SVG handles its appearance #}
+        {# data-i18n="logo_text" is removed as the image has an alt attribute #}
       >
-        {{ translations.get('logo_text', 'Logo') }}
+        <img src="public/logo.svg" alt="NeuroGen Logo" style="height: 30px; display: block;">
       </a>
     </div>
 
