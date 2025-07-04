@@ -26,7 +26,7 @@
 
     {% include "components/footer/footer.html" %} {# Bundled JavaScript
     including SADS engine, theme, app.js, and component JS #}
-    <script src="public/dist/main.js" defer></script>
+    <script type="module" src="public/dist/main.js" defer></script>
 
     {% block scripts %} {# Specific inline scripts or page-specific JS can go
     here if not part of the bundle #} {# The main application logic including

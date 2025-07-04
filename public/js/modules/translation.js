@@ -99,7 +99,7 @@ function _dispatchStateAndLanguageChange(lang, currentDarkModeState) {
  * @param {boolean} currentDarkModeState - The current dark mode state, needed for dispatching a complete 'appStateChanged' event.
  * @public
  */
-export async function initTranslations(currentDarkModeState) {
+async function initTranslations(currentDarkModeState) {
   const preferredLang =
     localStorage.getItem(LANGUAGE_STORAGE_KEY) ||
     document.documentElement.lang || // Usually set by <html lang="...">
@@ -117,7 +117,7 @@ export async function initTranslations(currentDarkModeState) {
  * @param {boolean} [isInitialLoad=false] - True if this is part of the initial application load sequence.
  * @public
  */
-export async function setLanguage(lang, currentDarkModeState, isInitialLoad = false) {
+async function setLanguage(lang, currentDarkModeState, isInitialLoad = false) {
   if (!lang) {
     console.error("setLanguage called with no language code provided.");
     return;
@@ -141,6 +141,6 @@ export async function setLanguage(lang, currentDarkModeState, isInitialLoad = fa
  * @returns {TranslationsObject} The current translations object.
  * @public
  */
-export function getCurrentTranslations() {
+function getCurrentTranslations() {
   return { ...currentTranslations }; // Return a copy to prevent external modification
 }

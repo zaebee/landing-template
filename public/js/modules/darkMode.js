@@ -55,7 +55,7 @@ function _dispatchStateChange(eventDetail) {
  * The `appStateChanged` event dispatched here will only contain `darkMode` status.
  * `app.js` will ensure `initTranslations` is called, which dispatches its own `appStateChanged` with translation status.
  */
-export function initDarkMode() {
+function initDarkMode() {
   const storedPreference = localStorage.getItem(DARK_MODE_STORAGE_KEY);
   isDarkModeEnabled = storedPreference === "enabled";
   _applyDarkModePreferenceToDOM();
@@ -72,7 +72,7 @@ export function initDarkMode() {
  * Toggles the dark mode state (on to off, or off to on).
  * Updates localStorage, applies the change to the DOM, and dispatches an 'appStateChanged' event.
  */
-export function toggleDarkMode() {
+function toggleDarkMode() {
   isDarkModeEnabled = !isDarkModeEnabled;
   localStorage.setItem(DARK_MODE_STORAGE_KEY, isDarkModeEnabled ? "enabled" : "disabled");
   _applyDarkModePreferenceToDOM();
@@ -84,6 +84,6 @@ export function toggleDarkMode() {
  * Returns the current activation state of dark mode.
  * @returns {boolean} True if dark mode is currently enabled, false otherwise.
  */
-export function isDarkModeActive() {
+function isDarkModeActive() {
   return isDarkModeEnabled;
 }

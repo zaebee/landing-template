@@ -6,9 +6,11 @@
  * Defines global event detail types for documentation.
  */
 
-import { initDarkMode, toggleDarkMode, isDarkModeActive } from './modules/darkMode.js';
-import { initTranslations, setLanguage, getCurrentTranslations } from './modules/translation.js';
-import { initSadsEngine, reapplySadsStyles } from './modules/sadsManager.js';
+// Module imports are removed as their functions will be available directly
+// in the concatenated main.js scope due to the bundling order.
+// import { initDarkMode, toggleDarkMode, isDarkModeActive } from './modules/darkMode.js';
+// import { initTranslations, setLanguage, getCurrentTranslations } from './modules/translation.js';
+// import { initSadsEngine, reapplySadsStyles } from './modules/sadsManager.js';
 // import eventBus from './modules/eventBus.js'; // Event bus module is available but not actively used for dispatch/subscribe yet.
 
 /**

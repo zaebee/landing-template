@@ -1,141 +1,144 @@
 {
-  "blocks": [
-    "components/hero/hero.html",
-    "components/features/features.html",
-    "components/testimonials/testimonials.html",
-    "components/portfolio/portfolio.html",
-    "components/blog/blog.html",
-    "components/contact-form/contact-form.html"
-  ],
-  "navigation_data_file": "data/navigation.json",
-  "supported_langs": ["en", "es"],
-  "default_lang": "en",
-  "block_data_loaders": {
-    "components/portfolio/portfolio.html": {
-      "data_file": "data/portfolio_items.json",
-      "message_type_name": "PortfolioItem",
-      "is_list": true
+    "blocks": [
+        "components/hero/hero.html",
+        "components/features/features.html",
+        "components/testimonials/testimonials.html",
+        "components/portfolio/portfolio.html",
+        "components/blog/blog.html",
+        "components/contact-form/contact-form.html"
+    ],
+    "navigation_data_file": "data/navigation.json",
+    "supported_langs": [
+        "en",
+        "es"
+    ],
+    "default_lang": "en",
+    "block_data_loaders": {
+        "components/portfolio/portfolio.html": {
+            "data_file": "data/portfolio_items.json",
+            "message_type_name": "PortfolioItem",
+            "is_list": true
+        },
+        "components/blog/blog.html": {
+            "data_file": "data/blog_posts.json",
+            "message_type_name": "BlogPost",
+            "is_list": true
+        },
+        "components/features/features.html": {
+            "data_file": "data/feature_items.json",
+            "message_type_name": "FeatureItem",
+            "is_list": true
+        },
+        "components/testimonials/testimonials.html": {
+            "data_file": "data/testimonial_items.json",
+            "message_type_name": "TestimonialItem",
+            "is_list": true
+        },
+        "components/hero/hero.html": {
+            "data_file": "data/hero_item.json",
+            "message_type_name": "HeroItem",
+            "is_list": false
+        },
+        "components/contact-form/contact-form.html": {
+            "data_file": "data/contact_form_config.json",
+            "message_type_name": "ContactFormConfig",
+            "is_list": false
+        }
     },
-    "components/blog/blog.html": {
-      "data_file": "data/blog_posts.json",
-      "message_type_name": "BlogPost",
-      "is_list": true
-    },
-    "components/features/features.html": {
-      "data_file": "data/feature_items.json",
-      "message_type_name": "FeatureItem",
-      "is_list": true
-    },
-    "components/testimonials/testimonials.html": {
-      "data_file": "data/testimonial_items.json",
-      "message_type_name": "TestimonialItem",
-      "is_list": true
-    },
-    "components/hero/hero.html": {
-      "data_file": "data/hero_item.json",
-      "message_type_name": "HeroItem",
-      "is_list": false
-    },
-    "components/contact-form/contact-form.html": {
-      "data_file": "data/contact_form_config.json",
-      "message_type_name": "ContactFormConfig",
-      "is_list": false
+    "navigation": [
+        {
+            "label_i18n_key": "nav_home",
+            "label": "Inicio",
+            "href": "#"
+        },
+        {
+            "label_i18n_key": "nav_features",
+            "label": "Características",
+            "href": "#features"
+        },
+        {
+            "label_i18n_key": "nav_testimonials",
+            "label": "Testimonios",
+            "href": "#testimonials"
+        },
+        {
+            "label_i18n_key": "nav_portfolio",
+            "label": "Portafolio",
+            "href": "#portfolio"
+        },
+        {
+            "label_i18n_key": "nav_blog",
+            "label": "Blog",
+            "href": "#blog"
+        }
+    ],
+    "current_lang": "es",
+    "ui_strings": {
+        "hero_title": "Bienvenido a Nuestra Página de Destino",
+        "hero_subtitle": "Esta es una sección de héroe simple para llamar la atención.",
+        "hero_cta": "Aprende Más",
+        "features_title": "Nuestras Características",
+        "feature_one_title": "Característica Uno",
+        "feature_one_desc": "Descripción de la característica uno.",
+        "feature_two_title": "Característica Dos",
+        "feature_two_desc": "Descripción de la característica dos.",
+        "feature_three_title": "Característica Tres",
+        "feature_three_desc": "Descripción of la característica tres.",
+        "contact_title": "Contáctanos",
+        "contact_name_label": "Nombre:",
+        "contact_email_label": "Correo Electrónico:",
+        "contact_message_label": "Mensaje:",
+        "contact_send_button": "Enviar Mensaje",
+        "testimonials_title": "Lo Que Dicen Nuestros Usuarios",
+        "testimonial_one_text": "Este es el mejor servicio que he usado. ¡Muy recomendado!",
+        "testimonial_one_author": "- Jane Doe",
+        "testimonial_two_text": "Características increíbles y un soporte espectacular. Mi negocio ha crecido significativamente.",
+        "testimonial_two_author": "- John Smith",
+        "testimonial_three_text": "Un cambio de juego para nuestro flujo de trabajo. Simple, efectivo y confiable.",
+        "testimonial_three_author": "- Alice Brown",
+        "testimonial_one_alt": "Foto del Usuario 1",
+        "testimonial_two_alt": "Foto del Usuario 2",
+        "testimonial_three_alt": "Foto del Usuario 3",
+        "portfolio_title": "Nuestro Trabajo",
+        "project_one_title": "Proyecto Uno",
+        "project_one_desc": "Una breve descripción del proyecto uno.",
+        "project_two_title": "Proyecto Dos",
+        "project_two_desc": "Una breve descripción del proyecto dos.",
+        "project_three_title": "Proyecto Tres",
+        "project_three_desc": "Una breve descripción del proyecto tres.",
+        "project_four_title": "Proyecto Cuatro",
+        "project_four_desc": "Una breve descripción del proyecto cuatro.",
+        "project_alpha_title": "Proyecto Alfa",
+        "project_alpha_desc": "Descripción del Proyecto Alfa.",
+        "project_beta_title": "Proyecto Beta",
+        "project_beta_desc": "Descripción del Proyecto Beta.",
+        "project_gamma_title": "Proyecto Gama",
+        "project_gamma_desc": "Descripción del Proyecto Gama.",
+        "project_delta_title": "Proyecto Delta",
+        "project_delta_desc": "Descripción del Proyecto Delta.",
+        "blog_title": "Últimas Publicaciones",
+        "blog_post_alpha_title": "Título de la Publicación Alfa",
+        "blog_post_alpha_excerpt": "Extracto de la publicación Alfa del blog...",
+        "blog_post_alpha_cta": "Leer Publicación Alfa",
+        "blog_post_beta_title": "Título de la Publicación Beta",
+        "blog_post_beta_excerpt": "Extracto de la publicación Beta del blog...",
+        "blog_post_beta_cta": "Leer Publicación Beta",
+        "blog_post_gamma_title": "Título de la Publicación Gama",
+        "blog_post_gamma_excerpt": "Extracto de la publicación Gama del blog...",
+        "blog_post_gamma_cta": "Leer Publicación Gama",
+        "nav_home": "Inicio",
+        "nav_features": "Características",
+        "nav_testimonials": "Testimonios",
+        "nav_portfolio": "Portafolio",
+        "nav_blog": "Blog",
+        "dark_mode_toggle": "Alternar Modo Oscuro",
+        "light_mode_toggle": "Alternar Modo Claro",
+        "theme_light_button": "Tema Claro",
+        "theme_dark_button": "Tema Oscuro",
+        "footer_text": "&copy; 2024 Página de Destino Simple. Todos los derechos reservados.",
+        "contact_form_success": "¡Mensaje enviado con éxito! Gracias.",
+        "contact_form_error": "¡Ups! Algo salió mal. Por favor, inténtalo de nuevo.",
+        "logo_text": "Logo ES",
+        "toggle_menu_label": "Alternar menú"
     }
-  },
-  "navigation": [
-    {
-      "label_i18n_key": "nav_home",
-      "label": "Inicio",
-      "href": "#"
-    },
-    {
-      "label_i18n_key": "nav_features",
-      "label": "Características",
-      "href": "#features"
-    },
-    {
-      "label_i18n_key": "nav_testimonials",
-      "label": "Testimonios",
-      "href": "#testimonials"
-    },
-    {
-      "label_i18n_key": "nav_portfolio",
-      "label": "Portafolio",
-      "href": "#portfolio"
-    },
-    {
-      "label_i18n_key": "nav_blog",
-      "label": "Blog",
-      "href": "#blog"
-    }
-  ],
-  "current_lang": "es",
-  "ui_strings": {
-    "hero_title": "Bienvenido a Nuestra Página de Destino",
-    "hero_subtitle": "Esta es una sección de héroe simple para llamar la atención.",
-    "hero_cta": "Aprende Más",
-    "features_title": "Nuestras Características",
-    "feature_one_title": "Característica Uno",
-    "feature_one_desc": "Descripción de la característica uno.",
-    "feature_two_title": "Característica Dos",
-    "feature_two_desc": "Descripción de la característica dos.",
-    "feature_three_title": "Característica Tres",
-    "feature_three_desc": "Descripción of la característica tres.",
-    "contact_title": "Contáctanos",
-    "contact_name_label": "Nombre:",
-    "contact_email_label": "Correo Electrónico:",
-    "contact_message_label": "Mensaje:",
-    "contact_send_button": "Enviar Mensaje",
-    "testimonials_title": "Lo Que Dicen Nuestros Usuarios",
-    "testimonial_one_text": "Este es el mejor servicio que he usado. ¡Muy recomendado!",
-    "testimonial_one_author": "- Jane Doe",
-    "testimonial_two_text": "Características increíbles y un soporte espectacular. Mi negocio ha crecido significativamente.",
-    "testimonial_two_author": "- John Smith",
-    "testimonial_three_text": "Un cambio de juego para nuestro flujo de trabajo. Simple, efectivo y confiable.",
-    "testimonial_three_author": "- Alice Brown",
-    "testimonial_one_alt": "Foto del Usuario 1",
-    "testimonial_two_alt": "Foto del Usuario 2",
-    "testimonial_three_alt": "Foto del Usuario 3",
-    "portfolio_title": "Nuestro Trabajo",
-    "project_one_title": "Proyecto Uno",
-    "project_one_desc": "Una breve descripción del proyecto uno.",
-    "project_two_title": "Proyecto Dos",
-    "project_two_desc": "Una breve descripción del proyecto dos.",
-    "project_three_title": "Proyecto Tres",
-    "project_three_desc": "Una breve descripción del proyecto tres.",
-    "project_four_title": "Proyecto Cuatro",
-    "project_four_desc": "Una breve descripción del proyecto cuatro.",
-    "project_alpha_title": "Proyecto Alfa",
-    "project_alpha_desc": "Descripción del Proyecto Alfa.",
-    "project_beta_title": "Proyecto Beta",
-    "project_beta_desc": "Descripción del Proyecto Beta.",
-    "project_gamma_title": "Proyecto Gama",
-    "project_gamma_desc": "Descripción del Proyecto Gama.",
-    "project_delta_title": "Proyecto Delta",
-    "project_delta_desc": "Descripción del Proyecto Delta.",
-    "blog_title": "Últimas Publicaciones",
-    "blog_post_alpha_title": "Título de la Publicación Alfa",
-    "blog_post_alpha_excerpt": "Extracto de la publicación Alfa del blog...",
-    "blog_post_alpha_cta": "Leer Publicación Alfa",
-    "blog_post_beta_title": "Título de la Publicación Beta",
-    "blog_post_beta_excerpt": "Extracto de la publicación Beta del blog...",
-    "blog_post_beta_cta": "Leer Publicación Beta",
-    "blog_post_gamma_title": "Título de la Publicación Gama",
-    "blog_post_gamma_excerpt": "Extracto de la publicación Gama del blog...",
-    "blog_post_gamma_cta": "Leer Publicación Gama",
-    "nav_home": "Inicio",
-    "nav_features": "Características",
-    "nav_testimonials": "Testimonios",
-    "nav_portfolio": "Portafolio",
-    "nav_blog": "Blog",
-    "dark_mode_toggle": "Alternar Modo Oscuro",
-    "light_mode_toggle": "Alternar Modo Claro",
-    "theme_light_button": "Tema Claro",
-    "theme_dark_button": "Tema Oscuro",
-    "footer_text": "&copy; 2024 Página de Destino Simple. Todos los derechos reservados.",
-    "contact_form_success": "¡Mensaje enviado con éxito! Gracias.",
-    "contact_form_error": "¡Ups! Algo salió mal. Por favor, inténtalo de nuevo.",
-    "logo_text": "Logo ES",
-    "toggle_menu_label": "Alternar menú"
-  }
 }

@@ -23,7 +23,7 @@ let sadsEngineInstance = null;
  * It creates a singleton instance of the engine and applies styles to all SADS components.
  * @public
  */
-export function initSadsEngine() {
+function initSadsEngine() {
   // Check if SADSEngine constructor is available globally and if an instance doesn't already exist.
   if (typeof SADSEngine === "function" && !sadsEngineInstance) {
     sadsEngineInstance = new SADSEngine({
@@ -52,7 +52,7 @@ export function initSadsEngine() {
  * - Language changes that might alter text content and thus layout.
  * @public
  */
-export function reapplySadsStyles() {
+function reapplySadsStyles() {
   if (sadsEngineInstance && typeof sadsEngineInstance.applyStylesTo === "function") {
     const components = document.querySelectorAll("[data-sads-component]");
     if (components.length > 0) {
@@ -85,7 +85,7 @@ export function reapplySadsStyles() {
  *                       In TypeScript, this would be `SADSEngine | null`.
  * @public
  */
-export function getSadsEngineInstance() {
+function getSadsEngineInstance() {
   return sadsEngineInstance;
 }
 

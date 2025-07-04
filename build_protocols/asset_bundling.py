@@ -134,6 +134,7 @@ class DefaultAssetBundler:  # Implements AssetBundler (structurally)
                 return None
 
         js_contents: List[str] = []
+
         for file_path in js_files_to_bundle:
             try:
                 with open(file_path, "r", encoding="utf-8") as f:
