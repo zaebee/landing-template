@@ -13,6 +13,12 @@ const sadsDefaultTheme = {
     transparent: "transparent",
     "text-secondary": "#555555",
     "text-secondary-dark": "#bbbbbb",
+    "header-bg": "#ffffff", // Default light header background
+    "header-bg-dark": "#2c3e50", // Default dark header background
+    "text-on-header-bg": "#333333", // Text color on light header
+    "text-on-header-bg-dark": "#ecf0f1", // Text color on dark header
+    "text-nav-link": "#007bff", // Default nav link color
+    "text-nav-link-dark": "#3498db", // Default nav link color for dark mode
     // border-accent will be aliased to text-accent in the engine after load
     "blog-section-bg": "#e9ecef",
     "blog-section-bg-dark": "#2a2a2a",

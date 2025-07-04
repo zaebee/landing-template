@@ -80,3 +80,190 @@ body.dark-mode {
   /* .testimonial-list and .testimonial-item responsive styles moved to SADS/testimonials.css */
   /* .blog-list and .blog-item responsive styles moved to SADS/blog.css */
 }
+
+/* --- Header Mobile Menu Active States --- */
+/* When the mobile menu is active, show the nav items container */
+.nav-items-container--active {
+  display: flex !important; /* Override SADS display:none for mobile */
+  /* Other styles like position, top, left, width, bg-color, padding, shadow, gap, zIndex
+     are handled by SADS responsive rules on the element itself.
+     This class primarily ensures it's visible.
+     Ensure flex-direction: column is set by SADS for mobile. */
+}
+
+/* Hamburger Menu Icon Transformation (to an "X") */
+.hamburger-menu {
+  /* Basic styling for the hamburger bars if not covered by SADS */
+  /* display: flex; Already handled by SADS for mobile? Check header.html */
+  /* flex-direction: column; */
+  /* justify-content: space-around; */
+  /* width: 30px; */ /* Example width */
+  /* height: 24px; */ /* Example height */
+  /* background: transparent; Handled by SADS */
+  /* border: none; Handled by SADS */
+  /* cursor: pointer; Handled by SADS */
+  /* padding: 0; SADS has padding:s */
+  /* z-index: 1001; To be above nav items container if it has a bg */
+}
+
+.hamburger-menu .hamburger-bar {
+  display: block;
+  width: 25px; /* Example width */
+  height: 3px; /* Example height */
+  background-color: currentColor; /* Inherit color from parent button's text color (set by SADS) */
+  border-radius: 3px;
+  transition: all 0.3s ease-in-out;
+}
+
+/* body.dark-mode .hamburger-menu .hamburger-bar rule is no longer needed as currentColor handles it */
+
+.hamburger-menu.hamburger-menu--active .hamburger-bar:nth-child(1) {
+  transform: translateY(8px) rotate(45deg); /* Adjusted for 3px height + 2.5px spacing approx */
+}
+
+.hamburger-menu.hamburger-menu--active .hamburger-bar:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-menu.hamburger-menu--active .hamburger-bar:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg); /* Adjusted for 3px height + 2.5px spacing approx */
+}
+
+/* Ensure hamburger bars are spaced out if not using flex properties on parent */
+.hamburger-menu .hamburger-bar + .hamburger-bar {
+  margin-top: 5px; /* Example spacing */
+}
+
+/* --- Language Switcher Active State --- */
+#language-switcher button.active-lang {
+  /* Example active state: more prominent border, different background or text weight */
+  /* These should ideally use theme variables if SADS was to control them,
+     but for a simple CSS override: */
+  font-weight: bold;
+  border-color: #007bff; /* Example: Use accent color for border */
+  color: #007bff; /* Example: Use accent color for text */
+  /* background-color: #eef; */ /* Optional: very light background */
+}
+
+body.dark-mode #language-switcher button.active-lang {
+  border-color: #0af; /* Example: Dark mode accent color for border */
+  color: #0af; /* Example: Dark mode accent color for text */
+  /* background-color: #334; */ /* Optional: slightly different dark bg */
+}
+
+/* --- General Header Button Styling & Interactive States --- */
+/* Default styling for buttons in the header if SADS variants are insufficient */
+#dark-mode-toggle,
+#language-switcher button {
+  cursor: pointer;
+  padding: 0.4rem 0.8rem; /* CSS padding for consistent button size, SADS data-sads-padding provides base but this can refine */
+  /* SADS attributes will now handle:
+     - border-color (via data-sads-border-color)
+     - background-color (via data-sads-bg-color)
+     - color (via data-sads-text-color)
+  */
+  /* border: 1px solid #ccc; */ /* Now handled by SADS data-sads-border-color */
+  /* background-color: #f8f9fa; */ /* Now handled by SADS data-sads-bg-color */
+  /* color: #333; */ /* Now handled by SADS data-sads-text-color */
+  border-radius: 4px; /* Default border-radius from theme 's', can be SADS attribute too if needed */
+  transition:
+    background-color 0.2s ease-in-out,
+    border-color 0.2s ease-in-out,
+    color 0.2s ease-in-out;
+  line-height: 1; /* Ensure icon buttons don't have excessive line height */
+  min-width: 40px; /* Ensure a minimum tap target size / width */
+  min-height: 30px; /* Ensure a minimum tap target size / height */
+  display: inline-flex; /* Align icon/text nicely if it were mixed */
+  align-items: center;
+  justify-content: center;
+}
+
+/* Specific for dark mode toggle if it's meant to be more like an icon button */
+#dark-mode-toggle {
+  background-color: transparent; /* Icon button typically has no background */
+  border: 1px solid transparent; /* No border for icon button unless explicitly desired */
+  font-size: 1.2rem; /* Make icon slightly larger */
+  /* Padding is now handled by data-sads-padding="xs" in HTML */
+}
+
+/* Ensure language switcher buttons use SADS text color by default, or a themed color */
+#language-switcher button {
+  /* SADS `data-sads-text-color` is not set on these buttons in HTML, so they'd inherit from header or body. */
+  /* Let's use text-primary from theme as a default via CSS if SADS doesn't set it. */
+  /* color: var(--sads-color-text-primary); Not possible directly, use fallback or theme values */
+  color: #333; /* Fallback - matches theme's text-primary */
+}
+
+body.dark-mode #dark-mode-toggle {
+  /* text color for icon should come from data-sads-text-color="text-primary" which has a dark mode variant */
+}
+
+body.dark-mode #language-switcher button {
+  /* Base colors (bg, border, text) for dark mode are now handled by SADS attributes */
+  /* background-color: #3e4a58; */
+  /* border-color: #56677c; */
+  /* color: #e0e0e0; */
+}
+
+/* The #dark-mode-toggle specific dark mode styling for bg/border is removed as it's transparent.
+   Its text color (the icon) will be handled by its data-sads-text-color="text-primary" attribute. */
+
+/* Hover/Focus states for header buttons */
+#dark-mode-toggle:hover,
+#dark-mode-toggle:focus,
+#language-switcher button:hover,
+#language-switcher button:focus {
+  border-color: #007bff;
+  background-color: #e9ecef; /* Lighten on hover */
+  outline: none; /* Remove default focus outline if custom is preferred or not needed */
+}
+
+body.dark-mode #dark-mode-toggle:hover,
+body.dark-mode #dark-mode-toggle:focus,
+body.dark-mode #language-switcher button:hover,
+body.dark-mode #language-switcher button:focus {
+  border-color: #0af;
+  background-color: #495a6e; /* Slightly different hover for dark mode */
+}
+
+/* Styling for navigation links in the header */
+header nav ul li a {
+  /* SADS already provides: text-color, text-decoration, padding, border-radius, transition */
+  display: block; /* Ensure padding and hover areas work well */
+  position: relative; /* For potential pseudo-elements if needed later */
+}
+
+header nav ul li a:hover,
+header nav ul li a:focus {
+  /* SADS cannot do hover states directly. text-decoration from SADS is 'none' */
+  text-decoration: underline !important; /* Force underline on hover/focus */
+  background-color: rgba(0, 0, 0, 0.05); /* Subtle background on hover */
+  outline: none;
+}
+
+body.dark-mode header nav ul li a:hover,
+body.dark-mode header nav ul li a:focus {
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.1
+  ); /* Subtle background for dark mode */
+}
+
+/* Remove SADS-applied padding if CSS is taking over for specific buttons */
+/* This is a bit of a fight with SADS. Better to ensure SADS attributes are minimal if CSS handles it. */
+/* For example, if #dark-mode-toggle has `data-sads-padding` and also CSS padding, CSS might win or lose based on specificity/!important */
+
+/* General header layout refinements if SADS is not enough */
+/* Example: Ensure consistent vertical alignment in the nav bar if flex items have different heights */
+header [data-sads-element="navbar"] > div,
+header [data-sads-element="navbar"] > button {
+  /* This is a general approach, might need more specific targeting */
+  /* display: flex; */
+  /* align-items: center; */ /* Already on navbar, but maybe needed on children */
+}
+
+/* Ensure the language switcher buttons themselves don't get too wide on mobile from their container */
+/* This is better handled by SADS `width="auto"` on the buttons if an issue. */
+/* body.mobile #language-switcher button { width: auto; } */
