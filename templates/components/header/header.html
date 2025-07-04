@@ -1,9 +1,7 @@
-<header>
-  <nav>
+<header class="site-header">
+  <nav class="main-nav">
     <div class="logo">
-      <a href="#" data-i18n="logo_text"
-        >{{ translations.get('logo_text', 'Logo') }}</a
-      >
+      <a href="#" data-i18n="logo_text">{{ translations.get('logo_text', 'Logo') }}</a>
     </div>
     <button
       aria-expanded="false"
@@ -15,19 +13,19 @@
       <span class="hamburger-bar"></span>
     </button>
     <div class="nav-items">
-      <ul>
+      <ul class="nav-list">
         {% for item in navigation_items %}
-        <li>
+        <li class="nav-item">
           <a href="{{ item.href }}" data-i18n="{{ item.label.key }}"
             >{{ translations.get(item.label.key, item.label.key) }}</a
           >
         </li>
         {% endfor %}
       </ul>
-      <button aria-label="Switch to Dark Mode" id="dark-mode-toggle">🌙</button>
-      <div id="language-switcher">
-        <button data-lang="en">EN</button>
-        <button data-lang="es">ES</button>
+      <button aria-label="Switch to Dark Mode" id="dark-mode-toggle" class="dark-mode-button">🌙</button>
+      <div id="language-switcher" class="language-buttons">
+        <button data-lang="en" class="lang-button">EN</button>
+        <button data-lang="es" class="lang-button">ES</button>
       </div>
     </div>
   </nav>

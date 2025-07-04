@@ -1,0 +1,189 @@
+<section
+  data-sads-component="contact-form"
+  id="contact" {# Keep ID for potential navigation #}
+  data-sads-padding="xl"
+  data-sads-bg-color="contact-form-section-bg" {# Theme key for section background #}
+  data-sads-text-align="left"
+>
+  <div
+    data-sads-element="container"
+    data-sads-max-width="custom:600px" {# Limit form width for better readability #}
+    data-sads-margin="custom:0 auto" {# Center the form container #}
+    data-sads-bg-color="contact-form-bg" {# Theme key for form background #}
+    data-sads-padding="xl"
+    data-sads-border-radius="m"
+    data-sads-shadow="subtle"
+  >
+    <h2
+      data-sads-element="title"
+      data-i18n="contact_title"
+      data-sads-font-size="xl"
+      data-sads-text-color="text-primary"
+      data-sads-margin-bottom="l"
+      data-sads-text-align="center"
+    >
+      {{ translations.get('contact_title', 'Contact Us') }}
+    </h2>
+    <form
+      data-sads-element="form"
+      id="contactForm" {# ID is used by the script #}
+      method="POST"
+      action="{{ config.form_action_uri if config and config.form_action_uri else '#' }}"
+      data-form-action-url="{{ config.form_action_uri if config and config.form_action_uri else '#' }}"
+      data-success-message="{{ translations.get(config.success_message_key, 'Message sent!') if config else 'Message sent!' }}"
+      data-error-message="{{ translations.get(config.error_message_key, 'Error sending message.') if config else 'Error sending message.' }}"
+      data-sads-display="flex"
+      data-sads-flex-direction="column"
+      data-sads-gap="m"
+    >
+      <div>
+        <label
+          for="name"
+          data-i18n="contact_name_label"
+          data-sads-element="label"
+          data-sads-display="block"
+          data-sads-margin-bottom="xs"
+          data-sads-font-weight="bold"
+          data-sads-text-color="text-secondary"
+        >
+          {{ translations.get('contact_name_label', 'Name:') }}
+        </label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          required
+          data-sads-element="input"
+          data-sads-input-variant="default" {# Assuming a SADS input style variant #}
+          data-sads-width="full"
+          data-sads-padding="s"
+          data-sads-border-radius="s"
+        />
+      </div>
+
+      <div>
+        <label
+          for="email"
+          data-i18n="contact_email_label"
+          data-sads-element="label"
+          data-sads-display="block"
+          data-sads-margin-bottom="xs"
+          data-sads-font-weight="bold"
+          data-sads-text-color="text-secondary"
+        >
+          {{ translations.get('contact_email_label', 'Email:') }}
+        </label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          required
+          data-sads-element="input"
+          data-sads-input-variant="default"
+          data-sads-width="full"
+          data-sads-padding="s"
+          data-sads-border-radius="s"
+        />
+      </div>
+
+      <div>
+        <label
+          for="message"
+          data-i18n="contact_message_label"
+          data-sads-element="label"
+          data-sads-display="block"
+          data-sads-margin-bottom="xs"
+          data-sads-font-weight="bold"
+          data-sads-text-color="text-secondary"
+        >
+          {{ translations.get('contact_message_label', 'Message:') }}
+        </label>
+        <textarea
+          id="message"
+          name="message"
+          rows="4"
+          required
+          data-sads-element="textarea"
+          data-sads-input-variant="default" {# Assuming SADS textarea style is similar to input #}
+          data-sads-width="full"
+          data-sads-padding="s"
+          data-sads-border-radius="s"
+        ></textarea>
+      </div>
+
+      <button
+        type="submit"
+        data-i18n="contact_send_button"
+        data-sads-element="button"
+        data-sads-button-variant="primary" {# Assuming a SADS primary button style #}
+        data-sads-width="full"
+        data-sads-padding="m"
+        data-sads-margin-top="m"
+      >
+        {{ translations.get('contact_send_button', 'Send Message') }}
+      </button>
+      <div
+        data-sads-element="status-message"
+        id="contactFormStatus" {# ID is used by the script #}
+        role="status"
+        data-sads-min-height="custom:1.5em" {# Reserve space for message #}
+        data-sads-margin-top="s"
+        data-sads-text-align="center"
+        data-sads-font-size="s"
+        {# SADS could have attributes for success/error text colors e.g. data-sads-text-color-success, data-sads-text-color-error #}
+        {# These would be dynamically applied by JS if SADS supports it, or use classes as current script does #}
+      ></div>
+    </form>
+  </div>
+</section>
+
+{# The script part remains the same as it's client-side JavaScript #}
+{# It's already designed to pick up data attributes from the form tag and target IDs #}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("contactForm");
+    if (form) {
+      const statusDiv = document.getElementById("contactFormStatus");
+      const actionUrl = form.dataset.formActionUrl;
+      const successMessage = form.dataset.successMessage;
+      const errorMessage = form.dataset.errorMessage;
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const formData = new FormData(form);
+        statusDiv.textContent = "";
+        statusDiv.classList.remove("success", "error"); // Keep class-based styling for status messages for now
+
+        fetch(actionUrl, {
+          method: "POST",
+          body: formData,
+          headers: {
+            Accept: "application/json",
+          },
+        })
+          .then((response) => {
+            if (response.ok) {
+              statusDiv.textContent = successMessage;
+              statusDiv.classList.add("success"); // JS adds 'success' class
+              form.reset();
+            } else {
+              response.json().then((data) => {
+                if (Object.hasOwn(data, "errors")) {
+                  statusDiv.textContent = data["errors"]
+                    .map((error) => error["message"])
+                    .join(", ");
+                } else {
+                  statusDiv.textContent = errorMessage;
+                }
+                statusDiv.classList.add("error"); // JS adds 'error' class
+              });
+            }
+          })
+          .catch((error) => {
+            statusDiv.textContent = errorMessage;
+            statusDiv.classList.add("error");
+          });
+      });
+    }
+  });
+</script>
