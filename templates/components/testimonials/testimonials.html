@@ -18,13 +18,14 @@
     data-sads-element="list"
     data-sads-display="flex"
     data-sads-flex-direction="column" {# Stack testimonials vertically by default #}
-    data-sads-flex-align-items="center" {# Center items if they don't fill width #}
+    data-sads-flex-align-items="center" {# Center items if they don't fill width on mobile #}
     data-sads-gap="l" {# Gap between testimonial items #}
-    data-sads-max-width="content-container-narrow" {# Use a narrower container for readability #}
+    data-sads-max-width="content-container" {# Adjusted for potentially 3 items across #}
     data-sads-margin="custom:0 auto" {# Center the list container #}
     data-sads-responsive-rules='[
-        {"breakpoint": "tablet", "styles": {"flexDirection": "row", "flexWrap": "wrap", "flexJustify": "space-around"}}
-    ]' {# On tablet and up, arrange in rows and wrap #}
+        {"breakpoint": "tablet", "styles": {"flexDirection": "row", "flexWrap": "wrap", "flexJustify": "space-around", "alignItems": "stretch"}},
+        {"breakpoint": "desktop", "styles": {"flexDirection": "row", "flexWrap": "wrap", "flexJustify": "space-around", "alignItems": "stretch"}}
+    ]' {# On tablet and up, arrange in rows, wrap, and stretch items to equal height #}
   >
     {% for item in items %}
     <article
@@ -38,11 +39,12 @@
         data-sads-flex-direction="column"
         data-sads-flex-basis="full" {# Mobile: full width #}
         data-sads-responsive-rules='[
-            {"breakpoint": "tablet", "styles": {"flexBasis": "half-gap-l"}} {# Tablet: two items per row with 'l' gap accounted for #}
+            {"breakpoint": "tablet", "styles": {"flexBasis": "half-gap-l"}},
+            {"breakpoint": "desktop", "styles": {"flexBasis": "third-gap-l"}}
         ]'
-         {# Consider "third-gap-l" for desktop if 3 per row is desired on larger screens via another rule #}
+         {# Tablet: two items per row. Desktop: three items per row. Assumes SADS theme supports these flex-basis values #}
     >
-      <blockquote data-sads-element="quote" data-sads-margin-bottom="m">
+      <blockquote data-sads-element="quote" data-sads-margin-bottom="m" data-sads-flex-grow="1"> {# Allow quote to grow to fill space #}
         <p
           data-sads-font-size="m"
           data-sads-text-color="text-quote" {# Assumes 'text-quote' color #}

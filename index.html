@@ -274,10 +274,11 @@
     data-sads-flex-direction="column"
     data-sads-flex-align-items="center"
     data-sads-gap="l"
-    data-sads-max-width="content-container-narrow"
+    data-sads-max-width="content-container"
     data-sads-margin="custom:0 auto"
     data-sads-responsive-rules='[
-        {"breakpoint": "tablet", "styles": {"flexDirection": "row", "flexWrap": "wrap", "flexJustify": "space-around"}}
+        {"breakpoint": "tablet", "styles": {"flexDirection": "row", "flexWrap": "wrap", "flexJustify": "space-around", "alignItems": "stretch"}},
+        {"breakpoint": "desktop", "styles": {"flexDirection": "row", "flexWrap": "wrap", "flexJustify": "space-around", "alignItems": "stretch"}}
     ]'
   >
 
@@ -292,11 +293,12 @@
         data-sads-flex-direction="column"
         data-sads-flex-basis="full"
         data-sads-responsive-rules='[
-            {"breakpoint": "tablet", "styles": {"flexBasis": "half-gap-l"}}
+            {"breakpoint": "tablet", "styles": {"flexBasis": "half-gap-l"}},
+            {"breakpoint": "desktop", "styles": {"flexBasis": "third-gap-l"}}
         ]'
 
     >
-      <blockquote data-sads-element="quote" data-sads-margin-bottom="m">
+      <blockquote data-sads-element="quote" data-sads-margin-bottom="m" data-sads-flex-grow="1">
         <p
           data-sads-font-size="m"
           data-sads-text-color="text-quote"
@@ -344,11 +346,12 @@
         data-sads-flex-direction="column"
         data-sads-flex-basis="full"
         data-sads-responsive-rules='[
-            {"breakpoint": "tablet", "styles": {"flexBasis": "half-gap-l"}}
+            {"breakpoint": "tablet", "styles": {"flexBasis": "half-gap-l"}},
+            {"breakpoint": "desktop", "styles": {"flexBasis": "third-gap-l"}}
         ]'
 
     >
-      <blockquote data-sads-element="quote" data-sads-margin-bottom="m">
+      <blockquote data-sads-element="quote" data-sads-margin-bottom="m" data-sads-flex-grow="1">
         <p
           data-sads-font-size="m"
           data-sads-text-color="text-quote"
@@ -396,11 +399,12 @@
         data-sads-flex-direction="column"
         data-sads-flex-basis="full"
         data-sads-responsive-rules='[
-            {"breakpoint": "tablet", "styles": {"flexBasis": "half-gap-l"}}
+            {"breakpoint": "tablet", "styles": {"flexBasis": "half-gap-l"}},
+            {"breakpoint": "desktop", "styles": {"flexBasis": "third-gap-l"}}
         ]'
 
     >
-      <blockquote data-sads-element="quote" data-sads-margin-bottom="m">
+      <blockquote data-sads-element="quote" data-sads-margin-bottom="m" data-sads-flex-grow="1">
         <p
           data-sads-font-size="m"
           data-sads-text-color="text-quote"
