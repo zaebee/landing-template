@@ -68,11 +68,50 @@
     </header>
 
     <main>
-      <section class="hero">
-        <h1>hero_title_v1</h1>
-        <p>hero_subtitle_v1</p>
-        <a href="#signup" class="cta-button">hero_cta_v1</a>
-        <!-- Selected variation: hero_v1 -->
+      <section
+        data-sads-component="hero"
+        data-sads-padding="xl"
+        data-sads-text-align="center"
+        data-sads-bg-color="hero-section-bg"
+        data-sads-min-height="custom:75vh"
+        data-sads-display="flex"
+        data-sads-flex-direction="column"
+        data-sads-flex-justify="center"
+        data-sads-flex-align-items="center"
+      >
+        <h1
+          data-sads-element="title"
+          data-i18n="hero_title_v1"
+          data-sads-font-size="xxl"
+          data-sads-text-color="text-hero-title"
+          data-sads-margin-bottom="m"
+        >
+          Welcome to Our Site
+        </h1>
+        <p
+          data-sads-element="subtitle"
+          data-i18n="hero_subtitle_v1"
+          data-sads-font-size="l"
+          data-sads-text-color="text-hero-subtitle"
+          data-sads-margin-bottom="l"
+          data-sads-max-width="custom:800px"
+        >
+          Discover amazing things.
+        </p>
+
+        <a
+          data-sads-element="cta-button"
+          href="#signup"
+          data-sads-button-variant="primary"
+          data-sads-padding="m l"
+          data-sads-text-decoration="none"
+          data-sads-font-weight="bold"
+          data-sads-border-radius="s"
+          data-sads-bg-color="button-primary-bg"
+          data-sads-text-color="button-primary-text"
+        >
+          Learn More
+        </a>
       </section>
       <section
         data-sads-component="features"
@@ -93,7 +132,7 @@
         </h2>
         <div
           data-sads-element="list"
-          data-sads-layout-type="flex"
+          data-sads-display="flex"
           data-sads-flex-wrap="wrap"
           data-sads-flex-justify="space-around"
           data-sads-gap="m"
@@ -188,81 +227,394 @@
           </div>
         </div>
       </section>
-      <section class="testimonials" id="testimonials">
-        <h2 data-i18n="testimonials_title">Lo Que Dicen Nuestros Usuarios</h2>
-        <div class="testimonial-list">
-          <div class="testimonial-item">
-            <img
-              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
-              alt="Foto del Usuario 1"
-            />
-            <p>"Este es el mejor servicio que he usado. ¡Muy recomendado!"</p>
-            <h4>- Jane Doe</h4>
-          </div>
+      <section
+        data-sads-component="testimonials"
+        id="testimonials"
+        data-sads-padding="xl"
+        data-sads-text-align="center"
+        data-sads-bg-color="testimonials-section-bg"
+      >
+        <h2
+          data-sads-element="title"
+          data-i18n="testimonials_title"
+          data-sads-margin-bottom="xl"
+          data-sads-font-size="xl"
+          data-sads-text-color="text-primary"
+        >
+          Lo Que Dicen Nuestros Usuarios
+        </h2>
+        <div
+          data-sads-element="list"
+          data-sads-display="flex"
+          data-sads-flex-direction="column"
+          data-sads-flex-align-items="center"
+          data-sads-gap="l"
+          data-sads-max-width="content-container"
+          data-sads-margin="custom:0 auto"
+          data-sads-responsive-rules='[
+        {"breakpoint": "tablet", "styles": {"flexDirection": "row", "flexWrap": "wrap", "flexJustify": "space-around", "alignItems": "stretch"}},
+        {"breakpoint": "desktop", "styles": {"flexDirection": "row", "flexWrap": "wrap", "flexJustify": "space-around", "alignItems": "stretch"}}
+    ]'
+        >
+          <article
+            data-sads-element="item"
+            data-sads-bg-color="testimonial-item-bg"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-padding="l"
+            data-sads-text-align="left"
+            data-sads-display="flex"
+            data-sads-flex-direction="column"
+            data-sads-flex-basis="full"
+            data-sads-responsive-rules='[
+            {"breakpoint": "tablet", "styles": {"flexBasis": "half-gap-l"}},
+            {"breakpoint": "desktop", "styles": {"flexBasis": "third-gap-l"}}
+        ]'
+          >
+            <blockquote
+              data-sads-element="quote"
+              data-sads-margin-bottom="m"
+              data-sads-flex-grow="1"
+            >
+              <p
+                data-sads-font-size="m"
+                data-sads-text-color="text-quote"
+                data-sads-line-height="relaxed"
+              >
+                "Este es el mejor servicio que he usado. ¡Muy recomendado!"
+              </p>
+            </blockquote>
+            <figcaption
+              data-sads-element="author-info"
+              data-sads-display="flex"
+              data-sads-flex-align-items="center"
+              data-sads-gap="m"
+            >
+              <img
+                data-sads-element="author-image"
+                src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
+                alt="Foto del Usuario 1"
+                data-sads-width="custom:60px"
+                data-sads-height="custom:60px"
+                data-sads-border-radius="circle"
+                data-sads-object-fit="cover"
+              />
 
-          <div class="testimonial-item">
-            <img
-              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
-              alt="Foto del Usuario 2"
-            />
-            <p>
-              "Características increíbles y un soporte espectacular. Mi negocio
-              ha crecido significativamente."
-            </p>
-            <h4>- John Smith</h4>
-          </div>
+              <cite
+                data-sads-element="author-name"
+                data-sads-font-style="normal"
+                data-sads-font-weight="bold"
+                data-sads-text-color="text-accent"
+              >
+                - Jane Doe
+              </cite>
+            </figcaption>
+          </article>
 
-          <div class="testimonial-item">
-            <img
-              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
-              alt="Foto del Usuario 3"
-            />
-            <p>
-              "Un cambio de juego para nuestro flujo de trabajo. Simple,
-              efectivo y confiable."
-            </p>
-            <h4>- Alice Brown</h4>
-          </div>
+          <article
+            data-sads-element="item"
+            data-sads-bg-color="testimonial-item-bg"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-padding="l"
+            data-sads-text-align="left"
+            data-sads-display="flex"
+            data-sads-flex-direction="column"
+            data-sads-flex-basis="full"
+            data-sads-responsive-rules='[
+            {"breakpoint": "tablet", "styles": {"flexBasis": "half-gap-l"}},
+            {"breakpoint": "desktop", "styles": {"flexBasis": "third-gap-l"}}
+        ]'
+          >
+            <blockquote
+              data-sads-element="quote"
+              data-sads-margin-bottom="m"
+              data-sads-flex-grow="1"
+            >
+              <p
+                data-sads-font-size="m"
+                data-sads-text-color="text-quote"
+                data-sads-line-height="relaxed"
+              >
+                "Características increíbles y un soporte espectacular. Mi
+                negocio ha crecido significativamente."
+              </p>
+            </blockquote>
+            <figcaption
+              data-sads-element="author-info"
+              data-sads-display="flex"
+              data-sads-flex-align-items="center"
+              data-sads-gap="m"
+            >
+              <img
+                data-sads-element="author-image"
+                src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
+                alt="Foto del Usuario 2"
+                data-sads-width="custom:60px"
+                data-sads-height="custom:60px"
+                data-sads-border-radius="circle"
+                data-sads-object-fit="cover"
+              />
+
+              <cite
+                data-sads-element="author-name"
+                data-sads-font-style="normal"
+                data-sads-font-weight="bold"
+                data-sads-text-color="text-accent"
+              >
+                - John Smith
+              </cite>
+            </figcaption>
+          </article>
+
+          <article
+            data-sads-element="item"
+            data-sads-bg-color="testimonial-item-bg"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-padding="l"
+            data-sads-text-align="left"
+            data-sads-display="flex"
+            data-sads-flex-direction="column"
+            data-sads-flex-basis="full"
+            data-sads-responsive-rules='[
+            {"breakpoint": "tablet", "styles": {"flexBasis": "half-gap-l"}},
+            {"breakpoint": "desktop", "styles": {"flexBasis": "third-gap-l"}}
+        ]'
+          >
+            <blockquote
+              data-sads-element="quote"
+              data-sads-margin-bottom="m"
+              data-sads-flex-grow="1"
+            >
+              <p
+                data-sads-font-size="m"
+                data-sads-text-color="text-quote"
+                data-sads-line-height="relaxed"
+              >
+                "Un cambio de juego para nuestro flujo de trabajo. Simple,
+                efectivo y confiable."
+              </p>
+            </blockquote>
+            <figcaption
+              data-sads-element="author-info"
+              data-sads-display="flex"
+              data-sads-flex-align-items="center"
+              data-sads-gap="m"
+            >
+              <img
+                data-sads-element="author-image"
+                src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
+                alt="Foto del Usuario 3"
+                data-sads-width="custom:60px"
+                data-sads-height="custom:60px"
+                data-sads-border-radius="circle"
+                data-sads-object-fit="cover"
+              />
+
+              <cite
+                data-sads-element="author-name"
+                data-sads-font-style="normal"
+                data-sads-font-weight="bold"
+                data-sads-text-color="text-accent"
+              >
+                - Alice Brown
+              </cite>
+            </figcaption>
+          </article>
         </div>
       </section>
-      <section class="portfolio" id="portfolio">
-        <h2 data-i18n="portfolio_title">Nuestro Trabajo</h2>
-        <div class="portfolio-grid">
-          <div class="portfolio-item" id="project1">
+      <section
+        data-sads-component="portfolio"
+        id="portfolio"
+        data-sads-padding="xl"
+        data-sads-text-align="center"
+        data-sads-bg-color="portfolio-section-bg"
+      >
+        <h2
+          data-sads-element="title"
+          data-i18n="portfolio_title"
+          data-sads-margin-bottom="xl"
+          data-sads-font-size="xl"
+          data-sads-text-color="text-primary"
+        >
+          Nuestro Trabajo
+        </h2>
+        <div
+          data-sads-element="grid"
+          data-sads-display="grid"
+          data-sads-grid-template-columns="repeat(auto-fit, minmax(300px, 1fr))"
+          data-sads-gap="l"
+          data-sads-max-width="content-container"
+          data-sads-margin="custom:0 auto"
+        >
+          <article
+            data-sads-element="item"
+            id="project1"
+            data-sads-bg-color="portfolio-item-bg"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-padding="l"
+            data-sads-text-align="left"
+            data-sads-display="flex"
+            data-sads-flex-direction="column"
+          >
             <img
+              data-sads-element="item-image"
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
-              alt="Portfolio image"
+              alt="project_alpha_alt"
+              data-sads-width="full"
+              data-sads-height="custom:200px"
+              data-sads-object-fit="cover"
+              data-sads-border-radius="s"
+              data-sads-margin-bottom="m"
             />
-            <h3>Proyecto Alfa</h3>
-            <p>Descripción del Proyecto Alfa.</p>
-          </div>
 
-          <div class="portfolio-item" id="project2">
-            <img
-              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
-              alt="Portfolio image"
-            />
-            <h3>Proyecto Beta</h3>
-            <p>Descripción del Proyecto Beta.</p>
-          </div>
+            <h3
+              data-sads-element="item-title"
+              data-sads-font-size="l"
+              data-sads-text-color="text-accent"
+              data-sads-margin-top="xs"
+              data-sads-margin-bottom="s"
+            >
+              Proyecto Alfa
+            </h3>
+            <p
+              data-sads-element="item-description"
+              data-sads-font-size="s"
+              data-sads-text-color="text-secondary"
+              data-sads-flex-grow="1"
+              data-sads-margin-bottom="m"
+            >
+              Descripción del Proyecto Alfa.
+            </p>
+          </article>
 
-          <div class="portfolio-item" id="project3">
+          <article
+            data-sads-element="item"
+            id="project2"
+            data-sads-bg-color="portfolio-item-bg"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-padding="l"
+            data-sads-text-align="left"
+            data-sads-display="flex"
+            data-sads-flex-direction="column"
+          >
             <img
+              data-sads-element="item-image"
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
-              alt="Portfolio image"
+              alt="project_beta_alt"
+              data-sads-width="full"
+              data-sads-height="custom:200px"
+              data-sads-object-fit="cover"
+              data-sads-border-radius="s"
+              data-sads-margin-bottom="m"
             />
-            <h3>Proyecto Gama</h3>
-            <p>Descripción del Proyecto Gama.</p>
-          </div>
 
-          <div class="portfolio-item" id="project4">
+            <h3
+              data-sads-element="item-title"
+              data-sads-font-size="l"
+              data-sads-text-color="text-accent"
+              data-sads-margin-top="xs"
+              data-sads-margin-bottom="s"
+            >
+              Proyecto Beta
+            </h3>
+            <p
+              data-sads-element="item-description"
+              data-sads-font-size="s"
+              data-sads-text-color="text-secondary"
+              data-sads-flex-grow="1"
+              data-sads-margin-bottom="m"
+            >
+              Descripción del Proyecto Beta.
+            </p>
+          </article>
+
+          <article
+            data-sads-element="item"
+            id="project3"
+            data-sads-bg-color="portfolio-item-bg"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-padding="l"
+            data-sads-text-align="left"
+            data-sads-display="flex"
+            data-sads-flex-direction="column"
+          >
             <img
+              data-sads-element="item-image"
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
-              alt="Portfolio image"
+              alt="project_gamma_alt"
+              data-sads-width="full"
+              data-sads-height="custom:200px"
+              data-sads-object-fit="cover"
+              data-sads-border-radius="s"
+              data-sads-margin-bottom="m"
             />
-            <h3>Proyecto Delta</h3>
-            <p>Descripción del Proyecto Delta.</p>
-          </div>
+
+            <h3
+              data-sads-element="item-title"
+              data-sads-font-size="l"
+              data-sads-text-color="text-accent"
+              data-sads-margin-top="xs"
+              data-sads-margin-bottom="s"
+            >
+              Proyecto Gama
+            </h3>
+            <p
+              data-sads-element="item-description"
+              data-sads-font-size="s"
+              data-sads-text-color="text-secondary"
+              data-sads-flex-grow="1"
+              data-sads-margin-bottom="m"
+            >
+              Descripción del Proyecto Gama.
+            </p>
+          </article>
+
+          <article
+            data-sads-element="item"
+            id="project4"
+            data-sads-bg-color="portfolio-item-bg"
+            data-sads-border-radius="m"
+            data-sads-shadow="subtle"
+            data-sads-padding="l"
+            data-sads-text-align="left"
+            data-sads-display="flex"
+            data-sads-flex-direction="column"
+          >
+            <img
+              data-sads-element="item-image"
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
+              alt="project_delta_alt"
+              data-sads-width="full"
+              data-sads-height="custom:200px"
+              data-sads-object-fit="cover"
+              data-sads-border-radius="s"
+              data-sads-margin-bottom="m"
+            />
+
+            <h3
+              data-sads-element="item-title"
+              data-sads-font-size="l"
+              data-sads-text-color="text-accent"
+              data-sads-margin-top="xs"
+              data-sads-margin-bottom="s"
+            >
+              Proyecto Delta
+            </h3>
+            <p
+              data-sads-element="item-description"
+              data-sads-font-size="s"
+              data-sads-text-color="text-secondary"
+              data-sads-flex-grow="1"
+              data-sads-margin-bottom="m"
+            >
+              Descripción del Proyecto Delta.
+            </p>
+          </article>
         </div>
       </section>
       <section

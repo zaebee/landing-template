@@ -92,10 +92,11 @@ class BaseHtmlGenerator(HtmlBlockGenerator):
 
 
 @register_html_generator(
-    block_name="portfolio.html", template_to_render="blocks/portfolio.html"
+    block_name="portfolio.html",
+    template_to_render="components/portfolio/portfolio.html",
 )  # data_key="items" is default
 class PortfolioHtmlGenerator(BaseHtmlGenerator):
-    """Generates HTML for a list of portfolio items using Jinja2."""
+    """Generates HTML for a list of portfolio items using Jinja2, utilizing SADS attributes."""
 
     # __init__ is inherited from BaseHtmlGenerator
 
@@ -119,10 +120,11 @@ class PortfolioHtmlGenerator(BaseHtmlGenerator):
 
 
 @register_html_generator(
-    block_name="testimonials.html", template_to_render="blocks/testimonials.html"
+    block_name="testimonials.html",
+    template_to_render="components/testimonials/testimonials.html",
 )  # data_key="items" is default
 class TestimonialsHtmlGenerator(BaseHtmlGenerator):
-    """Generates HTML for a list of testimonial items using Jinja2."""
+    """Generates HTML for a list of testimonial items using Jinja2, utilizing SADS attributes."""
 
     # __init__ is inherited
 
@@ -163,14 +165,15 @@ class FeaturesHtmlGenerator(BaseHtmlGenerator):
 
 
 @register_html_generator(
-    block_name="hero.html", template_to_render="blocks/hero.html"
-)  # No data_key needed as it has custom generate_html
+    block_name="hero.html",
+    template_to_render="components/hero/hero.html",
+    data_key="item",  # Match the variable name in the new template
+)
 class HeroHtmlGenerator(BaseHtmlGenerator):
-    """Generates HTML for a hero section using Jinja2."""
+    """Generates HTML for a hero section using Jinja2, utilizing SADS attributes."""
 
     # __init__ is inherited from BaseHtmlGenerator
 
-    # generate_html is custom due to variation logic
     def generate_html(
         self, data: Optional[HeroItem], translations: Translations
     ) -> str:
@@ -183,30 +186,27 @@ class HeroHtmlGenerator(BaseHtmlGenerator):
         Returns:
             An HTML string for the hero section.
         """
-        if not data or not data.variations:
-            return "<!-- Hero data not found or no variations -->"
+        if not data:  # Simplified: if no data, the SADS template will handle it.
+            return super().generate_html(None, translations)
 
         selected_variation: Optional[HeroItemContent] = None
 
-        # Attempt to find and set the selected_variation
-        if data.default_variation_id:
-            for var in data.variations:
-                if var.variation_id == data.default_variation_id:
-                    selected_variation = var
-                    break
+        if data.variations:
+            # Attempt to find and set the selected_variation
+            if data.default_variation_id:
+                for var in data.variations:
+                    if var.variation_id == data.default_variation_id:
+                        selected_variation = var
+                        break
 
-        # If no specific variation was found yet (e.g. default_variation_id didn't match or wasn't set)
-        # and variations are available, pick one randomly. (This condition also ensures data.variations is not empty)
-        if (
-            not selected_variation
-        ):  # Already know data.variations is not empty from the guard clause
-            selected_variation = random.choice(data.variations)
+            # If no specific variation was found yet (e.g. default_variation_id didn't match or wasn't set)
+            # and variations are available, pick one randomly.
+            if not selected_variation:
+                selected_variation = random.choice(data.variations)
 
-        template = self.jinja_env.get_template(self.__class__.template_to_render)
-        # The template expects `hero_item` as the context variable for the selected variation
-        return str(
-            template.render(hero_item=selected_variation, translations=translations)
-        )
+        # Pass the selected_variation to the template via the data_key="item"
+        # The BaseHtmlGenerator.generate_html will use self.data_key_for_template ("item")
+        return super().generate_html(selected_variation, translations)
 
 
 @register_html_generator(

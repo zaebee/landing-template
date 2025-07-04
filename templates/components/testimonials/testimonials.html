@@ -1,0 +1,89 @@
+<section
+    data-sads-component="testimonials"
+    id="testimonials"
+    data-sads-padding="xl"
+    data-sads-text-align="center"
+    data-sads-bg-color="testimonials-section-bg" {# Assumes a theme key 'testimonials-section-bg' #}
+>
+  <h2
+    data-sads-element="title"
+    data-i18n="testimonials_title"
+    data-sads-margin-bottom="xl"
+    data-sads-font-size="xl"
+    data-sads-text-color="text-primary"
+  >
+    {{ translations.get('testimonials_title', 'Testimonials') }}
+  </h2>
+  <div
+    data-sads-element="list"
+    data-sads-display="flex"
+    data-sads-flex-direction="column" {# Stack testimonials vertically by default #}
+    data-sads-flex-align-items="center" {# Center items if they don't fill width on mobile #}
+    data-sads-gap="l" {# Gap between testimonial items #}
+    data-sads-max-width="content-container" {# Adjusted for potentially 3 items across #}
+    data-sads-margin="custom:0 auto" {# Center the list container #}
+    data-sads-responsive-rules='[
+        {"breakpoint": "tablet", "styles": {"flexDirection": "row", "flexWrap": "wrap", "flexJustify": "space-around", "alignItems": "stretch"}},
+        {"breakpoint": "desktop", "styles": {"flexDirection": "row", "flexWrap": "wrap", "flexJustify": "space-around", "alignItems": "stretch"}}
+    ]' {# On tablet and up, arrange in rows, wrap, and stretch items to equal height #}
+  >
+    {% for item in items %}
+    <article
+        data-sads-element="item"
+        data-sads-bg-color="testimonial-item-bg" {# Assumes 'testimonial-item-bg' #}
+        data-sads-border-radius="m"
+        data-sads-shadow="subtle"
+        data-sads-padding="l"
+        data-sads-text-align="left"
+        data-sads-display="flex"
+        data-sads-flex-direction="column"
+        data-sads-flex-basis="full" {# Mobile: full width #}
+        data-sads-responsive-rules='[
+            {"breakpoint": "tablet", "styles": {"flexBasis": "half-gap-l"}},
+            {"breakpoint": "desktop", "styles": {"flexBasis": "third-gap-l"}}
+        ]'
+         {# Tablet: two items per row. Desktop: three items per row. Assumes SADS theme supports these flex-basis values #}
+    >
+      <blockquote data-sads-element="quote" data-sads-margin-bottom="m" data-sads-flex-grow="1"> {# Allow quote to grow to fill space #}
+        <p
+          data-sads-font-size="m"
+          data-sads-text-color="text-quote" {# Assumes 'text-quote' color #}
+          data-sads-line-height="relaxed"
+        >
+          "{{ translations.get(item.text.key if item.text else '', item.text.key if item.text else 'Testimonial text here.') }}"
+        </p>
+      </blockquote>
+      <figcaption
+        data-sads-element="author-info"
+        data-sads-display="flex"
+        data-sads-flex-align-items="center"
+        data-sads-gap="m"
+      >
+        {% if item.author_image and item.author_image.src %}
+        <img
+          data-sads-element="author-image"
+          src="{{ item.author_image.src }}"
+          alt="{{ translations.get(item.author_image.alt_text.key if item.author_image.alt_text else '', item.author_image.alt_text.key if item.author_image.alt_text else 'Author image') }}"
+          data-sads-width="custom:60px" {# Fixed size for author image #}
+          data-sads-height="custom:60px"
+          data-sads-border-radius="circle"
+          data-sads-object-fit="cover"
+        />
+        {% endif %}
+        <cite
+          data-sads-element="author-name"
+          data-sads-font-style="normal"
+          data-sads-font-weight="bold"
+          data-sads-text-color="text-accent"
+        >
+          {{ translations.get(item.author.key if item.author else '', item.author.key if item.author else 'Author Name') }}
+        </cite>
+      </figcaption>
+    </article>
+    {% else %}
+    <p data-sads-element="no-items-message" data-sads-text-color="text-secondary">
+      {{ translations.get('testimonials_no_items', 'No testimonials to display at this time.') }}
+    </p>
+    {% endfor %}
+  </div>
+</section>
