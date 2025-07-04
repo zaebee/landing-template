@@ -31,17 +31,25 @@
   text-decoration: none;
 }
 
-[data-sads-element="nav-list"] [data-sads-element="nav-item"] a.active-nav-link {
+[data-sads-element="nav-list"]
+  [data-sads-element="nav-item"]
+  a.active-nav-link {
   background-color: #007bff; /* TODO: Use SADS theme variable */
   /* color: #fff; */
 }
 
-body.dark-mode [data-sads-element="nav-list"] [data-sads-element="nav-item"] a:hover {
+body.dark-mode
+  [data-sads-element="nav-list"]
+  [data-sads-element="nav-item"]
+  a:hover {
   background-color: #444; /* TODO: Use SADS theme variable */
   /* color: #e0e0e0; */
 }
 
-body.dark-mode [data-sads-element="nav-list"] [data-sads-element="nav-item"] a.active-nav-link {
+body.dark-mode
+  [data-sads-element="nav-list"]
+  [data-sads-element="nav-item"]
+  a.active-nav-link {
   background-color: #0af; /* TODO: Use SADS theme variable */
   color: #121212;
 }
@@ -80,7 +88,8 @@ body.dark-mode #language-switcher button.active {
 @media (width <= 768px) {
   /* Hamburger menu is shown via SADS responsive rule on its element */
   /* Nav items container (.nav-items) styling for mobile dropdown state */
-  [data-sads-element="nav-items-container"].active { /* Class toggled by JS to show menu */
+  [data-sads-element="nav-items-container"].active {
+    /* Class toggled by JS to show menu */
     display: flex !important; /* Override SADS "display: none" from responsive rule */
     /* Ensure other visual properties like z-index, box-shadow are set by SADS responsive rules:
        e.g. data-sads-responsive-rules='[..., {"breakpoint": "mobile", "styles": {"zIndex": "dropdown", "shadow": "overlay"}}]'

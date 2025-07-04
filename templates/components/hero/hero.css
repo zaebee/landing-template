@@ -8,10 +8,10 @@
 */
 [data-sads-component="hero"] .cta-button:hover {
   background-color: #e6e6e6; /* Light mode hover */
-  color: #0056b3;           /* Light mode hover */
+  color: #0056b3; /* Light mode hover */
 }
 
 body.dark-mode [data-sads-component="hero"] .cta-button:hover {
   background-color: #ccc; /* Dark mode hover */
-  color: #000;          /* Dark mode hover */
+  color: #000; /* Dark mode hover */
 }

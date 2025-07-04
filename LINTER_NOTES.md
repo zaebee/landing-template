@@ -38,7 +38,6 @@ CSS files (`.css`) are linted using [Stylelint](https://stylelint.io/).
 Python code (`.py` files) is linted using [Ruff](https://beta.ruff.rs/docs/) for formatting and general code quality (style, errors, etc.) and [MyPy](http://mypy-lang.org/) for static type checking.
 
 - **Configuration**:
-
   - Ruff is configured in `pyproject.toml` under the `[tool.ruff]` and `[tool.ruff.lint]` sections.
   - MyPy is configured in `pyproject.toml` under the `[tool.mypy]` section.
   - Development dependencies, including `ruff` and `mypy`, are listed in `requirements-dev.txt`. Install them using `pip install -r requirements-dev.txt`.

@@ -79,10 +79,9 @@
         data-sads-margin-top="none" {# CSS: margin-top: 0 #}
         data-sads-font-weight="bold" {# CSS: font-weight: bold #}
         data-sads-text-color="testimonial-author-text" {# Theme: #333 light, #e0e0e0 dark #}
-        >
-          {{ translations.get(item.author.key if item.author else '', item.author.key if item.author else 'Author Name') }}
-        </cite>
-      </figcaption>
+      >
+        {{ translations.get(item.author.key if item.author else '', item.author.key if item.author else 'Author Name') }}
+      </h4>
     </article>
     {% else %}
     <p data-sads-element="no-items-message" data-sads-text-color="text-secondary">

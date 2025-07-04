@@ -66,15 +66,14 @@
       aria-label="{{ translations.get('toggle_menu_label', 'Toggle menu') }}"
       class="hamburger-menu"
       data-sads-display="none"
-      data-sads-responsive-rules='[
-        {"breakpoint": "mobile", "styles": {"display": "block"}}
-      ]'
+      data-sads-responsive-rules="[ {&quot;breakpoint&quot;: &quot;mobile&quot;, &quot;styles&quot;: {&quot;display&quot;: &quot;block&quot;}} ]"
       data-sads-button-variant="icon"
       data-sads-text-color="text-primary"
       data-sads-cursor="pointer"
       data-sads-bg-color="transparent"
       data-sads-border-style="none"
-      data-sads-padding="s" {# From original global CSS: padding: 10px -> theme 's' or specific custom value #}
+      {# From original global CSS: padding: 10px -> theme 's' or specific custom value #}
+      data-sads-padding="s"
     >
       {# Default: hide on larger screens #} {# Assuming SADS can style a basic
       icon button look #} {# Keep class if specific CSS for hamburger animation

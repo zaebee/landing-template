@@ -26,8 +26,12 @@ body.dark-mode .contact-submit-button:hover {
   /* Ensure other SADS properties like background/text color are not unintentionally overridden unless desired */
 }
 
-body.dark-mode [data-sads-component="contact-form"] [data-sads-element="input"]:focus,
-body.dark-mode [data-sads-component="contact-form"] [data-sads-element="textarea"]:focus {
+body.dark-mode
+  [data-sads-component="contact-form"]
+  [data-sads-element="input"]:focus,
+body.dark-mode
+  [data-sads-component="contact-form"]
+  [data-sads-element="textarea"]:focus {
   border-color: #0af; /* Dark mode focus border color */
   box-shadow: 0 0 0 0.2rem rgba(0, 170, 255, 0.25); /* Dark mode focus shadow */
 }
