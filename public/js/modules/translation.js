@@ -38,12 +38,17 @@ async function _fetchTranslations(lang) {
   try {
     const response = await fetch(`public/locales/${lang}.json`);
     if (!response.ok) {
-      console.error(`Could not load translation file for language "${lang}": ${response.statusText}`);
+      console.error(
+        `Could not load translation file for language "${lang}": ${response.statusText}`
+      );
       return null;
     }
     return await response.json();
   } catch (error) {
-    console.error(`Error fetching translation file for language "${lang}":`, error);
+    console.error(
+      `Error fetching translation file for language "${lang}":`,
+      error
+    );
     return null;
   }
 }
@@ -56,7 +61,9 @@ async function _fetchTranslations(lang) {
  */
 function _applyTranslationsToDOM(translations) {
   if (!translations || Object.keys(translations).length === 0) {
-    console.warn("[translation] Attempted to apply empty or null translations to DOM.");
+    console.warn(
+      "[translation] Attempted to apply empty or null translations to DOM."
+    );
     return;
   }
   currentTranslations = translations; // Update internal state
@@ -85,11 +92,15 @@ function _dispatchStateAndLanguageChange(lang, currentDarkModeState) {
     translationsLoaded: true,
     darkMode: currentDarkModeState,
   };
-  document.dispatchEvent(new CustomEvent("appStateChanged", { detail: appStateDetail }));
+  document.dispatchEvent(
+    new CustomEvent("appStateChanged", { detail: appStateDetail })
+  );
 
   /** @type {LanguageChangedEventDetail} */
   const langChangedDetail = { lang: lang };
-  document.dispatchEvent(new CustomEvent("languageChanged", { detail: langChangedDetail }));
+  document.dispatchEvent(
+    new CustomEvent("languageChanged", { detail: langChangedDetail })
+  );
 }
 
 /**

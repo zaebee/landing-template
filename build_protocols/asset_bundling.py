@@ -99,8 +99,10 @@ class DefaultAssetBundler:  # Implements AssetBundler (structurally)
             os.path.join(modules_dir, "darkMode.js"),
             os.path.join(modules_dir, "translation.js"),
             os.path.join(modules_dir, "sadsManager.js"),
-            os.path.join(shared_js_dir, "app.js"), # Main orchestrator
-            os.path.join(shared_js_dir, "headerInteractions.js"), # Header-specific interactions
+            os.path.join(shared_js_dir, "app.js"),  # Main orchestrator
+            os.path.join(
+                shared_js_dir, "headerInteractions.js"
+            ),  # Header-specific interactions
         ]
 
         processed_shared_js = []
@@ -110,7 +112,11 @@ class DefaultAssetBundler:  # Implements AssetBundler (structurally)
                 print(f"Found JS: {path}")
             else:
                 # app.js is critical, others might be optional if project evolves
-                if os.path.basename(path) in ["app.js", "sads-style-engine.js", "sads-default-theme.js"]:
+                if os.path.basename(path) in [
+                    "app.js",
+                    "sads-style-engine.js",
+                    "sads-default-theme.js",
+                ]:
                     print(f"ERROR: Critical JS file not found: {path}")
                     # Depending on strictness, might want to return None or raise error
                 else:

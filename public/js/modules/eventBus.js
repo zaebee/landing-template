@@ -49,4 +49,6 @@ const eventEmitter = {
 export default eventEmitter;
 */
 
-console.log("eventBus.js loaded (currently a placeholder for type definitions and future use).");
+console.log(
+  "eventBus.js loaded (currently a placeholder for type definitions and future use)."
+);

@@ -109,7 +109,7 @@ body.dark-mode {
 .hamburger-menu .hamburger-bar {
   display: block;
   width: 25px; /* Example width */
-  height: 3px;  /* Example height */
+  height: 3px; /* Example height */
   background-color: currentColor; /* Inherit color from parent button's text color (set by SADS) */
   border-radius: 3px;
   transition: all 0.3s ease-in-out;
@@ -166,7 +166,10 @@ body.dark-mode #language-switcher button.active-lang {
   /* background-color: #f8f9fa; */ /* Now handled by SADS data-sads-bg-color */
   /* color: #333; */ /* Now handled by SADS data-sads-text-color */
   border-radius: 4px; /* Default border-radius from theme 's', can be SADS attribute too if needed */
-  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  transition:
+    background-color 0.2s ease-in-out,
+    border-color 0.2s ease-in-out,
+    color 0.2s ease-in-out;
   line-height: 1; /* Ensure icon buttons don't have excessive line height */
   min-width: 40px; /* Ensure a minimum tap target size / width */
   min-height: 30px; /* Ensure a minimum tap target size / height */
@@ -191,7 +194,6 @@ body.dark-mode #language-switcher button.active-lang {
   color: #333; /* Fallback - matches theme's text-primary */
 }
 
-
 body.dark-mode #dark-mode-toggle {
   /* text color for icon should come from data-sads-text-color="text-primary" which has a dark mode variant */
 }
@@ -205,7 +207,6 @@ body.dark-mode #language-switcher button {
 
 /* The #dark-mode-toggle specific dark mode styling for bg/border is removed as it's transparent.
    Its text color (the icon) will be handled by its data-sads-text-color="text-primary" attribute. */
-
 
 /* Hover/Focus states for header buttons */
 #dark-mode-toggle:hover,
@@ -242,7 +243,12 @@ header nav ul li a:focus {
 
 body.dark-mode header nav ul li a:hover,
 body.dark-mode header nav ul li a:focus {
-  background-color: rgba(255, 255, 255, 0.1); /* Subtle background for dark mode */
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.1
+  ); /* Subtle background for dark mode */
 }
 
 /* Remove SADS-applied padding if CSS is taking over for specific buttons */

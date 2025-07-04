@@ -53,7 +53,10 @@ function initSadsEngine() {
  * @public
  */
 function reapplySadsStyles() {
-  if (sadsEngineInstance && typeof sadsEngineInstance.applyStylesTo === "function") {
+  if (
+    sadsEngineInstance &&
+    typeof sadsEngineInstance.applyStylesTo === "function"
+  ) {
     const components = document.querySelectorAll("[data-sads-component]");
     if (components.length > 0) {
       components.forEach((comp) => {
@@ -61,7 +64,9 @@ function reapplySadsStyles() {
         // console.log("sadsManager: Re-applying styles to component:", comp.dataset.sadsComponent);
         sadsEngineInstance.applyStylesTo(comp);
       });
-      console.log(`SADS styles re-applied to ${components.length} component(s) by sadsManager.`);
+      console.log(
+        `SADS styles re-applied to ${components.length} component(s) by sadsManager.`
+      );
     } else {
       // console.log("sadsManager: No SADS components found to re-apply styles to.");
     }
@@ -70,7 +75,7 @@ function reapplySadsStyles() {
     if (typeof SADSEngine === "function" && !sadsEngineInstance) {
       console.warn(
         "sadsManager: SADSEngine class is available, but the instance is not. " +
-        "Initialize the engine using initSadsEngine() before attempting to re-apply styles."
+          "Initialize the engine using initSadsEngine() before attempting to re-apply styles."
       );
     } else if (typeof SADSEngine !== "function") {
       // This case is covered by initSadsEngine, but good for explicitness if reapply is called independently.

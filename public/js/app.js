@@ -90,8 +90,11 @@ window.appGlobal.handleDarkModeToggle = function () {
  * @async
  */
 window.appGlobal.setAppLanguage = async function (lang) {
-  if (typeof lang !== 'string' || !lang.trim()) {
-    console.error("setAppLanguage: lang parameter must be a non-empty string.", lang);
+  if (typeof lang !== "string" || !lang.trim()) {
+    console.error(
+      "setAppLanguage: lang parameter must be a non-empty string.",
+      lang
+    );
     return;
   }
   // Pass the current dark mode state for the 'appStateChanged' event dispatched by `setLanguage`.
@@ -106,4 +109,6 @@ window.appGlobal.setAppLanguage = async function (lang) {
 // Defer initialization until the DOM is fully loaded and parsed.
 document.addEventListener("DOMContentLoaded", initializeApp);
 
-console.log("app.js orchestrator script loaded. Initialization will occur on DOMContentLoaded.");
+console.log(
+  "app.js orchestrator script loaded. Initialization will occur on DOMContentLoaded."
+);

@@ -74,7 +74,10 @@ function initDarkMode() {
  */
 function toggleDarkMode() {
   isDarkModeEnabled = !isDarkModeEnabled;
-  localStorage.setItem(DARK_MODE_STORAGE_KEY, isDarkModeEnabled ? "enabled" : "disabled");
+  localStorage.setItem(
+    DARK_MODE_STORAGE_KEY,
+    isDarkModeEnabled ? "enabled" : "disabled"
+  );
   _applyDarkModePreferenceToDOM();
   _dispatchStateChange({ darkMode: isDarkModeEnabled });
   console.log("Dark Mode Toggled. Enabled:", isDarkModeEnabled); // Keep this informative log
