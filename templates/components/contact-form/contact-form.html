@@ -3,6 +3,7 @@
 <section
   data-sads-component="contact-form"
   id="contact" {# Keep ID for potential navigation #}
+  itemscope itemtype="https://schema.org/ContactPage"
   data-sads-padding="xl"
   data-sads-bg-color="contact-section-bg"
   data-sads-text-align="center"
@@ -17,6 +18,19 @@
     data-sads-shadow="medium" {# Theme: medium shadow #}
   >
     {{ form_title(text_key='title', default_text='Contact Us') }}
+
+    <p
+      data-sads-element="subtitle"
+      data-sads-text-color="text-secondary"
+      data-sads-font-size="m"
+      data-sads-margin-bottom="l" {# Increased from m to l for more space before form #}
+      data-sads-max-width="custom:90%" {# Keep it slightly constrained #}
+      data-sads-margin-left="auto" {# Center the max-width block #}
+      data-sads-margin-right="auto" {# Center the max-width block #}
+      data-i18n="contact_subtitle"
+    >
+      {{ translations.get('contact_subtitle', 'Have a question or want to work together? Fill out the form below.') }}
+    </p>
 
     <form
       data-sads-element="form"
@@ -46,48 +60,92 @@
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("contactForm");
-    if (form) {
-      const statusDiv = document.getElementById("contactFormStatus");
-      const actionUrl = form.dataset.formActionUrl;
-      const successMessage = form.dataset.successMessage;
-      const errorMessage = form.dataset.errorMessage;
+    if (!form) return;
 
-      form.addEventListener("submit", function (event) {
-        event.preventDefault();
-        const formData = new FormData(form);
-        statusDiv.textContent = "";
-        statusDiv.classList.remove("success", "error"); // Keep class-based styling for status messages for now
+    const submitButton = form.querySelector(".contact-submit-button");
+    const buttonText = submitButton ? submitButton.querySelector(".button-text") : null;
+    const buttonSpinner = submitButton ? submitButton.querySelector(".button-spinner") : null;
+    const originalButtonText = buttonText ? buttonText.textContent : "";
+    const sendingButtonText = "{{ translations.get('contact_sending_button', 'Sending...') }}"; // Get this from translations
 
-        fetch(actionUrl, {
-          method: "POST",
-          body: formData,
-          headers: {
-            Accept: "application/json",
-          },
-        })
-          .then((response) => {
-            if (response.ok) {
-              statusDiv.textContent = successMessage;
-              statusDiv.classList.add("success"); // JS adds 'success' class
-              form.reset();
-            } else {
-              response.json().then((data) => {
-                if (Object.hasOwn(data, "errors")) {
-                  statusDiv.textContent = data["errors"]
-                    .map((error) => error["message"])
-                    .join(", ");
-                } else {
-                  statusDiv.textContent = errorMessage;
-                }
-                statusDiv.classList.add("error"); // JS adds 'error' class
-              });
-            }
-          })
-          .catch((error) => {
-            statusDiv.textContent = errorMessage;
-            statusDiv.classList.add("error");
-          });
-      });
+    const statusDiv = document.getElementById("contactFormStatus");
+    const actionUrl = form.dataset.formActionUrl;
+    const successMessage = form.dataset.successMessage;
+    const errorMessage = form.dataset.errorMessage;
+
+    const iconSuccess = `<svg viewBox="0 0 24 24" fill="currentColor" style="width: 1.2em; height: 1.2em; margin-right: 0.5em; vertical-align: middle;"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"></path></svg>`;
+    const iconError = `<svg viewBox="0 0 24 24" fill="currentColor" style="width: 1.2em; height: 1.2em; margin-right: 0.5em; vertical-align: middle;"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"></path></svg>`;
+
+    function showStatusMessage(message, type) {
+      statusDiv.innerHTML = ""; // Clear previous content
+      const icon = type === "success" ? iconSuccess : iconError;
+      const textNode = document.createTextNode(message);
+
+      // Create a temporary div to parse the icon SVG string
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = icon;
+      const iconNode = tempDiv.firstChild;
+
+      statusDiv.appendChild(iconNode);
+      statusDiv.appendChild(textNode);
+
+      statusDiv.classList.remove("success", "error", "visible");
+      statusDiv.classList.add(type);
+      // Trigger reflow to ensure animation plays
+      void statusDiv.offsetWidth;
+      statusDiv.classList.add("visible");
     }
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const formData = new FormData(form);
+
+      // Reset status message
+      statusDiv.classList.remove("visible", "success", "error");
+      statusDiv.innerHTML = "";
+
+      // Update button state
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.classList.add("loading");
+        if (buttonText) buttonText.textContent = sendingButtonText;
+        if (buttonSpinner) buttonSpinner.style.display = "inline-block";
+      }
+
+      fetch(actionUrl, {
+        method: "POST",
+        body: formData,
+        headers: {
+          Accept: "application/json",
+        },
+      })
+      .then((response) => {
+        if (response.ok) {
+          showStatusMessage(successMessage, "success");
+          form.reset();
+        } else {
+          response.json().then((data) => {
+            const message = Object.hasOwn(data, "errors")
+              ? data["errors"].map((error) => error["message"]).join(", ")
+              : errorMessage;
+            showStatusMessage(message, "error");
+          }).catch(() => {
+            showStatusMessage(errorMessage, "error");
+          });
+        }
+      })
+      .catch(()_ => {
+        showStatusMessage(errorMessage, "error");
+      })
+      .finally(() => {
+        // Restore button state
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.classList.remove("loading");
+          if (buttonText) buttonText.textContent = originalButtonText;
+          if (buttonSpinner) buttonSpinner.style.display = "none";
+        }
+      });
+    });
   });
 </script>

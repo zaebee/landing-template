@@ -48,7 +48,16 @@ attr ~ '="' ~ value ~ '"' %} {% endfor %} {% endif %}
   {%
   endif
   %}
-  data-sads-element="input"
+  {%
+  if
+  type=""
+  ="email"
+  %}inputmode="email"
+  {%
+  endif
+  %}
+  itemprop="{{ 'email' if name == 'email' else ('name' if name == 'name' else '') }}"
+  data-sads-element="form-input-{{ name | replace('_', '-') }}"
   data-sads-width="full"
   data-sads-padding="s-m"
   data-sads-border-width="custom:1px"
@@ -80,7 +89,8 @@ value ~ '"' %} {% endfor %} {% endif %}
   required{%
   endif
   %}
-  data-sads-element="textarea"
+  itemprop="text"
+  data-sads-element="form-textarea-{{ name | replace('_', '-') }}"
   data-sads-width="full"
   data-sads-padding="s-m"
   data-sads-border-width="custom:1px"
@@ -132,8 +142,11 @@ endif %}
   safe
   }}
 >
-  {{ translations.get(i18n_key_prefix + '_' + text_key + '_button',
-  default_text) }}
+  <span class="button-text"
+    >{{ translations.get(i18n_key_prefix + '_' + text_key + '_button',
+    default_text) }}</span
+  >
+  <span class="button-spinner" style="display: none"></span>
 </button>
 {% endmacro %} {% macro form_status_message(id, sads_attrs=None) %} {% set
 _attrs = "" %} {% if sads_attrs %} {% for attr, value in sads_attrs.items() %}
@@ -143,6 +156,7 @@ _attrs = "" %} {% if sads_attrs %} {% for attr, value in sads_attrs.items() %}
   id="{{ id }}"
   data-sads-element="status-message"
   role="status"
+  aria-live="polite"
   data-sads-min-height="custom:1.5em"
   data-sads-margin-top="s"
   data-sads-text-align="center"

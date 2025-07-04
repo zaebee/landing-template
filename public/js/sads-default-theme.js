@@ -29,7 +29,7 @@ const sadsDefaultTheme = {
     "form-input-border": "#ced4da",
     "form-input-border-dark": "#484f58", // Using ui-border-dark
     "form-input-bg": "#ffffff", // surface
-    "form-input-bg-dark": "#2d333b", // surface-accent-dark
+    "form-input-bg-dark": "#343a40", // Slightly lighter than surface-accent-dark for better contrast
     "form-input-text": "#212529", // text-primary
     "form-input-text-dark": "#c9d1d9", // text-primary-dark
     "form-label-text": "#495057",

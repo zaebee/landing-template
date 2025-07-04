@@ -16,13 +16,47 @@ body.dark-mode .contact-submit-button:hover {
     0 1px 2px rgba(0, 0, 0, 0.15) !important;
 }
 
-/* Input and Textarea Focus States */
+/* Input and Textarea General & Focus States */
+[data-sads-component="contact-form"] [data-sads-element="input"],
+[data-sads-component="contact-form"] [data-sads-element="textarea"] {
+  transition:
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+}
+
 [data-sads-component="contact-form"] [data-sads-element="input"]:focus,
 [data-sads-component="contact-form"] [data-sads-element="textarea"]:focus {
   outline: none;
   border-color: #0056b3; /* theme: text-accent */
   box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.25); /* theme: focus-ring-color */
   /* SADS handles bg-color, text-color, so no need to override unless desired */
+}
+
+/* Shake animation for errors */
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-5px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(5px);
+  }
+}
+
+.input-error-shake {
+  animation: shake 0.5s ease-in-out;
+  /* Apply error border color directly if needed, or rely on JS to also add a class for that */
+  /* border-color: #dc3545; /* theme: error-border-dark (example, pick appropriate light/dark) */
 }
 
 body.dark-mode
@@ -35,12 +69,90 @@ body.dark-mode
   box-shadow: 0 0 0 0.2rem rgba(88, 166, 255, 0.35); /* theme: focus-ring-color-dark */
 }
 
+/* body.dark-mode .input-error-shake { */
+/* border-color: #ef5350; /* theme: error-border-dark (example) */
+/* } */
+
+/* Button Focus State */
+.contact-submit-button:focus-visible {
+  /* Using :focus-visible for better accessibility */
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.35); /* Similar to input focus, but maybe slightly different alpha */
+}
+
+body.dark-mode .contact-submit-button:focus-visible {
+  box-shadow: 0 0 0 0.2rem rgba(88, 166, 255, 0.45);
+}
+
+/* Button Spinner */
+.contact-submit-button {
+  position: relative; /* For spinner positioning */
+  /* Ensure transition includes box-shadow if not already handled by SADS transition attribute */
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease; /* SADS already has this, but ensure it's there */
+}
+
+.button-spinner {
+  display: inline-block;
+  width: 1em; /* Relative to button font size */
+  height: 1em; /* Relative to button font size */
+  border: 2px solid currentColor; /* Spinner color matches button text color */
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+  margin-left: 0.5em;
+  vertical-align: middle;
+  /* Initially hidden by inline style, shown by JS */
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Hide button text when spinner is active (JS will add/remove a class like 'loading') */
+.contact-submit-button.loading .button-text {
+  visibility: hidden;
+  opacity: 0;
+}
+.contact-submit-button.loading .button-spinner {
+  /* Ensure spinner is visible if it was display:none initially by JS */
+  /* JS should set display: inline-block, but this is a fallback */
+}
+
 /* Status Message Styling */
+#contactFormStatus {
+  transition:
+    opacity 0.3s ease-in-out,
+    transform 0.3s ease-in-out;
+  opacity: 0; /* Initially hidden for animation */
+  transform: translateY(10px); /* Start slightly lower for slide-in effect */
+}
+
+#contactFormStatus.visible {
+  /* JS will add this class */
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Add some basic styling for icons if they are prepended */
+#contactFormStatus svg {
+  width: 1.2em;
+  height: 1.2em;
+  margin-right: 0.5em;
+  vertical-align: middle;
+}
+
 #contactFormStatus.success {
   color: #0a3622; /* theme: success-text */
   background-color: #d1e7dd; /* theme: success-bg */
   border: 1px solid #a3cfbb; /* theme: success-border */
   /* Padding and border-radius are set by SADS attributes on the element itself */
+}
+#contactFormStatus.success svg {
+  fill: #0a3622; /* theme: success-text */
 }
 
 body.dark-mode #contactFormStatus.success {
@@ -48,15 +160,24 @@ body.dark-mode #contactFormStatus.success {
   background-color: #0f5132; /* theme: success-bg-dark */
   border: 1px solid #198754; /* theme: success-border-dark */
 }
+body.dark-mode #contactFormStatus.success svg {
+  fill: #75b798; /* theme: success-text-dark */
+}
 
 #contactFormStatus.error {
   color: #58151c; /* theme: error-text */
   background-color: #f8d7da; /* theme: error-bg */
   border: 1px solid #f1aeb5; /* theme: error-border */
 }
+#contactFormStatus.error svg {
+  fill: #58151c; /* theme: error-text */
+}
 
 body.dark-mode #contactFormStatus.error {
   color: #ea868f; /* theme: error-text-dark */
   background-color: #842029; /* theme: error-bg-dark */
   border: 1px solid #dc3545; /* theme: error-border-dark */
+}
+body.dark-mode #contactFormStatus.error svg {
+  fill: #ea868f; /* theme: error-text-dark */
 }
