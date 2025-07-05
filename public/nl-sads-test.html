@@ -116,11 +116,14 @@
     <!--
         IMPORTANT: The actual paths to these .js files assume compilation output from public/ts/*
         to public/js/compiled_ts/*.
-        The order of sads-default-theme.js and sads-style-engine.js is important.
+        The order of sads-default-theme.js and sads-style-engine.js is important when loaded as modules,
+        as nlToSadsInterface.js imports SADSEngine, which may implicitly depend on sadsDefaultTheme if not passed explicitly.
+        However, with type="module", the browser handles dependency resolution if they import each other.
+        The explicit window assignments ensure the global access for the inline script below.
     -->
-    <script src="js/compiled_ts/sads-default-theme.js"></script>
-    <script src="js/compiled_ts/sads-style-engine.js"></script>
-    <script src="js/compiled_ts/nlToSadsInterface.js"></script>
+    <script type="module" src="js/compiled_ts/sads-default-theme.js"></script>
+    <script type="module" src="js/compiled_ts/sads-style-engine.js"></script>
+    <script type="module" src="js/compiled_ts/nlToSadsInterface.js"></script>
 
     <script>
         // Basic initialization logic
