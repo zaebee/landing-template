@@ -10,10 +10,8 @@
     "lint:py:fix": "ruff check . --fix && mypy .",
     "format": "prettier --write \"**/*.{json,css,html,js,jsx,ts,tsx,md,mdx}\" && clang-format -i proto/*.proto",
     "lint": "npm run lint:py && npm run format && ruff format",
-    "generate-proto:py": "mkdir -p generated && python -m grpc_tools.protoc -I./proto --python_out=./generated --pyi_out=./generated ./proto/*.proto",
-    "generate-proto:go": "mkdir -p generated/go && protoc --go_out=./generated/go --go_opt=paths=source_relative -I./proto ./proto/*.proto",
-    "generate-proto-win:py": "python -m grpc_tools.protoc -I./proto --python_out=./generated --pyi_out=./generated ./proto/*.proto",
-    "generate-proto-win:go": "mkdir -p generated\\go && protoc --go_out=./generated/go --go_opt=paths=source_relative --go-grpc_out=./generated/go --go-grpc_opt=paths=source_relative -I./proto ./proto/*.proto"
+    "generate-proto": "mkdir -p generated/go && protoc --go_out=./generated/go --go_opt=paths=source_relative --go-grpc_out=./generated/go --go-grpc_opt=paths=source_relative -I./proto ./proto/*.proto && touch generated/go/__init__.py",
+    "generate-proto-win": "mkdir -p generated\\go && protoc --go_out=./generated/go --go_opt=paths=source_relative --go-grpc_out=./generated/go --go-grpc_opt=paths=source_relative -I./proto ./proto/*.proto"
   },
   "keywords": [],
   "author": "",
