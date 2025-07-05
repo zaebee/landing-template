@@ -288,26 +288,33 @@ func getSadsComponentSampleDataHandler(w http.ResponseWriter, r *http.Request) {
 // Function to start the previewer API server (can be called from main)
 func StartSadsPreviewerServer(port string) {
 	mux := http.NewServeMux()
+
+	// API Handlers
+	// This single registration for "/api/sads/component/" handles both:
+	// - /api/sads/component/{name}
+	// - /api/sads/component/{name}/sample-data
+	// The handler itself will differentiate based on the path suffix.
 	mux.HandleFunc("/api/sads/components", listSadsComponentsHandler)
-	mux.HandleFunc("/api/sads/component/", getSadsComponentHandler) // Path prefix
-	mux.HandleFunc("/api/sads/component/", func(w http.ResponseWriter, r *http.Request) { // More specific routing
+	mux.HandleFunc("/api/sads/component/", func(w http.ResponseWriter, r *http.Request) {
 		if strings.HasSuffix(r.URL.Path, "/sample-data") {
-			getSadsComponentSampleDataHandler(w,r)
+			getSadsComponentSampleDataHandler(w, r)
 		} else {
-			getSadsComponentHandler(w,r)
+			getSadsComponentHandler(w, r)
 		}
 	})
 
+	// Static file server for the public directory
+	// This will serve sads_previewer.html and its assets (JS, CSS)
+	// It's important that API routes are registered *before* this catch-all for "/",
+	// otherwise, this file server might try to handle API requests.
+	// However, ServeMux prioritizes more specific paths (like /api/sads/) over /
+	// so the order here is generally fine.
+	publicDir := http.Dir("./public")
+	fileServer := http.FileServer(publicDir)
+	mux.Handle("/", fileServer)
 
-	// Serve static files for the previewer tool itself (HTML, JS, CSS for the tool)
-	// Assumes previewer's static assets will be in public/sads_previewer_assets/
-	// For now, this might not be strictly necessary if sads_previewer.html is also in public/
-	// and served by a general static file server.
-	// fs := http.FileServer(http.Dir("./public/sads_previewer_assets"))
-	// mux.Handle("/sads-previewer-assets/", http.StripPrefix("/sads-previewer-assets/", fs))
-
-
-	log.Printf("SADS Previewer API server starting on port %s", port)
+	log.Printf("SADS Previewer server starting on port %s", port)
+	log.Printf("Access the previewer at http://localhost:%s/sads_previewer.html", port)
 	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatalf("Failed to start SADS Previewer API server: %v", err)
 	}
