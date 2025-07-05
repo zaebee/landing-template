@@ -22,8 +22,9 @@ let sadsEngineInstance = null;
  * (from `sads-style-engine.js`) has been loaded and executed.
  * It creates a singleton instance of the engine and applies styles to all SADS components.
  * @public
+ * @async
  */
-function initSadsEngine() {
+async function initSadsEngine() {
   // Check if SADSEngine constructor is available globally and if an instance doesn't already exist.
   if (typeof SADSEngine === "function" && !sadsEngineInstance) {
     sadsEngineInstance = new SADSEngine({
@@ -32,10 +33,10 @@ function initSadsEngine() {
     });
     console.log("SADS Engine Initialized by sadsManager.");
     // Perform an initial application of styles to all SADS components on the page.
-    reapplySadsStyles();
+    await reapplySadsStyles(); // Now awaits the async style application
   } else if (sadsEngineInstance) {
     console.warn("SADS Engine already initialized. Re-applying styles.");
-    reapplySadsStyles(); // If called again, ensure styles are fresh.
+    await reapplySadsStyles(); // If called again, ensure styles are fresh.
   } else if (typeof SADSEngine !== "function") {
     console.warn(
       "SADSEngine class not found globally. SADS styles will not be applied by sadsManager. Ensure sads-style-engine.js is loaded first."
@@ -45,41 +46,39 @@ function initSadsEngine() {
 
 /**
  * Re-applies SADS styles to all SADS components currently in the DOM.
- * SADS components are identified by the `data-sads-component` attribute.
- * This is useful after dynamic changes that might affect styling, such as:
- * - Theme changes (e.g., dark mode toggle).
- * - Dynamic content loading that adds new SADS components.
- * - Language changes that might alter text content and thus layout.
+ * This now calls the async `applyStyles` method on the SADSEngine instance.
  * @public
+ * @async
  */
-function reapplySadsStyles() {
+async function reapplySadsStyles() {
   if (
     sadsEngineInstance &&
-    typeof sadsEngineInstance.applyStylesTo === "function"
+    typeof sadsEngineInstance.applyStyles === "function" // Check for the new async method
   ) {
-    const components = document.querySelectorAll("[data-sads-component]");
-    if (components.length > 0) {
-      components.forEach((comp) => {
-        // Optional: log which component is being re-styled for debugging.
-        // console.log("sadsManager: Re-applying styles to component:", comp.dataset.sadsComponent);
-        sadsEngineInstance.applyStylesTo(comp);
-      });
-      console.log(
-        `SADS styles re-applied to ${components.length} component(s) by sadsManager.`
+    try {
+      await sadsEngineInstance.applyStyles(); // Call the new async method
+      // console.log("SADS styles re-applied by sadsManager using new async applyStyles.");
+    } catch (error) {
+      console.error(
+        "sadsManager: Error during sadsEngineInstance.applyStyles():",
+        error
       );
-    } else {
-      // console.log("sadsManager: No SADS components found to re-apply styles to.");
     }
   } else {
-    // This warning is helpful if SADS is expected to be running.
     if (typeof SADSEngine === "function" && !sadsEngineInstance) {
       console.warn(
         "sadsManager: SADSEngine class is available, but the instance is not. " +
           "Initialize the engine using initSadsEngine() before attempting to re-apply styles."
       );
     } else if (typeof SADSEngine !== "function") {
-      // This case is covered by initSadsEngine, but good for explicitness if reapply is called independently.
       // console.warn("sadsManager: SADSEngine class not found. Cannot re-apply styles.");
+    } else if (
+      sadsEngineInstance &&
+      typeof sadsEngineInstance.applyStyles !== "function"
+    ) {
+      console.error(
+        "sadsManager: sadsEngineInstance.applyStyles() is not a function. Did the SADS Engine change?"
+      );
     }
   }
 }

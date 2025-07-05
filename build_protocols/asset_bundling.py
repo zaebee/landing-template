@@ -1,8 +1,10 @@
 """
-Handles bundling of CSS and JavaScript assets for the project.
+Handles bundling of CSS and JavaScript assets for the project,
+and copying of WebAssembly related assets.
 """
 
 import os
+import shutil  # Added for file copying
 from typing import List, Optional
 
 # Assuming AssetBundler interface will be in build_protocols.interfaces
@@ -175,3 +177,54 @@ class DefaultAssetBundler:  # Implements AssetBundler (structurally)
         except IOError as e:
             print(f"Error writing bundled JavaScript to {output_file_path}: {e}")
             return None
+
+    def copy_wasm_assets(self, project_root: str, output_dir: str) -> bool:
+        """
+        Copies necessary WebAssembly (.wasm) and JavaScript glue files (.js)
+        to the specified output directory, under a 'wasm' subdirectory.
+
+        Args:
+            project_root: The root directory of the project.
+            output_dir: The base output directory (e.g., 'dist/assets').
+                        The WASM assets will be placed in 'output_dir/wasm'.
+
+        Returns:
+            True if all assets were copied successfully, False otherwise.
+        """
+        print("Copying WASM assets...")
+        wasm_source_dir = os.path.join(project_root, "sads_wasm_poc")
+        wasm_target_dir = os.path.join(output_dir, "wasm")
+
+        os.makedirs(wasm_target_dir, exist_ok=True)
+
+        assets_to_copy = {
+            "sads_poc.wasm": True,  # True means essential
+            "wasm_exec.js": True,  # True means essential
+        }
+
+        all_successful = True
+        for asset_name, is_essential in assets_to_copy.items():
+            source_path = os.path.join(wasm_source_dir, asset_name)
+            target_path = os.path.join(wasm_target_dir, asset_name)
+
+            if os.path.exists(source_path):
+                try:
+                    shutil.copy2(source_path, target_path)
+                    print(f"Successfully copied {asset_name} to {target_path}")
+                except IOError as e:
+                    print(
+                        f"Error copying {asset_name} from {source_path} to {target_path}: {e}"
+                    )
+                    if is_essential:
+                        all_successful = False
+            else:
+                print(f"Error: Source asset {asset_name} not found at {source_path}")
+                if is_essential:
+                    all_successful = False
+
+        if all_successful:
+            print(f"All essential WASM assets copied successfully to {wasm_target_dir}")
+        else:
+            print("Failed to copy one or more essential WASM assets.")
+
+        return all_successful
