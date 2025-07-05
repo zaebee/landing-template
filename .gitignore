@@ -19,6 +19,7 @@ venv/
 
 # Protobuf generated files
 generated/
+public/ts/generated_proto/
 
 # Node / NPM
 node_modules/
@@ -39,6 +40,7 @@ Thumbs.db
 # Build output
 dist/
 build/
+public/js/compiled_ts/ # Compiled TypeScript
 *.egg-info/
 *.egg
 

@@ -42,6 +42,7 @@
       "is_list": false
     }
   },
+  "site_logo_data_file": "data/site_logo.json",
   "navigation": [
     {
       "label_i18n_key": "nav_home",
@@ -132,10 +133,11 @@
     "light_mode_toggle": "Alternar Modo Claro",
     "theme_light_button": "Tema Claro",
     "theme_dark_button": "Tema Oscuro",
-    "footer_text": "&copy; 2024 Página de Destino Simple. Todos los derechos reservados.",
     "contact_form_success": "¡Mensaje enviado con éxito! Gracias.",
     "contact_form_error": "¡Ups! Algo salió mal. Por favor, inténtalo de nuevo.",
-    "logo_text": "Logo ES",
-    "toggle_menu_label": "Alternar menú"
+    "logo_text": "NombreMarca",
+    "logo_alt_text": "Logo de NombreMarca",
+    "toggle_menu_label": "Alternar menú",
+    "footer_text": "&copy; 2024 Página de Destino Simple. Todos los derechos reservados."
   }
 }

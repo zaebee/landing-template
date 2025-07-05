@@ -42,6 +42,7 @@
       "is_list": false
     }
   },
+  "site_logo_data_file": "data/site_logo.json",
   "navigation": [
     {
       "label_i18n_key": "nav_home",
@@ -132,10 +133,11 @@
     "light_mode_toggle": "Toggle Light Mode",
     "theme_light_button": "Light Theme",
     "theme_dark_button": "Dark Theme",
-    "footer_text": "&copy; 2024 Simple Landing Page. All rights reserved.",
     "contact_form_success": "Message sent successfully! Thank you.",
     "contact_form_error": "Oops! Something went wrong. Please try again.",
-    "logo_text": "Logo",
-    "toggle_menu_label": "Toggle menu"
+    "logo_text": "BrandName",
+    "logo_alt_text": "BrandName Logo",
+    "toggle_menu_label": "Toggle menu",
+    "footer_text": "&copy; 2024 Simple Landing Page. All rights reserved."
   }
 }

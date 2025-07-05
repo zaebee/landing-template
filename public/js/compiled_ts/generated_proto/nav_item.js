@@ -1,0 +1,165 @@
+import { WireType } from "@protobuf-ts/runtime";
+import { UnknownFieldHandler } from "@protobuf-ts/runtime";
+import { reflectionMergePartial } from "@protobuf-ts/runtime";
+import { MessageType } from "@protobuf-ts/runtime";
+import { I18nString } from "./common";
+// @generated message type with reflection information, may provide speed optimized methods
+class NavItem$Type extends MessageType {
+  constructor() {
+    super("website_content.v1.NavItem", [
+      { no: 1, name: "label", kind: "message", T: () => I18nString },
+      { no: 2, name: "href", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      {
+        no: 3,
+        name: "animation_hint",
+        kind: "scalar",
+        T: 9 /*ScalarType.STRING*/,
+      },
+    ]);
+  }
+  create(value) {
+    const message = globalThis.Object.create(this.messagePrototype);
+    message.href = "";
+    message.animationHint = "";
+    if (value !== undefined) reflectionMergePartial(this, message, value);
+    return message;
+  }
+  internalBinaryRead(reader, length, options, target) {
+    let message = target ?? this.create(),
+      end = reader.pos + length;
+    while (reader.pos < end) {
+      let [fieldNo, wireType] = reader.tag();
+      switch (fieldNo) {
+        case /* website_content.v1.I18nString label */ 1:
+          message.label = I18nString.internalBinaryRead(
+            reader,
+            reader.uint32(),
+            options,
+            message.label
+          );
+          break;
+        case /* string href */ 2:
+          message.href = reader.string();
+          break;
+        case /* string animation_hint */ 3:
+          message.animationHint = reader.string();
+          break;
+        default:
+          let u = options.readUnknownField;
+          if (u === "throw")
+            throw new globalThis.Error(
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+            );
+          let d = reader.skip(wireType);
+          if (u !== false)
+            (u === true ? UnknownFieldHandler.onRead : u)(
+              this.typeName,
+              message,
+              fieldNo,
+              wireType,
+              d
+            );
+      }
+    }
+    return message;
+  }
+  internalBinaryWrite(message, writer, options) {
+    /* website_content.v1.I18nString label = 1; */
+    if (message.label)
+      I18nString.internalBinaryWrite(
+        message.label,
+        writer.tag(1, WireType.LengthDelimited).fork(),
+        options
+      ).join();
+    /* string href = 2; */
+    if (message.href !== "")
+      writer.tag(2, WireType.LengthDelimited).string(message.href);
+    /* string animation_hint = 3; */
+    if (message.animationHint !== "")
+      writer.tag(3, WireType.LengthDelimited).string(message.animationHint);
+    let u = options.writeUnknownFields;
+    if (u !== false)
+      (u == true ? UnknownFieldHandler.onWrite : u)(
+        this.typeName,
+        message,
+        writer
+      );
+    return writer;
+  }
+}
+/**
+ * @generated MessageType for protobuf message website_content.v1.NavItem
+ */
+export const NavItem = new NavItem$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Navigation$Type extends MessageType {
+  constructor() {
+    super("website_content.v1.Navigation", [
+      {
+        no: 1,
+        name: "items",
+        kind: "message",
+        repeat: 2 /*RepeatType.UNPACKED*/,
+        T: () => NavItem,
+      },
+    ]);
+  }
+  create(value) {
+    const message = globalThis.Object.create(this.messagePrototype);
+    message.items = [];
+    if (value !== undefined) reflectionMergePartial(this, message, value);
+    return message;
+  }
+  internalBinaryRead(reader, length, options, target) {
+    let message = target ?? this.create(),
+      end = reader.pos + length;
+    while (reader.pos < end) {
+      let [fieldNo, wireType] = reader.tag();
+      switch (fieldNo) {
+        case /* repeated website_content.v1.NavItem items */ 1:
+          message.items.push(
+            NavItem.internalBinaryRead(reader, reader.uint32(), options)
+          );
+          break;
+        default:
+          let u = options.readUnknownField;
+          if (u === "throw")
+            throw new globalThis.Error(
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+            );
+          let d = reader.skip(wireType);
+          if (u !== false)
+            (u === true ? UnknownFieldHandler.onRead : u)(
+              this.typeName,
+              message,
+              fieldNo,
+              wireType,
+              d
+            );
+      }
+    }
+    return message;
+  }
+  internalBinaryWrite(message, writer, options) {
+    /* repeated website_content.v1.NavItem items = 1; */
+    for (let i = 0; i < message.items.length; i++)
+      NavItem.internalBinaryWrite(
+        message.items[i],
+        writer.tag(1, WireType.LengthDelimited).fork(),
+        options
+      ).join();
+    let u = options.writeUnknownFields;
+    if (u !== false)
+      (u == true ? UnknownFieldHandler.onWrite : u)(
+        this.typeName,
+        message,
+        writer
+      );
+    return writer;
+  }
+}
+/**
+ * @generated MessageType for protobuf message website_content.v1.Navigation
+ */
+export const Navigation = new Navigation$Type();
+//# sourceMappingURL=nav_item.js.map
