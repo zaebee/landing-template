@@ -126,9 +126,9 @@
         However, with type="module", the browser handles dependency resolution if they import each other.
         The explicit window assignments ensure the global access for the inline script below.
     -->
-    <script type="module" src="js/compiled_ts/sads-default-theme.js"></script>
-    <script type="module" src="js/compiled_ts/sads-style-engine.js"></script>
-    <script type="module" src="js/compiled_ts/nlToSadsInterface.js"></script>
+    <script type="module" src="js/sads-default-theme.js"></script>
+    <script type="module" src="js/sads-style-engine.js"></script>
+    <script type="module" src="js/nlToSadsInterface.js"></script>
 
     <script>
       // Basic initialization logic
@@ -164,19 +164,11 @@
             "sads-target-element"
           );
 
-          // Apply initial SADS styles to the target element
-          // The target element already has data-sads-* attributes.
-          // The SADSEngine needs to process any element with data-sads-component.
-          const targetElement = document.getElementById("sads-target-element");
-          if (targetElement) {
-            sadsEngineInstance.applyStylesTo(targetElement);
-          } else {
-            console.error("Target element for SADS not found.");
-          }
+          // Apply initial SADS styles to all SADS components on the page.
+          // The new applyStyles() method will find and process any elements
+          // with data-sads-component, including our target element.
+          sadsEngineInstance.applyStyles();
 
-          // Also, if there are other SADS components on the page, they should be initialized.
-          // For this demo, we only focus on the target element.
-          // Example: document.querySelectorAll('[data-sads-component]').forEach(el => sadsEngineInstance.applyStylesTo(el));
         } catch (e) {
           console.error("Error during SADS initialization:", e);
           alert(
