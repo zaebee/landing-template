@@ -32,7 +32,7 @@ async function main() {
   }
 
   const go = new Go();
-  const wasmPath = "sads_poc.wasm"; // Expected name of the compiled WASM file
+  const wasmPath = "/public/dist/assets/wasm/sads_poc.wasm"; // Expected name of the compiled WASM file
 
   try {
     console.log(`Attempting to load WASM module from: ${wasmPath}`);
@@ -80,18 +80,6 @@ async function main() {
       "neutral-L1-dark": "#b0b0b0",
       "neutral-D1": "#a0a0a0",
       "neutral-D1-dark": "#909090",
-    };
-    const defaultThemeColors = {
-      primary: "#007bff",
-      "primary-dark": "#0056b3",
-      secondary: "#6c757d",
-      "secondary-dark": "#494f54",
-      surface: "#ffffff",
-      "surface-dark": "#2a2a2a",
-      "text-primary": "#212529",
-      "text-primary-dark": "#f8f9fa",
-      accent: "red",
-      "accent-dark": "darkred",
     };
     const themeColorsJson = JSON.stringify(defaultThemeColors);
 

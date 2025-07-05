@@ -3,6 +3,7 @@
     "components/hero/hero.html",
     "components/features/features.html",
     "components/testimonials/testimonials.html",
+    "components/chat/chat.html",
     "components/portfolio/portfolio.html",
     "components/blog/blog.html",
     "components/contact-form/contact-form.html"
@@ -41,5 +42,6 @@
       "message_type_name": "ContactFormConfig",
       "is_list": false
     }
-  }
+  },
+  "site_logo_data_file": "data/site_logo.json"
 }

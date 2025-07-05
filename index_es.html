@@ -13,7 +13,7 @@
       name="keywords"
     />
 
-    <title>Simple Landing Page</title>
+    <title></title>
     <link href="public/style.css" rel="stylesheet" />
     <link href="public/dist/main.css" rel="stylesheet" />
     <link rel="icon" href="public/favicon.svg" type="image/svg+xml" />
@@ -44,8 +44,7 @@
       >
         <div data-sads-element="logo-container">
           <a
-            href="#"
-            data-i18n="logo_text"
+            href=""
             data-sads-element="logo-link"
             data-sads-text-color="text-primary"
             data-sads-text-decoration="none"
@@ -506,6 +505,76 @@
               - Alice Brown
             </h4>
           </article>
+        </div>
+      </section>
+
+      <section
+        data-sads-component="chat"
+        data-sads-padding="xl"
+        data-sads-bg-color="chat-bg"
+      >
+        <div
+          data-sads-element="chat-container"
+          data-sads-max-width="custom:400px"
+          data-sads-margin="custom:0 auto"
+          data-sads-display="flex"
+          data-sads-flex-direction="column"
+          data-sads-gap="m"
+        >
+          <div
+            data-sads-element="messages"
+            data-sads-padding="m"
+            data-sads-bg-color="chat-messages-bg"
+            data-sads-border-radius="m"
+            data-sads-min-height="custom:200px"
+            data-sads-shadow="subtle"
+          >
+            <!-- Example messages (static for now) -->
+            <div
+              data-sads-element="message"
+              data-sads-padding="s"
+              data-sads-margin-bottom="s"
+            >
+              <span data-sads-font-weight="bold">User 1:</span> Hello there!
+            </div>
+            <div
+              data-sads-element="message"
+              data-sads-padding="s"
+              data-sads-bg-color="surface-accent"
+              data-sads-border-radius="s"
+            >
+              <span data-sads-font-weight="bold">User 2:</span> Hi! How are you?
+            </div>
+          </div>
+          <form
+            data-sads-element="input-form"
+            data-sads-display="flex"
+            data-sads-gap="s"
+          >
+            <input
+              data-sads-element="input"
+              type="text"
+              placeholder="Type a message..."
+              data-sads-flex="custom:1"
+              data-sads-padding="s"
+              data-sads-border-radius="s"
+              data-sads-border-color="input-border-color"
+              data-sads-border-width="custom:1px"
+              data-sads-border-style="solid"
+              data-sads-bg-color="input-bg-color"
+            />
+            <button
+              data-sads-element="send-btn"
+              type="submit"
+              data-sads-bg-color="button-primary-bg-color"
+              data-sads-text-color="button-primary-text-color"
+              data-sads-padding="s m"
+              data-sads-border-radius="s"
+              data-sads-cursor="pointer"
+            >
+              Send
+            </button>
+          </form>
         </div>
       </section>
 
