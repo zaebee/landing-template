@@ -3,8 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"html/template"
-	"io/fs"
 	"io/ioutil"
 	"log"
 	"net/http"
