@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package sads.v1;
 
-option go_package = "example.com/project/sads/v1;sads_v1"; // Placeholder, user might want to adjust 'example.com/project'
+option go_package = "example.com/website_content/v1;website_content_v1";
 
 // Enum for common spacing tokens
 enum SadsSpacingToken {
@@ -61,12 +61,16 @@ message SadsAttributeValue {
     SadsColorToken color_token = 2;
     SadsFontWeightToken font_weight_token = 3;
     SadsBorderRadiusToken border_radius_token = 4;
-    string font_size_value = 5;     // For font sizes like "1rem", "1.2em", or theme keys like "l".
-                                    // Not an enum as font sizes can be very granular or specific theme keys.
-    string custom_value = 6;        // For any other CSS value (e.g., "center" for text-align, "flex" for display),
-                                    // direct pixel/rem values (e.g., "10px", "100%"),
-                                    // or theme keys not covered by specific enums (e.g., "shadow.medium").
-                                    // Also used for "custom:<value>" passthrough from data-sads-* attributes.
+    string font_size_value =
+        5;  // For font sizes like "1rem", "1.2em", or theme keys like "l".
+            // Not an enum as font sizes can be very granular or specific theme
+            // keys.
+    string custom_value =
+        6;  // For any other CSS value (e.g., "center" for text-align,
+            // "flex" for display), direct pixel/rem values (e.g., "10px",
+            // "100%"), or theme keys not covered by specific enums (e.g.,
+            // "shadow.medium"). Also used for "custom:<value>" passthrough
+            // from data-sads-* attributes.
   }
 }
 

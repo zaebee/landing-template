@@ -81,6 +81,7 @@
     ]
   },
   "navigation_data_file": "data/navigation.json",
+  "site_logo_data_file": "data/site_logo.json",
   "supported_langs": ["en", "es"],
   "translations": {
     "blog_post_alpha_cta": "Read Alpha Post",
@@ -113,7 +114,8 @@
     "hero_subtitle": "This is a simple hero section to grab attention.",
     "hero_title": "Welcome to Our Landing Page",
     "light_mode_toggle": "Toggle Light Mode",
-    "logo_text": "Logo",
+    "logo_alt_text": "BrandName Logo",
+    "logo_text": "BrandName",
     "nav_blog": "Blog",
     "nav_features": "Features",
     "nav_home": "Home",

@@ -1,6 +1,6 @@
 # Exploring Go/WebAssembly for SADS Engine Enhancements
 
-This document outlines a conceptual exploration into using Go compiled to WebAssembly (WASM) to potentially enhance or rewrite parts of the Semantic Attribute-Driven Styling (SADS) engine, which is currently implemented in JavaScript (`public/js/sads-style-engine.js`).
+This document outlines a conceptual exploration into using Go compiled to WebAssembly (WASM) to potentially enhance or rewrite parts of the Semantic Attribute-Driven Styling (SADS) engine. The SADS engine source is currently implemented in TypeScript (`public/ts/sads-style-engine.ts`) and compiled to JavaScript.
 
 ## 1. Introduction & Concept
 
@@ -17,9 +17,9 @@ Using Go/WASM for parts of SADS could offer several benefits:
 - **Concurrency (Advanced):** While likely an over-optimization for the current SADS implementation, Go's built-in support for concurrency (goroutines and channels) could be an advantage if SADS were to evolve to handle very complex, parallelizable styling calculations or real-time updates.
 - **Code Reusability/Portability:** Go code is portable. If SADS logic were also needed server-side (e.g., for pre-rendering SADS styles), having parts in Go might facilitate this.
 
-## 3. Candidate SADS Logic in `sads-style-engine.js` for Go/WASM
+## 3. Candidate SADS Logic in SADS Engine for Go/WASM
 
-The existing `sads-style-engine.js` contains several pieces of logic that could be candidates for a rewrite in Go:
+The existing SADS engine (source: `public/ts/sads-style-engine.ts`) contains several pieces of logic that could be candidates for a rewrite in Go:
 
 - **Attribute Parsing & Collection:** The logic that iterates through DOM element datasets to find and collect all `data-sads-*` attributes.
 - **Theme Value Resolution (`_mapSemanticValueToActual` function):** This is a strong candidate. It involves:
@@ -192,7 +192,7 @@ This functionality is primarily handled within the `_mapSemanticValueToActual` m
 
 ## 7. Go Implementation Design for PoC Function: `ResolveSadsColorToken`
 
-This section details the design for the Go function that will implement the "Resolving a Single SADS Color Token" PoC.
+This section details the design for the Go function that will implement the "Resolving a Single SADS Color Token" PoC. The SADS attribute and theme token definitions could align with those defined in `proto/sads_attributes.proto` for consistency across JS and potential Go implementations.
 
 **Go Function Name (Exported to JS):** `resolveColor` (within a `sadsPocWasm` global object)
 
