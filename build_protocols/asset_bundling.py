@@ -4,7 +4,7 @@ and copying of WebAssembly related assets.
 """
 
 import os
-import shutil # Added for file copying
+import shutil  # Added for file copying
 from typing import List, Optional
 
 # Assuming AssetBundler interface will be in build_protocols.interfaces
@@ -199,7 +199,7 @@ class DefaultAssetBundler:  # Implements AssetBundler (structurally)
 
         assets_to_copy = {
             "sads_poc.wasm": True,  # True means essential
-            "wasm_exec.js": True,   # True means essential
+            "wasm_exec.js": True,  # True means essential
         }
 
         all_successful = True
@@ -212,7 +212,9 @@ class DefaultAssetBundler:  # Implements AssetBundler (structurally)
                     shutil.copy2(source_path, target_path)
                     print(f"Successfully copied {asset_name} to {target_path}")
                 except IOError as e:
-                    print(f"Error copying {asset_name} from {source_path} to {target_path}: {e}")
+                    print(
+                        f"Error copying {asset_name} from {source_path} to {target_path}: {e}"
+                    )
                     if is_essential:
                         all_successful = False
             else:
