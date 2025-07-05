@@ -22,7 +22,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@protobuf-ts/runtime": "^2.9.4"
+    "@protobuf-ts/runtime": "^2.9.4",
+    "google-protobuf": "^3.21.4"
   },
   "devDependencies": {
     "@protobuf-ts/plugin": "^2.9.4",

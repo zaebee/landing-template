@@ -536,7 +536,7 @@ The following ideas were generated during a recent analysis session. They are pr
       - Potentially expose a method to re-process a specific element or re-apply all styles on demand.
       - Ensure SADS can run multiple times or on dynamically added content if not already supported.
   5.  **Data Source (for components needing data)**:
-      - For components that are data-driven (e.g., features, testimonials), the previewer would need a way to load sample data. This could be a predefined sample JSON structure or a way to select a sample data file. The Go backend could serve this sample data.
+      - For components that are data-driven (e.g., features, testimonials), volunteeer would need a way to load sample data. This could be a predefined sample JSON structure or a way to select a sample data file. The Go backend could serve this sample data.
 
 ---
 
@@ -648,5 +648,38 @@ The following ideas were generated during a recent analysis session. They are pr
   7.  **Error Handling & Caching**:
       - Robust error handling for API failures or data transformation issues.
       - Consider implementing a caching mechanism for fetched data to speed up subsequent builds and reduce API calls (e.g., cache to a local file with a TTL).
+
+---
+---
+
+### 17. Chat Component
+
+- **Priority**: Medium (New Feature)
+- **Impact**: Medium
+- **Effort**: Low (Initial static SADS implementation)
+- **Concept**: A new SADS component that provides a basic chat interface, including a message display area, a text input field, and a send button. Initially, it will be a static component rendered with SADS attributes, without dynamic message loading or sending capabilities.
+- **Benefits**:
+  - Adds a common UI pattern to the component library.
+  - Demonstrates further use of SADS for layout and styling.
+  - Provides a foundation for future interactive chat functionality.
+- **Implementation Sketch**:
+  - **HTML Template (`templates/components/chat/chat.html`)**:
+    - Main container: `<section data-sads-component="chat" data-sads-padding="xl" data-sads-bg-color="chat-bg">`
+    - Inner container: `<div data-sads-element="chat-container" data-sads-max-width="custom:400px" data-sads-margin="custom:0 auto" data-sads-display="flex" data-sads-flex-direction="column" data-sads-gap="m">`
+    - Messages area: `<div data-sads-element="messages" data-sads-padding="m" data-sads-bg-color="chat-messages-bg" data-sads-border-radius="m" data-sads-min-height="custom:200px" data-sads-shadow="subtle">`
+    - Input form: `<form data-sads-element="input-form" data-sads-display="flex" data-sads-gap="s">`
+    - Text input: `<input data-sads-element="input" type="text" placeholder="Type a message..." data-sads-flex="custom:1" data-sads-padding="s" data-sads-border-radius="s" data-sads-border-color="input-border-color" data-sads-border-width="custom:1px" data-sads-border-style="solid" data-sads-bg-color="input-bg-color" />`
+    - Send button: `<button data-sads-element="send-btn" type="submit" data-sads-bg-color="button-primary-bg-color" data-sads-text-color="button-primary-text-color" data-sads-padding="s m" data-sads-border-radius="s" data-sads-cursor="pointer">Send</button>`
+  - **SADS Tokens (New in `public/ts/sads-default-theme.ts`)**:
+    - `chat-bg`: Background color for the main chat section.
+    - `chat-bg-dark`: Dark mode version of `chat-bg`.
+    - `chat-messages-bg`: Background color for the messages display area.
+    - `chat-messages-bg-dark`: Dark mode version of `chat-messages-bg`.
+  - **Styling**: Achieved entirely through `data-sads-*` attributes.
+  - **Dynamic Content/Logic**: Not included in the initial implementation. Future enhancements could add Protobuf definitions for messages and TypeScript for sending/receiving messages.
+- **Key SADS Attributes Used**:
+  - `data-sads-component="chat"`
+  - `data-sads-element="chat-container|messages|input-form|input|send-btn"`
+  - `data-sads-padding`, `data-sads-bg-color`, `data-sads-max-width`, `data-sads-margin`, `data-sads-display`, `data-sads-flex-direction`, `data-sads-gap`, `data-sads-border-radius`, `data-sads-min-height`, `data-sads-shadow`, `data-sads-flex`, `data-sads-border-color`, `data-sads-border-width`, `data-sads-border-style`, `data-sads-text-color`, `data-sads-cursor`.
 
 ---
