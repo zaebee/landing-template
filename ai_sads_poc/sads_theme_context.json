@@ -1,0 +1,91 @@
+{
+    "colors": {
+        "primary": "#007bff",
+        "primary-dark": "#0056b3",
+        "secondary": "#6c757d",
+        "surface": "#ffffff",
+        "surface-dark": "#343a40",
+        "text-primary": "#212529",
+        "text-on-primary": "#ffffff",
+        "text-on-surface": "#333333",
+        "text-on-surface-dark": "#f8f9fa",
+        "accent": "#ffc107",
+        "danger": "#dc3545",
+        "success": "#28a745",
+        "warning": "#ffc107",
+        "info": "#17a2b8"
+    },
+    "spacing": {
+        "none": "0",
+        "xs": "0.25rem",
+        "s": "0.5rem",
+        "m": "1rem",
+        "l": "1.5rem",
+        "xl": "2rem",
+        "xxl": "3rem",
+        "auto": "auto"
+    },
+    "fontSize": {
+        "s": "0.875rem",
+        "default": "1rem",
+        "m": "1rem",
+        "l": "1.25rem",
+        "xl": "1.75rem",
+        "display-1": "2.5rem",
+        "display-2": "2rem"
+    },
+    "fontWeight": {
+        "light": "300",
+        "normal": "400",
+        "bold": "700"
+    },
+    "borderRadius": {
+        "none": "0",
+        "s": "0.2rem",
+        "default": "0.25rem",
+        "m": "0.25rem",
+        "l": "0.3rem",
+        "pill": "50rem"
+    },
+    "shadow": {
+        "none": "none",
+        "sm": "0 .125rem .25rem rgba(0,0,0,.075)",
+        "default": "0 .5rem 1rem rgba(0,0,0,.15)",
+        "lg": "0 1rem 3rem rgba(0,0,0,.175)"
+    },
+    "sadsPropertiesReference": {
+        "bgColor": "string (color token or custom:value)",
+        "textColor": "string (color token or custom:value)",
+        "borderColor": "string (color token or custom:value)",
+        "padding": "string (spacing token or custom:value)",
+        "paddingTop": "string (spacing token or custom:value)",
+        "paddingBottom": "string (spacing token or custom:value)",
+        "paddingLeft": "string (spacing token or custom:value)",
+        "paddingRight": "string (spacing token or custom:value)",
+        "margin": "string (spacing token or custom:value)",
+        "marginTop": "string (spacing token or custom:value)",
+        "marginBottom": "string (spacing token or custom:value)",
+        "marginLeft": "string (spacing token or custom:value)",
+        "marginRight": "string (spacing token or custom:value)",
+        "fontSize": "string (fontSize token or custom:value)",
+        "fontWeight": "string (fontWeight token or custom:value)",
+        "borderRadius": "string (borderRadius token or custom:value)",
+        "shadow": "string (shadow token or custom:value)",
+        "textAlign": "string (e.g., custom:left, custom:center, custom:right)",
+        "display": "string (e.g., custom:block, custom:flex, custom:inline-block)",
+        "width": "string (spacing token, custom:value like 100%, 50vw)",
+        "height": "string (spacing token, custom:value)",
+        "maxWidth": "string (e.g., theme.maxWidth token key, custom:value)",
+        "position": "string (e.g., custom:relative, custom:absolute)",
+        "top": "string (spacing token or custom:value)",
+        "left": "string (spacing token or custom:value)",
+        "right": "string (spacing token or custom:value)",
+        "bottom": "string (spacing token or custom:value)",
+        "zIndex": "string (custom:value, e.g., custom:10, custom:999)",
+        "border": "string (custom:value, e.g., custom:1px solid #CCC)",
+        "borderTop": "string (custom:value)",
+        "borderBottom": "string (custom:value)",
+        "borderLeft": "string (custom:value)",
+        "borderRight": "string (custom:value)"
+    }
+}

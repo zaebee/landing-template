@@ -19,10 +19,14 @@ The core functionality revolves around a Go build script (`main.go`) that assemb
 
 Before you begin, ensure you have the following installed:
 
-- **Go** (version 1.18+ recommended)
-- **Node.js** (for running npm scripts, e.g., `generate-proto`, `format`)
-- **npm** (Node package manager, usually comes with Node.js)
-- **Protocol Buffer Compiler (`protoc`)** (version 3+)
+- **Go**: Version 1.18+ recommended. (Used for the main build script `main.go` and for compiling SADS Go/WASM modules).
+- **Protocol Buffer Compiler (`protoc`)**: Version 3+. Essential for generating code from `.proto` files.
+- **JavaScript Runtime & Package Manager**:
+    - **Node.js & npm**: LTS versions recommended if you choose this route. `npm` is used for running scripts defined in `package.json` (like `generate-proto`, `format`, `build`).
+    - **Bun**: Can be used as an alternative to Node.js/npm for running scripts and managing JavaScript dependencies (if any were to be added to `package.json`).
+- **Python Environment Manager (Optional but Recommended for `build.py` and linting tools)**:
+    - **uv**: A fast Python installer and resolver. If you intend to use or develop the Python scripts in `build_protocols/` or run the full `format.sh` script (which uses Python-based linters like `black`, `isort`, `autoflake`), `uv` can be used to manage these Python tool dependencies, typically defined in `pyproject.toml`. For example: `uv pip install -r requirements-dev.txt` (if you generate one from `pyproject.toml`) or `uv venv && uv pip sync`.
+    - Alternatively, standard Python `venv` and `pip` can be used.
 
 ### Installation
 
@@ -34,20 +38,34 @@ cd <repository-directory>
 ```
 
 2.  **Install Go dependencies & tools:**
-    The Go build script uses Go modules. Dependencies like Pongo2 will be downloaded automatically when you build or run the Go program (`go run main.go` or `go build`).
-    Ensure you have the Go Protocol Buffer plugins installed:
+    The Go build script uses Go modules. Dependencies like Pongo2 (for `main.go`) will be downloaded automatically when you build or run the Go program.
 
+    **Important for Go Protobuf Generation:**
+    Ensure you have the Go Protocol Buffer generator plugins installed globally and available in your system's `PATH`. `protoc` needs to find these executables.
     ```bash
     go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
     go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
     ```
+    After installation, verify that your Go binary path (usually `$GOPATH/bin` or `$HOME/go/bin`) is correctly added to your system's `PATH` environment variable. A new terminal session might be required for `PATH` changes to take effect. If `protoc` cannot find these plugins, the `npm run generate-proto` command will fail.
 
-    Make sure your `GOPATH/bin` or `HOME/go/bin` (if `GOPATH` is not set) is in your system's `PATH` so that `protoc` can find these plugins.
-
-3.  **Install Node.js development dependencies (for formatting, etc.):**
-    This step is mainly for tools like Prettier used in `format.sh`.
+3.  **Install JavaScript/Build Tooling Dependencies:**
+    If using `npm`:
     ```bash
     npm install
+    ```
+    If using `bun`:
+    ```bash
+    bun install
+    ```
+    This installs development tools like Prettier (used in `format.sh`) and any other JS dependencies defined in `package.json`.
+
+4.  **Setup Python Development Environment (Optional, for `build.py` / linters):**
+    If you plan to work with `build.py` or the Python-based linters in `format.sh`, set up a Python environment using `uv` (recommended) or `venv`/`pip` with the dependencies from `pyproject.toml` (e.g., by generating a `requirements-dev.txt` or using `uv pip sync`).
+    Example with `uv`:
+    ```bash
+    uv venv .venv
+    source .venv/bin/activate  # or .venv\Scripts\activate on Windows
+    uv pip install -e .[dev]   # Install project and dev dependencies
     ```
 
 ### Build Process
