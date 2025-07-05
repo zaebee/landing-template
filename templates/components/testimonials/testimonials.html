@@ -51,7 +51,9 @@
         <img
           data-sads-element="author-image"
           src="{{ item.author_image.src }}"
-          alt="{{ translations.get(item.author_image.alt_text.key if item.author_image.alt_text else '', item.author_image.alt_text.key if item.author_image.alt_text else 'Author image') }}"
+          {% set _alt_key = "" %}
+          {% if item.author_image and item.author_image.alt_text and item.author_image.alt_text.key %}{% set _alt_key = item.author_image.alt_text.key %}{% endif %}
+          alt="{{ translations[_alt_key] | default:"Author image" }}"
           data-sads-width="custom:80px" {# CSS: 80px #}
           data-sads-height="custom:80px" {# CSS: 80px #}
           data-sads-border-radius="circle" {# CSS: 50% #}
@@ -72,7 +74,9 @@
         data-sads-margin-bottom="m" {# CSS: margin-bottom: 1rem #}
         data-sads-flex-grow="1" {# If inside a flex column, allow text to take space #}
       >
-        "{{ translations.get(item.text.key if item.text else '', item.text.key if item.text else 'Testimonial text here.') }}"
+        {% set _quote_key = "" %}
+        {% if item.text and item.text.key %}{% set _quote_key = item.text.key %}{% endif %}
+        "{{ translations[_quote_key] | default:"Testimonial text here." }}"
       </p>
       <h4
         data-sads-element="author-name"
@@ -80,12 +84,15 @@
         data-sads-font-weight="bold" {# CSS: font-weight: bold #}
         data-sads-text-color="testimonial-author-text" {# Theme: #333 light, #e0e0e0 dark #}
       >
-        {{ translations.get(item.author.key if item.author else '', item.author.key if item.author else 'Author Name') }}
+        {% set _author_key = "" %}
+        {% if item.author and item.author.key %}{% set _author_key = item.author.key %}{% endif %}
+        {{ translations[_author_key] | default:"Author Name" }}
       </h4>
     </article>
-    {% else %}
+    {% empty %}
     <p data-sads-element="no-items-message" data-sads-text-color="text-secondary">
-      {{ translations.get('testimonials_no_items', 'No testimonials to display at this time.') }}
+      {# Corrected this final translation lookup as well #}
+      {{ translations["testimonials_no_items"] | default:"No testimonials to display at this time." }}
     </p>
     {% endfor %}
   </div>
