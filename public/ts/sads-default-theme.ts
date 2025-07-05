@@ -43,6 +43,10 @@ export interface SadsColors {
   "contact-section-bg-dark": string;
   "contact-form-bg": string;
   "contact-form-bg-dark": string;
+    "chat-bg": string;
+    "chat-bg-dark": string;
+    "chat-messages-bg": string;
+    "chat-messages-bg-dark": string;
   "input-border-color": string;
   "input-border-color-dark": string;
   "input-bg-color": string;
@@ -195,6 +199,10 @@ export const sadsDefaultTheme: SadsTheme = {
     "contact-section-bg-dark": "#2a2a2a",
     "contact-form-bg": "#ffffff",
     "contact-form-bg-dark": "#1f1f1f",
+    "chat-bg": "#e9ecef", // Similar to contact-section-bg
+    "chat-bg-dark": "#2a2a2a", // Similar to contact-section-bg-dark
+    "chat-messages-bg": "#ffffff", // Similar to surface
+    "chat-messages-bg-dark": "#1f1f1f", // Similar to surface-accent-dark or blog-item-bg-dark
     "input-border-color": "#cccccc",
     "input-border-color-dark": "#555555",
     "input-bg-color": "#ffffff",
