@@ -58,8 +58,8 @@ async function initializeApp() {
 
   // 3. Initialize SADS (Semantic Attribute-Driven Styling) Engine.
   // This instantiates the SADS engine and performs an initial application of styles
-  // to all SADS components on the page.
-  initSadsEngine();
+  // to all SADS components on the page. This is now async.
+  await initSadsEngine();
 
   console.log(
     `App Initialized: Dark Mode = ${isDarkModeActive()}, Language = ${document.documentElement.lang}`
@@ -71,14 +71,16 @@ async function initializeApp() {
  * darkMode module and then triggers a re-application of SADS styles.
  * Exposed on `window.appGlobal.handleDarkModeToggle`.
  * @public
+ * @async
  */
-window.appGlobal.handleDarkModeToggle = function () {
+window.appGlobal.handleDarkModeToggle = async function () {
   toggleDarkMode(); // Manages state, localStorage, DOM class, and dispatches its event.
 
   // Re-apply SADS styles. The SADS engine checks body.class for dark-mode live
   // during color mapping. This call ensures all SADS properties are re-evaluated
   // and components redraw if necessary.
-  reapplySadsStyles();
+  // reapplySadsStyles is now async.
+  await reapplySadsStyles();
 };
 
 /**

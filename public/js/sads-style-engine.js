@@ -181,9 +181,48 @@ class SADSEngine {
     return baseCssText;
   }
 
-  applyStylesTo(rootElement) {
+  // Centralized method to apply styles, now async to await WASM readiness
+  async applyStyles() {
+    console.log("SADS: applyStyles called. Checking WASM readiness...");
+    if (window.sadsPocWasmReadyPromise) {
+      try {
+        await window.sadsPocWasmReadyPromise;
+        console.log("SADS: WASM module is ready.");
+      } catch (error) {
+        console.warn("SADS: WASM module failed to load or was rejected. Falling back to JS-only styling for colors.", error);
+        // window.sadsPocWasm will likely be undefined or its functions unavailable.
+        // The _mapSemanticValueToActual method's fallback logic will handle this.
+      }
+    } else {
+      console.log("SADS: sadsPocWasmReadyPromise not found. Proceeding with JS-only styling for colors.");
+      // Fallback logic in _mapSemanticValueToActual will handle this.
+    }
+
+    // Clear existing rules before reapplying, if dynamicStyleSheet is valid
+    if (this.dynamicStyleSheet && this.dynamicStyleSheet.ownerNode) {
+        while (this.dynamicStyleSheet.cssRules.length > 0) {
+            this.dynamicStyleSheet.deleteRule(0);
+        }
+    } else {
+        // Attempt to re-create it if it became invalid
+        this.dynamicStyleSheet = this._createDynamicStyleSheet();
+        if (!this.dynamicStyleSheet) {
+            console.error("SADS: Critical error - dynamic stylesheet cannot be created or accessed. Styling will not be applied.");
+            return; // Cannot proceed without a stylesheet
+        }
+    }
+    this.ruleCounter = 0; // Reset rule counter for fresh application
+
+    document.querySelectorAll("[data-sads-component]").forEach((rootEl) => {
+      this._applyStylesToElementAndChildren(rootEl);
+    });
+    console.log("SADS: Style application process completed.");
+  }
+
+
+  _applyStylesToElementAndChildren(rootElement) {
+    // This is the original applyStylesTo logic, refactored to be called by the new async applyStyles
     if (!rootElement || !rootElement.matches("[data-sads-component]")) {
-      // console.warn("SADS: applyStylesTo called on invalid root or non-component element.", rootElement);
       return;
     }
 
@@ -196,6 +235,7 @@ class SADSEngine {
       const targetSelector = this._getTargetSelector(el);
       const attributes = el.dataset;
 
+      // _generateBaseCss and _parseResponsiveRules will now potentially use WASM
       const baseCssText = this._generateBaseCss(attributes, targetSelector);
       if (baseCssText) {
         this._addCssRule(targetSelector, baseCssText);
@@ -210,6 +250,14 @@ class SADSEngine {
       }
     });
   }
+
+  // Make updateTheme async as well, as it calls applyStyles
+  async updateTheme(newThemeConfig) {
+    this.theme = this._initializeTheme(newThemeConfig); // Re-initialize with new config
+    // applyStyles will handle clearing rules now
+    await this.applyStyles();
+  }
+
 
   _addCssRule(selector, rules, mediaQuery = null) {
     if (!rules.trim()) return; // Do not add empty rules
@@ -340,13 +388,37 @@ class SADSEngine {
 
     if (category) {
       if (category === "colors") {
+        // WASM Integration Point for Color Resolution
+        if (window.sadsPocWasm && typeof window.sadsPocWasm.resolveColor === 'function') {
+          try {
+            const themeColorsJson = JSON.stringify(this.theme.colors);
+            const resolvedColor = window.sadsPocWasm.resolveColor(valueStr, themeColorsJson, isDarkMode);
+
+            if (typeof resolvedColor === 'string' && !resolvedColor.startsWith("Error:")) {
+              // console.log(`SADS: Color '${valueStr}' resolved by WASM to '${resolvedColor}' (Dark Mode: ${isDarkMode})`);
+              return resolvedColor;
+            } else if (typeof resolvedColor === 'string' && resolvedColor.startsWith("Error:")) {
+              console.warn(`SADS: WASM resolveColor returned error for token '${valueStr}': ${resolvedColor}. Falling back to JS logic.`);
+              // Fallthrough to JS logic below
+            } else {
+              console.warn(`SADS: WASM resolveColor returned unexpected value for token '${valueStr}':`, resolvedColor, `. Falling back to JS logic.`);
+              // Fallthrough to JS logic below
+            }
+          } catch (wasmError) {
+            console.error(`SADS: Error calling WASM resolveColor for token '${valueStr}':`, wasmError, `. Falling back to JS logic.`);
+            // Fallthrough to JS logic below
+          }
+        } else {
+          // console.log("SADS: WASM resolveColor not available. Using JS logic for color token:", valueStr);
+        }
+
+        // Original JavaScript Fallback Logic for colors:
         const colorKey = isDarkMode ? `${valueStr}-dark` : valueStr;
-        // Fallback chain: dark-mode specific -> primary -> direct value
-        return (
-          this.theme.colors[colorKey] || this.theme.colors[valueStr] || valueStr
-        );
+        const resolvedJsColor = this.theme.colors[colorKey] || this.theme.colors[valueStr] || valueStr;
+        // console.log(`SADS: Color '${valueStr}' resolved by JS to '${resolvedJsColor}' (Dark Mode: ${isDarkMode})`);
+        return resolvedJsColor;
       }
-      // For other categories (spacing, fontSize, etc.)
+      // For other categories (spacing, fontSize, etc.) - no WASM for these yet
       return this.theme[category]?.[valueStr] || valueStr;
     }
     // If no specific category mapping, return the value string directly (e.g., for 'display', 'text-align')

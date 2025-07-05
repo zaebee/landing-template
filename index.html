@@ -1071,6 +1071,18 @@
       </div>
     </footer>
 
+    <!--
+      WASM Loader Script:
+      This script is responsible for loading wasm_exec.js (Go's WASM support)
+      and then our compiled sads_poc.wasm module. It should be loaded before
+      the main application bundle (main.js) so that the WASM module can be
+      ready or its loading initiated before app.js tries to use it.
+      The wasmLoader.js script will expose a Promise (window.sadsPocWasmReadyPromise)
+      that the main application logic can await.
+    -->
+    <script src="public/js/modules/wasmLoader.js" defer></script>
+
+    <!-- Main application bundle -->
     <script src="public/dist/main.js" defer></script>
   </body>
 </html>
