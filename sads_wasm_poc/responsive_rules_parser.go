@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"strings" // Not directly used here, but dependencies might
 	"syscall/js"
-	// "strings" // Not directly used here, but dependencies might
 )
 
 // Structs for parsing JSON inputs
