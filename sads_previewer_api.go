@@ -95,12 +95,12 @@ func getSadsComponentHandler(w http.ResponseWriter, r *http.Request) {
 
 				if dataFile != "" && messageTypeName != "" {
 					log.Printf("Attempting to load data for component %s: file '%s', type '%s', isList: %t", componentName, dataFile, messageTypeName, isList)
-
+					
 					// Use the existing proto loading logic (simplified)
 					// Need access to newMessageInstance and JsonProtoDataLoader from main.go
 					// For now, let's assume direct access or we'll refactor them later.
 					dataLoader := NewJsonProtoDataLoader() // Assumes NewJsonProtoDataLoader is accessible
-
+					
 					protoInstance, err := newMessageInstance(messageTypeName) // Assumes newMessageInstance is accessible
 					if err != nil {
 						log.Printf("Error creating new message instance for %s: %v", messageTypeName, err)
@@ -133,7 +133,7 @@ func getSadsComponentHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		log.Printf("App config not loaded, cannot determine data for component %s", componentName)
 	}
-
+	
 	// Convert proto message(s) to pongo2.Context
 	if componentData != nil {
 		pongoCompatibleData = make(pongo2.Context)
@@ -203,7 +203,7 @@ func getSadsComponentSampleDataHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	componentName := parts[3]
-
+	
 	// This logic will be similar to the data loading part of getSadsComponentHandler
 	// For brevity in this step, I'll sketch it out.
 	// 1. Load App Config
@@ -275,7 +275,7 @@ func getSadsComponentSampleDataHandler(w http.ResponseWriter, r *http.Request) {
 	default:
 		marshalErr = fmt.Errorf("unknown data type for JSON marshalling: %T", componentDataProto)
 	}
-
+	
 	if marshalErr != nil {
 		http.Error(w, "Failed to marshal sample data to JSON: "+marshalErr.Error(), http.StatusInternalServerError)
 		return
@@ -288,26 +288,33 @@ func getSadsComponentSampleDataHandler(w http.ResponseWriter, r *http.Request) {
 // Function to start the previewer API server (can be called from main)
 func StartSadsPreviewerServer(port string) {
 	mux := http.NewServeMux()
+
+	// API Handlers
+	// This single registration for "/api/sads/component/" handles both:
+	// - /api/sads/component/{name}
+	// - /api/sads/component/{name}/sample-data
+	// The handler itself will differentiate based on the path suffix.
 	mux.HandleFunc("/api/sads/components", listSadsComponentsHandler)
-	mux.HandleFunc("/api/sads/component/", getSadsComponentHandler) // Path prefix
-	mux.HandleFunc("/api/sads/component/", func(w http.ResponseWriter, r *http.Request) { // More specific routing
+	mux.HandleFunc("/api/sads/component/", func(w http.ResponseWriter, r *http.Request) {
 		if strings.HasSuffix(r.URL.Path, "/sample-data") {
-			getSadsComponentSampleDataHandler(w,r)
+			getSadsComponentSampleDataHandler(w, r)
 		} else {
-			getSadsComponentHandler(w,r)
+			getSadsComponentHandler(w, r)
 		}
 	})
 
+	// Static file server for the public directory
+	// This will serve sads_previewer.html and its assets (JS, CSS)
+	// It's important that API routes are registered *before* this catch-all for "/",
+	// otherwise, this file server might try to handle API requests.
+	// However, ServeMux prioritizes more specific paths (like /api/sads/) over /
+	// so the order here is generally fine.
+	publicDir := http.Dir("./public")
+	fileServer := http.FileServer(publicDir)
+	mux.Handle("/", fileServer)
 
-	// Serve static files for the previewer tool itself (HTML, JS, CSS for the tool)
-	// Assumes previewer's static assets will be in public/sads_previewer_assets/
-	// For now, this might not be strictly necessary if sads_previewer.html is also in public/
-	// and served by a general static file server.
-	// fs := http.FileServer(http.Dir("./public/sads_previewer_assets"))
-	// mux.Handle("/sads-previewer-assets/", http.StripPrefix("/sads-previewer-assets/", fs))
-
-
-	log.Printf("SADS Previewer API server starting on port %s", port)
+	log.Printf("SADS Previewer server starting on port %s", port)
+	log.Printf("Access the previewer at http://localhost:%s/sads_previewer.html", port)
 	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatalf("Failed to start SADS Previewer API server: %v", err)
 	}

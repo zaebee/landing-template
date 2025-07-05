@@ -363,7 +363,7 @@ func main() {
 	if *servePreviewer {
 		log.Println("Starting SADS Previewer server...")
 		// Ensure that StartSadsPreviewerServer is accessible (it should be as it's in package main)
-		go StartSadsPreviewerServer(*previewerPort) // Run in a goroutine if you also want to build
+		// go StartSadsPreviewerServer(*previewerPort) // Run in a goroutine if you also want to build
 		// If you only want to serve and not build, you can just call it directly
 		// and the program will block here. For now, let's assume we might want to build then serve,
 		// or serve while the main app might have other functions.
