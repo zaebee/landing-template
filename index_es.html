@@ -44,20 +44,21 @@
       >
         <div data-sads-element="logo-container">
           <a
-            href=""
+            href="index.html"
             data-sads-element="logo-link"
             data-sads-text-color="text-primary"
             data-sads-text-decoration="none"
             data-sads-font-weight="bold"
             data-sads-font-size="l"
           >
+            NombreMarca
           </a>
         </div>
 
         <button
           data-sads-element="menu-toggle"
           aria-expanded="false"
-          aria-label=""
+          aria-label="Alternar menú"
           class="hamburger-menu"
           data-sads-display="none"
           data-sads-responsive-rules='[ {"breakpoint": "mobile", "styles": {"display": "block"}} ]'
@@ -106,6 +107,7 @@
                 data-sads-border-radius="s"
                 data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
               >
+                Inicio
               </a>
             </li>
 
@@ -122,6 +124,7 @@
                 data-sads-border-radius="s"
                 data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
               >
+                Características
               </a>
             </li>
 
@@ -138,6 +141,7 @@
                 data-sads-border-radius="s"
                 data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
               >
+                Testimonios
               </a>
             </li>
 
@@ -154,6 +158,7 @@
                 data-sads-border-radius="s"
                 data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
               >
+                Portafolio
               </a>
             </li>
 
@@ -170,6 +175,7 @@
                 data-sads-border-radius="s"
                 data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
               >
+                Blog
               </a>
             </li>
           </ul>
@@ -242,7 +248,7 @@
       >
         <h1
           data-sads-element="title"
-          data-i18n="hero_title_placeholder"
+          data-i18n="hero_title_v1"
           data-sads-font-size="custom:2.5rem"
           data-sads-margin-bottom="m"
         >
@@ -250,15 +256,30 @@
         </h1>
         <p
           data-sads-element="subtitle"
-          data-i18n="hero_subtitle_placeholder"
+          data-i18n="hero_subtitle_v1"
           data-sads-font-size="custom:1.2rem"
           data-sads-margin-bottom="xl"
           data-sads-max-width="custom:800px"
         >
           Discover amazing things.
         </p>
-      </section>
 
+        <a
+          data-sads-element="cta-button"
+          class="cta-button"
+          href="#signup"
+          data-sads-display="inline-block"
+          data-sads-padding="s l"
+          data-sads-text-decoration="none"
+          data-sads-font-weight="bold"
+          data-sads-border-radius="s"
+          data-sads-bg-color="cta-hero-bg"
+          data-sads-text-color="cta-hero-text"
+          data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
+        >
+          Learn More
+        </a>
+      </section>
       <section
         data-sads-component="features"
         id="features"
@@ -307,11 +328,15 @@
               data-sads-margin-top="none"
               data-sads-text-color="feature-item-title-text"
               data-sads-font-size="l"
-            ></h3>
+            >
+              Característica Uno
+            </h3>
             <p
               data-sads-element="item-description"
               data-sads-font-size="default"
-            ></p>
+            >
+              Descripción de la característica uno.
+            </p>
           </div>
 
           <div
@@ -333,11 +358,15 @@
               data-sads-margin-top="none"
               data-sads-text-color="feature-item-title-text"
               data-sads-font-size="l"
-            ></h3>
+            >
+              Característica Dos
+            </h3>
             <p
               data-sads-element="item-description"
               data-sads-font-size="default"
-            ></p>
+            >
+              Descripción de la característica dos.
+            </p>
           </div>
 
           <div
@@ -359,11 +388,15 @@
               data-sads-margin-top="none"
               data-sads-text-color="feature-item-title-text"
               data-sads-font-size="l"
-            ></h3>
+            >
+              Característica Tres
+            </h3>
             <p
               data-sads-element="item-description"
               data-sads-font-size="default"
-            ></p>
+            >
+              Descripción of la característica tres.
+            </p>
           </div>
         </div>
       </section>
@@ -380,7 +413,9 @@
           data-sads-margin-bottom="xl"
           data-sads-font-size="custom:2rem"
           data-sads-text-color="testimonials-title-text"
-        ></h2>
+        >
+          Lo Que Dicen Nuestros Usuarios
+        </h2>
         <div
           data-sads-element="list"
           data-sads-display="flex"
@@ -411,6 +446,21 @@
             {"breakpoint": "desktop", "styles": {"flexBasis": "custom:calc(33.333% - 40px)", "marginBottom": "custom:20px"}} 
         ]'
           >
+            <img
+              data-sads-element="author-image"
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
+              alt="Foto del Usuario 1"
+              data-sads-width="custom:80px"
+              data-sads-height="custom:80px"
+              data-sads-border-radius="circle"
+              data-sads-object-fit="cover"
+              data-sads-margin-bottom="m"
+              data-sads-border-width="custom:3px"
+              data-sads-border-style="solid"
+              data-sads-border-color="testimonial-img-border"
+              data-sads-margin="custom:0 auto 1rem auto"
+            />
+
             <p
               data-sads-element="quote-text"
               data-sads-font-style="italic"
@@ -448,6 +498,21 @@
             {"breakpoint": "desktop", "styles": {"flexBasis": "custom:calc(33.333% - 40px)", "marginBottom": "custom:20px"}} 
         ]'
           >
+            <img
+              data-sads-element="author-image"
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
+              alt="Foto del Usuario 2"
+              data-sads-width="custom:80px"
+              data-sads-height="custom:80px"
+              data-sads-border-radius="circle"
+              data-sads-object-fit="cover"
+              data-sads-margin-bottom="m"
+              data-sads-border-width="custom:3px"
+              data-sads-border-style="solid"
+              data-sads-border-color="testimonial-img-border"
+              data-sads-margin="custom:0 auto 1rem auto"
+            />
+
             <p
               data-sads-element="quote-text"
               data-sads-font-style="italic"
@@ -486,6 +551,21 @@
             {"breakpoint": "desktop", "styles": {"flexBasis": "custom:calc(33.333% - 40px)", "marginBottom": "custom:20px"}} 
         ]'
           >
+            <img
+              data-sads-element="author-image"
+              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
+              alt="Foto del Usuario 3"
+              data-sads-width="custom:80px"
+              data-sads-height="custom:80px"
+              data-sads-border-radius="circle"
+              data-sads-object-fit="cover"
+              data-sads-margin-bottom="m"
+              data-sads-border-width="custom:3px"
+              data-sads-border-style="solid"
+              data-sads-border-color="testimonial-img-border"
+              data-sads-margin="custom:0 auto 1rem auto"
+            />
+
             <p
               data-sads-element="quote-text"
               data-sads-font-style="italic"
@@ -507,7 +587,6 @@
           </article>
         </div>
       </section>
-
       <section
         data-sads-component="portfolio"
         id="portfolio"
@@ -689,7 +768,6 @@
           </article>
         </div>
       </section>
-
       <section
         data-sads-component="blog"
         id="blog"
@@ -851,7 +929,6 @@
           </article>
         </div>
       </section>
-
       <section
         data-sads-component="contact-form"
         id="contact"
@@ -883,10 +960,10 @@
             class="contact-form-tag"
             id="contactForm"
             method="POST"
-            action="#"
-            data-form-action-url="#"
-            data-success-message="Message sent!"
-            data-error-message="Error sending message."
+            action="https://formspree.io/f/xgvyddyg"
+            data-form-action-url="https://formspree.io/f/xgvyddyg"
+            data-success-message="¡Mensaje enviado con éxito! Gracias."
+            data-error-message="¡Ups! Algo salió mal. Por favor, inténtalo de nuevo."
             data-sads-display="flex"
             data-sads-flex-direction="column"
             data-sads-gap="m"
@@ -1084,10 +1161,12 @@
           data-sads-element="footer-text"
           data-sads-font-size="s"
           data-sads-margin="none"
-        ></p>
+        >
+          &amp;copy; 2024 Página de Destino Simple. Todos los derechos
+          reservados.
+        </p>
       </div>
     </footer>
-
     <script type="module" src="public/dist/main.js" defer></script>
   </body>
 </html>
