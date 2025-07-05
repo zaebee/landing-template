@@ -17,1077 +17,1305 @@
     <link href="public/style.css" rel="stylesheet" />
     <link href="public/dist/main.css" rel="stylesheet" />
     <link rel="icon" href="public/favicon.svg" type="image/svg+xml" />
+
   </head>
   <body>
     <header
-      data-sads-component="header"
-      data-sads-bg-color="header-bg"
-      data-sads-text-color="text-on-header-bg"
-      data-sads-padding="m 0"
-      data-sads-position="sticky"
-      data-sads-top="custom:0"
-      data-sads-width="full"
-      data-sads-z-index="custom:1000"
-      data-sads-shadow="subtle"
-    >
-      <nav
-        data-sads-element="navbar"
-        data-sads-display="flex"
-        data-sads-flex-justify="space-between"
-        data-sads-flex-align-items="center"
-        data-sads-max-width="content-container"
-        data-sads-margin="custom:0 auto"
-        data-sads-padding="0 m"
-        data-sads-responsive-rules='[
+  data-sads-component="header"
+  data-sads-bg-color="header-bg"
+  data-sads-text-color="text-on-header-bg"
+  data-sads-padding="m 0"
+  data-sads-position="sticky"
+  data-sads-top="custom:0"
+  data-sads-width="full"
+  data-sads-z-index="custom:1000"
+  data-sads-shadow="subtle"
+>
+  <nav
+    data-sads-element="navbar"
+    data-sads-display="flex"
+    data-sads-flex-justify="space-between"
+    data-sads-flex-align-items="center"
+    data-sads-max-width="content-container"
+
+    data-sads-margin="custom:0 auto"
+
+    data-sads-padding="0 m"
+
+    data-sads-responsive-rules='[
         {"breakpoint": "mobile", "styles": {"position": "relative"}}
     ]'
+  >
+    <div data-sads-element="logo-container">
+
+      <a
+        href="index.html"
+        data-sads-element="logo-link"
+        data-sads-text-color="text-primary"
+        data-sads-text-decoration="none"
+        data-sads-font-weight="bold"
+        data-sads-font-size="l"
       >
-        <div data-sads-element="logo-container">
-          <a
-            href=""
-            data-sads-element="logo-link"
-            data-sads-text-color="text-primary"
-            data-sads-text-decoration="none"
-            data-sads-font-weight="bold"
-            data-sads-font-size="l"
-          >
-          </a>
-        </div>
+        BrandName
+      </a>
+    </div>
 
-        <button
-          data-sads-element="menu-toggle"
-          aria-expanded="false"
-          aria-label=""
-          class="hamburger-menu"
-          data-sads-display="none"
-          data-sads-responsive-rules='[ {"breakpoint": "mobile", "styles": {"display": "block"}} ]'
-          data-sads-button-variant="icon"
-          data-sads-text-color="text-primary"
-          data-sads-cursor="pointer"
-          data-sads-bg-color="transparent"
-          data-sads-border-style="none"
-          data-sads-padding="s"
-        >
-          <span class="hamburger-bar"></span>
-          <span class="hamburger-bar"></span>
-          <span class="hamburger-bar"></span>
-        </button>
+    <button
+      data-sads-element="menu-toggle"
+      aria-expanded="false"
+      aria-label="Toggle menu"
+      class="hamburger-menu"
+      data-sads-display="none"
+      data-sads-responsive-rules="[ {&quot;breakpoint&quot;: &quot;mobile&quot;, &quot;styles&quot;: {&quot;display&quot;: &quot;block&quot;}} ]"
+      data-sads-button-variant="icon"
+      data-sads-text-color="text-primary"
+      data-sads-cursor="pointer"
+      data-sads-bg-color="transparent"
+      data-sads-border-style="none"
 
-        <div
-          data-sads-element="nav-items-container"
-          data-sads-display="flex"
-          data-sads-flex-align-items="center"
-          data-sads-gap="m"
-          data-sads-responsive-rules='[
+      data-sads-padding="s"
+    >
+
+
+
+
+      <span class="hamburger-bar"></span>
+      <span class="hamburger-bar"></span>
+      <span class="hamburger-bar"></span>
+    </button>
+
+    <div
+      data-sads-element="nav-items-container"
+      data-sads-display="flex"
+      data-sads-flex-align-items="center"
+      data-sads-gap="m"
+      data-sads-responsive-rules='[
         {"breakpoint": "mobile", "styles": {"display": "none", "flexDirection": "column", "position": "absolute", "top": "custom:60px", "left": "custom:0", "width": "full", "bg-color": "header-bg", "padding": "m", "shadow": "subtle", "gap": "s", "zIndex": "custom:999" }}
       ]'
-        >
-          <ul
-            data-sads-element="nav-list"
-            data-sads-display="flex"
-            data-sads-gap="m"
-            data-sads-list-style="none"
-            data-sads-padding="none"
-            data-sads-margin="none"
-            data-sads-responsive-rules='[
+    >
+
+
+      <ul
+        data-sads-element="nav-list"
+        data-sads-display="flex"
+        data-sads-gap="m"
+        data-sads-list-style="none"
+        data-sads-padding="none"
+        data-sads-margin="none"
+        data-sads-responsive-rules='[
             {"breakpoint": "mobile", "styles": {"flexDirection": "column", "width": "full", "alignItems": "stretch", "gap": "s"}}
         ]'
+      >
+
+        <li data-sads-element="nav-item">
+          <a
+            href="#"
+            data-i18n="nav_home"
+            data-sads-text-color="text-nav-link"
+            data-sads-text-decoration="none"
+            data-sads-padding-top="xs"
+            data-sads-padding-bottom="xs"
+            data-sads-padding-left="s"
+            data-sads-padding-right="s"
+            data-sads-border-radius="s"
+            data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
+
+
           >
-            <li data-sads-element="nav-item">
-              <a
-                href="#"
-                data-i18n="nav_home"
-                data-sads-text-color="text-nav-link"
-                data-sads-text-decoration="none"
-                data-sads-padding-top="xs"
-                data-sads-padding-bottom="xs"
-                data-sads-padding-left="s"
-                data-sads-padding-right="s"
-                data-sads-border-radius="s"
-                data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
-              >
-              </a>
-            </li>
+            Home
+          </a>
+        </li>
 
-            <li data-sads-element="nav-item">
-              <a
-                href="#features"
-                data-i18n="nav_features"
-                data-sads-text-color="text-nav-link"
-                data-sads-text-decoration="none"
-                data-sads-padding-top="xs"
-                data-sads-padding-bottom="xs"
-                data-sads-padding-left="s"
-                data-sads-padding-right="s"
-                data-sads-border-radius="s"
-                data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
-              >
-              </a>
-            </li>
+        <li data-sads-element="nav-item">
+          <a
+            href="#features"
+            data-i18n="nav_features"
+            data-sads-text-color="text-nav-link"
+            data-sads-text-decoration="none"
+            data-sads-padding-top="xs"
+            data-sads-padding-bottom="xs"
+            data-sads-padding-left="s"
+            data-sads-padding-right="s"
+            data-sads-border-radius="s"
+            data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
 
-            <li data-sads-element="nav-item">
-              <a
-                href="#testimonials"
-                data-i18n="nav_testimonials"
-                data-sads-text-color="text-nav-link"
-                data-sads-text-decoration="none"
-                data-sads-padding-top="xs"
-                data-sads-padding-bottom="xs"
-                data-sads-padding-left="s"
-                data-sads-padding-right="s"
-                data-sads-border-radius="s"
-                data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
-              >
-              </a>
-            </li>
 
-            <li data-sads-element="nav-item">
-              <a
-                href="#portfolio"
-                data-i18n="nav_portfolio"
-                data-sads-text-color="text-nav-link"
-                data-sads-text-decoration="none"
-                data-sads-padding-top="xs"
-                data-sads-padding-bottom="xs"
-                data-sads-padding-left="s"
-                data-sads-padding-right="s"
-                data-sads-border-radius="s"
-                data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
-              >
-              </a>
-            </li>
+          >
+            Features
+          </a>
+        </li>
 
-            <li data-sads-element="nav-item">
-              <a
-                href="#blog"
-                data-i18n="nav_blog"
-                data-sads-text-color="text-nav-link"
-                data-sads-text-decoration="none"
-                data-sads-padding-top="xs"
-                data-sads-padding-bottom="xs"
-                data-sads-padding-left="s"
-                data-sads-padding-right="s"
-                data-sads-border-radius="s"
-                data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
-              >
-              </a>
-            </li>
-          </ul>
+        <li data-sads-element="nav-item">
+          <a
+            href="#testimonials"
+            data-i18n="nav_testimonials"
+            data-sads-text-color="text-nav-link"
+            data-sads-text-decoration="none"
+            data-sads-padding-top="xs"
+            data-sads-padding-bottom="xs"
+            data-sads-padding-left="s"
+            data-sads-padding-right="s"
+            data-sads-border-radius="s"
+            data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
 
-          <button
-            data-sads-element="dark-mode-toggle"
-            aria-label="Switch to Dark Mode"
-            id="dark-mode-toggle"
-            data-sads-button-variant="icon"
-            data-sads-text-color="text-primary"
-            data-sads-padding="xs"
-            data-sads-responsive-rules='[
+
+          >
+            Testimonials
+          </a>
+        </li>
+
+        <li data-sads-element="nav-item">
+          <a
+            href="#portfolio"
+            data-i18n="nav_portfolio"
+            data-sads-text-color="text-nav-link"
+            data-sads-text-decoration="none"
+            data-sads-padding-top="xs"
+            data-sads-padding-bottom="xs"
+            data-sads-padding-left="s"
+            data-sads-padding-right="s"
+            data-sads-border-radius="s"
+            data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
+
+
+          >
+            Portfolio
+          </a>
+        </li>
+
+        <li data-sads-element="nav-item">
+          <a
+            href="#blog"
+            data-i18n="nav_blog"
+            data-sads-text-color="text-nav-link"
+            data-sads-text-decoration="none"
+            data-sads-padding-top="xs"
+            data-sads-padding-bottom="xs"
+            data-sads-padding-left="s"
+            data-sads-padding-right="s"
+            data-sads-border-radius="s"
+            data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
+
+
+          >
+            Blog
+          </a>
+        </li>
+
+      </ul>
+
+      <button
+        data-sads-element="dark-mode-toggle"
+        aria-label="Switch to Dark Mode"
+        id="dark-mode-toggle"
+
+        data-sads-button-variant="icon"
+        data-sads-text-color="text-primary"
+        data-sads-padding="xs"
+        data-sads-responsive-rules='[
             {"breakpoint": "mobile", "styles": {"marginTop": "s", "marginLeft": "custom:0", "width": "auto", "padding": "s"}}
         ]'
-          >
-            🌙
-          </button>
+      >
+        🌙
+      </button>
 
-          <div
-            data-sads-element="language-switcher"
-            id="language-switcher"
-            data-sads-display="flex"
-            data-sads-gap="s"
-            data-sads-responsive-rules='[
+      <div
+        data-sads-element="language-switcher"
+        id="language-switcher"
+
+        data-sads-display="flex"
+        data-sads-gap="s"
+        data-sads-responsive-rules='[
             {"breakpoint": "mobile", "styles": {"width": "full", "justifyContent": "center", "marginTop": "m", "marginLeft": "custom:0"}}
         ]'
-          >
-            <button
-              data-lang="en"
-              data-sads-button-variant="outline"
-              data-sads-text-color="text-primary"
-              data-sads-bg-color="surface"
-              data-sads-border-color="input-border-color"
-              data-sads-padding="xs s"
-              data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"padding": "s m"}}
-          ]'
-            >
-              EN
-            </button>
-            <button
-              data-lang="es"
-              data-sads-button-variant="outline"
-              data-sads-text-color="text-primary"
-              data-sads-bg-color="surface"
-              data-sads-border-color="input-border-color"
-              data-sads-padding="xs s"
-              data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"padding": "s m"}}
-          ]'
-            >
-              ES
-            </button>
-          </div>
-        </div>
-      </nav>
-    </header>
-
-    <main>
-      <section
-        data-sads-component="hero"
-        data-sads-padding="xxl xl"
-        data-sads-text-align="center"
-        data-sads-bg-color="hero-bg"
-        data-sads-text-color="text-on-hero"
-        data-sads-display="flex"
-        data-sads-flex-direction="column"
-        data-sads-flex-justify="center"
-        data-sads-flex-align-items="center"
       >
-        <h1
-          data-sads-element="title"
-          data-i18n="hero_title_placeholder"
-          data-sads-font-size="custom:2.5rem"
-          data-sads-margin-bottom="m"
-        >
-          Welcome to Our Site
-        </h1>
-        <p
-          data-sads-element="subtitle"
-          data-i18n="hero_subtitle_placeholder"
-          data-sads-font-size="custom:1.2rem"
-          data-sads-margin-bottom="xl"
-          data-sads-max-width="custom:800px"
-        >
-          Discover amazing things.
-        </p>
-      </section>
-
-      <section
-        data-sads-component="features"
-        id="features"
-        data-aos="fade-up"
-        data-aos-delay="100"
-        data-sads-padding="xl"
-        data-sads-text-align="center"
-        data-sads-bg-color="features-bg"
-      >
-        <h2
-          data-sads-element="title"
-          data-i18n="features_title"
-          data-sads-margin-bottom="xl"
-          data-sads-font-size="custom:2rem"
-        >
-          Our Features
-        </h2>
-        <div
-          data-sads-element="list"
-          data-sads-display="flex"
-          data-sads-flex-wrap="wrap"
-          data-sads-flex-justify="space-around"
-          data-sads-gap="custom:20px"
-          data-sads-max-width="content-container"
-          data-sads-margin="custom:0 auto"
+        <button
+          data-lang="en"
+          data-sads-button-variant="outline"
+          data-sads-text-color="text-primary"
+          data-sads-bg-color="surface"
+          data-sads-border-color="input-border-color"
+          data-sads-padding="xs s"
           data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"padding": "s m"}}
+          ]'
+        >
+          EN
+        </button>
+        <button
+          data-lang="es"
+          data-sads-button-variant="outline"
+          data-sads-text-color="text-primary"
+          data-sads-bg-color="surface"
+          data-sads-border-color="input-border-color"
+          data-sads-padding="xs s"
+          data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"padding": "s m"}}
+          ]'
+        >
+          ES
+        </button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+    <main><section
+    data-sads-component="hero"
+    data-sads-padding="xxl xl"
+    data-sads-text-align="center"
+    data-sads-bg-color="hero-bg"
+    data-sads-text-color="text-on-hero"
+
+    data-sads-display="flex"
+    data-sads-flex-direction="column"
+    data-sads-flex-justify="center"
+    data-sads-flex-align-items="center"
+>
+
+  <h1
+    data-sads-element="title"
+    data-i18n="hero_title_v1"
+    data-sads-font-size="custom:2.5rem"
+
+    data-sads-margin-bottom="m"
+  >
+
+
+    Welcome to Our Site
+  </h1>
+  <p
+    data-sads-element="subtitle"
+    data-i18n="hero_subtitle_v1"
+    data-sads-font-size="custom:1.2rem"
+
+    data-sads-margin-bottom="xl"
+    data-sads-max-width="custom:800px"
+  >
+
+
+    Discover amazing things.
+  </p>
+
+  <a
+    data-sads-element="cta-button"
+    class="cta-button"
+    href="#signup"
+    data-sads-display="inline-block"
+    data-sads-padding="s l"
+    data-sads-text-decoration="none"
+    data-sads-font-weight="bold"
+    data-sads-border-radius="s"
+    data-sads-bg-color="cta-hero-bg"
+    data-sads-text-color="cta-hero-text"
+    data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
+  >
+
+
+    Learn More
+  </a>
+
+
+</section>
+<section
+    data-sads-component="features"
+    id="features"
+    data-aos="fade-up"
+    data-aos-delay="100"
+    data-sads-padding="xl"
+    data-sads-text-align="center"
+    data-sads-bg-color="features-bg"
+>
+  <h2
+    data-sads-element="title"
+    data-i18n="features_title"
+    data-sads-margin-bottom="xl"
+    data-sads-font-size="custom:2rem"
+  >
+    Our Features
+  </h2>
+  <div
+    data-sads-element="list"
+    data-sads-display="flex"
+    data-sads-flex-wrap="wrap"
+    data-sads-flex-justify="space-around"
+    data-sads-gap="custom:20px"
+    data-sads-max-width="content-container"
+    data-sads-margin="custom:0 auto"
+    data-sads-responsive-rules='[
         {"breakpoint": "mobile", "styles": {"flexDirection": "column", "gap": "custom:0"}} 
     ]'
-        >
-          <div
-            data-sads-element="item"
-            class="feature-item"
-            data-sads-bg-color="feature-item-bg"
-            data-sads-padding="custom:1.5rem"
-            data-sads-border-radius="custom:8px"
-            data-sads-shadow="feature-item-shadow"
-            data-sads-flex-basis="custom:calc(33.333% - 20px)"
-            data-sads-box-sizing="border-box"
-            data-sads-text-align="left"
-            data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px"}}
-        ]'
-          >
-            <h3
-              data-sads-element="item-title"
-              data-sads-margin-top="none"
-              data-sads-text-color="feature-item-title-text"
-              data-sads-font-size="l"
-            ></h3>
-            <p
-              data-sads-element="item-description"
-              data-sads-font-size="default"
-            ></p>
-          </div>
+  >
 
-          <div
-            data-sads-element="item"
-            class="feature-item"
-            data-sads-bg-color="feature-item-bg"
-            data-sads-padding="custom:1.5rem"
-            data-sads-border-radius="custom:8px"
-            data-sads-shadow="feature-item-shadow"
-            data-sads-flex-basis="custom:calc(33.333% - 20px)"
-            data-sads-box-sizing="border-box"
-            data-sads-text-align="left"
-            data-sads-responsive-rules='[
+    <div
+        data-sads-element="item"
+        class="feature-item"
+        data-sads-bg-color="feature-item-bg"
+        data-sads-padding="custom:1.5rem"
+        data-sads-border-radius="custom:8px"
+        data-sads-shadow="feature-item-shadow"
+        data-sads-flex-basis="custom:calc(33.333% - 20px)"
+        data-sads-box-sizing="border-box"
+        data-sads-text-align="left"
+        data-sads-responsive-rules='[
             {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px"}}
         ]'
-          >
-            <h3
-              data-sads-element="item-title"
-              data-sads-margin-top="none"
-              data-sads-text-color="feature-item-title-text"
-              data-sads-font-size="l"
-            ></h3>
-            <p
-              data-sads-element="item-description"
-              data-sads-font-size="default"
-            ></p>
-          </div>
 
-          <div
-            data-sads-element="item"
-            class="feature-item"
-            data-sads-bg-color="feature-item-bg"
-            data-sads-padding="custom:1.5rem"
-            data-sads-border-radius="custom:8px"
-            data-sads-shadow="feature-item-shadow"
-            data-sads-flex-basis="custom:calc(33.333% - 20px)"
-            data-sads-box-sizing="border-box"
-            data-sads-text-align="left"
-            data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px"}}
-        ]'
-          >
-            <h3
-              data-sads-element="item-title"
-              data-sads-margin-top="none"
-              data-sads-text-color="feature-item-title-text"
-              data-sads-font-size="l"
-            ></h3>
-            <p
-              data-sads-element="item-description"
-              data-sads-font-size="default"
-            ></p>
-          </div>
-        </div>
-      </section>
-      <section
-        data-sads-component="testimonials"
-        id="testimonials"
-        data-sads-padding="xl"
-        data-sads-text-align="center"
-        data-sads-bg-color="testimonials-bg"
+    >
+
+      <h3
+        data-sads-element="item-title"
+        data-sads-margin-top="none"
+        data-sads-text-color="feature-item-title-text"
+        data-sads-font-size="l"
       >
-        <h2
-          data-sads-element="title"
-          data-i18n="testimonials_title"
-          data-sads-margin-bottom="xl"
-          data-sads-font-size="custom:2rem"
-          data-sads-text-color="testimonials-title-text"
-        ></h2>
-        <div
-          data-sads-element="list"
-          data-sads-display="flex"
-          data-sads-gap="custom:20px"
-          data-sads-max-width="content-container"
-          data-sads-margin="custom:0 auto"
-          data-sads-responsive-rules='[
+        Feature One
+      </h3>
+      <p
+        data-sads-element="item-description"
+        data-sads-font-size="default"
+      >
+        Description of feature one.
+      </p>
+    </div>
+
+    <div
+        data-sads-element="item"
+        class="feature-item"
+        data-sads-bg-color="feature-item-bg"
+        data-sads-padding="custom:1.5rem"
+        data-sads-border-radius="custom:8px"
+        data-sads-shadow="feature-item-shadow"
+        data-sads-flex-basis="custom:calc(33.333% - 20px)"
+        data-sads-box-sizing="border-box"
+        data-sads-text-align="left"
+        data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px"}}
+        ]'
+
+    >
+
+      <h3
+        data-sads-element="item-title"
+        data-sads-margin-top="none"
+        data-sads-text-color="feature-item-title-text"
+        data-sads-font-size="l"
+      >
+        Feature Two
+      </h3>
+      <p
+        data-sads-element="item-description"
+        data-sads-font-size="default"
+      >
+        Description of feature two.
+      </p>
+    </div>
+
+    <div
+        data-sads-element="item"
+        class="feature-item"
+        data-sads-bg-color="feature-item-bg"
+        data-sads-padding="custom:1.5rem"
+        data-sads-border-radius="custom:8px"
+        data-sads-shadow="feature-item-shadow"
+        data-sads-flex-basis="custom:calc(33.333% - 20px)"
+        data-sads-box-sizing="border-box"
+        data-sads-text-align="left"
+        data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px"}}
+        ]'
+
+    >
+
+      <h3
+        data-sads-element="item-title"
+        data-sads-margin-top="none"
+        data-sads-text-color="feature-item-title-text"
+        data-sads-font-size="l"
+      >
+        Feature Three
+      </h3>
+      <p
+        data-sads-element="item-description"
+        data-sads-font-size="default"
+      >
+        Description of feature three.
+      </p>
+    </div>
+
+  </div>
+</section>
+<section
+    data-sads-component="testimonials"
+    id="testimonials"
+    data-sads-padding="xl"
+    data-sads-text-align="center"
+    data-sads-bg-color="testimonials-bg"
+>
+  <h2
+    data-sads-element="title"
+    data-i18n="testimonials_title"
+    data-sads-margin-bottom="xl"
+    data-sads-font-size="custom:2rem"
+    data-sads-text-color="testimonials-title-text"
+  >
+    What Our Users Say
+  </h2>
+  <div
+    data-sads-element="list"
+    data-sads-display="flex"
+
+
+    data-sads-gap="custom:20px"
+    data-sads-max-width="content-container"
+    data-sads-margin="custom:0 auto"
+    data-sads-responsive-rules='[
         {"breakpoint": "mobile", "styles": {"flexDirection": "column", "gap": "custom:0"}}, 
         {"breakpoint": "tablet", "styles": {"flexDirection": "row", "flexWrap": "wrap", "flexJustify": "space-around", "alignItems": "stretch", "gap": "custom:20px"}},
         {"breakpoint": "desktop", "styles": {"flexDirection": "row", "flexWrap": "wrap", "flexJustify": "space-around", "alignItems": "stretch", "gap": "custom:20px"}}
     ]'
-        >
-          <article
-            data-sads-element="item"
-            class="testimonial-item"
-            data-sads-bg-color="testimonial-item-bg"
-            data-sads-padding="custom:1.5rem"
-            data-sads-border-radius="custom:8px"
-            data-sads-shadow="testimonial-item-shadow"
-            data-sads-box-sizing="border-box"
-            data-sads-text-align="center"
-            data-sads-display="flex"
-            data-sads-flex-direction="column"
-            data-sads-flex-basis="full"
-            data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"marginBottom": "custom:20px"}},
-            {"breakpoint": "tablet", "styles": {"flexBasis": "custom:calc(50% - 10px)", "marginBottom": "custom:20px"}}, 
-            {"breakpoint": "desktop", "styles": {"flexBasis": "custom:calc(33.333% - 40px)", "marginBottom": "custom:20px"}} 
-        ]'
-          >
-            <p
-              data-sads-element="quote-text"
-              data-sads-font-style="italic"
-              data-sads-text-color="testimonial-quote-text"
-              data-sads-margin-bottom="m"
-              data-sads-flex-grow="1"
-            >
-              "This is the best service I have ever used. Highly recommended!"
-            </p>
-            <h4
-              data-sads-element="author-name"
-              data-sads-margin-top="none"
-              data-sads-font-weight="bold"
-              data-sads-text-color="testimonial-author-text"
-            >
-              - Jane Doe
-            </h4>
-          </article>
+  >
 
-          <article
-            data-sads-element="item"
-            class="testimonial-item"
-            data-sads-bg-color="testimonial-item-bg"
-            data-sads-padding="custom:1.5rem"
-            data-sads-border-radius="custom:8px"
-            data-sads-shadow="testimonial-item-shadow"
-            data-sads-box-sizing="border-box"
-            data-sads-text-align="center"
-            data-sads-display="flex"
-            data-sads-flex-direction="column"
-            data-sads-flex-basis="full"
-            data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"marginBottom": "custom:20px"}},
-            {"breakpoint": "tablet", "styles": {"flexBasis": "custom:calc(50% - 10px)", "marginBottom": "custom:20px"}}, 
-            {"breakpoint": "desktop", "styles": {"flexBasis": "custom:calc(33.333% - 40px)", "marginBottom": "custom:20px"}} 
-        ]'
-          >
-            <p
-              data-sads-element="quote-text"
-              data-sads-font-style="italic"
-              data-sads-text-color="testimonial-quote-text"
-              data-sads-margin-bottom="m"
-              data-sads-flex-grow="1"
-            >
-              "Amazing features and incredible support. My business has grown
-              significantly."
-            </p>
-            <h4
-              data-sads-element="author-name"
-              data-sads-margin-top="none"
-              data-sads-font-weight="bold"
-              data-sads-text-color="testimonial-author-text"
-            >
-              - John Smith
-            </h4>
-          </article>
-
-          <article
-            data-sads-element="item"
-            class="testimonial-item"
-            data-sads-bg-color="testimonial-item-bg"
-            data-sads-padding="custom:1.5rem"
-            data-sads-border-radius="custom:8px"
-            data-sads-shadow="testimonial-item-shadow"
-            data-sads-box-sizing="border-box"
-            data-sads-text-align="center"
-            data-sads-display="flex"
-            data-sads-flex-direction="column"
-            data-sads-flex-basis="full"
-            data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"marginBottom": "custom:20px"}},
-            {"breakpoint": "tablet", "styles": {"flexBasis": "custom:calc(50% - 10px)", "marginBottom": "custom:20px"}}, 
-            {"breakpoint": "desktop", "styles": {"flexBasis": "custom:calc(33.333% - 40px)", "marginBottom": "custom:20px"}} 
-        ]'
-          >
-            <p
-              data-sads-element="quote-text"
-              data-sads-font-style="italic"
-              data-sads-text-color="testimonial-quote-text"
-              data-sads-margin-bottom="m"
-              data-sads-flex-grow="1"
-            >
-              "A game-changer for our workflow. Simple, effective, and
-              reliable."
-            </p>
-            <h4
-              data-sads-element="author-name"
-              data-sads-margin-top="none"
-              data-sads-font-weight="bold"
-              data-sads-text-color="testimonial-author-text"
-            >
-              - Alice Brown
-            </h4>
-          </article>
-        </div>
-      </section>
-
-      <section
-        data-sads-component="portfolio"
-        id="portfolio"
-        data-sads-padding="xl"
+    <article
+        data-sads-element="item"
+        class="testimonial-item"
+        data-sads-bg-color="testimonial-item-bg"
+        data-sads-padding="custom:1.5rem"
+        data-sads-border-radius="custom:8px"
+        data-sads-shadow="testimonial-item-shadow"
+        data-sads-box-sizing="border-box"
         data-sads-text-align="center"
-        data-sads-bg-color="portfolio-bg"
+        data-sads-display="flex"
+        data-sads-flex-direction="column"
+        data-sads-flex-basis="full"
+        data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"marginBottom": "custom:20px"}},
+            {"breakpoint": "tablet", "styles": {"flexBasis": "custom:calc(50% - 10px)", "marginBottom": "custom:20px"}}, 
+            {"breakpoint": "desktop", "styles": {"flexBasis": "custom:calc(33.333% - 40px)", "marginBottom": "custom:20px"}} 
+        ]'
+    >
+
+        <img
+          data-sads-element="author-image"
+          src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
+
+
+          alt="User 1 Photo"
+          data-sads-width="custom:80px"
+          data-sads-height="custom:80px"
+          data-sads-border-radius="circle"
+          data-sads-object-fit="cover"
+          data-sads-margin-bottom="m"
+          data-sads-border-width="custom:3px"
+          data-sads-border-style="solid"
+          data-sads-border-color="testimonial-img-border"
+          data-sads-margin="custom:0 auto 1rem auto"
+        />
+
+
+
+      <p
+        data-sads-element="quote-text"
+        data-sads-font-style="italic"
+        data-sads-text-color="testimonial-quote-text"
+        data-sads-margin-bottom="m"
+        data-sads-flex-grow="1"
       >
-        <h2
-          data-sads-element="title"
-          data-i18n="portfolio_title"
-          data-sads-margin-bottom="xl"
-          data-sads-font-size="custom:2rem"
-          data-sads-text-color="portfolio-title-text"
-        >
-          Our Work
-        </h2>
-        <div
-          data-sads-element="grid"
-          data-sads-display="grid"
-          data-sads-grid-template-columns="custom:repeat(auto-fit, minmax(280px, 1fr))"
-          data-sads-gap="custom:20px"
-          data-sads-max-width="content-container"
-          data-sads-margin="custom:0 auto"
-        >
-          <article
-            data-sads-element="item"
-            id="project1"
-            data-sads-bg-color="portfolio-item-bg"
-            data-sads-border-radius="custom:8px"
-            data-sads-shadow="portfolio-item-shadow"
-            data-sads-overflow="hidden"
-            data-sads-text-align="left"
-          >
-            <img
-              data-sads-element="item-image"
-              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
-              alt="Portfolio image"
-              data-sads-width="full"
-              data-sads-height="auto"
-              data-sads-display="block"
-              data-sads-border-bottom-width="custom:1px"
-              data-sads-border-bottom-style="solid"
-              data-sads-border-bottom-color="portfolio-img-border"
-            />
 
-            <h3
-              data-sads-element="item-title"
-              data-sads-margin="custom:1rem 1rem 0.5rem"
-              data-sads-text-color="portfolio-item-heading-text"
-              data-sads-font-size="l"
-            >
-              Project Alpha
-            </h3>
-            <p
-              data-sads-element="item-description"
-              data-sads-margin="custom:0 1rem 1rem"
-              data-sads-text-color="portfolio-item-para-text"
-              data-sads-font-size="custom:0.9rem"
-            >
-              Description for Project Alpha.
-            </p>
-          </article>
 
-          <article
-            data-sads-element="item"
-            id="project2"
-            data-sads-bg-color="portfolio-item-bg"
-            data-sads-border-radius="custom:8px"
-            data-sads-shadow="portfolio-item-shadow"
-            data-sads-overflow="hidden"
-            data-sads-text-align="left"
-          >
-            <img
-              data-sads-element="item-image"
-              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
-              alt="Portfolio image"
-              data-sads-width="full"
-              data-sads-height="auto"
-              data-sads-display="block"
-              data-sads-border-bottom-width="custom:1px"
-              data-sads-border-bottom-style="solid"
-              data-sads-border-bottom-color="portfolio-img-border"
-            />
+        "This is the best service I have ever used. Highly recommended!"
+      </p>
+      <h4
+        data-sads-element="author-name"
+        data-sads-margin-top="none"
+        data-sads-font-weight="bold"
+        data-sads-text-color="testimonial-author-text"
+      >
 
-            <h3
-              data-sads-element="item-title"
-              data-sads-margin="custom:1rem 1rem 0.5rem"
-              data-sads-text-color="portfolio-item-heading-text"
-              data-sads-font-size="l"
-            >
-              Project Beta
-            </h3>
-            <p
-              data-sads-element="item-description"
-              data-sads-margin="custom:0 1rem 1rem"
-              data-sads-text-color="portfolio-item-para-text"
-              data-sads-font-size="custom:0.9rem"
-            >
-              Description for Project Beta.
-            </p>
-          </article>
 
-          <article
-            data-sads-element="item"
-            id="project3"
-            data-sads-bg-color="portfolio-item-bg"
-            data-sads-border-radius="custom:8px"
-            data-sads-shadow="portfolio-item-shadow"
-            data-sads-overflow="hidden"
-            data-sads-text-align="left"
-          >
-            <img
-              data-sads-element="item-image"
-              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
-              alt="Portfolio image"
-              data-sads-width="full"
-              data-sads-height="auto"
-              data-sads-display="block"
-              data-sads-border-bottom-width="custom:1px"
-              data-sads-border-bottom-style="solid"
-              data-sads-border-bottom-color="portfolio-img-border"
-            />
+        - Jane Doe
+      </h4>
+    </article>
 
-            <h3
-              data-sads-element="item-title"
-              data-sads-margin="custom:1rem 1rem 0.5rem"
-              data-sads-text-color="portfolio-item-heading-text"
-              data-sads-font-size="l"
-            >
-              Project Gamma
-            </h3>
-            <p
-              data-sads-element="item-description"
-              data-sads-margin="custom:0 1rem 1rem"
-              data-sads-text-color="portfolio-item-para-text"
-              data-sads-font-size="custom:0.9rem"
-            >
-              Description for Project Gamma.
-            </p>
-          </article>
-
-          <article
-            data-sads-element="item"
-            id="project4"
-            data-sads-bg-color="portfolio-item-bg"
-            data-sads-border-radius="custom:8px"
-            data-sads-shadow="portfolio-item-shadow"
-            data-sads-overflow="hidden"
-            data-sads-text-align="left"
-          >
-            <img
-              data-sads-element="item-image"
-              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
-              alt="Portfolio image"
-              data-sads-width="full"
-              data-sads-height="auto"
-              data-sads-display="block"
-              data-sads-border-bottom-width="custom:1px"
-              data-sads-border-bottom-style="solid"
-              data-sads-border-bottom-color="portfolio-img-border"
-            />
-
-            <h3
-              data-sads-element="item-title"
-              data-sads-margin="custom:1rem 1rem 0.5rem"
-              data-sads-text-color="portfolio-item-heading-text"
-              data-sads-font-size="l"
-            >
-              Project Delta
-            </h3>
-            <p
-              data-sads-element="item-description"
-              data-sads-margin="custom:0 1rem 1rem"
-              data-sads-text-color="portfolio-item-para-text"
-              data-sads-font-size="custom:0.9rem"
-            >
-              Description for Project Delta.
-            </p>
-          </article>
-        </div>
-      </section>
-
-      <section
-        data-sads-component="blog"
-        id="blog"
-        data-sads-padding="xl"
+    <article
+        data-sads-element="item"
+        class="testimonial-item"
+        data-sads-bg-color="testimonial-item-bg"
+        data-sads-padding="custom:1.5rem"
+        data-sads-border-radius="custom:8px"
+        data-sads-shadow="testimonial-item-shadow"
+        data-sads-box-sizing="border-box"
         data-sads-text-align="center"
-        data-sads-bg-color="blog-bg"
+        data-sads-display="flex"
+        data-sads-flex-direction="column"
+        data-sads-flex-basis="full"
+        data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"marginBottom": "custom:20px"}},
+            {"breakpoint": "tablet", "styles": {"flexBasis": "custom:calc(50% - 10px)", "marginBottom": "custom:20px"}}, 
+            {"breakpoint": "desktop", "styles": {"flexBasis": "custom:calc(33.333% - 40px)", "marginBottom": "custom:20px"}} 
+        ]'
+    >
+
+        <img
+          data-sads-element="author-image"
+          src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
+
+
+          alt="User 2 Photo"
+          data-sads-width="custom:80px"
+          data-sads-height="custom:80px"
+          data-sads-border-radius="circle"
+          data-sads-object-fit="cover"
+          data-sads-margin-bottom="m"
+          data-sads-border-width="custom:3px"
+          data-sads-border-style="solid"
+          data-sads-border-color="testimonial-img-border"
+          data-sads-margin="custom:0 auto 1rem auto"
+        />
+
+
+
+      <p
+        data-sads-element="quote-text"
+        data-sads-font-style="italic"
+        data-sads-text-color="testimonial-quote-text"
+        data-sads-margin-bottom="m"
+        data-sads-flex-grow="1"
       >
-        <h2
-          data-sads-element="title"
-          data-i18n="blog_title"
-          data-sads-margin-bottom="xl"
-          data-sads-font-size="custom:2rem"
-          data-sads-text-color="blog-title-text"
-        >
-          Latest Posts
-        </h2>
-        <div
-          data-sads-element="list"
-          data-sads-display="flex"
-          data-sads-flex-wrap="wrap"
-          data-sads-flex-justify="space-around"
-          data-sads-gap="custom:20px"
-          data-sads-max-width="content-container"
-          data-sads-margin="custom:0 auto"
-          data-sads-responsive-rules='[
+
+
+        "Amazing features and incredible support. My business has grown significantly."
+      </p>
+      <h4
+        data-sads-element="author-name"
+        data-sads-margin-top="none"
+        data-sads-font-weight="bold"
+        data-sads-text-color="testimonial-author-text"
+      >
+
+
+        - John Smith
+      </h4>
+    </article>
+
+    <article
+        data-sads-element="item"
+        class="testimonial-item"
+        data-sads-bg-color="testimonial-item-bg"
+        data-sads-padding="custom:1.5rem"
+        data-sads-border-radius="custom:8px"
+        data-sads-shadow="testimonial-item-shadow"
+        data-sads-box-sizing="border-box"
+        data-sads-text-align="center"
+        data-sads-display="flex"
+        data-sads-flex-direction="column"
+        data-sads-flex-basis="full"
+        data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"marginBottom": "custom:20px"}},
+            {"breakpoint": "tablet", "styles": {"flexBasis": "custom:calc(50% - 10px)", "marginBottom": "custom:20px"}}, 
+            {"breakpoint": "desktop", "styles": {"flexBasis": "custom:calc(33.333% - 40px)", "marginBottom": "custom:20px"}} 
+        ]'
+    >
+
+        <img
+          data-sads-element="author-image"
+          src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
+
+
+          alt="User 3 Photo"
+          data-sads-width="custom:80px"
+          data-sads-height="custom:80px"
+          data-sads-border-radius="circle"
+          data-sads-object-fit="cover"
+          data-sads-margin-bottom="m"
+          data-sads-border-width="custom:3px"
+          data-sads-border-style="solid"
+          data-sads-border-color="testimonial-img-border"
+          data-sads-margin="custom:0 auto 1rem auto"
+        />
+
+
+
+      <p
+        data-sads-element="quote-text"
+        data-sads-font-style="italic"
+        data-sads-text-color="testimonial-quote-text"
+        data-sads-margin-bottom="m"
+        data-sads-flex-grow="1"
+      >
+
+
+        "A game-changer for our workflow. Simple, effective, and reliable."
+      </p>
+      <h4
+        data-sads-element="author-name"
+        data-sads-margin-top="none"
+        data-sads-font-weight="bold"
+        data-sads-text-color="testimonial-author-text"
+      >
+
+
+        - Alice Brown
+      </h4>
+    </article>
+
+  </div>
+</section>
+<section
+    data-sads-component="portfolio"
+    id="portfolio"
+    data-sads-padding="xl"
+    data-sads-text-align="center"
+    data-sads-bg-color="portfolio-bg"
+>
+  <h2
+    data-sads-element="title"
+    data-i18n="portfolio_title"
+    data-sads-margin-bottom="xl"
+    data-sads-font-size="custom:2rem"
+    data-sads-text-color="portfolio-title-text"
+  >
+    Our Work
+  </h2>
+  <div
+    data-sads-element="grid"
+    data-sads-display="grid"
+    data-sads-grid-template-columns="custom:repeat(auto-fit, minmax(280px, 1fr))"
+    data-sads-gap="custom:20px"
+    data-sads-max-width="content-container"
+    data-sads-margin="custom:0 auto"
+  >
+
+    <article
+        data-sads-element="item"
+        id="project1"
+        data-sads-bg-color="portfolio-item-bg"
+        data-sads-border-radius="custom:8px"
+        data-sads-shadow="portfolio-item-shadow"
+        data-sads-overflow="hidden"
+        data-sads-text-align="left"
+
+    >
+
+      <img
+        data-sads-element="item-image"
+        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
+
+
+        alt="Portfolio image"
+        data-sads-width="full"
+        data-sads-height="auto"
+        data-sads-display="block"
+        data-sads-border-bottom-width="custom:1px"
+        data-sads-border-bottom-style="solid"
+        data-sads-border-bottom-color="portfolio-img-border"
+      />
+
+
+      <h3
+        data-sads-element="item-title"
+        data-sads-margin="custom:1rem 1rem 0.5rem"
+        data-sads-text-color="portfolio-item-heading-text"
+        data-sads-font-size="l"
+      >
+
+
+        Project Alpha
+      </h3>
+      <p
+        data-sads-element="item-description"
+        data-sads-margin="custom:0 1rem 1rem"
+        data-sads-text-color="portfolio-item-para-text"
+        data-sads-font-size="custom:0.9rem"
+      >
+
+
+        Description for Project Alpha.
+      </p>
+
+
+
+
+
+
+
+
+    </article>
+
+    <article
+        data-sads-element="item"
+        id="project2"
+        data-sads-bg-color="portfolio-item-bg"
+        data-sads-border-radius="custom:8px"
+        data-sads-shadow="portfolio-item-shadow"
+        data-sads-overflow="hidden"
+        data-sads-text-align="left"
+
+    >
+
+      <img
+        data-sads-element="item-image"
+        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
+
+
+        alt="Portfolio image"
+        data-sads-width="full"
+        data-sads-height="auto"
+        data-sads-display="block"
+        data-sads-border-bottom-width="custom:1px"
+        data-sads-border-bottom-style="solid"
+        data-sads-border-bottom-color="portfolio-img-border"
+      />
+
+
+      <h3
+        data-sads-element="item-title"
+        data-sads-margin="custom:1rem 1rem 0.5rem"
+        data-sads-text-color="portfolio-item-heading-text"
+        data-sads-font-size="l"
+      >
+
+
+        Project Beta
+      </h3>
+      <p
+        data-sads-element="item-description"
+        data-sads-margin="custom:0 1rem 1rem"
+        data-sads-text-color="portfolio-item-para-text"
+        data-sads-font-size="custom:0.9rem"
+      >
+
+
+        Description for Project Beta.
+      </p>
+
+
+
+
+
+
+
+
+    </article>
+
+    <article
+        data-sads-element="item"
+        id="project3"
+        data-sads-bg-color="portfolio-item-bg"
+        data-sads-border-radius="custom:8px"
+        data-sads-shadow="portfolio-item-shadow"
+        data-sads-overflow="hidden"
+        data-sads-text-align="left"
+
+    >
+
+      <img
+        data-sads-element="item-image"
+        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
+
+
+        alt="Portfolio image"
+        data-sads-width="full"
+        data-sads-height="auto"
+        data-sads-display="block"
+        data-sads-border-bottom-width="custom:1px"
+        data-sads-border-bottom-style="solid"
+        data-sads-border-bottom-color="portfolio-img-border"
+      />
+
+
+      <h3
+        data-sads-element="item-title"
+        data-sads-margin="custom:1rem 1rem 0.5rem"
+        data-sads-text-color="portfolio-item-heading-text"
+        data-sads-font-size="l"
+      >
+
+
+        Project Gamma
+      </h3>
+      <p
+        data-sads-element="item-description"
+        data-sads-margin="custom:0 1rem 1rem"
+        data-sads-text-color="portfolio-item-para-text"
+        data-sads-font-size="custom:0.9rem"
+      >
+
+
+        Description for Project Gamma.
+      </p>
+
+
+
+
+
+
+
+
+    </article>
+
+    <article
+        data-sads-element="item"
+        id="project4"
+        data-sads-bg-color="portfolio-item-bg"
+        data-sads-border-radius="custom:8px"
+        data-sads-shadow="portfolio-item-shadow"
+        data-sads-overflow="hidden"
+        data-sads-text-align="left"
+
+    >
+
+      <img
+        data-sads-element="item-image"
+        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjwvc3ZnPg=="
+
+
+        alt="Portfolio image"
+        data-sads-width="full"
+        data-sads-height="auto"
+        data-sads-display="block"
+        data-sads-border-bottom-width="custom:1px"
+        data-sads-border-bottom-style="solid"
+        data-sads-border-bottom-color="portfolio-img-border"
+      />
+
+
+      <h3
+        data-sads-element="item-title"
+        data-sads-margin="custom:1rem 1rem 0.5rem"
+        data-sads-text-color="portfolio-item-heading-text"
+        data-sads-font-size="l"
+      >
+
+
+        Project Delta
+      </h3>
+      <p
+        data-sads-element="item-description"
+        data-sads-margin="custom:0 1rem 1rem"
+        data-sads-text-color="portfolio-item-para-text"
+        data-sads-font-size="custom:0.9rem"
+      >
+
+
+        Description for Project Delta.
+      </p>
+
+
+
+
+
+
+
+
+    </article>
+
+  </div>
+</section>
+<section
+    data-sads-component="blog"
+    id="blog"
+    data-sads-padding="xl"
+    data-sads-text-align="center"
+    data-sads-bg-color="blog-bg"
+>
+  <h2
+    data-sads-element="title"
+    data-i18n="blog_title"
+    data-sads-margin-bottom="xl"
+    data-sads-font-size="custom:2rem"
+    data-sads-text-color="blog-title-text"
+  >
+    Latest Posts
+  </h2>
+  <div
+    data-sads-element="list"
+    data-sads-display="flex"
+    data-sads-flex-wrap="wrap"
+    data-sads-flex-justify="space-around"
+    data-sads-gap="custom:20px"
+    data-sads-max-width="content-container"
+    data-sads-margin="custom:0 auto"
+    data-sads-responsive-rules='[
         {"breakpoint": "mobile", "styles": {"flexDirection": "column", "gap": "custom:0", "alignItems": "center" }} 
     ]'
-        >
-          <article
-            data-sads-element="item"
-            class="blog-item"
-            id="post1"
-            data-sads-bg-color="blog-item-bg"
-            data-sads-padding="custom:1.5rem"
-            data-sads-border-radius="custom:8px"
-            data-sads-shadow="blog-item-shadow"
-            data-sads-flex-basis="custom:calc(33.333% - 40px)"
-            data-sads-text-align="left"
-            data-sads-box-sizing="border-box"
-            data-sads-responsive-rules='[
+  >
+
+    <article
+        data-sads-element="item"
+        class="blog-item"
+        id="post1"
+        data-sads-bg-color="blog-item-bg"
+        data-sads-padding="custom:1.5rem"
+        data-sads-border-radius="custom:8px"
+        data-sads-shadow="blog-item-shadow"
+        data-sads-flex-basis="custom:calc(33.333% - 40px)"
+        data-sads-text-align="left"
+        data-sads-box-sizing="border-box"
+        data-sads-responsive-rules='[
             {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px", "width": "full"}} 
         ]'
-          >
-            <h3
-              data-sads-element="item-title"
-              data-sads-margin-top="none"
-              data-sads-text-color="blog-item-title-text"
-              data-sads-font-size="l"
-            >
-              Alpha Post Title
-            </h3>
-            <p
-              data-sads-element="item-excerpt"
-              data-sads-font-size="custom:0.9rem"
-              data-sads-text-color="blog-item-excerpt-text"
-              data-sads-margin-bottom="m"
-            >
-              Excerpt for Alpha blog post...
-            </p>
-            <a
-              data-sads-element="read-more-link"
-              class="read-more-link"
-              href="#post1-link"
-              data-sads-display="inline-block"
-              data-sads-text-color="blog-readmore-text"
-              data-sads-text-decoration="none"
-              data-sads-font-weight="bold"
-            >
-              Read Alpha Post</a
-            >
-          </article>
 
-          <article
-            data-sads-element="item"
-            class="blog-item"
-            id="post2"
-            data-sads-bg-color="blog-item-bg"
-            data-sads-padding="custom:1.5rem"
-            data-sads-border-radius="custom:8px"
-            data-sads-shadow="blog-item-shadow"
-            data-sads-flex-basis="custom:calc(33.333% - 40px)"
-            data-sads-text-align="left"
-            data-sads-box-sizing="border-box"
-            data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px", "width": "full"}} 
-        ]'
-          >
-            <h3
-              data-sads-element="item-title"
-              data-sads-margin-top="none"
-              data-sads-text-color="blog-item-title-text"
-              data-sads-font-size="l"
-            >
-              Beta Post Title
-            </h3>
-            <p
-              data-sads-element="item-excerpt"
-              data-sads-font-size="custom:0.9rem"
-              data-sads-text-color="blog-item-excerpt-text"
-              data-sads-margin-bottom="m"
-            >
-              Excerpt for Beta blog post...
-            </p>
-            <a
-              data-sads-element="read-more-link"
-              class="read-more-link"
-              href="#post2-link"
-              data-sads-display="inline-block"
-              data-sads-text-color="blog-readmore-text"
-              data-sads-text-decoration="none"
-              data-sads-font-weight="bold"
-            >
-              Read Beta Post</a
-            >
-          </article>
-
-          <article
-            data-sads-element="item"
-            class="blog-item"
-            id="post3"
-            data-sads-bg-color="blog-item-bg"
-            data-sads-padding="custom:1.5rem"
-            data-sads-border-radius="custom:8px"
-            data-sads-shadow="blog-item-shadow"
-            data-sads-flex-basis="custom:calc(33.333% - 40px)"
-            data-sads-text-align="left"
-            data-sads-box-sizing="border-box"
-            data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px", "width": "full"}} 
-        ]'
-          >
-            <h3
-              data-sads-element="item-title"
-              data-sads-margin-top="none"
-              data-sads-text-color="blog-item-title-text"
-              data-sads-font-size="l"
-            >
-              Gamma Post Title
-            </h3>
-            <p
-              data-sads-element="item-excerpt"
-              data-sads-font-size="custom:0.9rem"
-              data-sads-text-color="blog-item-excerpt-text"
-              data-sads-margin-bottom="m"
-            >
-              Excerpt for Gamma blog post...
-            </p>
-            <a
-              data-sads-element="read-more-link"
-              class="read-more-link"
-              href="#post3-link"
-              data-sads-display="inline-block"
-              data-sads-text-color="blog-readmore-text"
-              data-sads-text-decoration="none"
-              data-sads-font-weight="bold"
-            >
-              Read Gamma Post</a
-            >
-          </article>
-        </div>
-      </section>
-
-      <section
-        data-sads-component="contact-form"
-        id="contact"
-        data-sads-padding="xl"
-        data-sads-bg-color="contact-section-bg"
-        data-sads-text-align="center"
+    >
+      <h3
+        data-sads-element="item-title"
+        data-sads-margin-top="none"
+        data-sads-text-color="blog-item-title-text"
+        data-sads-font-size="l"
       >
-        <div
-          data-sads-element="container"
-          data-sads-max-width="custom:600px"
-          data-sads-margin="custom:0 auto"
-          data-sads-bg-color="contact-form-inner-bg"
-          data-sads-padding="xl"
-          data-sads-border-radius="custom:8px"
-          data-sads-shadow="contact-form-shadow"
+        Alpha Post Title
+      </h3>
+      <p
+        data-sads-element="item-excerpt"
+        data-sads-font-size="custom:0.9rem"
+        data-sads-text-color="blog-item-excerpt-text"
+        data-sads-margin-bottom="m"
+      >
+        Excerpt for Alpha blog post...
+      </p>
+      <a
+        data-sads-element="read-more-link"
+        class="read-more-link"
+        href="#post1-link"
+        data-sads-display="inline-block"
+        data-sads-text-color="blog-readmore-text"
+        data-sads-text-decoration="none"
+        data-sads-font-weight="bold"
+      >
+        Read Alpha Post</a
+      >
+    </article>
+
+    <article
+        data-sads-element="item"
+        class="blog-item"
+        id="post2"
+        data-sads-bg-color="blog-item-bg"
+        data-sads-padding="custom:1.5rem"
+        data-sads-border-radius="custom:8px"
+        data-sads-shadow="blog-item-shadow"
+        data-sads-flex-basis="custom:calc(33.333% - 40px)"
+        data-sads-text-align="left"
+        data-sads-box-sizing="border-box"
+        data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px", "width": "full"}} 
+        ]'
+
+    >
+      <h3
+        data-sads-element="item-title"
+        data-sads-margin-top="none"
+        data-sads-text-color="blog-item-title-text"
+        data-sads-font-size="l"
+      >
+        Beta Post Title
+      </h3>
+      <p
+        data-sads-element="item-excerpt"
+        data-sads-font-size="custom:0.9rem"
+        data-sads-text-color="blog-item-excerpt-text"
+        data-sads-margin-bottom="m"
+      >
+        Excerpt for Beta blog post...
+      </p>
+      <a
+        data-sads-element="read-more-link"
+        class="read-more-link"
+        href="#post2-link"
+        data-sads-display="inline-block"
+        data-sads-text-color="blog-readmore-text"
+        data-sads-text-decoration="none"
+        data-sads-font-weight="bold"
+      >
+        Read Beta Post</a
+      >
+    </article>
+
+    <article
+        data-sads-element="item"
+        class="blog-item"
+        id="post3"
+        data-sads-bg-color="blog-item-bg"
+        data-sads-padding="custom:1.5rem"
+        data-sads-border-radius="custom:8px"
+        data-sads-shadow="blog-item-shadow"
+        data-sads-flex-basis="custom:calc(33.333% - 40px)"
+        data-sads-text-align="left"
+        data-sads-box-sizing="border-box"
+        data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px", "width": "full"}} 
+        ]'
+
+    >
+      <h3
+        data-sads-element="item-title"
+        data-sads-margin-top="none"
+        data-sads-text-color="blog-item-title-text"
+        data-sads-font-size="l"
+      >
+        Gamma Post Title
+      </h3>
+      <p
+        data-sads-element="item-excerpt"
+        data-sads-font-size="custom:0.9rem"
+        data-sads-text-color="blog-item-excerpt-text"
+        data-sads-margin-bottom="m"
+      >
+        Excerpt for Gamma blog post...
+      </p>
+      <a
+        data-sads-element="read-more-link"
+        class="read-more-link"
+        href="#post3-link"
+        data-sads-display="inline-block"
+        data-sads-text-color="blog-readmore-text"
+        data-sads-text-decoration="none"
+        data-sads-font-weight="bold"
+      >
+        Read Gamma Post</a
+      >
+    </article>
+
+  </div>
+</section>
+<section
+  data-sads-component="contact-form"
+  id="contact"
+  data-sads-padding="xl"
+  data-sads-bg-color="contact-section-bg"
+  data-sads-text-align="center"
+>
+  <div
+    data-sads-element="container"
+    data-sads-max-width="custom:600px"
+    data-sads-margin="custom:0 auto"
+    data-sads-bg-color="contact-form-inner-bg"
+    data-sads-padding="xl"
+    data-sads-border-radius="custom:8px"
+    data-sads-shadow="contact-form-shadow"
+  >
+    <h2
+      data-sads-element="title"
+      data-i18n="contact_title"
+      data-sads-font-size="custom:2rem"
+      data-sads-text-color="text-primary"
+      data-sads-margin-bottom="xl"
+      data-sads-text-align="center"
+    >
+      Contact Us
+    </h2>
+    <form
+      data-sads-element="form"
+      class="contact-form-tag"
+      id="contactForm"
+      method="POST"
+      action="https://formspree.io/f/xgvyddyg"
+      data-form-action-url="https://formspree.io/f/xgvyddyg"
+      data-success-message="Message sent successfully! Thank you."
+      data-error-message="Oops! Something went wrong. Please try again."
+      data-sads-display="flex"
+      data-sads-flex-direction="column"
+      data-sads-gap="m"
+    >
+      <div>
+        <label
+          for="name"
+          data-i18n="contact_name_label"
+          data-sads-element="label"
+          data-sads-display="block"
+          data-sads-margin-bottom="xs"
+          data-sads-font-weight="bold"
+          data-sads-text-color="contact-label-text"
+          data-sads-text-align="left"
         >
-          <h2
-            data-sads-element="title"
-            data-i18n="contact_title"
-            data-sads-font-size="custom:2rem"
-            data-sads-text-color="text-primary"
-            data-sads-margin-bottom="xl"
-            data-sads-text-align="center"
-          >
-            Contact Us
-          </h2>
-          <form
-            data-sads-element="form"
-            class="contact-form-tag"
-            id="contactForm"
-            method="POST"
-            action="#"
-            data-form-action-url="#"
-            data-success-message="Message sent!"
-            data-error-message="Error sending message."
-            data-sads-display="flex"
-            data-sads-flex-direction="column"
-            data-sads-gap="m"
-          >
-            <div>
-              <label
-                for="name"
-                data-i18n="contact_name_label"
-                data-sads-element="label"
-                data-sads-display="block"
-                data-sads-margin-bottom="xs"
-                data-sads-font-weight="bold"
-                data-sads-text-color="contact-label-text"
-                data-sads-text-align="left"
-              >
-                Name:
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                required
-                data-sads-element="input"
-                data-sads-width="full"
-                data-sads-padding="custom:0.75rem"
-                data-sads-border-width="custom:1px"
-                data-sads-border-style="solid"
-                data-sads-border-color="contact-input-border"
-                data-sads-border-radius="custom:4px"
-                data-sads-box-sizing="border-box"
-                data-sads-bg-color="contact-input-bg"
-                data-sads-text-color="contact-input-text"
-              />
-            </div>
+          Name:
+        </label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          required
+          data-sads-element="input"
+          data-sads-width="full"
+          data-sads-padding="custom:0.75rem"
+          data-sads-border-width="custom:1px"
+          data-sads-border-style="solid"
+          data-sads-border-color="contact-input-border"
+          data-sads-border-radius="custom:4px"
+          data-sads-box-sizing="border-box"
+          data-sads-bg-color="contact-input-bg"
+          data-sads-text-color="contact-input-text"
+        />
+      </div>
 
-            <div>
-              <label
-                for="email"
-                data-i18n="contact_email_label"
-                data-sads-element="label"
-                data-sads-display="block"
-                data-sads-margin-bottom="xs"
-                data-sads-font-weight="bold"
-                data-sads-text-color="contact-label-text"
-                data-sads-text-align="left"
-              >
-                Email:
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                required
-                data-sads-element="input"
-                data-sads-width="full"
-                data-sads-padding="custom:0.75rem"
-                data-sads-border-width="custom:1px"
-                data-sads-border-style="solid"
-                data-sads-border-color="contact-input-border"
-                data-sads-border-radius="custom:4px"
-                data-sads-box-sizing="border-box"
-                data-sads-bg-color="contact-input-bg"
-                data-sads-text-color="contact-input-text"
-              />
-            </div>
+      <div>
+        <label
+          for="email"
+          data-i18n="contact_email_label"
+          data-sads-element="label"
+          data-sads-display="block"
+          data-sads-margin-bottom="xs"
+          data-sads-font-weight="bold"
+          data-sads-text-color="contact-label-text"
+          data-sads-text-align="left"
+        >
+          Email:
+        </label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          required
+          data-sads-element="input"
+          data-sads-width="full"
+          data-sads-padding="custom:0.75rem"
+          data-sads-border-width="custom:1px"
+          data-sads-border-style="solid"
+          data-sads-border-color="contact-input-border"
+          data-sads-border-radius="custom:4px"
+          data-sads-box-sizing="border-box"
+          data-sads-bg-color="contact-input-bg"
+          data-sads-text-color="contact-input-text"
+        />
+      </div>
 
-            <div>
-              <label
-                for="message"
-                data-i18n="contact_message_label"
-                data-sads-element="label"
-                data-sads-display="block"
-                data-sads-margin-bottom="xs"
-                data-sads-font-weight="bold"
-                data-sads-text-color="contact-label-text"
-                data-sads-text-align="left"
-              >
-                Message:
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                rows="4"
-                required
-                data-sads-element="textarea"
-                data-sads-width="full"
-                data-sads-padding="custom:0.75rem"
-                data-sads-border-width="custom:1px"
-                data-sads-border-style="solid"
-                data-sads-border-color="contact-input-border"
-                data-sads-border-radius="custom:4px"
-                data-sads-box-sizing="border-box"
-                data-sads-bg-color="contact-input-bg"
-                data-sads-text-color="contact-input-text"
-                data-sads-resize="vertical"
-              ></textarea>
-            </div>
+      <div>
+        <label
+          for="message"
+          data-i18n="contact_message_label"
+          data-sads-element="label"
+          data-sads-display="block"
+          data-sads-margin-bottom="xs"
+          data-sads-font-weight="bold"
+          data-sads-text-color="contact-label-text"
+          data-sads-text-align="left"
+        >
+          Message:
+        </label>
+        <textarea
+          id="message"
+          name="message"
+          rows="4"
+          required
+          data-sads-element="textarea"
+          data-sads-width="full"
+          data-sads-padding="custom:0.75rem"
+          data-sads-border-width="custom:1px"
+          data-sads-border-style="solid"
+          data-sads-border-color="contact-input-border"
+          data-sads-border-radius="custom:4px"
+          data-sads-box-sizing="border-box"
+          data-sads-bg-color="contact-input-bg"
+          data-sads-text-color="contact-input-text"
+          data-sads-resize="vertical"
+        ></textarea>
+      </div>
 
-            <button
-              type="submit"
-              class="contact-submit-button"
-              data-i18n="contact_send_button"
-              data-sads-element="button"
-              data-sads-width="full"
-              data-sads-padding="custom:10px 20px"
-              data-sads-bg-color="contact-submit-bg"
-              data-sads-text-color="contact-submit-text"
-              data-sads-border-style="none"
-              data-sads-border-radius="custom:5px"
-              data-sads-cursor="pointer"
-              data-sads-font-size="custom:1rem"
-              data-sads-font-weight="bold"
-              data-sads-transition="custom:background-color 0.3s ease"
-            >
-              Send Message
-            </button>
-            <div
-              data-sads-element="status-message"
-              id="contactFormStatus"
-              role="status"
-              data-sads-min-height="custom:1.5em"
-              data-sads-margin-top="s"
-              data-sads-text-align="center"
-              data-sads-font-size="s"
-            ></div>
-          </form>
-        </div>
-      </section>
+      <button
+        type="submit"
+        class="contact-submit-button"
+        data-i18n="contact_send_button"
+        data-sads-element="button"
+        data-sads-width="full"
+        data-sads-padding="custom:10px 20px"
+        data-sads-bg-color="contact-submit-bg"
+        data-sads-text-color="contact-submit-text"
+        data-sads-border-style="none"
+        data-sads-border-radius="custom:5px"
+        data-sads-cursor="pointer"
+        data-sads-font-size="custom:1rem"
+        data-sads-font-weight="bold"
+        data-sads-transition="custom:background-color 0.3s ease"
+      >
+        Send Message
+      </button>
+      <div
+        data-sads-element="status-message"
+        id="contactFormStatus"
+        role="status"
+        data-sads-min-height="custom:1.5em"
+        data-sads-margin-top="s"
+        data-sads-text-align="center"
+        data-sads-font-size="s"
 
-      <script>
-        document.addEventListener("DOMContentLoaded", function () {
-          const form = document.getElementById("contactForm");
-          if (form) {
-            const statusDiv = document.getElementById("contactFormStatus");
-            const actionUrl = form.dataset.formActionUrl;
-            const successMessage = form.dataset.successMessage;
-            const errorMessage = form.dataset.errorMessage;
 
-            form.addEventListener("submit", function (event) {
-              event.preventDefault();
-              const formData = new FormData(form);
-              statusDiv.textContent = "";
-              statusDiv.classList.remove("success", "error"); // Keep class-based styling for status messages for now
+      ></div>
+    </form>
+  </div>
+</section>
 
-              fetch(actionUrl, {
-                method: "POST",
-                body: formData,
-                headers: {
-                  Accept: "application/json",
-                },
-              })
-                .then((response) => {
-                  if (response.ok) {
-                    statusDiv.textContent = successMessage;
-                    statusDiv.classList.add("success"); // JS adds 'success' class
-                    form.reset();
-                  } else {
-                    response.json().then((data) => {
-                      if (Object.hasOwn(data, "errors")) {
-                        statusDiv.textContent = data["errors"]
-                          .map((error) => error["message"])
-                          .join(", ");
-                      } else {
-                        statusDiv.textContent = errorMessage;
-                      }
-                      statusDiv.classList.add("error"); // JS adds 'error' class
-                    });
-                  }
-                })
-                .catch((error) => {
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("contactForm");
+    if (form) {
+      const statusDiv = document.getElementById("contactFormStatus");
+      const actionUrl = form.dataset.formActionUrl;
+      const successMessage = form.dataset.successMessage;
+      const errorMessage = form.dataset.errorMessage;
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const formData = new FormData(form);
+        statusDiv.textContent = "";
+        statusDiv.classList.remove("success", "error"); // Keep class-based styling for status messages for now
+
+        fetch(actionUrl, {
+          method: "POST",
+          body: formData,
+          headers: {
+            Accept: "application/json",
+          },
+        })
+          .then((response) => {
+            if (response.ok) {
+              statusDiv.textContent = successMessage;
+              statusDiv.classList.add("success"); // JS adds 'success' class
+              form.reset();
+            } else {
+              response.json().then((data) => {
+                if (Object.hasOwn(data, "errors")) {
+                  statusDiv.textContent = data["errors"]
+                    .map((error) => error["message"])
+                    .join(", ");
+                } else {
                   statusDiv.textContent = errorMessage;
-                  statusDiv.classList.add("error");
-                });
-            });
-          }
-        });
-      </script>
-    </main>
+                }
+                statusDiv.classList.add("error"); // JS adds 'error' class
+              });
+            }
+          })
+          .catch((error) => {
+            statusDiv.textContent = errorMessage;
+            statusDiv.classList.add("error");
+          });
+      });
+    }
+  });
+</script></main>
 
     <footer
-      data-sads-component="footer"
-      data-sads-bg-color="footer-bg"
-      data-sads-text-color="text-footer"
-      data-sads-padding="l 0"
-      data-sads-text-align="center"
-      data-sads-margin-top="xl"
-    >
-      <div
-        data-sads-element="footer-content-container"
-        data-sads-max-width="content-container"
-        data-sads-margin="custom:0 auto"
-        data-sads-padding="0 m"
-      >
-        <p
-          data-sads-element="footer-text"
-          data-sads-font-size="s"
-          data-sads-margin="none"
-        ></p>
-      </div>
-    </footer>
-
+  data-sads-component="footer"
+  data-sads-bg-color="footer-bg"
+  data-sads-text-color="text-footer"
+  data-sads-padding="l 0"
+  data-sads-text-align="center"
+  data-sads-margin-top="xl"
+>
+  <div
+    data-sads-element="footer-content-container"
+    data-sads-max-width="content-container"
+    data-sads-margin="custom:0 auto"
+    data-sads-padding="0 m"
+  >
+    <p data-sads-element="footer-text" data-sads-font-size="s" data-sads-margin="none">
+      &amp;copy; 2024 Simple Landing Page. All rights reserved.
+    </p>
+  </div>
+</footer>
     <script type="module" src="public/dist/main.js" defer></script>
+
+
   </body>
 </html>

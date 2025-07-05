@@ -22,7 +22,7 @@
       data-sads-margin-bottom="xl" {# CSS: margin-bottom: 2rem #}
       data-sads-text-align="center"
     >
-      {{ translations["contact_title"] | default:"Contact Us" }}
+      {{ translations["contact_title"] | default("Contact Us") }}
     </h2>
     <form
       data-sads-element="form"
@@ -31,8 +31,8 @@
       method="POST"
       action="{% if config and config.form_action_uri %}{{ config.form_action_uri }}{% else %}#{% endif %}"
       data-form-action-url="{% if config and config.form_action_uri %}{{ config.form_action_uri }}{% else %}#{% endif %}"
-      data-success-message="{% if config and config.success_message_key %}{{ translations[config.success_message_key] | default:"Message sent!" }}{% else %}Message sent!{% endif %}"
-      data-error-message="{% if config and config.error_message_key %}{{ translations[config.error_message_key] | default:"Error sending message." }}{% else %}Error sending message.{% endif %}"
+      data-success-message="{% if config and config.success_message_key %}{{ translations[config.success_message_key] | default('Message sent!') }}{% else %}Message sent!{% endif %}"
+      data-error-message="{% if config and config.error_message_key %}{{ translations[config.error_message_key] | default('Error sending message.') }}{% else %}Error sending message.{% endif %}"
       data-sads-display="flex"
       data-sads-flex-direction="column"
       data-sads-gap="m"
@@ -48,7 +48,7 @@
           data-sads-text-color="contact-label-text" {# Theme for label text, esp. for dark mode #}
           data-sads-text-align="left"
         >
-          {{ translations["contact_name_label"] | default:"Name:" }}
+          {{ translations["contact_name_label"] | default("Name:") }}
         </label>
         <input
           type="text"
@@ -79,7 +79,7 @@
           data-sads-text-color="contact-label-text" {# Theme for label text, esp. for dark mode #}
           data-sads-text-align="left"
         >
-          {{ translations["contact_email_label"] | default:"Email:" }}
+          {{ translations["contact_email_label"] | default("Email:") }}
         </label>
         <input
           type="email"
@@ -110,7 +110,7 @@
           data-sads-text-color="contact-label-text" {# Theme for label text, esp. for dark mode #}
           data-sads-text-align="left"
         >
-          {{ translations["contact_message_label"] | default:"Message:" }}
+          {{ translations["contact_message_label"] | default("Message:") }}
         </label>
         <textarea
           id="message"
@@ -147,7 +147,7 @@
         data-sads-font-weight="bold" {# CSS: font-weight: bold #}
         data-sads-transition="custom:background-color 0.3s ease" {# CSS: transition #}
       >
-        {{ translations["contact_send_button"] | default:"Send Message" }}
+        {{ translations["contact_send_button"] | default("Send Message") }}
       </button>
       <div
         data-sads-element="status-message"
