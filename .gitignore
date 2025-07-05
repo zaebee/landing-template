@@ -19,6 +19,7 @@ venv/
 
 # Protobuf generated files
 generated/
+public/ts/generated_proto/
 
 # Node / NPM
 node_modules/

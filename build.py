@@ -93,7 +93,7 @@ class BuildOrchestrator:
 
         self.app_config: Dict[str, Any] = {}
         self.nav_proto_data: Optional[Navigation] = None
-        self.site_logo_data: Optional[SiteLogo] = None  # Added for SiteLogo
+        self.site_logo_data: Optional[SiteLogo] = None # Added for SiteLogo
 
     def load_initial_configurations(self) -> None:
         """Loads base configurations like app config, navigation data, and site logo data.
@@ -108,7 +108,7 @@ class BuildOrchestrator:
         )
         self.nav_proto_data = self.data_loader.load_dynamic_single_item_data(
             data_file_path=nav_data_file,
-            message_type=Navigation,  # type: ignore
+            message_type=Navigation, # type: ignore
         )
 
         # Load Site Logo Data
@@ -116,12 +116,11 @@ class BuildOrchestrator:
         if site_logo_data_file:
             self.site_logo_data = self.data_loader.load_dynamic_single_item_data(
                 data_file_path=site_logo_data_file,
-                message_type=SiteLogo,  # type: ignore
+                message_type=SiteLogo, # type: ignore
             )
         else:
-            print(
-                "Warning: 'site_logo_data_file' not found in app_config. Site logo will not be data-driven."
-            )
+            print("Warning: 'site_logo_data_file' not found in app_config. Site logo will not be data-driven.")
+
 
     def _process_language(
         self,
@@ -150,7 +149,7 @@ class BuildOrchestrator:
             main_content=assembled_main_content,
             navigation_items=navigation_items,
             page_title=page_title,
-            site_logo_data=self.site_logo_data,  # Pass site_logo_data
+            site_logo_data=self.site_logo_data, # Pass site_logo_data
         )
 
         output_filename = f"index_{lang}.html"

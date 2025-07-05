@@ -52,7 +52,7 @@ class DefaultPageBuilder(PageBuilder):
         main_content: str,
         navigation_items: Optional[List[Dict[str, Any]]] = None,
         page_title: Optional[str] = None,
-        site_logo_data: Optional[Message] = None,  # Added site_logo_data
+        site_logo_data: Optional[Message] = None, # Added site_logo_data
     ) -> str:
         """Assembles a full HTML page using a Jinja2 base template.
 
@@ -77,7 +77,7 @@ class DefaultPageBuilder(PageBuilder):
             "translations": translations,
             "main_content": main_content,
             "navigation_items": navigation_items or [],
-            "site_logo": site_logo_data,  # Added site_logo to context
+            "site_logo": site_logo_data, # Added site_logo to context
             # Add any other variables your base.html might need
         }
         return str(base_template.render(context))
