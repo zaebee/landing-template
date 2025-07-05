@@ -69,6 +69,7 @@ async function main() {
             "neutral-D1": "#a0a0a0",
             "neutral-D1-dark": "#909090",
         };
+
         const defaultThemeColors = {
             "primary": "#007bff", "primary-dark": "#0056b3", "secondary": "#6c757d", "secondary-dark": "#494f54",
             "surface": "#ffffff", "surface-dark": "#2a2a2a", "text-primary": "#212529", "text-primary-dark": "#f8f9fa",
@@ -218,7 +219,6 @@ async function main() {
         } else {
             logResult("WASM Function Check", {}, "window.sadsPocWasm.parseResponsiveRules not found.", true);
         }
-
 
     } catch (err) {
         const errorMsg = `Error loading or running WASM module: ${err}`;
