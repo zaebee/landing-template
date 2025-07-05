@@ -33,10 +33,8 @@ The existing `sads-style-engine.js` contains several pieces of logic that could 
 A hybrid SADS engine using Go/WASM might look like this:
 
 1.  **JavaScript Orchestrator (e.g., modified `sads-style-engine.js` or a new layer):**
-
     - Still responsible for initially finding all elements with `data-sads-component`.
     - For each SADS component and its SADS-attributed children:
-
       - Collects all `data-sads-*` attributes (perhaps as a simple key-value map or JSON string).
       - Retrieves the current SADS theme (e.g., as a JSON string).
       - Optionally, gathers viewport context (e.g., current browser width for responsive styling) and passes it as JSON.
