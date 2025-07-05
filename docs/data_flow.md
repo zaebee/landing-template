@@ -89,6 +89,10 @@ message ContactFormConfig {
 
 Define the structure for navigation links. `Navigation` is loaded as a single item from `data/navigation.json`.
 
+### `SadsAttributeValue`, `SadsStylingSet`, etc. (`sads_attributes.proto`)
+
+Defines the schema for SADS (Semantic Attribute-Driven Styling) attributes, including enums for semantic tokens (like spacing, colors) and messages for structuring styling rules. These definitions are used to generate TypeScript types for the SADS engine and can be used by other tools or systems (e.g., AI, Go/WASM SADS engine) that interact with SADS.
+
 ```proto
 // Message for a single navigation item.
 message NavItem {
@@ -111,9 +115,15 @@ The `build.py` script is responsible for generating the static HTML pages (`inde
 graph TD
     A_CFG[Input: public/config.json] --> ORCHESTRATOR{BuildOrchestrator};
     A_DATA[Input: data/*.json] --> DATA_LOADER;
-    C_PROTO[Input: proto/*.proto] --> D_PROTOC[Tool: protoc];
-    D_PROTOC --> E_STUBS[Generated: generated/*.py];
-    E_STUBS --> DATA_LOADER[Service: JsonProtoDataLoader];
+    C_PROTO[Input: proto/*.proto] --> D_PROTOC[Tool: protoc + Plugins];
+    D_PROTOC -- Generates Python --> E_PY_STUBS[Generated: generated/*.py];
+    D_PROTOC -- Generates TypeScript --> E_TS_PROTO_STUBS[Generated: public/ts/generated_proto/*.ts];
+    E_PY_STUBS --> DATA_LOADER[Service: JsonProtoDataLoader];
+
+    TS_SRC[Input: public/ts/**/*.ts] --> TSC_COMPILER[Tool: tsc];
+    E_TS_PROTO_STUBS --> TSC_COMPILER;
+    TSC_COMPILER --> COMPILED_TS_JS[Generated: public/js/compiled_ts/*.js];
+
     F_BLOCKS[Input: templates/components/*/*.html] --> ORCHESTRATOR;
     G_LOCALES[Input: public/locales/*.json] --> TRANS_PROVIDER[Service: DefaultTranslationProvider];
     H_BASE_HTML[Input: templates/base.html Base Template] --> PAGE_BUILDER[Service: DefaultPageBuilder];
@@ -165,15 +175,29 @@ graph TD
 
     HTML_GENERATORS[Services: HtmlBlockGenerators<br>e.g., HeroHtmlGenerator] --> GEN_BLOCK_HTML;
 
+    EXISTING_JS_MODULES[Input: public/js/modules/*.js] --> JS_BUNDLER[Tool: AssetBundler (Python)];
+    COMPILED_TS_JS --> JS_BUNDLER;
+    JS_BUNDLER --> FINAL_MAIN_JS[Generated: public/dist/main.js];
+    FINAL_MAIN_JS --> H_BASE_HTML; // main.js is linked in base.html
+
     style A_CFG fill:#f9f,stroke:#333,stroke-width:2px
     style A_DATA fill:#f9f,stroke:#333,stroke-width:2px
     style C_PROTO fill:#f9f,stroke:#333,stroke-width:2px
+    style TS_SRC fill:#f9f,stroke:#333,stroke-width:2px
+    style EXISTING_JS_MODULES fill:#f9f,stroke:#333,stroke-width:2px
     style F_BLOCKS fill:#f9f,stroke:#333,stroke-width:2px
     style G_LOCALES fill:#f9f,stroke:#333,stroke-width:2px
     style H_BASE_HTML fill:#f9f,stroke:#333,stroke-width:2px
 
     style D_PROTOC fill:#ffc66d,stroke:#333,stroke-width:2px
-    style E_STUBS fill:#ccf,stroke:#333,stroke-width:2px
+    style TSC_COMPILER fill:#ffc66d,stroke:#333,stroke-width:2px
+    style JS_BUNDLER fill:#ffc66d,stroke:#333,stroke-width:2px
+
+    style E_PY_STUBS fill:#ccf,stroke:#333,stroke-width:2px
+    style E_TS_PROTO_STUBS fill:#ccf,stroke:#333,stroke-width:2px
+    style COMPILED_TS_JS fill:#ccf,stroke:#333,stroke-width:2px
+    style FINAL_MAIN_JS fill:#ccf,stroke:#333,stroke-width:2px
+
     style I_OUTPUT_HTML fill:#cfc,stroke:#333,stroke-width:2px
     style ORCHESTRATOR fill:#9cf,stroke:#333,stroke-width:4px
 
@@ -201,24 +225,33 @@ graph TD
 
 ### Explanation of Diagram
 
-The diagram illustrates the data flow and component interactions within the `build.py` script, which uses a `BuildOrchestrator` to manage the page generation process.
+The diagram illustrates the data flow and component interactions within the `build.py` script, which uses a `BuildOrchestrator` to manage the page generation process. This now includes steps for handling TypeScript source files and generating TypeScript from Protobuf definitions.
 
 1. **Inputs (Pink Nodes)**:
-   - **`public/config.json`**: Main configuration file (site settings, languages, blocks to use).
-   - **`data/*.json`**: JSON files containing content for dynamic blocks (e.g., hero text, portfolio items).
-   - **`proto/*.proto`**: Protocol Buffer definitions that define the schema for the data in `data/*.json`.
-   - **`templates/components/*/*.html`**: HTML template files for individual content components used by `HtmlBlockGenerators`.
-   - **`public/locales/*.json`**: JSON files with translations for different languages.
-   - **`templates/base.html` (Base Template)**: The main HTML file providing the overall page structure, used by `DefaultPageBuilder`.
+   - **`public/config.json`**: Main configuration file.
+   - **`data/*.json`**: JSON content files.
+   - **`proto/*.proto`**: Protocol Buffer schema definitions (including `sads_attributes.proto`).
+   - **`public/ts/**/\*.ts` (TS_SRC)\*\*: Source TypeScript files for client-side logic (e.g., SADS engine, UI interactions).
+   - **`public/js/modules/*.js` (EXISTING_JS_MODULES)**: Existing JavaScript modules.
+   - **`templates/components/*/*.html`**: HTML templates for components.
+   - **`public/locales/*.json`**: Translation files.
+   - **`templates/base.html` (Base Template)**: Main HTML page structure.
 
-2. **Initial Processing & Tools**:
-   - **`protoc` (Orange Node)**: The Protocol Buffer compiler. It processes `.proto` files.
-   - **`generated/*.py` (Light Blue Node)**: Python stub files generated by `protoc`. These classes represent the data structures.
+2. **Initial Processing & Tools (Orange Nodes)**:
+   - **`protoc + Plugins` (D_PROTOC)**: The Protocol Buffer compiler and associated plugins (for Python and TypeScript). It processes `.proto` files.
+     - Generates Python stub files: **`generated/*.py` (E_PY_STUBS)**.
+     - Generates TypeScript definition files: **`public/ts/generated_proto/*.ts` (E_TS_PROTO_STUBS)**.
+   - **`tsc` (TSC_COMPILER)**: The TypeScript compiler. It processes all TypeScript files in `public/ts/` (including source files and generated proto TS files).
+     - Generates JavaScript files: **`public/js/compiled_ts/*.js` (COMPILED_TS_JS)**.
+   - **`AssetBundler (Python)` (JS_BUNDLER)**: This is part of `build.py`'s logic (`asset_bundling.py`). It concatenates JavaScript files.
+     - Takes input from `COMPILED_TS_JS` (compiled TypeScript) and `EXISTING_JS_MODULES`.
+     - Produces the final bundled JavaScript: **`public/dist/main.js` (FINAL_MAIN_JS)**.
+     - (It also bundles CSS into `public/dist/main.css`, not detailed in this part of the diagram update but functions similarly).
 
-3. **Core Services (Light Cyan Nodes)**:
-   - **`JsonProtoDataLoader`**: Reads JSON data from `data/*.json`, validates it against the Protobuf stubs (`generated/*.py`), and converts it into Python Protobuf objects.
-   - **`InMemoryDataCache`**: Stores the loaded Protobuf objects in memory to avoid redundant loading.
-   - **`DefaultTranslationProvider`**: Loads translations from `public/locales/*.json` and provides a `Translations` object accessible within Jinja templates.
+3. **Core Python Services (Light Cyan Nodes in Diagram, some roles adjusted)**:
+   - **`JsonProtoDataLoader`**: Reads JSON data, validates against Python Protobuf stubs (`E_PY_STUBS`), converts to Python Protobuf objects.
+   - **`InMemoryDataCache`**: Caches loaded Protobuf objects.
+   - **`DefaultTranslationProvider`**: Loads translations.
    - **`DefaultPageBuilder`**: Manages the overall HTML page structure. It uses the base `templates/base.html` (via its Jinja environment) and assembles the final page with processed component HTML.
    - **`HtmlBlockGenerators` (e.g., `HeroHtmlGenerator`, `PortfolioHtmlGenerator`)**: A collection of classes, each responsible for generating the specific HTML for a type of content component. They use their own Jinja environment to load and render templates from `templates/components/`, injecting data and translations.
 

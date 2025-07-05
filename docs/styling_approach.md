@@ -12,10 +12,11 @@ SADS dynamically injects its styles into a `<style id="sads-dynamic-styles"></st
 
 SADS is used for all components including Header, Footer, Features, Testimonials, Blog, and Contact Form in this experimental configuration.
 
-- **Concept:** Styling intent is declared directly on HTML elements using `data-sads-*` attributes, which are then processed by a JavaScript engine to generate CSS rules.
+- **Concept:** Styling intent is declared directly on HTML elements using `data-sads-*` attributes, which are then processed by a TypeScript/JavaScript engine to generate CSS rules. The SADS engine and theme configuration have been refactored to TypeScript for improved type safety and maintainability.
 - **HTML Templates:** Located in `templates/components/<component_name>/<component_name>.html` (e.g., `templates/components/features/features.html`).
-- **SADS Engine (`public/js/sads-style-engine.js`):**
-  - **Initialization**: Runs on page load (`DOMContentLoaded` via `public/js/app.js`).
+- **SADS Engine (Source: `public/ts/sads-style-engine.ts`):**
+  - Compiled to JavaScript (e.g., to `public/js/compiled_ts/sads-style-engine.js`) and bundled into `public/dist/main.js`.
+  - **Initialization**: Runs on page load (`DOMContentLoaded` via `public/js/app.js`, which is part of the `main.js` bundle).
   - **Element Targeting**:
     - The engine is triggered by `data-sads-component` attributes on root elements of a component.
     - It then processes styling for the component root and any descendant elements that also have `data-sads-*` attributes.
@@ -23,9 +24,11 @@ SADS is used for all components including Header, Footer, Features, Testimonials
     - The engine assigns a unique class (e.g., `sads-id-0`, `sads-id-1`) to each styled element to target it with the generated CSS rules.
   - **Rule Generation**: Parses `data-sads-*` attributes, interprets their semantic meaning (e.g., `padding="m"`, `bg-color="surface"`), and translates them into actual CSS rules using a predefined theme.
   - **Style Injection**: Injects generated CSS rules dynamically into a `<style id="sads-dynamic-styles"></style>` tag in the document's `<head>`.
-- **Theming:**
-  - The SADS engine uses a theme configuration object (defined in `sads-default-theme.js` and potentially customized in `sads-style-engine.js` or `app.js`).
-  - This theme maps semantic tokens to concrete CSS values:
+- **Theming (Source: `public/ts/sads-default-theme.ts`):**
+  - The SADS engine uses a theme configuration object (defined in `public/ts/sads-default-theme.ts`, compiled, and bundled). This theme can be customized during the engine's instantiation.
+  - This theme maps semantic tokens (e.g., "m" for spacing, "surface" for color) to concrete CSS values.
+  - **Schema for SADS Attributes and Tokens:** The underlying semantic tokens (like spacing scales, color names) and attribute structures are being defined using Protocol Buffers (`proto/sads_attributes.proto`). This provides a schema and enables generation of TypeScript types for these tokens, aiming for more robust validation and engine logic in the future.
+  - **Theme Categories:**
     - **Colors**: `surface`, `surface-accent`, `text-primary`, `text-accent`, etc. Dark mode is supported by looking for a corresponding key with a `-dark` suffix (e.g., `surface-dark`) when `document.body.classList.contains('dark-mode')`.
     - **Spacing**: `xs`, `s`, `m`, `l`, `xl`, `xxl` for properties like `padding`, `margin`, `gap`.
     - **Font Sizes**: `s`, `m`, `l`, `xl`, etc.
@@ -40,8 +43,8 @@ SADS is used for all components including Header, Footer, Features, Testimonials
   - `custom:<value>`: Allows direct CSS values for a SADS property, bypassing theme lookups. Example: `data-sads-width="custom:100%"`, `data-sads-margin="custom:0 auto"`.
 - **Modifying SADS Component Styles:**
   - **Existing Styles**: Change `data-sads-*` attributes directly in the component's HTML template (`templates/components/<block_name>/<block_name>.html`).
-  - **New Semantic Values**: To add a new color like `brand-highlight` or a spacing size `xxxs`, update the theme configuration object (e.g., in `sads-default-theme.js` or the engine's initialization).
-  - **New CSS Properties**: To make SADS aware of a new CSS property, update the `_mapSadsPropertyToCss` method (and potentially `_mapSemanticValueToActual` if it needs special theme mapping) in `public/js/sads-style-engine.js`.
+  - **New Semantic Values**: To add a new color like `brand-highlight` or a spacing size `xxxs`, update the theme configuration object (source: `public/ts/sads-default-theme.ts`). If these tokens are part of the Protobuf schema (e.g., `SadsColorToken` in `proto/sads_attributes.proto`), consider updating the enum there as well for consistency.
+  - **New CSS Properties**: To make SADS aware of a new CSS property, update the `_mapSadsPropertyToCss` method (and potentially `_mapSemanticValueToActual` if it needs special theme mapping) in the SADS engine source (`public/ts/sads-style-engine.ts`).
 
 ### Known SADS MVP Limitations (Important)
 
@@ -58,6 +61,6 @@ The current "Minimum Viable Product" (MVP) SADS engine has several limitations:
 ## Global Styles
 
 - Minimal global styles are present in `public/style.css`. This typically includes base HTML element styling (e.g., for `html`, `body`) and reset/normalize rules.
-- The SADS engine's dark mode logic relies on `document.body.classList.contains('dark-mode')`. This class is toggled by `public/js/app.js`, which also initializes the SADS engine.
+- The SADS engine's dark mode logic relies on `document.body.classList.contains('dark-mode')`. This class is toggled by `public/js/app.js` (part of the `public/dist/main.js` bundle), which also initializes the SADS engine.
 
-Understanding this hybrid approach and the SADS system's current capabilities and limitations is crucial for effectively developing and maintaining the site's appearance. Remember to run `npm run build` after any style-related changes to regenerate outputs and see updates.
+Understanding this hybrid approach and the SADS system's current capabilities and limitations is crucial for effectively developing and maintaining the site's appearance. Remember to run `npm run build` after any style-related changes (including changes to `.ts` SADS files or `.proto` SADS definitions) to regenerate outputs and see updates. This command now includes TypeScript compilation and Protobuf code generation.
