@@ -1,6 +1,6 @@
 // TypeScript type definitions and class for SADS (Semantic Attribute-Driven Styling) Engine
 
-import { SadsTheme, sadsDefaultTheme as importedDefaultTheme } from './sads-default-theme';
+import { SadsTheme, sadsDefaultTheme as importedDefaultTheme } from './sads-default-theme.js';
 
 // Type for the structure of responsive rules parsed from the data attribute
 interface ResponsiveRuleStyle {

@@ -1,5 +1,5 @@
 // public/ts/nlToSadsInterface.ts
-import { SADSEngine } from './sads-style-engine'; // Assuming SADSEngine is exported
+import { SADSEngine } from './sads-style-engine.js'; // Assuming SADSEngine is exported
 
 interface SadsAttributes {
     [key: string]: string; // e.g., "data-sads-bg-color": "text-accent"
