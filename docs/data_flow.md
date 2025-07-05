@@ -89,6 +89,10 @@ message ContactFormConfig {
 
 Define the structure for navigation links. `Navigation` is loaded as a single item from `data/navigation.json`.
 
+### `SadsAttributeValue`, `SadsStylingSet`, etc. (`sads_attributes.proto`)
+
+Defines the schema for SADS (Semantic Attribute-Driven Styling) attributes, including enums for semantic tokens (like spacing, colors) and messages for structuring styling rules. These definitions are used to generate TypeScript types for the SADS engine and can be used by other tools or systems (e.g., AI, Go/WASM SADS engine) that interact with SADS.
+
 ```proto
 // Message for a single navigation item.
 message NavItem {
@@ -162,9 +166,16 @@ graph TD
 
     GO_BLOCK_GENERATORS[Go Block Generation Logic <br> using Pongo2] --> RENDER_BLOCK_HTML;
 
+    EXISTING_JS_MODULES[Input: public/js/modules/*.js] --> JS_BUNDLER[Tool: AssetBundler Python];
+    COMPILED_TS_JS --> JS_BUNDLER;
+    JS_BUNDLER --> FINAL_MAIN_JS[Generated: public/dist/main.js];
+    FINAL_MAIN_JS --> H_BASE_HTML[main.js is linked in base.html];
+
     style A_CFG fill:#f9f,stroke:#333,stroke-width:2px
     style A_DATA fill:#f9f,stroke:#333,stroke-width:2px
     style C_PROTO fill:#f9f,stroke:#333,stroke-width:2px
+    style TS_SRC fill:#f9f,stroke:#333,stroke-width:2px
+    style EXISTING_JS_MODULES fill:#f9f,stroke:#333,stroke-width:2px
     style F_BLOCKS fill:#f9f,stroke:#333,stroke-width:2px
     style G_LOCALES fill:#f9f,stroke:#333,stroke-width:2px
     style H_BASE_HTML fill:#f9f,stroke:#333,stroke-width:2px
