@@ -1,0 +1,114 @@
+import { WireType } from "@protobuf-ts/runtime";
+import { UnknownFieldHandler } from "@protobuf-ts/runtime";
+import { reflectionMergePartial } from "@protobuf-ts/runtime";
+import { MessageType } from "@protobuf-ts/runtime";
+import { CTA } from "./common";
+import { I18nString } from "./common";
+// @generated message type with reflection information, may provide speed optimized methods
+class BlogPost$Type extends MessageType {
+  constructor() {
+    super("website_content.v1.BlogPost", [
+      { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 2, name: "title", kind: "message", T: () => I18nString },
+      { no: 3, name: "excerpt", kind: "message", T: () => I18nString },
+      { no: 4, name: "cta", kind: "message", T: () => CTA },
+    ]);
+  }
+  create(value) {
+    const message = globalThis.Object.create(this.messagePrototype);
+    message.id = "";
+    if (value !== undefined) reflectionMergePartial(this, message, value);
+    return message;
+  }
+  internalBinaryRead(reader, length, options, target) {
+    let message = target ?? this.create(),
+      end = reader.pos + length;
+    while (reader.pos < end) {
+      let [fieldNo, wireType] = reader.tag();
+      switch (fieldNo) {
+        case /* string id */ 1:
+          message.id = reader.string();
+          break;
+        case /* website_content.v1.I18nString title */ 2:
+          message.title = I18nString.internalBinaryRead(
+            reader,
+            reader.uint32(),
+            options,
+            message.title
+          );
+          break;
+        case /* website_content.v1.I18nString excerpt */ 3:
+          message.excerpt = I18nString.internalBinaryRead(
+            reader,
+            reader.uint32(),
+            options,
+            message.excerpt
+          );
+          break;
+        case /* website_content.v1.CTA cta */ 4:
+          message.cta = CTA.internalBinaryRead(
+            reader,
+            reader.uint32(),
+            options,
+            message.cta
+          );
+          break;
+        default:
+          let u = options.readUnknownField;
+          if (u === "throw")
+            throw new globalThis.Error(
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+            );
+          let d = reader.skip(wireType);
+          if (u !== false)
+            (u === true ? UnknownFieldHandler.onRead : u)(
+              this.typeName,
+              message,
+              fieldNo,
+              wireType,
+              d
+            );
+      }
+    }
+    return message;
+  }
+  internalBinaryWrite(message, writer, options) {
+    /* string id = 1; */
+    if (message.id !== "")
+      writer.tag(1, WireType.LengthDelimited).string(message.id);
+    /* website_content.v1.I18nString title = 2; */
+    if (message.title)
+      I18nString.internalBinaryWrite(
+        message.title,
+        writer.tag(2, WireType.LengthDelimited).fork(),
+        options
+      ).join();
+    /* website_content.v1.I18nString excerpt = 3; */
+    if (message.excerpt)
+      I18nString.internalBinaryWrite(
+        message.excerpt,
+        writer.tag(3, WireType.LengthDelimited).fork(),
+        options
+      ).join();
+    /* website_content.v1.CTA cta = 4; */
+    if (message.cta)
+      CTA.internalBinaryWrite(
+        message.cta,
+        writer.tag(4, WireType.LengthDelimited).fork(),
+        options
+      ).join();
+    let u = options.writeUnknownFields;
+    if (u !== false)
+      (u == true ? UnknownFieldHandler.onWrite : u)(
+        this.typeName,
+        message,
+        writer
+      );
+    return writer;
+  }
+}
+/**
+ * @generated MessageType for protobuf message website_content.v1.BlogPost
+ */
+export const BlogPost = new BlogPost$Type();
+//# sourceMappingURL=blog_post.js.map
