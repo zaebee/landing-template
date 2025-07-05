@@ -11,6 +11,9 @@ dependencies = [
     "grpcio-tools",
     "protobuf",
     "Jinja2>=3.0.0",
+    "python-dotenv>=1.1.1",
+    "mistralai>=1.9.1",
+    "openai>=1.93.0",
 ]
 
 [tool.ruff.lint]
