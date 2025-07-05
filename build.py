@@ -43,6 +43,7 @@ from build_protocols.interfaces import (
 )
 from build_protocols.page_assembly import DefaultPageBuilder
 from build_protocols.translation import DefaultTranslationProvider
+from generated.common_pb2 import SiteLogo  # Added import for SiteLogo
 from generated.nav_item_pb2 import Navigation
 
 
@@ -92,24 +93,35 @@ class BuildOrchestrator:
 
         self.app_config: Dict[str, Any] = {}
         self.nav_proto_data: Optional[Navigation] = None
+        self.site_logo_data: Optional[SiteLogo] = None  # Added for SiteLogo
 
     def load_initial_configurations(self) -> None:
-        """Loads base configurations like app config and navigation data.
+        """Loads base configurations like app config, navigation data, and site logo data.
 
-        This method populates `self.app_config` and `self.nav_proto_data`.
+        This method populates `self.app_config`, `self.nav_proto_data`, and `self.site_logo_data`.
         """
         self.app_config = self.app_config_manager.load_app_config()
 
+        # Load Navigation Data
         nav_data_file = self.app_config.get(
             "navigation_data_file", "data/navigation.json"
         )
-        # The DataLoader is generic (Message), but here we expect Navigation.
-        # A type: ignore is used as the generic loader's signature doesn't
-        # specifically guarantee Navigation without more complex generics.
         self.nav_proto_data = self.data_loader.load_dynamic_single_item_data(
-            nav_data_file,
-            Navigation,  # type: ignore
+            data_file_path=nav_data_file,
+            message_type=Navigation,  # type: ignore
         )
+
+        # Load Site Logo Data
+        site_logo_data_file = self.app_config.get("site_logo_data_file")
+        if site_logo_data_file:
+            self.site_logo_data = self.data_loader.load_dynamic_single_item_data(
+                data_file_path=site_logo_data_file,
+                message_type=SiteLogo,  # type: ignore
+            )
+        else:
+            print(
+                "Warning: 'site_logo_data_file' not found in app_config. Site logo will not be data-driven."
+            )
 
     def _process_language(
         self,
@@ -138,6 +150,7 @@ class BuildOrchestrator:
             main_content=assembled_main_content,
             navigation_items=navigation_items,
             page_title=page_title,
+            site_logo_data=self.site_logo_data,  # Pass site_logo_data
         )
 
         output_filename = f"index_{lang}.html"
