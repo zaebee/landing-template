@@ -13,6 +13,10 @@ import (
 	"github.com/flosch/pongo2/v6"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
+	"net/url"
+	"path" // path should be used for URL paths, filepath for OS paths
+
+	"golang.org/x/net/html"
 	"google.golang.org/protobuf/reflect/protoreflect"
 	// "google.golang.org/protobuf/types/known/anypb" // Not used
 
@@ -20,9 +24,305 @@ import (
 	pb "landing-page-generator/generated/go" // Alias for convenience
 )
 
+// --- Data structures for link and asset checking ---
+
+// BrokenLinkInfo holds information about a broken internal link.
+type BrokenLinkInfo struct {
+	SourceFile string // HTML file where the link was found
+	TargetLink string // The problematic link URL
+	Error      string // Error message (e.g., "target not found")
+}
+
+// MissingAssetInfo holds information about a missing asset.
+type MissingAssetInfo struct {
+	SourceFile string // HTML file referencing the asset
+	AssetPath  string // The path to the missing asset
+	Error      string // Error message (e.g., "asset not found")
+}
+
 // --- Type Registry for Proto Messages ---
 
 var protoRegistry = make(map[string]protoreflect.MessageType)
+
+// --- HTML Parsing and Link/Asset Extraction ---
+
+// extractLinksAndAssets parses HTML content to find internal links and asset references.
+// sourceHTMLPath is the path of the HTML file being parsed, used for resolving relative links.
+// It returns two maps:
+// - internalLinks: maps a resolved internal link path to the original link string.
+// - assetRefs: maps a resolved asset path (relative to project root) to the original asset string.
+func extractLinksAndAssets(sourceHTMLPath string, htmlContent string) (map[string]string, map[string]string, error) {
+	internalLinks := make(map[string]string)
+	assetRefs := make(map[string]string)
+
+	doc, err := html.Parse(strings.NewReader(htmlContent))
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to parse HTML from %s: %w", sourceHTMLPath, err)
+	}
+
+	sourceDir := filepath.Dir(sourceHTMLPath)
+
+	var f func(*html.Node)
+	f = func(n *html.Node) {
+		if n.Type == html.ElementNode {
+			switch n.Data {
+			case "a":
+				for _, attr := range n.Attr {
+					if attr.Key == "href" {
+						linkURL := strings.TrimSpace(attr.Val)
+						if linkURL == "" || strings.HasPrefix(linkURL, "#") || strings.HasPrefix(linkURL, "mailto:") || strings.HasPrefix(linkURL, "tel:") {
+							continue // Skip empty, fragment, mailto, or tel links
+						}
+
+						parsedURL, err := url.Parse(linkURL)
+						if err != nil {
+							log.Printf("Warning: could not parse URL '%s' in %s: %v", linkURL, sourceHTMLPath, err)
+							continue
+						}
+
+						// Check if it's an internal link (no scheme or host, or relative path)
+						if parsedURL.Scheme == "" && parsedURL.Host == "" {
+							resolvedLink := linkURL
+							if !filepath.IsAbs(linkURL) { // Relative path
+								resolvedLink = filepath.Join(sourceDir, linkURL)
+							}
+							// Clean the path (e.g., remove ../, ./, //)
+							cleanedPath := path.Clean(resolvedLink)
+							// Ensure it's represented with forward slashes for consistency with web paths
+							internalLinks[filepath.ToSlash(cleanedPath)] = linkURL
+						}
+					}
+				}
+			case "img", "script", "audio", "video", "source":
+				var srcAttr string
+				for _, attr := range n.Attr {
+					if attr.Key == "src" {
+						srcAttr = strings.TrimSpace(attr.Val)
+						break
+					}
+				}
+				if srcAttr != "" {
+					parsedURL, err := url.Parse(srcAttr)
+					if err != nil {
+						log.Printf("Warning: could not parse asset URL '%s' in %s: %v", srcAttr, sourceHTMLPath, err)
+						// If parsing fails, we simply don't process this attribute further.
+					} else { // Only proceed if parsing was successful
+						if parsedURL.Scheme == "" && parsedURL.Host == "" { // Local asset
+							resolvedAssetPath := srcAttr
+						if !filepath.IsAbs(srcAttr) {
+							resolvedAssetPath = filepath.Join(sourceDir, srcAttr)
+						}
+						// Normalize to be relative to project root, assuming 'public' is where assets are served from.
+						// If sourceHTMLPath is like "index.html" or "index_es.html", sourceDir is "."
+						// If sourceHTMLPath is like "output/en/index.html", sourceDir is "output/en"
+						// Assets are typically in "public/js/app.js", "public/style.css"
+						// The resolvedAssetPath here is an OS path. We need to make it relative to project root.
+						// For example, if resolvedAssetPath is "public/js/app.js", it's fine.
+						// If sourceHTMLPath is "index.html" and srcAttr is "js/app.js", resolvedAssetPath is "js/app.js".
+						// We need to ensure asset paths are consistently relative to where they are served from (e.g. "public" dir)
+						// or how they are referenced from the root of the site.
+
+						// Let's assume for now that paths like "js/app.js" are meant to be "public/js/app.js"
+						// and paths like "/js/app.js" are also "public/js/app.js".
+						// Path cleaning is important.
+						cleanedPath := path.Clean(resolvedAssetPath) // Use path.Clean for URL-like paths
+						// Ensure it's represented with forward slashes
+						assetRefs[filepath.ToSlash(cleanedPath)] = srcAttr
+						}
+					}
+				}
+			case "link":
+				var hrefAttr string
+				var relValue string
+				for _, attr := range n.Attr {
+					if attr.Key == "href" {
+						hrefAttr = strings.TrimSpace(attr.Val)
+					}
+					if attr.Key == "rel" {
+						relValue = strings.ToLower(attr.Val)
+					}
+				}
+
+				// Process if href is present and it's a local path,
+				// unless rel indicates it's purely a resource hint not directly loaded as a standalone asset.
+				if hrefAttr != "" {
+					// Filter out common resource hints that aren't direct assets for this check.
+					// `preload` can be tricky; it might be an asset or not depending on `as`.
+					// For simplicity, we'll be somewhat greedy here and refine if it causes issues.
+					// Common asset rels: stylesheet, icon, shortcut icon, apple-touch-icon, manifest
+					// Common non-asset rels: preconnect, dns-prefetch, prerender, alternate, author, canonical, help, license, next, prev, search
+					// We are primarily interested in things that would cause a 404 if missing.
+					isHintOrAlternative := false
+					switch relValue {
+					case "preconnect", "dns-prefetch", "prerender", "alternate", "author", "canonical", "help", "license", "next", "prev", "search":
+						isHintOrAlternative = true
+					case "preload":
+						// Preload could be an asset, but often handled by browser caches, not direct linking.
+						// For now, let's treat preload as something not to check for existence here unless 'as' is image/style/script.
+						// This can be refined. For now, let's exclude generic preloads.
+						isHintOrAlternative = true // Simplified: exclude preload for now from asset checking
+					}
+
+
+					if !isHintOrAlternative {
+						parsedURL, err := url.Parse(hrefAttr)
+						if err != nil {
+							log.Printf("Warning: could not parse <link> href '%s' (rel='%s') in %s: %v", hrefAttr, relValue, sourceHTMLPath, err)
+						} else { // Only proceed if parsing was successful
+							if parsedURL.Scheme == "" && parsedURL.Host == "" { // Local asset
+								resolvedAssetPath := hrefAttr
+								if !filepath.IsAbs(hrefAttr) {
+									resolvedAssetPath = filepath.Join(sourceDir, hrefAttr)
+								}
+								cleanedPath := path.Clean(resolvedAssetPath)
+								assetRefs[filepath.ToSlash(cleanedPath)] = hrefAttr
+							}
+						}
+					}
+				}
+			}
+		}
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
+			f(c)
+		}
+	}
+	f(doc)
+
+	return internalLinks, assetRefs, nil
+}
+
+// checkInternalLink checks if a given resolved link (relative to project root)
+// corresponds to an existing generated HTML file.
+// generatedHtmlFiles is a map where keys are project-relative paths to generated HTML files.
+func checkInternalLink(resolvedLink string, generatedHtmlFiles map[string]bool) bool {
+	// Links might have anchors or query parameters, remove them for checking file existence.
+	linkPath, _, _ := strings.Cut(resolvedLink, "#")
+	linkPath, _, _ = strings.Cut(linkPath, "?")
+
+	// Ensure the link path is clean and uses OS-specific separators for file checking,
+	// but generatedHtmlFiles should use forward slashes for consistency.
+	// The keys in generatedHtmlFiles are already cleaned and use forward slashes.
+	// resolvedLink from extractLinksAndAssets is also cleaned and uses forward slashes.
+	if _, exists := generatedHtmlFiles[linkPath]; exists {
+		return true
+	}
+	// Try adding .html if it's not there, as links might be to "about" instead of "about.html"
+	// and the generated file is "about.html".
+	// This depends on server configuration (how it handles extensionless URLs).
+	// For static generation, we usually link to the exact filename.
+	// However, if index.html is linked as "/", this needs to be handled.
+	// The generatedHtmlFiles map should ideally contain "index.html" for "/" if that's the convention.
+	// Let's assume for now links are explicit or already resolved to the .html file.
+	return false
+}
+
+// checkAssetReference checks if a given asset path (assumed to be relative to project root, e.g., "js/app.js")
+// exists within the public directory.
+// projectRoot is the absolute path to the project's root directory.
+func checkAssetReference(assetPath string, projectRoot string) bool {
+	// assetPath is expected to be like "js/app.js" or "style.css" or "images/logo.png".
+	// These are relative to the "public" directory.
+	// Remove leading slash if present, as filepath.Join treats it as absolute.
+	cleanedAssetPath := strings.TrimPrefix(assetPath, "/")
+	fullAssetPath := filepath.Join(projectRoot, "public", cleanedAssetPath)
+
+	// Check if the file exists
+	if _, err := os.Stat(fullAssetPath); err == nil {
+		return true // File exists
+	} else if os.IsNotExist(err) {
+		return false // File does not exist
+	} else {
+		// Other error (e.g., permission issue), log it and treat as missing for now.
+		log.Printf("Warning: Error checking asset %s at %s: %v", assetPath, fullAssetPath, err)
+		return false
+	}
+}
+
+// findUnusedAssets walks the publicDirName (e.g., "public") and identifies files not present in referencedAssets.
+// projectRoot is the absolute path to the project's root directory.
+// referencedAssets is a map where keys are asset paths relative to the *inside* of publicDirName (e.g., "js/app.js", "favicon.svg").
+// These keys are expected to be cleaned and use forward slashes.
+func findUnusedAssets(publicDirName string, projectRoot string, referencedAssets map[string]bool) ([]string, error) {
+	var unusedAssets []string
+	walkPath := filepath.Join(projectRoot, publicDirName) // Absolute path to the public directory
+
+	err := filepath.Walk(walkPath, func(currentPath string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// pathRelativeToProjectRoot will be like "public/js/app.js" or "public/favicon.svg" (using forward slashes)
+		pathRelativeToProjectRoot, err := filepath.Rel(projectRoot, currentPath)
+		if err != nil {
+			log.Printf("Warning: Could not make path '%s' relative to project root '%s': %v", currentPath, projectRoot, err)
+			return nil // Skip this file
+		}
+		pathRelativeToProjectRoot = filepath.ToSlash(pathRelativeToProjectRoot)
+
+		if info.IsDir() {
+			// dirNameInProject is like "public/locales" or "public/dist"
+			// We want to skip specific top-level directories within publicDirName
+			// Or specific named directories regardless of depth (e.g. any .git folder)
+			baseDirName := info.Name() // e.g., "locales", "dist", ".git"
+			if baseDirName == ".git" || baseDirName == "node_modules" { // Standard ignores anywhere
+				return filepath.SkipDir
+			}
+			// Check if the current directory path (relative to project root) matches one of our specific skips for public subdirs
+			if pathRelativeToProjectRoot == filepath.ToSlash(filepath.Join(publicDirName, "generated_configs")) ||
+				pathRelativeToProjectRoot == filepath.ToSlash(filepath.Join(publicDirName, "dist")) ||
+				pathRelativeToProjectRoot == filepath.ToSlash(filepath.Join(publicDirName, "locales")) {
+				log.Printf("DEBUG: Skipping directory based on full path: %s", pathRelativeToProjectRoot)
+				return filepath.SkipDir
+			}
+			return nil // Continue walking other directories
+		}
+
+		// --- File Checks ---
+
+		// Skip common OS-generated files or build artifacts not typically referenced directly
+		if strings.HasSuffix(info.Name(), ".map") || info.Name() == ".DS_Store" || info.Name() == "Thumbs.db" {
+			return nil
+		}
+
+		// Skip specific configuration files not referenced via HTML
+		if pathRelativeToProjectRoot == filepath.ToSlash(filepath.Join(publicDirName, "config.json")) {
+			log.Printf("DEBUG: Skipping file explicitly: %s", pathRelativeToProjectRoot)
+			return nil
+		}
+
+		// assetKeyForComparison is the key we expect in referencedAssets map (e.g., "js/app.js", "favicon.svg")
+		// It's the path relative to the *inside* of publicDirName.
+		// Example: pathRelativeToProjectRoot = "public/js/app.js", publicDirName = "public" -> assetKeyForComparison = "js/app.js"
+		// Example: pathRelativeToProjectRoot = "public/favicon.svg", publicDirName = "public" -> assetKeyForComparison = "favicon.svg"
+		var assetKeyForComparison string
+		if strings.HasPrefix(pathRelativeToProjectRoot, publicDirName+"/") {
+			assetKeyForComparison = strings.TrimPrefix(pathRelativeToProjectRoot, publicDirName+"/")
+		} else if pathRelativeToProjectRoot == publicDirName && !info.IsDir() {
+			assetKeyForComparison = pathRelativeToProjectRoot
+		} else {
+			log.Printf("Warning: Asset %s (rel: %s) seems outside expected public dir structure ('%s'). Skipping from unused check.", info.Name(), pathRelativeToProjectRoot, publicDirName)
+			return nil
+		}
+
+		assetKeyForComparison = path.Clean(assetKeyForComparison)
+		assetKeyForComparison = filepath.ToSlash(assetKeyForComparison) // Ensure forward slashes for map key
+
+		if assetKeyForComparison == "" || assetKeyForComparison == "." {
+			log.Printf("Warning: Asset path for '%s' (from %s) resolved to empty or dot key. Skipping.", info.Name(), pathRelativeToProjectRoot)
+			return nil
+		}
+
+		if _, isReferenced := referencedAssets[assetKeyForComparison]; !isReferenced {
+			unusedAssets = append(unusedAssets, pathRelativeToProjectRoot) // Report the project-relative path (e.g., "public/js/unused.js")
+		}
+		return nil
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("error walking public directory %s: %w", walkPath, err)
+	}
+	return unusedAssets, nil
+}
 
 func init() {
 	protoRegistry["Navigation"] = (&pb.Navigation{}).ProtoReflect().Type()
@@ -241,6 +541,165 @@ func (o *BuildOrchestrator) BuildAllLanguages() error {
 		if err := o.writeOutputFile(outputFilename, fullHtmlContent); err != nil { log.Printf("Warning: Failed to write output file %s: %v", outputFilename, err) }
 	}
 	log.Println("Build process complete.")
+
+	// --- Perform Link and Asset Checking ---
+	log.Println("Starting link and asset checking...")
+	projectRootAbs, err := filepath.Abs(projectRoot)
+	if err != nil {
+		log.Printf("Critical: Could not determine absolute project root: %v", err)
+		return fmt.Errorf("failed to get absolute project root: %w", err)
+	}
+
+	generatedHtmlFiles := make(map[string]bool) // Store paths relative to project root, using forward slashes
+	htmlFilePathsForProcessing := []string{}   // Store OS-specific paths for reading
+
+	// Collect all generated HTML files
+	for _, lang := range supportedLangs {
+		outputFilename := fmt.Sprintf("index_%s.html", lang)
+		if lang == defaultLang {
+			outputFilename = "index.html"
+		}
+		// Store OS-specific path for reading the file
+		htmlFilePathsForProcessing = append(htmlFilePathsForProcessing, outputFilename)
+		// Store project-relative, slash-separated path for link checking
+		generatedHtmlFiles[filepath.ToSlash(outputFilename)] = true
+
+		// Handle potential sub-pages if the structure supports it (e.g. if HTML files are in lang subdirs)
+		// Current structure saves all in root. If files were in "public/en/index.html", logic would need adjustment here.
+	}
+	// Add base HTML files themselves if they are directly outputted and not just templates.
+	// Assuming index.html, index_es.html etc., are the final outputs.
+
+	allReferencedAssets := make(map[string]bool)    // Keys are asset paths relative to 'public/', using forward slashes
+	var brokenInternalLinksFound []BrokenLinkInfo  // Using the struct
+	var missingAssetReferencesFound []MissingAssetInfo // Using the struct
+
+	for _, htmlFilePathOs := range htmlFilePathsForProcessing { // htmlFilePathOs is like "index.html" or "index_es.html"
+		htmlFileContent, err := ioutil.ReadFile(htmlFilePathOs)
+		if err != nil {
+			log.Printf("Warning: Failed to read HTML file %s for checking: %v", htmlFilePathOs, err)
+			continue
+		}
+
+		// sourceHtmlForExtract is relative to project root, using forward slashes
+		sourceHtmlForExtract := filepath.ToSlash(htmlFilePathOs)
+		internalLinks, assetRefs, err := extractLinksAndAssets(sourceHtmlForExtract, string(htmlFileContent))
+		if err != nil {
+			log.Printf("Warning: Failed to extract links/assets from %s: %v", htmlFilePathOs, err)
+			continue
+		}
+
+		// Check Internal Links
+		for resolvedLink, originalLink := range internalLinks { // resolvedLink is cleaned, slash-separated, relative to project root
+			if !checkInternalLink(resolvedLink, generatedHtmlFiles) {
+				// Try checking if link + ".html" exists (for extensionless links)
+				// This is a common pattern, e.g. /about linking to /about.html
+				if !strings.HasSuffix(resolvedLink, ".html") && !checkInternalLink(resolvedLink+".html", generatedHtmlFiles) {
+					brokenInternalLinksFound = append(brokenInternalLinksFound, BrokenLinkInfo{
+						SourceFile: sourceHtmlForExtract,
+						TargetLink: originalLink,
+						Error:      fmt.Sprintf("target '%s' (or '%s.html') not found among generated files", resolvedLink, resolvedLink),
+					})
+				} else if strings.HasSuffix(resolvedLink, ".html") { // Only if it already ended with .html and wasn't found
+					brokenInternalLinksFound = append(brokenInternalLinksFound, BrokenLinkInfo{
+						SourceFile: sourceHtmlForExtract,
+						TargetLink: originalLink,
+						Error:      fmt.Sprintf("target '%s' not found among generated files", resolvedLink),
+					})
+				}
+				// If it was found by adding .html, it's not broken.
+			}
+		}
+
+		// Check Asset References
+		for resolvedAssetPath, originalAsset := range assetRefs { // resolvedAssetPath is cleaned, slash-separated, relative to the HTML file's dir
+			// We need to normalize resolvedAssetPath to be relative to the 'public' directory
+			// Example: htmlFilePathOs = "index.html", resolvedAssetPath = "js/app.js" -> assetKeyForCheck = "js/app.js"
+			// Example: htmlFilePathOs = "docs/guide.html", resolvedAssetPath = "../js/app.js" -> assetKeyForCheck = "js/app.js" (after cleaning)
+
+			// resolvedAssetPath is already effectively relative to project root if HTML is at root,
+			// or correctly pathed if HTML is in subdir, e.g. "docs/../js/app.js" -> "js/app.js"
+			// We need to ensure it's consistently relative to 'public' for the check and for allReferencedAssets map.
+
+			// Start with resolvedAssetPath, which is relative to the HTML file's location but cleaned.
+			// Examples from extractLinksAndAssets:
+			// HTML: <img src="img.png"> on index.html -> resolvedAssetPath = "img.png"
+			// HTML: <img src="/img.png"> on index.html -> resolvedAssetPath = "/img.png" (path.Clean keeps leading /)
+			// HTML: <img src="../img.png"> on docs/page.html -> resolvedAssetPath = "img.png"
+			// HTML: <link href="style.css"> on index.html -> resolvedAssetPath = "style.css"
+			// HTML: <link href="/style.css"> on index.html -> resolvedAssetPath = "/style.css"
+
+			assetKeyForReferencedMap := resolvedAssetPath
+
+			// If path starts with "/", it's server-relative, treat as relative to public dir root.
+			if strings.HasPrefix(assetKeyForReferencedMap, "/") {
+				assetKeyForReferencedMap = strings.TrimPrefix(assetKeyForReferencedMap, "/")
+			}
+			// If path starts with "public/", also trim that, as we want paths *within* public.
+			// This case should ideally not happen if source HTML paths are correct and don't include "public/".
+			if strings.HasPrefix(assetKeyForReferencedMap, "public/") {
+				assetKeyForReferencedMap = strings.TrimPrefix(assetKeyForReferencedMap, "public/")
+			}
+
+			// Final clean and slash normalization
+			assetKeyForReferencedMap = path.Clean(assetKeyForReferencedMap)
+			assetKeyForReferencedMap = filepath.ToSlash(assetKeyForReferencedMap)
+
+			// Skip empty paths that might result from cleaning, e.g. if original was just "/" or "/public/"
+			if assetKeyForReferencedMap == "" || assetKeyForReferencedMap == "." {
+				log.Printf("Warning: Asset path for '%s' in %s resolved to an empty or dot path ('%s'). Skipping.", originalAsset, sourceHtmlForExtract, assetKeyForReferencedMap)
+				continue
+			}
+
+			allReferencedAssets[assetKeyForReferencedMap] = true
+			if !checkAssetReference(assetKeyForReferencedMap, projectRootAbs) {
+				missingAssetReferencesFound = append(missingAssetReferencesFound, MissingAssetInfo{
+					SourceFile: sourceHtmlForExtract,
+					AssetPath:  originalAsset,
+					Error:      fmt.Sprintf("asset '%s' (resolved to 'public/%s') not found", originalAsset, assetKeyForReferencedMap),
+				})
+			}
+		}
+	}
+
+	// Find Unused Assets
+	// publicDir relative to projectRoot is just "public"
+	unusedAssetsFound, err := findUnusedAssets("public", projectRootAbs, allReferencedAssets)
+	if err != nil {
+		log.Printf("Warning: Failed to find unused assets: %v", err)
+	}
+
+	// --- Reporting ---
+	issuesFound := false
+	if len(brokenInternalLinksFound) > 0 {
+		issuesFound = true
+		log.Println("\n--- Broken Internal Links Found ---")
+		for _, b := range brokenInternalLinksFound {
+			log.Printf("Source: %s, Link: %s, Error: %s", b.SourceFile, b.TargetLink, b.Error)
+		}
+	}
+	if len(missingAssetReferencesFound) > 0 {
+		issuesFound = true
+		log.Println("\n--- Missing Asset References Found ---")
+		for _, m := range missingAssetReferencesFound {
+			log.Printf("Source: %s, Asset: %s, Error: %s", m.SourceFile, m.AssetPath, m.Error)
+		}
+	}
+	if len(unusedAssetsFound) > 0 {
+		issuesFound = true
+		log.Println("\n--- Unused Assets Found ---")
+		for _, u := range unusedAssetsFound {
+			log.Printf("Asset: %s", u)
+		}
+	}
+
+	if issuesFound {
+		log.Println("\nBuild completed with issues listed above.")
+		// os.Exit(1) // Or return an error to main
+		return fmt.Errorf("build completed with link/asset issues")
+	}
+
+	log.Println("Link and asset checking complete. No issues found.")
 	return nil
 }
 
