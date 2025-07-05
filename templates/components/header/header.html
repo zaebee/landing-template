@@ -27,14 +27,14 @@
     <div data-sads-element="logo-container">
       {# Assuming site_logo object is passed in the context from build.py #}
       <a
-        href="{{ site_logo.get('target_url', '#') }}"
+        href="{{ site_logo.target_url or '#' }}"
         data-sads-element="logo-link"
         data-sads-text-color="text-primary"
         data-sads-text-decoration="none"
         data-sads-font-weight="bold"
         data-sads-font-size="l"
       >
-        {{ translations.get('logo_text', 'Logo') }}
+        {{ translations.get(site_logo.logo_text_key, 'Logo') }}
       </a>
     </div>
 

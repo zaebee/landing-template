@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"strings" // Added for string manipulation functions
 	"syscall/js"
 	// "strings" // Not directly used here, but dependencies might
 )

@@ -13,7 +13,7 @@
     data-sads-margin-bottom="xl" {# CSS: 2rem #}
     data-sads-font-size="custom:2rem" {# CSS: 2rem #}
   >
-    {{ translations["features_title"] | default:"Features" }}
+    {{ translations["features_title"] | default("Features") }}
   </h2>
   <div
     data-sads-element="list"
@@ -63,7 +63,7 @@
         {{ translations.get(item_data.content.description.key, item_data.content.description.key) }}
       </p>
     </div>
-    {% empty %}
+    {% else %}
     <!-- No feature items provided -->
     {% endfor %}
   </div>
