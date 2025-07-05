@@ -179,10 +179,16 @@ func getSadsComponentHandler(w http.ResponseWriter, r *http.Request) {
 	// 3. Render the component template with Pongo2
 	// Need a Pongo2 template set, similar to main.go
 	// The loader should point to the root of templates, so paths like "components/hero/hero.html" work.
-	tplSet := pongo2.NewSet("previewer-loader", pongo2.MustNewLocalFileSystemLoader("templates"))
-	tpl, err := tplSet.FromFile(filepath.ToSlash(componentTemplatePath)) // Pongo expects forward slashes
+	tplSet := pongo2.NewSet("previewer-loader", pongo2.MustNewLocalFileSystemLoader("templates")) // Loader base path is "templates"
+
+	// The path for FromFile must be relative to the loader's base path.
+	// componentTemplatePath is "templates/components/name/name.html"
+	// We need to pass "components/name/name.html" to FromFile.
+	relativePathForPongo := strings.TrimPrefix(filepath.ToSlash(componentTemplatePath), "templates/")
+
+	tpl, err := tplSet.FromFile(relativePathForPongo)
 	if err != nil {
-		http.Error(w, "Failed to load component Pongo2 template "+componentTemplatePath+": "+err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Failed to load component Pongo2 template "+relativePathForPongo+" (original: "+componentTemplatePath+"): "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
