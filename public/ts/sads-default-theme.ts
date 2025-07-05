@@ -43,10 +43,10 @@ export interface SadsColors {
   "contact-section-bg-dark": string;
   "contact-form-bg": string;
   "contact-form-bg-dark": string;
-    "chat-bg": string;
-    "chat-bg-dark": string;
-    "chat-messages-bg": string;
-    "chat-messages-bg-dark": string;
+  "chat-bg": string;
+  "chat-bg-dark": string;
+  "chat-messages-bg": string;
+  "chat-messages-bg-dark": string;
   "input-border-color": string;
   "input-border-color-dark": string;
   "input-bg-color": string;
