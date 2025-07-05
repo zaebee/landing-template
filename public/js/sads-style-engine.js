@@ -103,9 +103,57 @@ class SADSEngine {
   }
 
   _parseResponsiveRules(rulesString, targetSelector) {
-    const responsiveStyles = {};
-    if (!rulesString) return responsiveStyles;
+    if (!rulesString) return {};
 
+    // WASM Integration Point for Responsive Rules Parsing
+    if (window.sadsPocWasm && typeof window.sadsPocWasm.parseResponsiveRules === 'function') {
+      try {
+        const breakpointsJSON = JSON.stringify(this.theme.breakpoints || {});
+        const themeColorsJSON = JSON.stringify(this.theme.colors || {});
+        const themeSpacingJSON = JSON.stringify(this.theme.spacing || {});
+        const themeFontSizeJSON = JSON.stringify(this.theme.fontSize || {});
+        const themeFontWeightJSON = JSON.stringify(this.theme.fontWeight || {});
+        const themeBorderStyleJSON = JSON.stringify(this.theme.borderStyle || {});
+        const themeBorderRadiusJSON = JSON.stringify(this.theme.borderRadius || {});
+        const themeShadowJSON = JSON.stringify(this.theme.shadow || {});
+        const themeMaxWidthJSON = JSON.stringify(this.theme.maxWidth || {});
+        const themeFlexBasisJSON = JSON.stringify(this.theme.flexBasis || {});
+        const themeObjectFitJSON = JSON.stringify(this.theme.objectFit || {});
+        const isDarkMode = document.body.classList.contains("dark-mode");
+
+        const resultJSON = window.sadsPocWasm.parseResponsiveRules(
+          rulesString,
+          breakpointsJSON,
+          themeColorsJSON,
+          themeSpacingJSON,
+          themeFontSizeJSON,
+          themeFontWeightJSON,
+          themeBorderStyleJSON,
+          themeBorderRadiusJSON,
+          themeShadowJSON,
+          themeMaxWidthJSON,
+          themeFlexBasisJSON,
+          themeObjectFitJSON,
+          isDarkMode
+        );
+
+        if (typeof resultJSON === 'string' && !resultJSON.startsWith("Error:")) {
+          // console.log(`SADS: Responsive rules for '${targetSelector}' parsed by WASM.`);
+          return JSON.parse(resultJSON); // Expected to be a map of media query to CSS rules string
+        } else if (typeof resultJSON === 'string' && resultJSON.startsWith("Error:")) {
+          console.warn(`SADS: WASM parseResponsiveRules returned error for ${targetSelector}: ${resultJSON}. Falling back to JS logic.`);
+        } else {
+          console.warn(`SADS: WASM parseResponsiveRules returned unexpected value for ${targetSelector}:`, resultJSON, `. Falling back to JS logic.`);
+        }
+      } catch (wasmError) {
+        console.error(`SADS: Error calling WASM parseResponsiveRules for ${targetSelector}:`, wasmError, `. Falling back to JS logic.`);
+      }
+    } else {
+      // console.log("SADS: WASM parseResponsiveRules not available. Using JS logic for:", targetSelector);
+    }
+
+    // Original JavaScript Fallback Logic:
+    const responsiveStyles = {};
     try {
       const parsedRules = JSON.parse(rulesString);
       parsedRules.forEach((rule) => {
@@ -115,25 +163,18 @@ class SADSEngine {
           console.warn(
             `SADS: Unknown breakpoint key '${breakpointKey}' for ${targetSelector}. Raw query used: ${breakpointKey}`
           );
-          // Use breakpointKey as raw query if not found in theme, as per original logic
-          responsiveStyles[breakpointKey] =
-            responsiveStyles[breakpointKey] || "";
+          responsiveStyles[breakpointKey] = responsiveStyles[breakpointKey] || "";
         } else {
           responsiveStyles[bpQuery] = responsiveStyles[bpQuery] || "";
         }
         const targetQuery = bpQuery || breakpointKey;
 
-        for (const [respSadsPropKey, respSemanticVal] of Object.entries(
-          rule.styles
-        )) {
+        for (const [respSadsPropKey, respSemanticVal] of Object.entries(rule.styles)) {
           const cssProp = this._mapSadsPropertyToCss(respSadsPropKey);
-          const actualVal = this._mapSemanticValueToActual(
-            cssProp,
-            respSemanticVal
-          );
+          // _mapSemanticValueToActual will internally use WASM for colors if available, or JS.
+          const actualVal = this._mapSemanticValueToActual(cssProp, respSemanticVal);
           if (cssProp && actualVal !== null) {
-            responsiveStyles[targetQuery] +=
-              `${cssProp}: ${actualVal} !important;\n`;
+            responsiveStyles[targetQuery] += `${cssProp}: ${actualVal} !important;\n`;
           } else if (!cssProp) {
             console.warn(
               `SADS: Unmapped SADS property '${respSadsPropKey}' in responsive rule for ${targetSelector}`
@@ -143,8 +184,7 @@ class SADSEngine {
       });
     } catch (e) {
       console.error(
-        `SADS: Error parsing responsive rules for ${targetSelector}: "${rulesString}"`,
-        e
+        `SADS: Error parsing responsive rules (JS fallback) for ${targetSelector}: "${rulesString}"`, e
       );
     }
     return responsiveStyles;
