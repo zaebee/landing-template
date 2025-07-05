@@ -1,13 +1,14 @@
-import os
-import json
 import argparse
-from typing import Dict, List, Optional, Any
-from openai import OpenAI
+import json
+import os
+from typing import Any, Dict, List, Optional
+
 from dotenv import load_dotenv
 
 # --- Mistral Specific Block ---
 from mistralai.client import MistralClient
 from mistralai.models.chat_completion import ChatMessage
+from openai import OpenAI
 
 
 def load_sads_theme_context(json_file_path: str) -> Optional[Dict[str, Any]]:
@@ -102,7 +103,7 @@ def construct_llm_prompt(
         f"{sads_explanation}\n\n"
         f"{sads_theme_context_str}"
         f"{sads_properties_ref_str}\n\n"
-        f"SADS THEME CONTEXT:\n{sads_theme_context_str}\n\n" #This line seems redundant, will remove in next step if confirmed
+        f"SADS THEME CONTEXT:\n{sads_theme_context_str}\n\n"  # This line seems redundant, will remove in next step if confirmed
         f"HTML SNIPPET:\n```html\n{html_snippet}\n```\n\n"
         f'USER STYLE DESCRIPTION: "{style_prompt}"\n\n'
         f"Generated `data-sads-*` attributes string:"
@@ -138,21 +139,25 @@ def get_sads_attributes_from_llm(
             return None
     elif provider.lower() == "mistral":
         try:
-            client = MistralClient(api_key=api_key) # Corrected: MistralClient not Mistral
-            messages: List[ChatMessage] = [ChatMessage(role="user", content=prompt)] # Corrected: ChatMessage not UserMessage, and ensure correct import
+            client = MistralClient(
+                api_key=api_key
+            )  # Corrected: MistralClient not Mistral
+            messages: List[ChatMessage] = [
+                ChatMessage(role="user", content=prompt)
+            ]  # Corrected: ChatMessage not UserMessage, and ensure correct import
 
-            chat_response = client.chat( # Corrected: client.chat not client.chat.complete
-                model=model_name,
-                messages=messages,
-                temperature=0.2,
-                max_tokens=150,
+            chat_response = (
+                client.chat(  # Corrected: client.chat not client.chat.complete
+                    model=model_name,
+                    messages=messages,
+                    temperature=0.2,
+                    max_tokens=150,
+                )
             )
             if chat_response.choices and chat_response.choices[0].message:
-                response_content: Optional[str] = str(
-                    chat_response.choices[0].message.content
-                ).strip()
+                response_content = str(chat_response.choices[0].message.content).strip()
                 return response_content if response_content else None
-            else: # Added else to handle no choices
+            else:  # Added else to handle no choices
                 print("Mistral API returned no choices or message content.")
                 return None
         except ImportError:
@@ -380,8 +385,14 @@ def parse_llm_sads_string_to_dict(
                     mapped = True
             if not mapped:
                 if sads_key.lower() in [
-                    "textalign", "display", "position", "overflow",
-                    "cursor", "transition", "boxsizing", "resize",
+                    "textalign",
+                    "display",
+                    "position",
+                    "overflow",
+                    "cursor",
+                    "transition",
+                    "boxsizing",
+                    "resize",
                 ]:
                     attr_value_dict["custom_value"] = value
                 elif "fontsize" in sads_key.lower():
@@ -397,6 +408,6 @@ def parse_llm_sads_string_to_dict(
             attributes_map[sads_key] = {"custom_value": value}
     return {"attributes": attributes_map}
 
+
 if __name__ == "__main__":
     main()
-```

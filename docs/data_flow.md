@@ -199,45 +199,45 @@ graph TD
 The diagram illustrates the data flow and component interactions within the `main.go` script, which serves as the build orchestrator for generating static HTML pages. This process uses Pongo2 for templating and Go's native capabilities for data handling and file system operations.
 
 1.  **Inputs (Pink Nodes)**:
-    *   **`public/config.json`**: Main configuration file defining site settings, supported languages, block order, and data file references.
-    *   **`data/*.json`**: JSON files containing content for dynamic blocks (e.g., hero text, portfolio items), structured according to Protobuf definitions.
-    *   **`proto/*.proto`**: Protocol Buffer files defining the schema for the data in `data/*.json`.
-    *   **`templates/components/*/*.html`**: Pongo2 HTML template files for individual content components.
-    *   **`public/locales/*.json`**: JSON files holding translations for different languages, typically key-value pairs.
-    *   **`templates/base.html`**: The main Pongo2 base template providing the overall page structure (e.g., `<html>`, `<head>`, `<body>`, header, footer placeholders).
+    - **`public/config.json`**: Main configuration file defining site settings, supported languages, block order, and data file references.
+    - **`data/*.json`**: JSON files containing content for dynamic blocks (e.g., hero text, portfolio items), structured according to Protobuf definitions.
+    - **`proto/*.proto`**: Protocol Buffer files defining the schema for the data in `data/*.json`.
+    - **`templates/components/*/*.html`**: Pongo2 HTML template files for individual content components.
+    - **`public/locales/*.json`**: JSON files holding translations for different languages, typically key-value pairs.
+    - **`templates/base.html`**: The main Pongo2 base template providing the overall page structure (e.g., `<html>`, `<head>`, `<body>`, header, footer placeholders).
 
 2.  **Initial Processing & Tools**:
-    *   **`protoc` (Orange Node)**: The Protocol Buffer compiler.
-    *   **`protoc-gen-go`**: A `protoc` plugin used to generate Go source files (`.pb.go`) from `.proto` definitions.
-    *   **`generated/go/*.pb.go` (Light Blue Node)**: Generated Go files containing struct definitions and (un)marshalling logic for the data types defined in `.proto` files. These are compiled into the `main.go` binary.
+    - **`protoc` (Orange Node)**: The Protocol Buffer compiler.
+    - **`protoc-gen-go`**: A `protoc` plugin used to generate Go source files (`.pb.go`) from `.proto` definitions.
+    - **`generated/go/*.pb.go` (Light Blue Node)**: Generated Go files containing struct definitions and (un)marshalling logic for the data types defined in `.proto` files. These are compiled into the `main.go` binary.
 
 3.  **Core Go Services/Logic (Light Cyan Nodes)**:
-    *   **`Go Data Handling Logic`**: Represents Go code within `main.go` (or its packages) responsible for:
-        *   Reading JSON files from `data/`.
-        *   Unmarshalling JSON data into the Go structs generated from `.pb.go` files.
-    *   **`Go Data Cache`**: An in-memory cache (e.g., a Go map) within `main.go` to store the loaded and unmarshalled Go struct data, preventing redundant file reads and parsing.
-    *   **`Go Translation Service`**: Go logic to load translation strings from `public/locales/*.json` for the current language being processed. It makes these translations available to the Pongo2 templating context.
-    *   **`Go Page Assembly Logic`**: Functions or methods in `main.go` that manage the overall HTML page structure using the Pongo2 base template (`templates/base.html`).
-    *   **`Go Block Generation Logic`**: Functions or methods in `main.go` responsible for rendering individual component blocks using their respective Pongo2 templates from `templates/components/`.
+    - **`Go Data Handling Logic`**: Represents Go code within `main.go` (or its packages) responsible for:
+      - Reading JSON files from `data/`.
+      - Unmarshalling JSON data into the Go structs generated from `.pb.go` files.
+    - **`Go Data Cache`**: An in-memory cache (e.g., a Go map) within `main.go` to store the loaded and unmarshalled Go struct data, preventing redundant file reads and parsing.
+    - **`Go Translation Service`**: Go logic to load translation strings from `public/locales/*.json` for the current language being processed. It makes these translations available to the Pongo2 templating context.
+    - **`Go Page Assembly Logic`**: Functions or methods in `main.go` that manage the overall HTML page structure using the Pongo2 base template (`templates/base.html`).
+    - **`Go Block Generation Logic`**: Functions or methods in `main.go` responsible for rendering individual component blocks using their respective Pongo2 templates from `templates/components/`.
 
 4.  **`main.go` Build Orchestrator (Dark Blue Node)**: The central Go program that drives the static site generation.
-    *   It initializes and coordinates all data loading, translation, and templating operations.
-    *   **Core Logic (Grey Subgraph "main.go - Core Logic")**:
-        *   **Load Initial Configs**: Reads `public/config.json` to get site-wide settings, language lists, block configurations, etc.
-        *   **Preload Data**: Iterates through data configurations, loads relevant JSON files from `data/`, unmarshals them into Go structs (defined in `generated/go/*.pb.go`), and stores them in the `Go Data Cache`.
-        *   **Loop Supported Languages**: Iterates through each language specified in `public/config.json`.
-        *   **Load Translations for Language**: For the current language, loads the corresponding locale file (e.g., `public/locales/en.json`) using the `Go Translation Service`.
-        *   **Generate Language-Specific Config Output**: Creates a language-specific JSON configuration file (e.g., `public/generated_configs/config_en.json`) for client-side use.
-        *   **Assemble Main Content Blocks**: For the current language, iterates through the blocks defined in `config.json` and generates HTML for each. (See "Assemble Main Content Blocks (Go + Pongo2)" subgraph).
-        *   **Assemble Full Page**: Uses the `Go Page Assembly Logic` (and `templates/base.html`) to combine the header, footer, and the assembled main content blocks into a complete HTML page. Pongo2 handles template inheritance and inclusion.
-        *   **Write Output HTML File**: Saves the fully rendered HTML page to the root directory (e.g., `index.html` for the default language, `index_es.html` for Spanish).
+    - It initializes and coordinates all data loading, translation, and templating operations.
+    - **Core Logic (Grey Subgraph "main.go - Core Logic")**:
+      - **Load Initial Configs**: Reads `public/config.json` to get site-wide settings, language lists, block configurations, etc.
+      - **Preload Data**: Iterates through data configurations, loads relevant JSON files from `data/`, unmarshals them into Go structs (defined in `generated/go/*.pb.go`), and stores them in the `Go Data Cache`.
+      - **Loop Supported Languages**: Iterates through each language specified in `public/config.json`.
+      - **Load Translations for Language**: For the current language, loads the corresponding locale file (e.g., `public/locales/en.json`) using the `Go Translation Service`.
+      - **Generate Language-Specific Config Output**: Creates a language-specific JSON configuration file (e.g., `public/generated_configs/config_en.json`) for client-side use.
+      - **Assemble Main Content Blocks**: For the current language, iterates through the blocks defined in `config.json` and generates HTML for each. (See "Assemble Main Content Blocks (Go + Pongo2)" subgraph).
+      - **Assemble Full Page**: Uses the `Go Page Assembly Logic` (and `templates/base.html`) to combine the header, footer, and the assembled main content blocks into a complete HTML page. Pongo2 handles template inheritance and inclusion.
+      - **Write Output HTML File**: Saves the fully rendered HTML page to the root directory (e.g., `index.html` for the default language, `index_es.html` for Spanish).
 
 5.  **Assemble Main Content Blocks (Go + Pongo2) (Light Grey Subgraph)**: This process is managed by `main.go` for each component.
-    *   **Load Pongo2 Block Template**: Loads the specific Pongo2 template file for the current block (e.g., `templates/components/hero/hero.html`).
-    *   **Get Cached Go Struct Data for Block**: Retrieves the necessary Go data structures (previously loaded and cached) for the current block.
-    *   **Render HTML for Block (Pongo2 Execution)**: Executes the Pongo2 template with the retrieved Go data and the current language's translations. Pongo2 processes the template logic (loops, conditionals, variable injections, filter applications) to produce the final HTML for that block.
+    - **Load Pongo2 Block Template**: Loads the specific Pongo2 template file for the current block (e.g., `templates/components/hero/hero.html`).
+    - **Get Cached Go Struct Data for Block**: Retrieves the necessary Go data structures (previously loaded and cached) for the current block.
+    - **Render HTML for Block (Pongo2 Execution)**: Executes the Pongo2 template with the retrieved Go data and the current language's translations. Pongo2 processes the template logic (loops, conditionals, variable injections, filter applications) to produce the final HTML for that block.
 
 6.  **Output (Green Node)**:
-    *   **`index_lang.html`**: The final, fully assembled, and translated static HTML pages for each supported language.
+    - **`index_lang.html`**: The final, fully assembled, and translated static HTML pages for each supported language.
 
 This Go-centric architecture uses Go's strengths in data processing and compilation alongside the Pongo2 templating engine for flexible HTML generation. The process is driven by JSON configurations and data files, with Protobuf ensuring data schema consistency.
