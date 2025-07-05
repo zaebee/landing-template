@@ -4,7 +4,9 @@ This document outlines a conceptual exploration into using Go compiled to WebAss
 
 ## 1. Introduction & Concept
 
-The core idea is to leverage Go's performance characteristics and static typing for computationally intensive or complex logic within the SADS engine. Go code would be compiled into a WASM module, which can then be loaded and called by the main JavaScript application running in the browser. This could lead to a hybrid SADS engine where JavaScript handles DOM interaction and overall orchestration, while Go/WASM modules tackle specific processing tasks.
+The core idea is to leverage Go's performance characteristics and static typing for computationally intensive or complex logic within the SADS (Semantic Attribute-Driven Styling) engine. The SADS engine itself is currently experimental, and this exploration looks at using Go compiled to WebAssembly (WASM) for parts of its rule-based logic. Go code would be compiled into a WASM module, which can then be loaded and called by the main JavaScript application running in the browser. This could lead to a hybrid SADS engine where JavaScript handles DOM interaction and overall orchestration, while Go/WASM modules tackle specific processing tasks.
+
+It's important to note, as stated in `docs/styling_approach.md`, that the "AI" in "SADS AI experimental" (a term sometimes used to describe the overall SADS project ambition) is currently an aspirational term. The existing SADS engine, and thus the parts being considered for Go/WASM porting in this document, are rule-based. This WASM exploration focuses on performance and architectural enhancements for this rule-based system.
 
 ## 2. Rationale
 
@@ -155,11 +157,11 @@ func main() {
 - **DOM Interaction:** WASM cannot directly and efficiently manipulate the DOM. All DOM reads (if needed beyond initial attribute collection) and writes (injecting styles) must go through JavaScript calls (JS interop). This can introduce overhead. The strategy of JS collecting data, WASM processing it, and JS applying results is generally preferred.
 - **Data Serialization/Deserialization:** Passing data (especially complex objects like the theme or attribute maps) between JavaScript and Go/WASM often involves serialization to JSON and deserialization back. This has a performance cost. For very frequent, small calls, this overhead might outweigh WASM's raw execution speed benefits.
 - **Bundle Size:** The compiled WASM binary (`.wasm` file) and the necessary JavaScript glue code (`wasm_exec.js` for Go) will add to the application's total download size. This needs to be weighed against potential performance gains.
-- **Build Process Complexity:** Integrating Go compilation and WASM generation into the existing (or a new) frontend build process adds complexity.
+- **Build Process Complexity:** Integrating Go compilation and WASM generation into the existing (or a new) frontend build process adds complexity. (See Section 8.1 for how the PoC currently handles this).
 - **Debugging:** Debugging Go code running as WASM in the browser can be more challenging than debugging JavaScript, though browser devtools are continually improving WASM support.
 - **Maturity of Ecosystem:** While Go's WASM support is good, the ecosystem for frontend-focused Go/WASM development (especially direct DOM manipulation libraries) is less mature than JavaScript's.
 
-This exploration represents a significant R&D effort but could lead to a highly performant and robust SADS engine, especially if combined with AI-driven styling concepts.
+This exploration represents a significant R&D effort but could lead to a highly performant and robust SADS engine. While the current focus is on the rule-based SADS engine, these Go/WASM enhancements could also serve as a foundational component for potential future AI-driven SADS capabilities (such as those brainstormed in `docs/feature_ideas.md`).
 
 ## 6. Initial Proof-of-Concept (PoC) Target
 
@@ -350,10 +352,14 @@ The initial Proof-of-Concept (PoC) focusing on the `ResolveSadsColorToken` funct
     - `sads_wasm_poc/wasm_exec.js`: The standard Go JavaScript glue code, copied from the Go installation (`$(go env GOROOT)/misc/wasm/`).
     - `public/js/modules/wasmLoader.js`: A new JavaScript module created to handle the asynchronous loading of `wasm_exec.js` and `sads_poc.wasm`.
 
-- **Build Process (`build_protocols/asset_bundling.py`):**
-    - The `DefaultAssetBundler` class was augmented with a new method `copy_wasm_assets`.
-    - This method copies `sads_poc.wasm` and `wasm_exec.js` from `sads_wasm_poc/` to `dist/assets/wasm/` during the build process.
-    - *Assumption*: The main `build.py` script is expected to call this `copy_wasm_assets` method.
+- **Build Process for WASM Assets:**
+    - **Manual Go Compilation:** The Go code in `sads_wasm_poc/color_resolver.go` must be manually compiled by the developer into `sads_wasm_poc/sads_poc.wasm` using the command:
+      `GOOS=js GOARCH=wasm go build -o sads_wasm_poc/sads_poc.wasm sads_wasm_poc/color_resolver.go`
+      This step is currently *not* integrated into the project's main `npm run build` (which runs `python build.py`). Automating this Go compilation within the main build script could be a future enhancement.
+    - **Copying WASM Assets (`build_protocols/asset_bundling.py`):**
+        - The `DefaultAssetBundler` class in `build_protocols/asset_bundling.py` was augmented with a new method `copy_wasm_assets`.
+        - This Python method is responsible for copying the pre-compiled `sads_poc.wasm` (from the manual step above) and `wasm_exec.js` from the local `sads_wasm_poc/` directory to `dist/assets/wasm/`.
+        - *Assumption*: The main `build.py` script calls this `copy_wasm_assets` method as part of its asset handling.
 
 - **HTML Integration (`public/index.html`):**
     - A script tag for `public/js/modules/wasmLoader.js` was added to `index.html` *before* the main application script (`public/dist/main.js`).
@@ -423,8 +429,115 @@ The initial Proof-of-Concept (PoC) focusing on the `ResolveSadsColorToken` funct
 
 This integration demonstrates a viable path for incorporating Go/WASM modules into the SADS engine for specific functionalities, starting with color resolution. The patterns established here (asset bundling, WASM loader, async handling in the engine, JS fallbacks) can be reused for porting other SADS logic.
 
-## 9. Note on Future Development and Implementation
+## 9. Future Development: Next Steps for Go/WASM in SADS
 
-The designs and concepts outlined in this document, along with the successful PoC integration, serve as a foundational guide for exploring further use of Go and WebAssembly to enhance the SADS engine.
+The successful PoC integration of `resolveColor` opens several avenues for further enhancing the SADS engine with Go/WebAssembly. The following are suggestions for an AI developer (like Jules) to continue this work, building upon the patterns and infrastructure established:
 
-Beyond this initial color resolution PoC, porting more substantial parts of the SADS engine to Go/WASM would involve similar design, implementation, and testing cycles. This document aims to provide the initial direction and considerations for such an undertaking. The user (developer) will be responsible for these implementation efforts.
+### 9.1. Porting Additional SADS Logic to Go/WASM
+
+The primary goal is to identify and port other self-contained, computationally beneficial parts of `sads-style-engine.js`.
+
+1.  **Target: `_mapSadsPropertyToCss` function**
+    *   **Objective**: Rewrite the SADS property key to CSS property name mapping (e.g., `bgColor` to `background-color`) in Go.
+    *   **Go Function Design**:
+        *   Name: `MapSadsKeyToCssProperty(sadsKeyString string) string`
+        *   Input: A single string representing the SADS property key (e.g., "bgColor", "paddingTop").
+        *   Output: A string representing the corresponding CSS property name (e.g., "background-color", "padding-top"), or an empty string/original key if no mapping exists.
+        *   Logic: Implement the mapping currently found in `_mapSadsPropertyToCss` within `sads-style-engine.js`. This is mostly a map lookup.
+    *   **JavaScript Integration**:
+        *   Export this new Go function (e.g., as `window.sadsPocWasm.mapSadsKey`).
+        *   Modify `sads-style-engine.js` in `_mapSadsPropertyToCss` to call this WASM function, with a JS fallback.
+    *   **Considerations**: This function is called frequently. Benchmark the overhead of WASM calls vs. the JS map lookup. The benefit might be minimal unless combined with other operations in WASM.
+
+2.  **Target: Non-Color Value Resolution in `_mapSemanticValueToActual`**
+    *   **Objective**: Extend Go/WASM capabilities to resolve other semantic tokens like spacing (`m`, `l`), font sizes, border radius, etc.
+    *   **Go Function Design (Option 1: Extend `ResolveSadsColorToken`)**:
+        *   Modify `ResolveSadsColorToken` to `ResolveSadsValueToken(tokenString, themeCategoryJsonString, categoryNameString) string`.
+        *   Inputs: SADS token, JSON string of the relevant theme category (e.g., `theme.spacing`, `theme.fontSize`), and the category name (e.g., "spacing", "fontSize").
+        *   Output: Resolved CSS value string.
+    *   **Go Function Design (Option 2: New Specific Functions)**:
+        *   `ResolveSadsSpacingToken(tokenString, themeSpacingJsonString) string`
+        *   `ResolveSadsFontSizeToken(tokenString, themeFontSizeJsonString) string`
+        *   This might be cleaner if theme structures vary significantly.
+    *   **JavaScript Integration**:
+        *   Export the new/modified Go function(s).
+        *   Update `_mapSemanticValueToActual` in `sads-style-engine.js` to delegate to these WASM functions for respective categories, with JS fallbacks.
+    *   **Theme Data**: This requires passing different parts of the theme object (e.g., `this.theme.spacing`, `this.theme.fontSize`) as JSON strings to the WASM functions.
+
+3.  **Target: `_parseResponsiveRules` (More Complex)**
+    *   **Objective**: Port the logic for parsing responsive rule strings and generating media query-specific CSS rules to Go/WASM.
+    *   **Go Function Design**: This would be significantly more complex.
+        *   Input: Responsive rules JSON string, theme breakpoints JSON string, possibly the `targetSelector` if CSS is generated directly.
+        *   Output: A JSON string representing structured media queries and their corresponding CSS rules, or a fully formatted CSS string block.
+        *   Logic: Replicate JSON parsing, breakpoint lookups, and iterating through styles to call other WASM functions (like `ResolveSadsValueToken` and `MapSadsKeyToCssProperty`) internally.
+    *   **JavaScript Integration**: Modify `_parseResponsiveRules` in `sads-style-engine.js` to call this comprehensive WASM function.
+    *   **Benefits**: Could offer significant performance gains if responsive rule processing is extensive and involves many lookups.
+
+### 9.2. Performance Benchmarking
+
+*   **Objective**: Quantify the performance difference between JavaScript and Go/WASM implementations for the ported functions.
+*   **Task**:
+    *   Create dedicated benchmark tests (e.g., using `performance.now()` in JavaScript).
+    *   For `resolveColor`, run the JS version and WASM version in a loop (e.g., 10,000+ iterations) with various inputs and measure execution time.
+    *   Compare results, considering the overhead of JS-to-WASM calls versus the Go execution speed.
+    *   Document findings in `docs/wasm_sads_exploration.md`.
+
+### 9.3. Build Process Automation
+
+*   **Objective**: Integrate the Go WASM compilation step into the main project build process.
+*   **Task**:
+    *   Modify `build.py` (or the script it calls, like `asset_bundling.py`) to execute the `GOOS=js GOARCH=wasm go build ...` command.
+    *   This might involve using Python's `subprocess` module.
+    *   Ensure it runs before `copy_wasm_assets` and that errors during Go compilation are handled and reported by the build script.
+    *   This would remove the need for developers to manually compile the Go/WASM module.
+
+### 9.4. Advanced: Consolidating SADS Logic in Go
+
+*   **Objective**: Create a single, more comprehensive Go/WASM function that takes all SADS attributes for an element and the full theme, then returns all computed CSS properties (perhaps as a JSON string map of CSS property to value).
+*   **Go Function Design**:
+    *   `ProcessElementSadsAttributes(attributesJsonString, themeJsonString, isDarkMode bool) string` (returning JSON map of CSS props)
+    *   This function would internally call the Go versions of `MapSadsKeyToCssProperty` and `ResolveSadsValueToken` for each relevant SADS attribute.
+*   **JavaScript Integration**:
+    *   `_generateBaseCss` in `sads-style-engine.js` would primarily call this function.
+    *   JS would then format the returned CSS properties map into a CSS string.
+*   **Benefits**: Reduces the number of JS-to-WASM calls per element, potentially improving performance by keeping more logic within the WASM module for a single element's processing.
+
+**AI Developer Prompt Structure for Next Task (Example based on 9.1.1):**
+
+```
+**Task Objective:**
+Port the `_mapSadsPropertyToCss` function from `public/js/sads-style-engine.js` to Go/WebAssembly.
+
+**Background & Context:**
+We have successfully integrated a Go/WASM function for SADS color resolution. This task continues the effort by porting another piece of the SADS engine logic as outlined in `docs/wasm_sads_exploration.md` (Section 9.1.1).
+
+**Specific Requirements:**
+
+1.  **Go Implementation (`sads_wasm_poc/color_resolver.go` or a new file):**
+    *   Create a new Go function, e.g., `MapSadsKeyToCssProperty(sadsKey string) string`.
+    *   It should take a SADS property key (e.g., "bgColor", "paddingLeft", "flexJustify") as a string.
+    *   It should return the corresponding CSS property name (e.g., "background-color", "padding-left", "justify-content").
+    *   If no mapping exists, it can return the original key or an empty string (document the chosen behavior).
+    *   The mapping logic should replicate that of `_mapSadsPropertyToCss` in `sads-style-engine.js`.
+    *   Update the Go `main` function to export this new function to JavaScript (e.g., under `window.sadsPocWasm.mapSadsKey`).
+2.  **JavaScript Integration (`public/js/sads-style-engine.js`):**
+    *   Modify the existing `_mapSadsPropertyToCss(sadsPropertyKey)` function.
+    *   If `window.sadsPocWasm.mapSadsKey` is available, call it. Use its result.
+    *   If the WASM function is not available or returns an empty/error indicator, fall back to the existing JavaScript mapping logic.
+3.  **Test Harness Update (`sads_wasm_poc/test_harness.js` and `test_harness.html`):**
+    *   Add new test cases to `test_harness.js` specifically for `mapSadsKey`.
+    *   Include tests for various known SADS keys and some unknown keys to verify fallback or error handling.
+    *   Log inputs and outputs.
+4.  **Documentation:**
+    *   Briefly update `docs/wasm_sads_exploration.md` to note the completion of this porting task.
+    *   Ensure Go code is commented.
+
+**Expected Deliverables:**
+*   Updated Go source file(s).
+*   Updated `public/js/sads-style-engine.js`.
+*   Updated `sads_wasm_poc/test_harness.js` and `test_harness.html`.
+*   Updated compilation instructions if anything changed (though likely not for this specific task).
+```
+
+This provides a more structured guide for future development efforts.
+The user (developer) will be responsible for the actual implementation of these further steps.
