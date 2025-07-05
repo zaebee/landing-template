@@ -1,7 +1,22 @@
 // TypeScript type definitions for SADS Default Theme
 
+import {
+  SadsColorToken,
+  SadsSpacingToken,
+  SadsFontWeightToken,
+  SadsBorderRadiusToken
+  // Other enums can be imported as needed, e.g., SadsFontSizeToken if we create one
+} from "./generated_proto/sads_attributes.js"; // Assuming .js extension for module imports
+
+// The theme will still store CSS string values. The SADS engine would be responsible
+// for mapping input tokens (like "m" for spacing or "surface" for color)
+// to these theme keys, potentially validating them against the enums.
+
 export interface SadsColors {
-  surface: string;
+  // Keys correspond to SadsColorToken members (e.g., "SURFACE" maps to SadsColorToken.COLOR_TOKEN_SURFACE)
+  // or direct string keys for colors not in the enum but in the theme.
+  // Values are actual CSS color strings.
+  surface: string; // Corresponds to a conceptual COLOR_TOKEN_SURFACE
   "surface-dark": string;
   "surface-accent": string;
   "surface-accent-dark": string;
@@ -35,13 +50,15 @@ export interface SadsColors {
   "button-primary-bg-color": string;
   "button-primary-bg-color-dark": string;
   "button-primary-text-color": string;
-  [key: string]: string | undefined; // Allow other string properties
+  [key: string]: string | undefined; // Allow other string properties, e.g. "button-primary-bg-color"
 }
 
 export interface SadsSpacing {
-  none: string;
-  xs: string;
-  s: string;
+  // Keys correspond to SadsSpacingToken members (e.g., "XS" maps to SadsSpacingToken.SPACING_TOKEN_XS)
+  // Values are actual CSS spacing strings.
+  none: string;  // Corresponds to SPACING_TOKEN_NONE
+  xs: string;    // Corresponds to SPACING_TOKEN_XS
+  s: string;     // Corresponds to SPACING_TOKEN_S
   m: string;
   l: string;
   xl: string;
@@ -62,17 +79,21 @@ export interface SadsFontSizes {
 }
 
 export interface SadsFontWeights {
-  normal: string;
-  bold: string;
-  [key: string]: string; // Allow other string properties
+  // Keys correspond to SadsFontWeightToken members
+  // Values are actual CSS font weight strings.
+  normal: string; // Corresponds to FONT_WEIGHT_TOKEN_NORMAL
+  bold: string;   // Corresponds to FONT_WEIGHT_TOKEN_BOLD
+  [key: string]: string;
 }
 
 export interface SadsBorderRadius {
-  none: string;
-  s: string;
-  m: string;
-  l: string;
-  [key: string]: string; // Allow other string properties
+  // Keys correspond to SadsBorderRadiusToken members
+  // Values are actual CSS border radius strings.
+  none: string; // Corresponds to BORDER_RADIUS_TOKEN_NONE
+  s: string;    // Corresponds to BORDER_RADIUS_TOKEN_S
+  m: string;    // Corresponds to BORDER_RADIUS_TOKEN_M
+  l: string;    // Corresponds to BORDER_RADIUS_TOKEN_L
+  [key: string]: string;
 }
 
 export interface SadsShadows {
