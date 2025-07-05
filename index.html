@@ -16,6 +16,7 @@
     <title>Simple Landing Page</title>
     <link href="public/style.css" rel="stylesheet" />
     <link href="public/dist/main.css" rel="stylesheet" />
+
     <link rel="icon" href="public/favicon.svg" type="image/svg+xml" />
   </head>
   <body>
@@ -116,10 +117,7 @@
                 data-i18n="nav_features"
                 data-sads-text-color="text-nav-link"
                 data-sads-text-decoration="none"
-                data-sads-padding-top="xs"
-                data-sads-padding-bottom="xs"
-                data-sads-padding-left="s"
-                data-sads-padding-right="s"
+                data-sads-padding="xs s"
                 data-sads-border-radius="s"
                 data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
               >
@@ -132,10 +130,7 @@
                 data-i18n="nav_testimonials"
                 data-sads-text-color="text-nav-link"
                 data-sads-text-decoration="none"
-                data-sads-padding-top="xs"
-                data-sads-padding-bottom="xs"
-                data-sads-padding-left="s"
-                data-sads-padding-right="s"
+                data-sads-padding="xs s"
                 data-sads-border-radius="s"
                 data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
               >
@@ -148,10 +143,7 @@
                 data-i18n="nav_portfolio"
                 data-sads-text-color="text-nav-link"
                 data-sads-text-decoration="none"
-                data-sads-padding-top="xs"
-                data-sads-padding-bottom="xs"
-                data-sads-padding-left="s"
-                data-sads-padding-right="s"
+                data-sads-padding="xs s"
                 data-sads-border-radius="s"
                 data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
               >
@@ -164,10 +156,7 @@
                 data-i18n="nav_blog"
                 data-sads-text-color="text-nav-link"
                 data-sads-text-decoration="none"
-                data-sads-padding-top="xs"
-                data-sads-padding-bottom="xs"
-                data-sads-padding-left="s"
-                data-sads-padding-right="s"
+                data-sads-padding="xs s"
                 data-sads-border-radius="s"
                 data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
               >
@@ -181,9 +170,8 @@
             id="dark-mode-toggle"
             data-sads-button-variant="icon"
             data-sads-text-color="text-primary"
-            data-sads-padding="xs"
             data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"marginTop": "s", "marginLeft": "custom:0", "width": "auto", "padding": "s"}}
+            {"breakpoint": "mobile", "styles": {"marginTop": "s", "marginLeft": "custom:0", "width": "auto", "padding": "s m"}}
         ]'
           >
             🌙
@@ -201,9 +189,6 @@
             <button
               data-lang="en"
               data-sads-button-variant="outline"
-              data-sads-text-color="text-primary"
-              data-sads-bg-color="surface"
-              data-sads-border-color="input-border-color"
               data-sads-padding="xs s"
               data-sads-responsive-rules='[
             {"breakpoint": "mobile", "styles": {"padding": "s m"}}
@@ -214,9 +199,6 @@
             <button
               data-lang="es"
               data-sads-button-variant="outline"
-              data-sads-text-color="text-primary"
-              data-sads-bg-color="surface"
-              data-sads-border-color="input-border-color"
               data-sads-padding="xs s"
               data-sads-responsive-rules='[
             {"breakpoint": "mobile", "styles": {"padding": "s m"}}
@@ -1089,6 +1071,18 @@
       </div>
     </footer>
 
-    <script type="module" src="public/dist/main.js" defer></script>
+    <!--
+      WASM Loader Script:
+      This script is responsible for loading wasm_exec.js (Go's WASM support)
+      and then our compiled sads_poc.wasm module. It should be loaded before
+      the main application bundle (main.js) so that the WASM module can be
+      ready or its loading initiated before app.js tries to use it.
+      The wasmLoader.js script will expose a Promise (window.sadsPocWasmReadyPromise)
+      that the main application logic can await.
+    -->
+    <script src="public/js/modules/wasmLoader.js" defer></script>
+
+    <!-- Main application bundle -->
+    <script src="public/dist/main.js" defer></script>
   </body>
 </html>

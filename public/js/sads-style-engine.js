@@ -106,22 +106,15 @@ class SADSEngine {
     if (!rulesString) return {};
 
     // WASM Integration Point for Responsive Rules Parsing
-    if (
-      window.sadsPocWasm &&
-      typeof window.sadsPocWasm.parseResponsiveRules === "function"
-    ) {
+    if (window.sadsPocWasm && typeof window.sadsPocWasm.parseResponsiveRules === 'function') {
       try {
         const breakpointsJSON = JSON.stringify(this.theme.breakpoints || {});
         const themeColorsJSON = JSON.stringify(this.theme.colors || {});
         const themeSpacingJSON = JSON.stringify(this.theme.spacing || {});
         const themeFontSizeJSON = JSON.stringify(this.theme.fontSize || {});
         const themeFontWeightJSON = JSON.stringify(this.theme.fontWeight || {});
-        const themeBorderStyleJSON = JSON.stringify(
-          this.theme.borderStyle || {}
-        );
-        const themeBorderRadiusJSON = JSON.stringify(
-          this.theme.borderRadius || {}
-        );
+        const themeBorderStyleJSON = JSON.stringify(this.theme.borderStyle || {});
+        const themeBorderRadiusJSON = JSON.stringify(this.theme.borderRadius || {});
         const themeShadowJSON = JSON.stringify(this.theme.shadow || {});
         const themeMaxWidthJSON = JSON.stringify(this.theme.maxWidth || {});
         const themeFlexBasisJSON = JSON.stringify(this.theme.flexBasis || {});
@@ -144,32 +137,16 @@ class SADSEngine {
           isDarkMode
         );
 
-        if (
-          typeof resultJSON === "string" &&
-          !resultJSON.startsWith("Error:")
-        ) {
+        if (typeof resultJSON === 'string' && !resultJSON.startsWith("Error:")) {
           // console.log(`SADS: Responsive rules for '${targetSelector}' parsed by WASM.`);
           return JSON.parse(resultJSON); // Expected to be a map of media query to CSS rules string
-        } else if (
-          typeof resultJSON === "string" &&
-          resultJSON.startsWith("Error:")
-        ) {
-          console.warn(
-            `SADS: WASM parseResponsiveRules returned error for ${targetSelector}: ${resultJSON}. Falling back to JS logic.`
-          );
+        } else if (typeof resultJSON === 'string' && resultJSON.startsWith("Error:")) {
+          console.warn(`SADS: WASM parseResponsiveRules returned error for ${targetSelector}: ${resultJSON}. Falling back to JS logic.`);
         } else {
-          console.warn(
-            `SADS: WASM parseResponsiveRules returned unexpected value for ${targetSelector}:`,
-            resultJSON,
-            `. Falling back to JS logic.`
-          );
+          console.warn(`SADS: WASM parseResponsiveRules returned unexpected value for ${targetSelector}:`, resultJSON, `. Falling back to JS logic.`);
         }
       } catch (wasmError) {
-        console.error(
-          `SADS: Error calling WASM parseResponsiveRules for ${targetSelector}:`,
-          wasmError,
-          `. Falling back to JS logic.`
-        );
+        console.error(`SADS: Error calling WASM parseResponsiveRules for ${targetSelector}:`, wasmError, `. Falling back to JS logic.`);
       }
     } else {
       // console.log("SADS: WASM parseResponsiveRules not available. Using JS logic for:", targetSelector);
@@ -186,25 +163,18 @@ class SADSEngine {
           console.warn(
             `SADS: Unknown breakpoint key '${breakpointKey}' for ${targetSelector}. Raw query used: ${breakpointKey}`
           );
-          responsiveStyles[breakpointKey] =
-            responsiveStyles[breakpointKey] || "";
+          responsiveStyles[breakpointKey] = responsiveStyles[breakpointKey] || "";
         } else {
           responsiveStyles[bpQuery] = responsiveStyles[bpQuery] || "";
         }
         const targetQuery = bpQuery || breakpointKey;
 
-        for (const [respSadsPropKey, respSemanticVal] of Object.entries(
-          rule.styles
-        )) {
+        for (const [respSadsPropKey, respSemanticVal] of Object.entries(rule.styles)) {
           const cssProp = this._mapSadsPropertyToCss(respSadsPropKey);
           // _mapSemanticValueToActual will internally use WASM for colors if available, or JS.
-          const actualVal = this._mapSemanticValueToActual(
-            cssProp,
-            respSemanticVal
-          );
+          const actualVal = this._mapSemanticValueToActual(cssProp, respSemanticVal);
           if (cssProp && actualVal !== null) {
-            responsiveStyles[targetQuery] +=
-              `${cssProp}: ${actualVal} !important;\n`;
+            responsiveStyles[targetQuery] += `${cssProp}: ${actualVal} !important;\n`;
           } else if (!cssProp) {
             console.warn(
               `SADS: Unmapped SADS property '${respSadsPropKey}' in responsive rule for ${targetSelector}`
@@ -214,8 +184,7 @@ class SADSEngine {
       });
     } catch (e) {
       console.error(
-        `SADS: Error parsing responsive rules (JS fallback) for ${targetSelector}: "${rulesString}"`,
-        e
+        `SADS: Error parsing responsive rules (JS fallback) for ${targetSelector}: "${rulesString}"`, e
       );
     }
     return responsiveStyles;
@@ -260,34 +229,27 @@ class SADSEngine {
         await window.sadsPocWasmReadyPromise;
         console.log("SADS: WASM module is ready.");
       } catch (error) {
-        console.warn(
-          "SADS: WASM module failed to load or was rejected. Falling back to JS-only styling for colors.",
-          error
-        );
+        console.warn("SADS: WASM module failed to load or was rejected. Falling back to JS-only styling for colors.", error);
         // window.sadsPocWasm will likely be undefined or its functions unavailable.
         // The _mapSemanticValueToActual method's fallback logic will handle this.
       }
     } else {
-      console.log(
-        "SADS: sadsPocWasmReadyPromise not found. Proceeding with JS-only styling for colors."
-      );
+      console.log("SADS: sadsPocWasmReadyPromise not found. Proceeding with JS-only styling for colors.");
       // Fallback logic in _mapSemanticValueToActual will handle this.
     }
 
     // Clear existing rules before reapplying, if dynamicStyleSheet is valid
     if (this.dynamicStyleSheet && this.dynamicStyleSheet.ownerNode) {
-      while (this.dynamicStyleSheet.cssRules.length > 0) {
-        this.dynamicStyleSheet.deleteRule(0);
-      }
+        while (this.dynamicStyleSheet.cssRules.length > 0) {
+            this.dynamicStyleSheet.deleteRule(0);
+        }
     } else {
-      // Attempt to re-create it if it became invalid
-      this.dynamicStyleSheet = this._createDynamicStyleSheet();
-      if (!this.dynamicStyleSheet) {
-        console.error(
-          "SADS: Critical error - dynamic stylesheet cannot be created or accessed. Styling will not be applied."
-        );
-        return; // Cannot proceed without a stylesheet
-      }
+        // Attempt to re-create it if it became invalid
+        this.dynamicStyleSheet = this._createDynamicStyleSheet();
+        if (!this.dynamicStyleSheet) {
+            console.error("SADS: Critical error - dynamic stylesheet cannot be created or accessed. Styling will not be applied.");
+            return; // Cannot proceed without a stylesheet
+        }
     }
     this.ruleCounter = 0; // Reset rule counter for fresh application
 
@@ -296,6 +258,7 @@ class SADSEngine {
     });
     console.log("SADS: Style application process completed.");
   }
+
 
   _applyStylesToElementAndChildren(rootElement) {
     // This is the original applyStylesTo logic, refactored to be called by the new async applyStyles
@@ -334,6 +297,7 @@ class SADSEngine {
     // applyStyles will handle clearing rules now
     await this.applyStyles();
   }
+
 
   _addCssRule(selector, rules, mediaQuery = null) {
     if (!rules.trim()) return; // Do not add empty rules
@@ -465,46 +429,23 @@ class SADSEngine {
     if (category) {
       if (category === "colors") {
         // WASM Integration Point for Color Resolution
-        if (
-          window.sadsPocWasm &&
-          typeof window.sadsPocWasm.resolveColor === "function"
-        ) {
+        if (window.sadsPocWasm && typeof window.sadsPocWasm.resolveColor === 'function') {
           try {
             const themeColorsJson = JSON.stringify(this.theme.colors);
-            const resolvedColor = window.sadsPocWasm.resolveColor(
-              valueStr,
-              themeColorsJson,
-              isDarkMode
-            );
+            const resolvedColor = window.sadsPocWasm.resolveColor(valueStr, themeColorsJson, isDarkMode);
 
-            if (
-              typeof resolvedColor === "string" &&
-              !resolvedColor.startsWith("Error:")
-            ) {
+            if (typeof resolvedColor === 'string' && !resolvedColor.startsWith("Error:")) {
               // console.log(`SADS: Color '${valueStr}' resolved by WASM to '${resolvedColor}' (Dark Mode: ${isDarkMode})`);
               return resolvedColor;
-            } else if (
-              typeof resolvedColor === "string" &&
-              resolvedColor.startsWith("Error:")
-            ) {
-              console.warn(
-                `SADS: WASM resolveColor returned error for token '${valueStr}': ${resolvedColor}. Falling back to JS logic.`
-              );
+            } else if (typeof resolvedColor === 'string' && resolvedColor.startsWith("Error:")) {
+              console.warn(`SADS: WASM resolveColor returned error for token '${valueStr}': ${resolvedColor}. Falling back to JS logic.`);
               // Fallthrough to JS logic below
             } else {
-              console.warn(
-                `SADS: WASM resolveColor returned unexpected value for token '${valueStr}':`,
-                resolvedColor,
-                `. Falling back to JS logic.`
-              );
+              console.warn(`SADS: WASM resolveColor returned unexpected value for token '${valueStr}':`, resolvedColor, `. Falling back to JS logic.`);
               // Fallthrough to JS logic below
             }
           } catch (wasmError) {
-            console.error(
-              `SADS: Error calling WASM resolveColor for token '${valueStr}':`,
-              wasmError,
-              `. Falling back to JS logic.`
-            );
+            console.error(`SADS: Error calling WASM resolveColor for token '${valueStr}':`, wasmError, `. Falling back to JS logic.`);
             // Fallthrough to JS logic below
           }
         } else {
@@ -513,10 +454,7 @@ class SADSEngine {
 
         // Original JavaScript Fallback Logic for colors:
         const colorKey = isDarkMode ? `${valueStr}-dark` : valueStr;
-        const resolvedJsColor =
-          this.theme.colors[colorKey] ||
-          this.theme.colors[valueStr] ||
-          valueStr;
+        const resolvedJsColor = this.theme.colors[colorKey] || this.theme.colors[valueStr] || valueStr;
         // console.log(`SADS: Color '${valueStr}' resolved by JS to '${resolvedJsColor}' (Dark Mode: ${isDarkMode})`);
         return resolvedJsColor;
       }
