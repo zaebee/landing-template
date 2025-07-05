@@ -584,41 +584,42 @@ Currently, Go/WASM functions like `resolveSadsValue` and `parseResponsiveRules` 
 Here are strategies to optimize theme data transfer:
 
 1.  **Initialize WASM Module with Theme Data Once:**
-    *   **Concept**: Add an exported Go function (e.g., `setSadsTheme(themeJsonString string)`) to the WASM module.
-    *   **Implementation**:
-        *   JavaScript would call this function once when the theme is loaded or changes.
-        *   The Go function would parse the `themeJsonString` (containing the entire SADS theme or relevant parts) and store it in global Go variables within the WASM module's memory.
-        *   Subsequent calls to functions like `resolveSadsValue` or `parseResponsiveRules` would then access this pre-parsed theme data directly from Go's memory, eliminating the need to pass theme JSON strings repeatedly.
-        *   The Go functions would need to be refactored to remove theme JSON string parameters and use the global theme data instead.
-    *   **Pros**:
-        *   Significantly reduces data transfer overhead for each SADS operation.
-        *   Simplifies the JavaScript call signatures for processing functions.
-    *   **Cons**:
-        *   Requires careful state management in Go if the theme can change dynamically (e.g., user switches themes). The `setSadsTheme` function would need to correctly update the global theme data.
-        *   Increases the memory footprint of the WASM module if the theme is very large, as it's held in Go's memory.
+    - **Concept**: Add an exported Go function (e.g., `setSadsTheme(themeJsonString string)`) to the WASM module.
+    - **Implementation**:
+      - JavaScript would call this function once when the theme is loaded or changes.
+      - The Go function would parse the `themeJsonString` (containing the entire SADS theme or relevant parts) and store it in global Go variables within the WASM module's memory.
+      - Subsequent calls to functions like `resolveSadsValue` or `parseResponsiveRules` would then access this pre-parsed theme data directly from Go's memory, eliminating the need to pass theme JSON strings repeatedly.
+      - The Go functions would need to be refactored to remove theme JSON string parameters and use the global theme data instead.
+    - **Pros**:
+      - Significantly reduces data transfer overhead for each SADS operation.
+      - Simplifies the JavaScript call signatures for processing functions.
+    - **Cons**:
+      - Requires careful state management in Go if the theme can change dynamically (e.g., user switches themes). The `setSadsTheme` function would need to correctly update the global theme data.
+      - Increases the memory footprint of the WASM module if the theme is very large, as it's held in Go's memory.
 
 2.  **Passing Theme Data by Reference (Conceptual - More Complex):**
-    *   **Concept**: Instead of copying theme data into WASM memory on each call or even once, explore ways to have Go access JavaScript memory more directly or use shared memory.
-    *   **Shared Memory (`WebAssembly.Memory`)**:
-        *   This is an advanced WebAssembly feature that allows JavaScript and WASM to share a block of memory.
-        *   JavaScript could write the theme data into this shared memory, and Go/WASM could read it directly without copying.
-        *   **Pros**: Potentially the most performant for large, frequently accessed data, as it avoids copying and serialization.
-        *   **Cons**:
-            *   Much more complex to implement correctly and safely. Requires careful memory layout management, synchronization (if data changes), and understanding of low-level memory operations.
-            *   Browser support for advanced shared memory features (especially with threads) might vary.
-            *   Go's direct support for managing externally allocated `WebAssembly.Memory` for complex structs might require more manual marshalling code.
-    *   **Considerations**: For the current SADS PoC, the complexity of shared memory likely outweighs the benefits, especially when compared to the "initialize once" approach. However, it's a valid consideration for scenarios with extremely high-performance requirements and very large, dynamic datasets.
+    - **Concept**: Instead of copying theme data into WASM memory on each call or even once, explore ways to have Go access JavaScript memory more directly or use shared memory.
+    - **Shared Memory (`WebAssembly.Memory`)**:
+      - This is an advanced WebAssembly feature that allows JavaScript and WASM to share a block of memory.
+      - JavaScript could write the theme data into this shared memory, and Go/WASM could read it directly without copying.
+      - **Pros**: Potentially the most performant for large, frequently accessed data, as it avoids copying and serialization.
+      - **Cons**:
+        - Much more complex to implement correctly and safely. Requires careful memory layout management, synchronization (if data changes), and understanding of low-level memory operations.
+        - Browser support for advanced shared memory features (especially with threads) might vary.
+        - Go's direct support for managing externally allocated `WebAssembly.Memory` for complex structs might require more manual marshalling code.
+    - **Considerations**: For the current SADS PoC, the complexity of shared memory likely outweighs the benefits, especially when compared to the "initialize once" approach. However, it's a valid consideration for scenarios with extremely high-performance requirements and very large, dynamic datasets.
 
 **Recommendation for SADS PoC:**
 
 The **"Initialize WASM Module with Theme Data Once"** strategy (Option 1) offers a good balance of performance improvement and implementation feasibility for the SADS PoC. It directly addresses the inefficiency of passing multiple theme JSON strings on every call to `parseResponsiveRules` and `resolveSadsValue`.
 
 This would involve:
-*   Defining a Go struct that can hold all necessary theme parts (colors, spacing, breakpoints, etc.).
-*   Creating a Go global variable of this struct type.
-*   Implementing `func SetTheme(themeFullJsonString string)` in Go, which parses the JSON and populates the global theme struct.
-*   Modifying existing Go functions (`resolveSadsValueInternal`, `ParseResponsiveRules`) to read from this global theme struct instead of accepting theme parts as parameters.
-*   Updating the JavaScript side to call `sadsPocWasm.SetTheme(JSON.stringify(fullTheme))` when the SADS engine initializes or the theme changes.
+
+- Defining a Go struct that can hold all necessary theme parts (colors, spacing, breakpoints, etc.).
+- Creating a Go global variable of this struct type.
+- Implementing `func SetTheme(themeFullJsonString string)` in Go, which parses the JSON and populates the global theme struct.
+- Modifying existing Go functions (`resolveSadsValueInternal`, `ParseResponsiveRules`) to read from this global theme struct instead of accepting theme parts as parameters.
+- Updating the JavaScript side to call `sadsPocWasm.SetTheme(JSON.stringify(fullTheme))` when the SADS engine initializes or the theme changes.
 
 This change would make the data flow more efficient for subsequent SADS operations within the WASM module.
 

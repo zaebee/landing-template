@@ -189,7 +189,7 @@ class BuildOrchestrator:
             "build",
             "-o",
             wasm_module_path,
-        ] + go_source_files # Add the list of Go files to the command
+        ] + go_source_files  # Add the list of Go files to the command
         try:
             # Set GOOS and GOARCH environment variables for the subprocess
             env = os.environ.copy()

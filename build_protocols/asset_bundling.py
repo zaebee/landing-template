@@ -5,6 +5,7 @@ and copying of WebAssembly related assets.
 
 import os
 import shutil  # Added for file copying
+import subprocess  # For running go env
 from typing import List, Optional
 
 # Assuming AssetBundler interface will be in build_protocols.interfaces
@@ -178,26 +179,32 @@ class DefaultAssetBundler:  # Implements AssetBundler (structurally)
             print(f"Error writing bundled JavaScript to {output_file_path}: {e}")
             return None
 
-import subprocess # For running go env
-
     def _get_goroot(self) -> Optional[str]:
         """Helper function to get GOROOT environment variable."""
         try:
-            process = subprocess.run(["go", "env", "GOROOT"], capture_output=True, text=True, check=True)
+            process = subprocess.run(
+                ["go", "env", "GOROOT"], capture_output=True, text=True, check=True
+            )
             goroot_path = process.stdout.strip()
             # Basic validation for the path
             if os.path.isdir(goroot_path):
                 return goroot_path
             else:
-                print(f"Warning: 'go env GOROOT' provided a path that is not a directory: {goroot_path}")
+                print(
+                    f"Warning: 'go env GOROOT' provided a path that is not a directory: {goroot_path}"
+                )
                 return None
         except subprocess.CalledProcessError as e:
-            print(f"Error getting GOROOT (go command failed): {e}. Stdout: {e.stdout}. Stderr: {e.stderr}")
+            print(
+                f"Error getting GOROOT (go command failed): {e}. Stdout: {e.stdout}. Stderr: {e.stderr}"
+            )
             return None
         except FileNotFoundError:
-            print("Error getting GOROOT: 'go' command not found. Please ensure Go is installed and in your PATH.")
+            print(
+                "Error getting GOROOT: 'go' command not found. Please ensure Go is installed and in your PATH."
+            )
             return None
-        except Exception as e: # Catch any other unexpected errors
+        except Exception as e:  # Catch any other unexpected errors
             print(f"An unexpected error occurred while getting GOROOT: {e}")
             return None
 
@@ -216,14 +223,18 @@ import subprocess # For running go env
         Returns:
             True if essential assets (sads_poc.wasm and wasm_exec.js for main app) were copied successfully, False otherwise.
         """
-        print(f"Starting WASM asset copying. Base output directory for assets: {assets_base_output_dir}")
+        print(
+            f"Starting WASM asset copying. Base output directory for assets: {assets_base_output_dir}"
+        )
 
         all_essential_copied = True
 
         # --- Determine GOROOT ---
         goroot = self._get_goroot()
         if not goroot:
-            print("Critical: Could not determine GOROOT. wasm_exec.js will not be copied from Go installation.")
+            print(
+                "Critical: Could not determine GOROOT. wasm_exec.js will not be copied from Go installation."
+            )
             # Depending on strictness, we could set all_essential_copied to False here
             # if wasm_exec.js from GOROOT is considered essential for the build.
             # For now, we'll let it try to copy sads_poc.wasm and potentially a local wasm_exec.js
@@ -242,71 +253,116 @@ import subprocess # For running go env
 
         # --- 1. Copy sads_poc.wasm to public/dist/assets/wasm/ ---
         sads_poc_wasm_source = os.path.join(sads_wasm_poc_dir, "sads_poc.wasm")
-        sads_poc_wasm_dest_main_app = os.path.join(wasm_output_dir_main_app, "sads_poc.wasm")
+        sads_poc_wasm_dest_main_app = os.path.join(
+            wasm_output_dir_main_app, "sads_poc.wasm"
+        )
 
         if os.path.exists(sads_poc_wasm_source):
             try:
                 shutil.copy2(sads_poc_wasm_source, sads_poc_wasm_dest_main_app)
-                print(f"Successfully copied {sads_poc_wasm_source} to {sads_poc_wasm_dest_main_app}")
+                print(
+                    f"Successfully copied {sads_poc_wasm_source} to {sads_poc_wasm_dest_main_app}"
+                )
             except IOError as e:
-                print(f"Error copying sads_poc.wasm to {sads_poc_wasm_dest_main_app}: {e}")
+                print(
+                    f"Error copying sads_poc.wasm to {sads_poc_wasm_dest_main_app}: {e}"
+                )
                 all_essential_copied = False
         else:
-            print(f"Error: Essential WASM asset sads_poc.wasm not found at {sads_poc_wasm_source}. Skipping.")
+            print(
+                f"Error: Essential WASM asset sads_poc.wasm not found at {sads_poc_wasm_source}. Skipping."
+            )
             all_essential_copied = False
 
         # --- 2. Copy wasm_exec.js ---
         wasm_exec_js_filename = "wasm_exec.js"
         wasm_exec_js_source_from_goroot = None
         if goroot:
-            wasm_exec_js_source_from_goroot = os.path.join(goroot, "misc", "wasm", wasm_exec_js_filename)
+            wasm_exec_js_source_from_goroot = os.path.join(
+                goroot, "misc", "wasm", wasm_exec_js_filename
+            )
 
         # Destination for sads_wasm_poc/ (local harness)
-        wasm_exec_js_dest_sads_poc = os.path.join(sads_wasm_poc_dir, wasm_exec_js_filename)
+        wasm_exec_js_dest_sads_poc = os.path.join(
+            sads_wasm_poc_dir, wasm_exec_js_filename
+        )
         # Destination for public/dist/assets/wasm/ (main app)
-        wasm_exec_js_dest_main_app = os.path.join(wasm_output_dir_main_app, wasm_exec_js_filename)
+        wasm_exec_js_dest_main_app = os.path.join(
+            wasm_output_dir_main_app, wasm_exec_js_filename
+        )
 
-        if wasm_exec_js_source_from_goroot and os.path.exists(wasm_exec_js_source_from_goroot):
+        if wasm_exec_js_source_from_goroot and os.path.exists(
+            wasm_exec_js_source_from_goroot
+        ):
             # Copy to sads_wasm_poc/
             try:
-                shutil.copy2(wasm_exec_js_source_from_goroot, wasm_exec_js_dest_sads_poc)
-                print(f"Successfully copied {wasm_exec_js_source_from_goroot} to {wasm_exec_js_dest_sads_poc}")
+                shutil.copy2(
+                    wasm_exec_js_source_from_goroot, wasm_exec_js_dest_sads_poc
+                )
+                print(
+                    f"Successfully copied {wasm_exec_js_source_from_goroot} to {wasm_exec_js_dest_sads_poc}"
+                )
             except IOError as e:
-                print(f"Error copying wasm_exec.js from GOROOT to {wasm_exec_js_dest_sads_poc}: {e}")
+                print(
+                    f"Error copying wasm_exec.js from GOROOT to {wasm_exec_js_dest_sads_poc}: {e}"
+                )
                 # This copy isn't strictly essential for the main app build if the next one succeeds.
 
             # Copy to public/dist/assets/wasm/
             try:
-                shutil.copy2(wasm_exec_js_source_from_goroot, wasm_exec_js_dest_main_app)
-                print(f"Successfully copied {wasm_exec_js_source_from_goroot} to {wasm_exec_js_dest_main_app}")
+                shutil.copy2(
+                    wasm_exec_js_source_from_goroot, wasm_exec_js_dest_main_app
+                )
+                print(
+                    f"Successfully copied {wasm_exec_js_source_from_goroot} to {wasm_exec_js_dest_main_app}"
+                )
             except IOError as e:
-                print(f"Error copying wasm_exec.js from GOROOT to {wasm_exec_js_dest_main_app}: {e}")
-                all_essential_copied = False # Essential for the main app
+                print(
+                    f"Error copying wasm_exec.js from GOROOT to {wasm_exec_js_dest_main_app}: {e}"
+                )
+                all_essential_copied = False  # Essential for the main app
         else:
-            if goroot : # goroot was found but wasm_exec.js was not in it
-                 print(f"Error: Essential asset wasm_exec.js not found at {wasm_exec_js_source_from_goroot}.")
-            else: # goroot itself was not found
-                 print(f"Error: GOROOT not found, cannot locate wasm_exec.js from Go installation.")
-            all_essential_copied = False # Essential for the main app
+            if goroot:  # goroot was found but wasm_exec.js was not in it
+                print(
+                    f"Error: Essential asset wasm_exec.js not found at {wasm_exec_js_source_from_goroot}."
+                )
+            else:  # goroot itself was not found
+                print(
+                    "Error: GOROOT not found, cannot locate wasm_exec.js from Go installation."
+                )
+            all_essential_copied = False  # Essential for the main app
 
             # Fallback: Check if wasm_exec.js already exists in sads_wasm_poc_dir (e.g. from a previous run or manual placement)
             # If so, and GOROOT failed, still try to copy it to the main app's assets.
             if os.path.exists(wasm_exec_js_dest_sads_poc):
-                print(f"Found {wasm_exec_js_filename} in {sads_wasm_poc_dir}. Attempting to use it as fallback for main app.")
+                print(
+                    f"Found {wasm_exec_js_filename} in {sads_wasm_poc_dir}. Attempting to use it as fallback for main app."
+                )
                 try:
                     shutil.copy2(wasm_exec_js_dest_sads_poc, wasm_exec_js_dest_main_app)
-                    print(f"Successfully copied (fallback) {wasm_exec_js_dest_sads_poc} to {wasm_exec_js_dest_main_app}")
-                    all_essential_copied = True # If fallback succeeds, consider it copied for the app.
+                    print(
+                        f"Successfully copied (fallback) {wasm_exec_js_dest_sads_poc} to {wasm_exec_js_dest_main_app}"
+                    )
+                    all_essential_copied = (
+                        True  # If fallback succeeds, consider it copied for the app.
+                    )
                 except IOError as e:
-                    print(f"Error copying (fallback) {wasm_exec_js_dest_sads_poc} to {wasm_exec_js_dest_main_app}: {e}")
+                    print(
+                        f"Error copying (fallback) {wasm_exec_js_dest_sads_poc} to {wasm_exec_js_dest_main_app}: {e}"
+                    )
                     # Keep all_essential_copied as False if this also fails.
             else:
-                print(f"wasm_exec.js also not found as a fallback in {sads_wasm_poc_dir}.")
-
+                print(
+                    f"wasm_exec.js also not found as a fallback in {sads_wasm_poc_dir}."
+                )
 
         if all_essential_copied:
-            print(f"All essential WASM assets processed for {wasm_output_dir_main_app} and {sads_wasm_poc_dir}")
+            print(
+                f"All essential WASM assets processed for {wasm_output_dir_main_app} and {sads_wasm_poc_dir}"
+            )
         else:
-            print("Failed to process one or more essential WASM assets for the main application.")
+            print(
+                "Failed to process one or more essential WASM assets for the main application."
+            )
 
         return all_essential_copied

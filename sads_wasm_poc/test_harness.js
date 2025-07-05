@@ -4,8 +4,10 @@ async function main() {
   const resultsContainer = document.getElementById("results-container");
 
   function logResult(testCaseName, inputs, output, error = false) {
-    const outputString = typeof output === 'object' ? JSON.stringify(output) : String(output);
-    const inputsString = typeof inputs === 'object' ? JSON.stringify(inputs) : String(inputs);
+    const outputString =
+      typeof output === "object" ? JSON.stringify(output) : String(output);
+    const inputsString =
+      typeof inputs === "object" ? JSON.stringify(inputs) : String(inputs);
 
     console.groupCollapsed(`Test Case: ${testCaseName}`);
     console.log("Inputs:", inputs);
@@ -364,7 +366,12 @@ async function main() {
   } catch (err) {
     const errorMsg = `Critical Error loading or running WASM module: ${err}`;
     console.error(errorMsg, err); // Log the full error object for more details
-    logResult("WASM Initialization", { wasmPath, error: err.message }, errorMsg, true);
+    logResult(
+      "WASM Initialization",
+      { wasmPath, error: err.message },
+      errorMsg,
+      true
+    );
     // Display this critical error on the page as well
     const errorDiv = document.createElement("div");
     errorDiv.style.color = "red";
