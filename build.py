@@ -5,6 +5,7 @@ using a class-based approach with protocols.
 
 import json
 import os
+import subprocess  # Added for running Go command
 import sys
 from typing import Any, Dict, List, Optional
 
@@ -168,13 +169,79 @@ class BuildOrchestrator:
         """
         self.load_initial_configurations()
 
-        # Define output directory for assets
-        asset_output_dir = os.path.join(project_root, "public", "dist")
+        # --- Compile Go WASM Module ---
+        print("Attempting to compile Go WASM module...")
+        wasm_module_path = os.path.join(project_root, "sads_wasm_poc", "sads_poc.wasm")
+        wasm_source_dir = os.path.join(project_root, "sads_wasm_poc")
+        # Ensure the source files exist (sads_wasm_bridge.go, value_resolver.go, etc.)
+        # For simplicity, we'll just point to the directory. `go build` will find .go files.
+
+        # Command to build the WASM module.
+        # Assumes all .go files in sads_wasm_poc directory are part of the 'main' package.
+        go_build_command = [
+            "go",
+            "build",
+            "-o",
+            wasm_module_path,
+            ".",  # Build all .go files in the specified directory
+        ]
+        try:
+            # Set GOOS and GOARCH environment variables for the subprocess
+            env = os.environ.copy()
+            env["GOOS"] = "js"
+            env["GOARCH"] = "wasm"
+
+            # Execute the command from within the sads_wasm_poc directory
+            # so `go build .` correctly targets the Go files there.
+            process = subprocess.run(
+                go_build_command,
+                cwd=wasm_source_dir,  # Run 'go build .' from within this directory
+                env=env,
+                check=True,  # Raise an exception for non-zero exit codes
+                capture_output=True,  # Capture stdout/stderr
+                text=True,  # Decode stdout/stderr as text
+            )
+            print(f"Go WASM module compiled successfully: {wasm_module_path}")
+            if process.stdout:
+                print("Go Build STDOUT:\n", process.stdout)
+        except subprocess.CalledProcessError as e:
+            print(f"Error compiling Go WASM module. Return code: {e.returncode}")
+            print("Go Build STDERR:\n", e.stderr)
+            print("Go Build STDOUT:\n", e.stdout)
+            # Decide if build should fail here. For now, print error and continue.
+            # return # Optionally, uncomment to stop build on WASM compilation failure
+        except FileNotFoundError:
+            print(
+                "Error: 'go' command not found. Please ensure Go is installed and in your PATH."
+            )
+            # return # Optionally, stop build
+
+        # --- Asset Bundling and Copying ---
+        # Define output directory for assets (CSS, JS, and WASM)
+        asset_output_dir = os.path.join(
+            project_root, "public", "dist", "assets"
+        )  # Target 'dist/assets'
+        # The wasm files will go into 'dist/assets/wasm' via copy_wasm_assets
         os.makedirs(asset_output_dir, exist_ok=True)
 
         # Bundle CSS and JS using the AssetBundler instance
-        css_bundle_path = self.asset_bundler.bundle_css(project_root, asset_output_dir)
-        js_bundle_path = self.asset_bundler.bundle_js(project_root, asset_output_dir)
+        # These will be placed directly in 'dist/assets' based on current DefaultAssetBundler logic
+        # if DefaultAssetBundler's output_dir param is 'asset_output_dir'
+        css_bundle_path = self.asset_bundler.bundle_css(
+            project_root, asset_output_dir
+        )  # Pass 'dist/assets'
+        js_bundle_path = self.asset_bundler.bundle_js(
+            project_root, asset_output_dir
+        )  # Pass 'dist/assets'
+
+        # Copy WASM assets (sads_poc.wasm from sads_wasm_poc, and wasm_exec.js)
+        # copy_wasm_assets will create 'dist/assets/wasm' and place files there.
+        if hasattr(self.asset_bundler, "copy_wasm_assets"):
+            self.asset_bundler.copy_wasm_assets(project_root, asset_output_dir)
+        else:
+            print(
+                "Warning: copy_wasm_assets method not found on asset_bundler. WASM files will not be copied."
+            )
 
         if not css_bundle_path:
             print("Warning: CSS bundling failed or produced no output.")

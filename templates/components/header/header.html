@@ -15,33 +15,11 @@
     data-sads-flex-justify="space-between"
     data-sads-flex-align-items="center"
     data-sads-max-width="content-container"
-    {#
-    Assuming
-    a
-    theme
-    variable
-    for
-    max
-    content
-    width
-    #}
+    {# Assuming a theme variable for max content width #}
     data-sads-margin="custom:0 auto"
-    {#
-    Center
-    the
-    nav
-    content
-    #}
+    {# Center the nav content #}
     data-sads-padding="0 m"
-    {#
-    Horizontal
-    padding
-    for
-    content
-    within
-    the
-    nav
-    #}
+    {# Horizontal padding for content within the nav #}
     data-sads-responsive-rules='[
         {"breakpoint": "mobile", "styles": {"position": "relative"}}
     ]'
@@ -49,9 +27,7 @@
     <div data-sads-element="logo-container">
       {# Assuming site_logo object is passed in the context from build.py #}
       <a
-        href="{{ site_logo.target_url | default('#') }}"
-        {# data-i18n attribute can be removed if logo_text_key is always resolved server-side #}
-        {# If client-side translation for logo text is still desired for some reason, keep data-i18n and use site_logo.logo_text_key as its value #}
+	href="{{ translations[site_logo.target_url] | default:'#' }}"
         data-sads-element="logo-link"
         data-sads-text-color="text-primary"
         data-sads-text-decoration="none"
@@ -77,11 +53,10 @@
       {# From original global CSS: padding: 10px -> theme 's' or specific custom value #}
       data-sads-padding="s"
     >
-      {# Default: hide on larger screens #} {# Assuming SADS can style a basic
-      icon button look #} {# Keep class if specific CSS for hamburger animation
-      exists outside SADS & SADS can't do it #} {# Spans for hamburger bars
-      might need to be styled by the class if SADS can't do pseudo-elements or
-      complex child styling for them #}
+      {# Default: hide on larger screens #}
+      {# Assuming SADS can style a basic icon button look #}
+      {# Keep class if specific CSS for hamburger animation exists outside SADS & SADS can't do it #}
+      {# Spans for hamburger bars might need to be styled by the class if SADS can't do pseudo-elements or complex child styling for them #}
       <span class="hamburger-bar"></span>
       <span class="hamburger-bar"></span>
       <span class="hamburger-bar"></span>
@@ -96,9 +71,8 @@
         {"breakpoint": "mobile", "styles": {"display": "none", "flexDirection": "column", "position": "absolute", "top": "custom:60px", "left": "custom:0", "width": "full", "bg-color": "header-bg", "padding": "m", "shadow": "subtle", "gap": "s", "zIndex": "custom:999" }}
       ]'
     >
-      {# This mobile rule attempts to make a dropdown. A class like
-      'nav-items-container--active' toggled by JS would set display to flex for
-      mobile #}
+      {# This mobile rule attempts to make a dropdown. #}
+      {# A class like 'nav-items-container--active' toggled by JS would set display to flex for mobile #}
       <ul
         data-sads-element="nav-list"
         data-sads-display="flex"
@@ -136,13 +110,7 @@
         data-sads-element="dark-mode-toggle"
         aria-label="Switch to Dark Mode"
         id="dark-mode-toggle"
-        {#
-        id
-        kept
-        for
-        JS
-        targeting
-        #}
+        {# id kept for JS targeting #}
         data-sads-button-variant="icon"
         data-sads-text-color="text-primary"
         data-sads-padding="xs" {# Consistent small padding for icon button via SADS #}
@@ -156,13 +124,7 @@
       <div
         data-sads-element="language-switcher"
         id="language-switcher"
-        {#
-        id
-        kept
-        for
-        JS
-        targeting
-        #}
+        {# id kept for JS targeting #}
         data-sads-display="flex"
         data-sads-gap="s"
         data-sads-responsive-rules='[

@@ -2,8 +2,25 @@
   "name": "landing-template",
   "version": "1.0.0",
   "description": "Template web site with landing page to track telegram bot user source.",
+  "scripts": {
+    "build": "npm run build:go",
+    "build:py": "npm run generate-proto && npm run compile:ts && python build.py",
+    "build:go": "npm run generate-proto && npm run compile:ts && go run main.go",
+    "compile:ts": "tsc -p tsconfig.json",
+    "run": "python -m http.server",
+    "test": "echo \"No Go tests implemented yet\"",
+    "lint:py": "ruff check . && mypy .",
+    "lint:py:fix": "ruff check . --fix && mypy .",
+    "format": "prettier --write \"**/*.{json,css,html,js,jsx,ts,tsx,md,mdx}\" && clang-format -i proto/*.proto",
+    "lint": "npm run lint:py && npm run format && ruff format",
+    "generate-proto": "npm run generate-proto:go && npm run generate-proto:py && npm run generate-proto:ts",
+    "generate-proto:go": "mkdir -p generated/go && protoc --go_out=./generated/go --go_opt=paths=source_relative -I./proto ./proto/*.proto",
+    "generate-proto:py": "mkdir -p generated/pb && python -m grpc_tools.protoc -I./proto --python_out=./generated/pb --pyi_out=./generated/pb ./proto/*.proto && touch generated/__init__.py",
+    "generate-proto:ts": "mkdir -p public/ts/generated_proto && protoc --plugin=protoc-gen-ts=\"$(npm root)/.bin/protoc-gen-ts\" --ts_out=public/ts/generated_proto --proto_path=./proto ./proto/*.proto",
+    "generate-proto-win": "python -m grpc_tools.protoc -I./proto --python_out=./generated/pb --pyi_out=./generated/pb ./proto/*.proto && protoc --plugin=protoc-gen-ts=\"%NPM_CONFIG_PREFIX%\\node_modules\\.bin\\protoc-gen-ts.cmd\" --ts_out=public\\ts\\generated_proto --proto_path=./proto ./proto/*.proto"
+  },
   "keywords": [],
-  "author": "",
+  "author": "jules | zae",
   "license": "ISC",
   "dependencies": {
     "@protobuf-ts/runtime": "^2.9.4"
@@ -13,19 +30,5 @@
     "clang-format": "^1.8.0",
     "prettier": "^3.6.2",
     "typescript": "^5.3.3"
-  },
-  "scripts": {
-    "build": "npm run generate-proto && npm run compile:ts && python build.py",
-    "compile:ts": "tsc -p tsconfig.json",
-    "run": "python -m http.server",
-    "test": "python -m pytest",
-    "lint:py": "ruff check . && mypy .",
-    "lint:py:fix": "ruff check . --fix && mypy .",
-    "format": "prettier --write \"**/*.{json,css,html,js,jsx,ts,tsx,md,mdx}\" && clang-format -i proto/*.proto",
-    "lint": "npm run lint:py && npm run format && ruff format",
-    "generate-proto:py": "mkdir -p generated && python -m grpc_tools.protoc -I./proto --python_out=./generated --pyi_out=./generated ./proto/*.proto && touch generated/__init__.py",
-    "generate-proto:ts": "mkdir -p public/ts/generated_proto && protoc --plugin=protoc-gen-ts=\"$(npm root)/.bin/protoc-gen-ts\" --ts_out=public/ts/generated_proto --proto_path=./proto ./proto/*.proto",
-    "generate-proto": "npm run generate-proto:py && npm run generate-proto:ts",
-    "generate-proto-win": "python -m grpc_tools.protoc -I./proto --python_out=./generated --pyi_out=./generated ./proto/*.proto && mkdir -p public\\ts\\generated_proto && protoc --plugin=protoc-gen-ts=\"%NPM_CONFIG_PREFIX%\\node_modules\\.bin\\protoc-gen-ts.cmd\" --ts_out=public\\ts\\generated_proto --proto_path=./proto ./proto/*.proto"
   }
 }
