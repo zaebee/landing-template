@@ -2,18 +2,6 @@
   "name": "landing-template",
   "version": "1.0.0",
   "description": "Template web site with landing page to track telegram bot user source.",
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@protobuf-ts/runtime": "^2.9.4"
-  },
-  "devDependencies": {
-    "@protobuf-ts/plugin": "^2.9.4",
-    "clang-format": "^1.8.0",
-    "prettier": "^3.6.2",
-    "typescript": "^5.3.3"
-  },
   "scripts": {
     "build": "npm run generate-proto && npm run compile:ts && go run main.go",
     "compile:ts": "tsc -p tsconfig.json",
@@ -32,8 +20,13 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "@protobuf-ts/runtime": "^2.9.4"
+  },
   "devDependencies": {
+    "@protobuf-ts/plugin": "^2.9.4",
     "clang-format": "^1.8.0",
-    "prettier": "^3.6.2"
+    "prettier": "^3.6.2",
+    "typescript": "^5.3.3"
   }
 }
