@@ -1,28 +1,28 @@
 {
   "compilerOptions": {
-    "target": "ES2020",                       // Target version of JavaScript
-    "module": "ESNext",                       // Module system
-    "rootDir": "./public/ts",                 // Root directory of TypeScript files
-    "outDir": "./public/js/compiled_ts",      // Output directory for compiled JavaScript
-    "esModuleInterop": true,                  // Enables compatibility with CommonJS modules
+    "target": "ES2020", // Target version of JavaScript
+    "module": "ESNext", // Module system
+    "rootDir": "./public/ts", // Root directory of TypeScript files
+    "outDir": "./public/js/compiled_ts", // Output directory for compiled JavaScript
+    "esModuleInterop": true, // Enables compatibility with CommonJS modules
     "forceConsistentCasingInFileNames": true, // Enforces consistent file casing
-    "strict": true,                           // Enable all strict type-checking options
-    "skipLibCheck": true,                     // Skip type checking of declaration files
-    "sourceMap": true,                        // Generate source maps for debugging
-    "resolveJsonModule": true,                // Allow importing JSON files
-    "moduleResolution": "node",               // Specify module resolution strategy
+    "strict": true, // Enable all strict type-checking options
+    "skipLibCheck": true, // Skip type checking of declaration files
+    "sourceMap": true, // Generate source maps for debugging
+    "resolveJsonModule": true, // Allow importing JSON files
+    "moduleResolution": "node", // Specify module resolution strategy
     "lib": ["ES2020", "DOM", "DOM.Iterable"], // Standard libraries to include
-    "allowJs": false,                         // Do not allow JavaScript files to be compiled
-    "checkJs": false,                         // Do not type-check JavaScript files
+    "allowJs": false, // Do not allow JavaScript files to be compiled
+    "checkJs": false // Do not type-check JavaScript files
     // "declaration": true,                   // Generate .d.ts files (optional for now)
     // "declarationMap": true,                // Generate source maps for .d.ts files (optional for now)
   },
   "include": [
-    "./public/ts/**/*.ts"                   // Patterns to include
+    "./public/ts/**/*.ts" // Patterns to include
   ],
   "exclude": [
-    "node_modules",                         // Exclude node_modules
-    "**/*.spec.ts",                         // Exclude test files if any
-    "build_protocols"                       // Exclude python files if accidentally matched
+    "node_modules", // Exclude node_modules
+    "**/*.spec.ts", // Exclude test files if any
+    "build_protocols" // Exclude python files if accidentally matched
   ]
 }

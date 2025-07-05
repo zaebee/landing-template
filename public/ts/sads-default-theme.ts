@@ -243,7 +243,7 @@ export const sadsDefaultTheme: SadsTheme = {
 // In TypeScript, the `export const sadsDefaultTheme` handles the module export.
 
 // To make it available globally for simple script inclusion in nl-sads-test.html:
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   (window as any).sadsDefaultTheme = sadsDefaultTheme;
   // Optionally, also expose types if needed for global context, though less common for direct script includes
   // (window as any).SadsTheme = {} as SadsTheme; // This is just a type, can't assign like this

@@ -100,19 +100,19 @@ class DefaultAssetBundler:  # Implements AssetBundler (structurally)
             # Compiled TypeScript files
             os.path.join(compiled_ts_dir, "sads-default-theme.js"),
             os.path.join(compiled_ts_dir, "sads-style-engine.js"),
-            os.path.join(compiled_ts_dir, "nlToSadsInterface.js"), # New NL to SADS interface
-
+            os.path.join(
+                compiled_ts_dir, "nlToSadsInterface.js"
+            ),  # New NL to SADS interface
             # Original JS modules
             os.path.join(modules_dir, "eventBus.js"),
             os.path.join(modules_dir, "darkMode.js"),
             os.path.join(modules_dir, "translation.js"),
-            os.path.join(modules_dir, "sadsManager.js"), # sadsManager uses SADSEngine, so must come after compiled SADS files
-
+            os.path.join(
+                modules_dir, "sadsManager.js"
+            ),  # sadsManager uses SADSEngine, so must come after compiled SADS files
             # Main app orchestrator and other specific JS files
             os.path.join(shared_js_dir, "app.js"),
-            os.path.join(
-                shared_js_dir, "headerInteractions.js"
-            ),
+            os.path.join(shared_js_dir, "headerInteractions.js"),
         ]
 
         processed_shared_js = []

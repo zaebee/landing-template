@@ -11,8 +11,6 @@ and produces an HTML string representation for that block.
 import random
 from typing import Any, Callable, Dict, List, Optional, Type
 
-from jinja2 import Environment
-
 # Generated protobuf message types
 from generated.blog_post_pb2 import BlogPost
 from generated.contact_form_config_pb2 import ContactFormConfig
@@ -20,6 +18,7 @@ from generated.feature_item_pb2 import FeatureItem
 from generated.hero_item_pb2 import HeroItem, HeroItemContent
 from generated.portfolio_item_pb2 import PortfolioItem
 from generated.testimonial_item_pb2 import TestimonialItem
+from jinja2 import Environment
 
 from .interfaces import HtmlBlockGenerator, Translations
 
