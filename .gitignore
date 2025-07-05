@@ -40,7 +40,7 @@ Thumbs.db
 # Build output
 dist/
 build/
-public/js/compiled_ts/ # Compiled TypeScript
+public/js/compiled_ts/
 *.egg-info/
 *.egg
 
