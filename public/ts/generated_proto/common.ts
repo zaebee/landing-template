@@ -16,10 +16,10 @@ import { MessageType } from "@protobuf-ts/runtime";
  * @generated from protobuf message website_content.v1.I18nString
  */
 export interface I18nString {
-    /**
-     * @generated from protobuf field: string key = 1
-     */
-    key: string;
+  /**
+   * @generated from protobuf field: string key = 1
+   */
+  key: string;
 }
 /**
  * Message for image elements.
@@ -27,14 +27,14 @@ export interface I18nString {
  * @generated from protobuf message website_content.v1.Image
  */
 export interface Image {
-    /**
-     * @generated from protobuf field: string src = 1
-     */
-    src: string; // Image source URL or path
-    /**
-     * @generated from protobuf field: website_content.v1.I18nString alt_text = 2
-     */
-    altText?: I18nString; // Alt text for accessibility, using an i18n key
+  /**
+   * @generated from protobuf field: string src = 1
+   */
+  src: string; // Image source URL or path
+  /**
+   * @generated from protobuf field: website_content.v1.I18nString alt_text = 2
+   */
+  altText?: I18nString; // Alt text for accessibility, using an i18n key
 }
 /**
  * Message for Call to Action elements.
@@ -42,14 +42,14 @@ export interface Image {
  * @generated from protobuf message website_content.v1.CTA
  */
 export interface CTA {
-    /**
-     * @generated from protobuf field: website_content.v1.I18nString text = 1
-     */
-    text?: I18nString; // CTA button text, using an i18n key
-    /**
-     * @generated from protobuf field: string uri = 2
-     */
-    uri: string; // URI the CTA links to (e.g., a URL or an anchor)
+  /**
+   * @generated from protobuf field: website_content.v1.I18nString text = 1
+   */
+  text?: I18nString; // CTA button text, using an i18n key
+  /**
+   * @generated from protobuf field: string uri = 2
+   */
+  uri: string; // URI the CTA links to (e.g., a URL or an anchor)
 }
 /**
  * Message for a block of content with a title and description.
@@ -58,57 +58,79 @@ export interface CTA {
  * @generated from protobuf message website_content.v1.TitledBlock
  */
 export interface TitledBlock {
-    /**
-     * @generated from protobuf field: website_content.v1.I18nString title = 1
-     */
-    title?: I18nString;
-    /**
-     * @generated from protobuf field: website_content.v1.I18nString description = 2
-     */
-    description?: I18nString;
+  /**
+   * @generated from protobuf field: website_content.v1.I18nString title = 1
+   */
+  title?: I18nString;
+  /**
+   * @generated from protobuf field: website_content.v1.I18nString description = 2
+   */
+  description?: I18nString;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class I18nString$Type extends MessageType<I18nString> {
-    constructor() {
-        super("website_content.v1.I18nString", [
-            { no: 1, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
-        ]);
+  constructor() {
+    super("website_content.v1.I18nString", [
+      { no: 1, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+    ]);
+  }
+  create(value?: PartialMessage<I18nString>): I18nString {
+    const message = globalThis.Object.create(this.messagePrototype!);
+    message.key = "";
+    if (value !== undefined)
+      reflectionMergePartial<I18nString>(this, message, value);
+    return message;
+  }
+  internalBinaryRead(
+    reader: IBinaryReader,
+    length: number,
+    options: BinaryReadOptions,
+    target?: I18nString
+  ): I18nString {
+    let message = target ?? this.create(),
+      end = reader.pos + length;
+    while (reader.pos < end) {
+      let [fieldNo, wireType] = reader.tag();
+      switch (fieldNo) {
+        case /* string key */ 1:
+          message.key = reader.string();
+          break;
+        default:
+          let u = options.readUnknownField;
+          if (u === "throw")
+            throw new globalThis.Error(
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+            );
+          let d = reader.skip(wireType);
+          if (u !== false)
+            (u === true ? UnknownFieldHandler.onRead : u)(
+              this.typeName,
+              message,
+              fieldNo,
+              wireType,
+              d
+            );
+      }
     }
-    create(value?: PartialMessage<I18nString>): I18nString {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.key = "";
-        if (value !== undefined)
-            reflectionMergePartial<I18nString>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: I18nString): I18nString {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string key */ 1:
-                    message.key = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: I18nString, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string key = 1; */
-        if (message.key !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.key);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
+    return message;
+  }
+  internalBinaryWrite(
+    message: I18nString,
+    writer: IBinaryWriter,
+    options: BinaryWriteOptions
+  ): IBinaryWriter {
+    /* string key = 1; */
+    if (message.key !== "")
+      writer.tag(1, WireType.LengthDelimited).string(message.key);
+    let u = options.writeUnknownFields;
+    if (u !== false)
+      (u == true ? UnknownFieldHandler.onWrite : u)(
+        this.typeName,
+        message,
+        writer
+      );
+    return writer;
+  }
 }
 /**
  * @generated MessageType for protobuf message website_content.v1.I18nString
@@ -116,53 +138,84 @@ class I18nString$Type extends MessageType<I18nString> {
 export const I18nString = new I18nString$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class Image$Type extends MessageType<Image> {
-    constructor() {
-        super("website_content.v1.Image", [
-            { no: 1, name: "src", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "alt_text", kind: "message", T: () => I18nString }
-        ]);
+  constructor() {
+    super("website_content.v1.Image", [
+      { no: 1, name: "src", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 2, name: "alt_text", kind: "message", T: () => I18nString },
+    ]);
+  }
+  create(value?: PartialMessage<Image>): Image {
+    const message = globalThis.Object.create(this.messagePrototype!);
+    message.src = "";
+    if (value !== undefined)
+      reflectionMergePartial<Image>(this, message, value);
+    return message;
+  }
+  internalBinaryRead(
+    reader: IBinaryReader,
+    length: number,
+    options: BinaryReadOptions,
+    target?: Image
+  ): Image {
+    let message = target ?? this.create(),
+      end = reader.pos + length;
+    while (reader.pos < end) {
+      let [fieldNo, wireType] = reader.tag();
+      switch (fieldNo) {
+        case /* string src */ 1:
+          message.src = reader.string();
+          break;
+        case /* website_content.v1.I18nString alt_text */ 2:
+          message.altText = I18nString.internalBinaryRead(
+            reader,
+            reader.uint32(),
+            options,
+            message.altText
+          );
+          break;
+        default:
+          let u = options.readUnknownField;
+          if (u === "throw")
+            throw new globalThis.Error(
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+            );
+          let d = reader.skip(wireType);
+          if (u !== false)
+            (u === true ? UnknownFieldHandler.onRead : u)(
+              this.typeName,
+              message,
+              fieldNo,
+              wireType,
+              d
+            );
+      }
     }
-    create(value?: PartialMessage<Image>): Image {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.src = "";
-        if (value !== undefined)
-            reflectionMergePartial<Image>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Image): Image {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string src */ 1:
-                    message.src = reader.string();
-                    break;
-                case /* website_content.v1.I18nString alt_text */ 2:
-                    message.altText = I18nString.internalBinaryRead(reader, reader.uint32(), options, message.altText);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: Image, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string src = 1; */
-        if (message.src !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.src);
-        /* website_content.v1.I18nString alt_text = 2; */
-        if (message.altText)
-            I18nString.internalBinaryWrite(message.altText, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
+    return message;
+  }
+  internalBinaryWrite(
+    message: Image,
+    writer: IBinaryWriter,
+    options: BinaryWriteOptions
+  ): IBinaryWriter {
+    /* string src = 1; */
+    if (message.src !== "")
+      writer.tag(1, WireType.LengthDelimited).string(message.src);
+    /* website_content.v1.I18nString alt_text = 2; */
+    if (message.altText)
+      I18nString.internalBinaryWrite(
+        message.altText,
+        writer.tag(2, WireType.LengthDelimited).fork(),
+        options
+      ).join();
+    let u = options.writeUnknownFields;
+    if (u !== false)
+      (u == true ? UnknownFieldHandler.onWrite : u)(
+        this.typeName,
+        message,
+        writer
+      );
+    return writer;
+  }
 }
 /**
  * @generated MessageType for protobuf message website_content.v1.Image
@@ -170,53 +223,83 @@ class Image$Type extends MessageType<Image> {
 export const Image = new Image$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CTA$Type extends MessageType<CTA> {
-    constructor() {
-        super("website_content.v1.CTA", [
-            { no: 1, name: "text", kind: "message", T: () => I18nString },
-            { no: 2, name: "uri", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
-        ]);
+  constructor() {
+    super("website_content.v1.CTA", [
+      { no: 1, name: "text", kind: "message", T: () => I18nString },
+      { no: 2, name: "uri", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+    ]);
+  }
+  create(value?: PartialMessage<CTA>): CTA {
+    const message = globalThis.Object.create(this.messagePrototype!);
+    message.uri = "";
+    if (value !== undefined) reflectionMergePartial<CTA>(this, message, value);
+    return message;
+  }
+  internalBinaryRead(
+    reader: IBinaryReader,
+    length: number,
+    options: BinaryReadOptions,
+    target?: CTA
+  ): CTA {
+    let message = target ?? this.create(),
+      end = reader.pos + length;
+    while (reader.pos < end) {
+      let [fieldNo, wireType] = reader.tag();
+      switch (fieldNo) {
+        case /* website_content.v1.I18nString text */ 1:
+          message.text = I18nString.internalBinaryRead(
+            reader,
+            reader.uint32(),
+            options,
+            message.text
+          );
+          break;
+        case /* string uri */ 2:
+          message.uri = reader.string();
+          break;
+        default:
+          let u = options.readUnknownField;
+          if (u === "throw")
+            throw new globalThis.Error(
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+            );
+          let d = reader.skip(wireType);
+          if (u !== false)
+            (u === true ? UnknownFieldHandler.onRead : u)(
+              this.typeName,
+              message,
+              fieldNo,
+              wireType,
+              d
+            );
+      }
     }
-    create(value?: PartialMessage<CTA>): CTA {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.uri = "";
-        if (value !== undefined)
-            reflectionMergePartial<CTA>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CTA): CTA {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* website_content.v1.I18nString text */ 1:
-                    message.text = I18nString.internalBinaryRead(reader, reader.uint32(), options, message.text);
-                    break;
-                case /* string uri */ 2:
-                    message.uri = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: CTA, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* website_content.v1.I18nString text = 1; */
-        if (message.text)
-            I18nString.internalBinaryWrite(message.text, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* string uri = 2; */
-        if (message.uri !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.uri);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
+    return message;
+  }
+  internalBinaryWrite(
+    message: CTA,
+    writer: IBinaryWriter,
+    options: BinaryWriteOptions
+  ): IBinaryWriter {
+    /* website_content.v1.I18nString text = 1; */
+    if (message.text)
+      I18nString.internalBinaryWrite(
+        message.text,
+        writer.tag(1, WireType.LengthDelimited).fork(),
+        options
+      ).join();
+    /* string uri = 2; */
+    if (message.uri !== "")
+      writer.tag(2, WireType.LengthDelimited).string(message.uri);
+    let u = options.writeUnknownFields;
+    if (u !== false)
+      (u == true ? UnknownFieldHandler.onWrite : u)(
+        this.typeName,
+        message,
+        writer
+      );
+    return writer;
+  }
 }
 /**
  * @generated MessageType for protobuf message website_content.v1.CTA
@@ -224,52 +307,92 @@ class CTA$Type extends MessageType<CTA> {
 export const CTA = new CTA$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class TitledBlock$Type extends MessageType<TitledBlock> {
-    constructor() {
-        super("website_content.v1.TitledBlock", [
-            { no: 1, name: "title", kind: "message", T: () => I18nString },
-            { no: 2, name: "description", kind: "message", T: () => I18nString }
-        ]);
+  constructor() {
+    super("website_content.v1.TitledBlock", [
+      { no: 1, name: "title", kind: "message", T: () => I18nString },
+      { no: 2, name: "description", kind: "message", T: () => I18nString },
+    ]);
+  }
+  create(value?: PartialMessage<TitledBlock>): TitledBlock {
+    const message = globalThis.Object.create(this.messagePrototype!);
+    if (value !== undefined)
+      reflectionMergePartial<TitledBlock>(this, message, value);
+    return message;
+  }
+  internalBinaryRead(
+    reader: IBinaryReader,
+    length: number,
+    options: BinaryReadOptions,
+    target?: TitledBlock
+  ): TitledBlock {
+    let message = target ?? this.create(),
+      end = reader.pos + length;
+    while (reader.pos < end) {
+      let [fieldNo, wireType] = reader.tag();
+      switch (fieldNo) {
+        case /* website_content.v1.I18nString title */ 1:
+          message.title = I18nString.internalBinaryRead(
+            reader,
+            reader.uint32(),
+            options,
+            message.title
+          );
+          break;
+        case /* website_content.v1.I18nString description */ 2:
+          message.description = I18nString.internalBinaryRead(
+            reader,
+            reader.uint32(),
+            options,
+            message.description
+          );
+          break;
+        default:
+          let u = options.readUnknownField;
+          if (u === "throw")
+            throw new globalThis.Error(
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+            );
+          let d = reader.skip(wireType);
+          if (u !== false)
+            (u === true ? UnknownFieldHandler.onRead : u)(
+              this.typeName,
+              message,
+              fieldNo,
+              wireType,
+              d
+            );
+      }
     }
-    create(value?: PartialMessage<TitledBlock>): TitledBlock {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<TitledBlock>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TitledBlock): TitledBlock {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* website_content.v1.I18nString title */ 1:
-                    message.title = I18nString.internalBinaryRead(reader, reader.uint32(), options, message.title);
-                    break;
-                case /* website_content.v1.I18nString description */ 2:
-                    message.description = I18nString.internalBinaryRead(reader, reader.uint32(), options, message.description);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: TitledBlock, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* website_content.v1.I18nString title = 1; */
-        if (message.title)
-            I18nString.internalBinaryWrite(message.title, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* website_content.v1.I18nString description = 2; */
-        if (message.description)
-            I18nString.internalBinaryWrite(message.description, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
+    return message;
+  }
+  internalBinaryWrite(
+    message: TitledBlock,
+    writer: IBinaryWriter,
+    options: BinaryWriteOptions
+  ): IBinaryWriter {
+    /* website_content.v1.I18nString title = 1; */
+    if (message.title)
+      I18nString.internalBinaryWrite(
+        message.title,
+        writer.tag(1, WireType.LengthDelimited).fork(),
+        options
+      ).join();
+    /* website_content.v1.I18nString description = 2; */
+    if (message.description)
+      I18nString.internalBinaryWrite(
+        message.description,
+        writer.tag(2, WireType.LengthDelimited).fork(),
+        options
+      ).join();
+    let u = options.writeUnknownFields;
+    if (u !== false)
+      (u == true ? UnknownFieldHandler.onWrite : u)(
+        this.typeName,
+        message,
+        writer
+      );
+    return writer;
+  }
 }
 /**
  * @generated MessageType for protobuf message website_content.v1.TitledBlock

@@ -30,7 +30,11 @@ class SADSEngine {
   ) {
     // Use externalDefaultTheme if provided, otherwise try to access global sadsDefaultTheme
     let baseTheme: SadsTheme | null = externalDefaultTheme;
-    if (!baseTheme && typeof window !== 'undefined' && (window as any).sadsDefaultTheme) {
+    if (
+      !baseTheme &&
+      typeof window !== "undefined" &&
+      (window as any).sadsDefaultTheme
+    ) {
       baseTheme = (window as any).sadsDefaultTheme as SadsTheme;
       console.log("SADS: Using global sadsDefaultTheme.");
     }
@@ -41,9 +45,18 @@ class SADSEngine {
       );
       // Initialize with an empty theme structure to prevent errors, though functionality will be limited.
       baseTheme = {
-        colors: {}, spacing: {}, fontSize: {}, fontWeight: {}, borderRadius: {},
-        shadow: {}, maxWidth: {}, breakpoints: {}, flexBasis: {}, objectFit: {},
-        fontStyle: {}, borderStyle: {},
+        colors: {},
+        spacing: {},
+        fontSize: {},
+        fontWeight: {},
+        borderRadius: {},
+        shadow: {},
+        maxWidth: {},
+        breakpoints: {},
+        flexBasis: {},
+        objectFit: {},
+        fontStyle: {},
+        borderStyle: {},
       } as unknown as SadsTheme; // Cast needed due to partial empty structure
     }
     this.theme = this._initializeTheme(baseTheme, customThemeConfig);
@@ -139,14 +152,25 @@ class SADSEngine {
     // Re-initialize with new config, merging with the global sadsDefaultTheme as base
     // (or an empty theme if global is not found)
     let baseThemeForUpdate: SadsTheme;
-    if (typeof window !== 'undefined' && (window as any).sadsDefaultTheme) {
+    if (typeof window !== "undefined" && (window as any).sadsDefaultTheme) {
       baseThemeForUpdate = (window as any).sadsDefaultTheme as SadsTheme;
     } else {
-      console.warn("SADS.updateTheme: Global sadsDefaultTheme not found for re-initialization. Using an empty theme structure as base.");
+      console.warn(
+        "SADS.updateTheme: Global sadsDefaultTheme not found for re-initialization. Using an empty theme structure as base."
+      );
       baseThemeForUpdate = {
-        colors: {}, spacing: {}, fontSize: {}, fontWeight: {}, borderRadius: {},
-        shadow: {}, maxWidth: {}, breakpoints: {}, flexBasis: {}, objectFit: {},
-        fontStyle: {}, borderStyle: {},
+        colors: {},
+        spacing: {},
+        fontSize: {},
+        fontWeight: {},
+        borderRadius: {},
+        shadow: {},
+        maxWidth: {},
+        breakpoints: {},
+        flexBasis: {},
+        objectFit: {},
+        fontStyle: {},
+        borderStyle: {},
       } as unknown as SadsTheme;
     }
 

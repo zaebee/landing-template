@@ -4,7 +4,7 @@ import {
   SadsColorToken,
   SadsSpacingToken,
   SadsFontWeightToken,
-  SadsBorderRadiusToken
+  SadsBorderRadiusToken,
   // Other enums can be imported as needed, e.g., SadsFontSizeToken if we create one
 } from "./generated_proto/sads_attributes.js"; // Assuming .js extension for module imports
 
@@ -56,9 +56,9 @@ export interface SadsColors {
 export interface SadsSpacing {
   // Keys correspond to SadsSpacingToken members (e.g., "XS" maps to SadsSpacingToken.SPACING_TOKEN_XS)
   // Values are actual CSS spacing strings.
-  none: string;  // Corresponds to SPACING_TOKEN_NONE
-  xs: string;    // Corresponds to SPACING_TOKEN_XS
-  s: string;     // Corresponds to SPACING_TOKEN_S
+  none: string; // Corresponds to SPACING_TOKEN_NONE
+  xs: string; // Corresponds to SPACING_TOKEN_XS
+  s: string; // Corresponds to SPACING_TOKEN_S
   m: string;
   l: string;
   xl: string;
@@ -82,7 +82,7 @@ export interface SadsFontWeights {
   // Keys correspond to SadsFontWeightToken members
   // Values are actual CSS font weight strings.
   normal: string; // Corresponds to FONT_WEIGHT_TOKEN_NORMAL
-  bold: string;   // Corresponds to FONT_WEIGHT_TOKEN_BOLD
+  bold: string; // Corresponds to FONT_WEIGHT_TOKEN_BOLD
   [key: string]: string;
 }
 
@@ -90,9 +90,9 @@ export interface SadsBorderRadius {
   // Keys correspond to SadsBorderRadiusToken members
   // Values are actual CSS border radius strings.
   none: string; // Corresponds to BORDER_RADIUS_TOKEN_NONE
-  s: string;    // Corresponds to BORDER_RADIUS_TOKEN_S
-  m: string;    // Corresponds to BORDER_RADIUS_TOKEN_M
-  l: string;    // Corresponds to BORDER_RADIUS_TOKEN_L
+  s: string; // Corresponds to BORDER_RADIUS_TOKEN_S
+  m: string; // Corresponds to BORDER_RADIUS_TOKEN_M
+  l: string; // Corresponds to BORDER_RADIUS_TOKEN_L
   [key: string]: string;
 }
 
