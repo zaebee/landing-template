@@ -32,7 +32,7 @@ async function main() {
   }
 
   const go = new Go();
-  const wasmPath = "sads_poc.wasm"; // Expected name of the compiled WASM file
+  const wasmPath = "/public/dist/assets/wasm/sads_poc.wasm"; // Expected name of the compiled WASM file
 
   try {
     console.log(`Attempting to load WASM module from: ${wasmPath}`);
