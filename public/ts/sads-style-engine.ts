@@ -286,23 +286,35 @@ class SADSEngine {
     const finalRule = mediaQuery
       ? `@media ${mediaQuery} { ${ruleContent} }`
       : ruleContent;
+
+    console.log(`SADS: Attempting to add CSS rule: "${finalRule}"`); // Added log
+
     try {
       if (this.dynamicStyleSheet) {
+        const currentRuleCount = this.dynamicStyleSheet.cssRules.length;
         this.dynamicStyleSheet.insertRule(
           finalRule,
-          this.dynamicStyleSheet.cssRules.length
+          currentRuleCount
         );
+        // Verify insertion if possible (some browsers might not update length immediately or consistently)
+        if (this.dynamicStyleSheet.cssRules.length > currentRuleCount) {
+          console.log(`SADS: Successfully inserted rule. New rule count: ${this.dynamicStyleSheet.cssRules.length}`);
+        } else {
+          // This path might be hit if insertRule succeeded but length didn't update, or if it failed silently before catch.
+          // Or if the rule was a duplicate and got ignored by some browser logic (less likely for unique SADS IDs).
+          console.warn(`SADS: Rule insertion attempted, but cssRules.length did not increase. Rule: "${finalRule}" Current sheet content:`, this.dynamicStyleSheet.ownerNode?.textContent);
+        }
       } else {
         console.error(
           `SADS: Dynamic stylesheet not available. Cannot insert rule: "${finalRule}"`
         );
       }
-    } catch (e) {
+    } catch (e: any) { // Explicitly type 'e' as any or unknown then check
+      console.error(`SADS: Error inserting CSS rule: "${finalRule}"`, e.message, e.stack);
       if (this.dynamicStyleSheet && this.dynamicStyleSheet.ownerNode) {
-        console.error(`SADS: Failed to insert CSS rule: "${finalRule}"`, e);
+         console.error(`SADS: Stylesheet ownerNode content at time of error:`, this.dynamicStyleSheet.ownerNode.textContent);
       } else if (!this.dynamicStyleSheet) {
-        // This case might occur if the stylesheet was removed or became invalid, or in non-browser env
-        // console.warn(`SADS: Attempted to insert rule, but stylesheet is invalid or missing. Rule: "${finalRule}"`);
+        console.error(`SADS: Dynamic stylesheet was null at time of error.`);
       }
     }
   }
