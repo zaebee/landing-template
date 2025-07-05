@@ -190,15 +190,15 @@ func (o *BuildOrchestrator) generateLanguageSpecificConfig(lang string, translat
 func (o *BuildOrchestrator) BuildAllLanguages() error {
 	log.Println("Starting build for all languages...")
 	if err := o.LoadInitialConfigurations(); err != nil { return fmt.Errorf("error loading initial configurations: %w", err) }
-	projectRoot, err := getProjectRoot()
-	if err != nil { return fmt.Errorf("failed to get project root: %w", err) }
-	assetOutputDir := filepath.Join(projectRoot, "public", "dist")
-	if err := os.MkdirAll(assetOutputDir, 0755); err != nil { return fmt.Errorf("failed to create asset output directory %s: %w", assetOutputDir, err) }
+	// projectRoot, err := getProjectRoot() // No longer used directly in this function after bundler calls removed
+	// if err != nil { return fmt.Errorf("failed to get project root: %w", err) }
+	// assetOutputDir := filepath.Join(projectRoot, "public", "dist") // No longer creating dist for these assets
+	// if err := os.MkdirAll(assetOutputDir, 0755); err != nil { return fmt.Errorf("failed to create asset output directory %s: %w", assetOutputDir, err) }
 
-	cssBundlePath, err := o.assetBundler.BundleCss(projectRoot, assetOutputDir)
-	if err != nil { log.Printf("Warning: CSS bundling failed: %v", err) } else if cssBundlePath == "" { log.Println("Warning: CSS bundling produced no output.") } else { log.Printf("CSS bundled to: %s", cssBundlePath) }
-	jsBundlePath, err := o.assetBundler.BundleJs(projectRoot, assetOutputDir)
-	if err != nil { log.Printf("Warning: JS bundling failed: %v", err) } else if jsBundlePath == "" { log.Println("Warning: JavaScript bundling produced no output.") } else { log.Printf("JS bundled to: %s", jsBundlePath) }
+	// cssBundlePath, err := o.assetBundler.BundleCss(projectRoot, assetOutputDir)
+	// if err != nil { log.Printf("Warning: CSS bundling failed: %v", err) } else if cssBundlePath == "" { log.Println("Warning: CSS bundling produced no output.") } else { log.Printf("CSS bundled to: %s", cssBundlePath) }
+	// jsBundlePath, err := o.assetBundler.BundleJs(projectRoot, assetOutputDir)
+	// if err != nil { log.Printf("Warning: JS bundling failed: %v", err) } else if jsBundlePath == "" { log.Println("Warning: JavaScript bundling produced no output.") } else { log.Printf("JS bundled to: %s", jsBundlePath) }
 
 	supportedLangsRaw, ok := o.appConfig["supported_langs"].([]interface{})
 	if !ok {
@@ -435,37 +435,38 @@ func (c *InMemoryDataCache) GetItem(key string) (interface{}, bool) { item, foun
 type DefaultAssetBundler struct{}
 
 func (ab *DefaultAssetBundler) BundleCss(projectRoot, outputDir string) (string, error) {
-	log.Println("AssetBundler: BundleCss called")
-	sourceCss := filepath.Join(projectRoot, "public", "style.css")
-	destDir := filepath.Join(outputDir)
-	if err := os.MkdirAll(destDir, 0755); err != nil { return "", fmt.Errorf("failed to create destination directory %s for CSS: %w", destDir, err) }
-	destCss := filepath.Join(destDir, "style.css")
-	if _, err := os.Stat(sourceCss); os.IsNotExist(err) { log.Printf("Source CSS %s does not exist. Skipping bundling.", sourceCss); return "", nil }
-	input, err := ioutil.ReadFile(sourceCss)
-	if err != nil { return "", fmt.Errorf("failed to read source CSS %s: %w", sourceCss, err) }
-	if err = ioutil.WriteFile(destCss, input, 0644); err != nil { return "", fmt.Errorf("failed to write destination CSS %s: %w", destCss, err) }
-	log.Printf("CSS 'bundled' to %s", destCss)
-	return destCss, nil
+	log.Println("AssetBundler: BundleCss called - No longer copying style.css to dist.")
+	// sourceCss := filepath.Join(projectRoot, "public", "style.css")
+	// destDir := filepath.Join(outputDir)
+	// if err := os.MkdirAll(destDir, 0755); err != nil { return "", fmt.Errorf("failed to create destination directory %s for CSS: %w", destDir, err) }
+	// destCss := filepath.Join(destDir, "style.css")
+	// if _, err := os.Stat(sourceCss); os.IsNotExist(err) { log.Printf("Source CSS %s does not exist. Skipping bundling.", sourceCss); return "", nil }
+	// input, err := ioutil.ReadFile(sourceCss)
+	// if err != nil { return "", fmt.Errorf("failed to read source CSS %s: %w", sourceCss, err) }
+	// if err = ioutil.WriteFile(destCss, input, 0644); err != nil { return "", fmt.Errorf("failed to write destination CSS %s: %w", destCss, err) }
+	// log.Printf("CSS 'bundled' to %s", destCss)
+	// return destCss, nil
+	return "", nil // Returning empty path as it's no longer processed here.
 }
 
 func (ab *DefaultAssetBundler) BundleJs(projectRoot, outputDir string) (string, error) {
-	log.Println("AssetBundler: BundleJs called")
-	jsFiles := []string{"app.js", "sads-default-theme.js", "sads-style-engine.js"}
-	var createdFiles []string
-	destJsDir := filepath.Join(outputDir, "js")
-	if err := os.MkdirAll(destJsDir, 0755); err != nil { return "", fmt.Errorf("failed to create destination directory %s for JS: %w", destJsDir, err) }
-	for _, jsFile := range jsFiles {
-		sourceJs := filepath.Join(projectRoot, "public", "js", jsFile)
-		destJs := filepath.Join(destJsDir, jsFile)
-		if _, err := os.Stat(sourceJs); os.IsNotExist(err) { log.Printf("Source JS %s does not exist. Skipping.", sourceJs); continue }
-		input, err := ioutil.ReadFile(sourceJs)
-		if err != nil { log.Printf("Failed to read source JS %s: %v. Skipping.", sourceJs, err); continue }
-		if err = ioutil.WriteFile(destJs, input, 0644); err != nil { log.Printf("Failed to write destination JS %s: %v. Skipping.", destJs, err); continue }
-		log.Printf("JS file 'copied' to %s", destJs)
-		createdFiles = append(createdFiles, destJs)
-	}
-	if len(createdFiles) > 0 { return filepath.Join(filepath.Base(outputDir), "js"), nil }
-	return "", nil
+	log.Println("AssetBundler: BundleJs called - No longer copying JS files to dist, tsc handles output to public/js.")
+	// jsFiles := []string{"app.js", "sads-default-theme.js", "sads-style-engine.js"}
+	// var createdFiles []string
+	// destJsDir := filepath.Join(outputDir, "js") // e.g. public/dist/js
+	// if err := os.MkdirAll(destJsDir, 0755); err != nil { return "", fmt.Errorf("failed to create destination directory %s for JS: %w", destJsDir, err) }
+	// for _, jsFile := range jsFiles {
+	// 	sourceJs := filepath.Join(projectRoot, "public", "js", jsFile) // Source from public/js (where tsc compiles)
+	// 	destJs := filepath.Join(destJsDir, jsFile)
+	// 	if _, err := os.Stat(sourceJs); os.IsNotExist(err) { log.Printf("Source JS %s does not exist. Skipping.", sourceJs); continue }
+	// 	input, err := ioutil.ReadFile(sourceJs)
+	// 	if err != nil { log.Printf("Failed to read source JS %s: %v. Skipping.", sourceJs, err); continue }
+	// 	if err = ioutil.WriteFile(destJs, input, 0644); err != nil { log.Printf("Failed to write destination JS %s: %v. Skipping.", destJs, err); continue }
+	// 	log.Printf("JS file 'copied' to %s", destJs)
+	// 	createdFiles = append(createdFiles, destJs)
+	// }
+	// if len(createdFiles) > 0 { return filepath.Join(filepath.Base(outputDir), "js"), nil }
+	return "", nil // Returning empty path as it's no longer processed here.
 }
 
 func getProjectRoot() (string, error) { return os.Getwd() }

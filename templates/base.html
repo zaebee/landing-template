@@ -15,7 +15,6 @@
     {% endblock head_meta %}
     <title>{{ title }}</title>
     <link href="public/style.css" rel="stylesheet" />
-    <link href="public/dist/main.css" rel="stylesheet" />
     <link rel="icon" href="public/favicon.svg" type="image/svg+xml" />
     {% block head_extra %} {% endblock head_extra %}
   </head>
@@ -25,7 +24,7 @@
     <main>{{ main_content | safe }}</main>
 
     {% include "components/footer/footer.html" %}
-    <script type="module" src="public/dist/main.js" defer></script>
+    <script type="module" src="public/js/app.js" defer></script>
 
     {% block scripts %}{% endblock scripts %}
   </body>

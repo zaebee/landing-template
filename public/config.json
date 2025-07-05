@@ -3,7 +3,6 @@
     "components/hero/hero.html",
     "components/features/features.html",
     "components/testimonials/testimonials.html",
-    "components/chat/chat.html",
     "components/portfolio/portfolio.html",
     "components/blog/blog.html",
     "components/contact-form/contact-form.html"

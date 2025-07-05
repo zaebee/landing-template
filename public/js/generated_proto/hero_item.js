@@ -1,0 +1,130 @@
+import { WireType } from "@protobuf-ts/runtime";
+import { UnknownFieldHandler } from "@protobuf-ts/runtime";
+import { reflectionMergePartial } from "@protobuf-ts/runtime";
+import { MessageType } from "@protobuf-ts/runtime";
+import { CTA } from "./common";
+import { I18nString } from "./common";
+// @generated message type with reflection information, may provide speed optimized methods
+class HeroItemContent$Type extends MessageType {
+    constructor() {
+        super("website_content.v1.HeroItemContent", [
+            { no: 1, name: "title", kind: "message", T: () => I18nString },
+            { no: 2, name: "subtitle", kind: "message", T: () => I18nString },
+            { no: 3, name: "cta", kind: "message", T: () => CTA },
+            { no: 4, name: "variation_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value) {
+        const message = globalThis.Object.create((this.messagePrototype));
+        message.variationId = "";
+        if (value !== undefined)
+            reflectionMergePartial(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader, length, options, target) {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* website_content.v1.I18nString title */ 1:
+                    message.title = I18nString.internalBinaryRead(reader, reader.uint32(), options, message.title);
+                    break;
+                case /* website_content.v1.I18nString subtitle */ 2:
+                    message.subtitle = I18nString.internalBinaryRead(reader, reader.uint32(), options, message.subtitle);
+                    break;
+                case /* website_content.v1.CTA cta */ 3:
+                    message.cta = CTA.internalBinaryRead(reader, reader.uint32(), options, message.cta);
+                    break;
+                case /* string variation_id */ 4:
+                    message.variationId = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message, writer, options) {
+        /* website_content.v1.I18nString title = 1; */
+        if (message.title)
+            I18nString.internalBinaryWrite(message.title, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* website_content.v1.I18nString subtitle = 2; */
+        if (message.subtitle)
+            I18nString.internalBinaryWrite(message.subtitle, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* website_content.v1.CTA cta = 3; */
+        if (message.cta)
+            CTA.internalBinaryWrite(message.cta, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* string variation_id = 4; */
+        if (message.variationId !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.variationId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message website_content.v1.HeroItemContent
+ */
+export const HeroItemContent = new HeroItemContent$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class HeroItem$Type extends MessageType {
+    constructor() {
+        super("website_content.v1.HeroItem", [
+            { no: 1, name: "variations", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => HeroItemContent },
+            { no: 2, name: "default_variation_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value) {
+        const message = globalThis.Object.create((this.messagePrototype));
+        message.variations = [];
+        message.defaultVariationId = "";
+        if (value !== undefined)
+            reflectionMergePartial(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader, length, options, target) {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated website_content.v1.HeroItemContent variations */ 1:
+                    message.variations.push(HeroItemContent.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* string default_variation_id */ 2:
+                    message.defaultVariationId = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message, writer, options) {
+        /* repeated website_content.v1.HeroItemContent variations = 1; */
+        for (let i = 0; i < message.variations.length; i++)
+            HeroItemContent.internalBinaryWrite(message.variations[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* string default_variation_id = 2; */
+        if (message.defaultVariationId !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.defaultVariationId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message website_content.v1.HeroItem
+ */
+export const HeroItem = new HeroItem$Type();
+//# sourceMappingURL=hero_item.js.map

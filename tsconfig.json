@@ -3,7 +3,7 @@
     "target": "ES2020", // Target version of JavaScript
     "module": "ESNext", // Module system
     "rootDir": "./public/ts", // Root directory of TypeScript files
-    "outDir": "./public/js/compiled_ts", // Output directory for compiled JavaScript
+    "outDir": "./public/js", // Output directory for compiled JavaScript
     "esModuleInterop": true, // Enables compatibility with CommonJS modules
     "forceConsistentCasingInFileNames": true, // Enforces consistent file casing
     "strict": true, // Enable all strict type-checking options
