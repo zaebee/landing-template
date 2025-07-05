@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SADS Component Previewer</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; }
+        .previewer-header { background-color: #f0f0f0; padding: 10px; border-bottom: 1px solid #ccc; display: flex; align-items: center; }
+        .previewer-header label { margin-right: 10px; }
+        .previewer-header select { padding: 5px; font-size: 1em; }
+        .main-content { display: flex; flex-grow: 1; overflow: hidden; }
+        .component-display-area { flex-grow: 3; padding: 20px; overflow-y: auto; border-right: 1px solid #ccc; background-color: #fff; }
+        .attributes-inspector-area { flex-grow: 1; padding: 20px; overflow-y: auto; background-color: #f9f9f9; font-family: monospace; font-size: 0.9em; }
+        .attributes-inspector-area h3 { margin-top: 0; }
+        .attributes-inspector-area pre { white-space: pre-wrap; word-break: break-all; }
+        #component-container iframe {
+            width: 100%;
+            height: 100%; /* Adjust as needed, or make it dynamic */
+            border: 1px dashed #ddd;
+        }
+        /* Basic styling for placeholder if no component is loaded */
+        #component-container:empty::before {
+            content: "Select a component to preview";
+            display: block;
+            text-align: center;
+            padding: 50px;
+            color: #aaa;
+            font-style: italic;
+        }
+         /* Styles for the iframe approach for isolation */
+        .component-render-target {
+            width: 100%;
+            min-height: 300px; /* Example minimum height */
+            border: 1px solid #ccc;
+            overflow: auto; /* If content overflows */
+        }
+    </style>
+    <!-- SADS specific styles - these are needed for the components themselves -->
+    <link rel="stylesheet" href="/style.css"> <!-- Main site styles, might contain useful defaults -->
+
+    <!-- SADS Engine and Theme - these will be used by components rendered in the previewer -->
+    <!-- These paths need to be valid when sads_previewer.html is served -->
+    <!-- The SADS engine will inject its styles into the head of this document -->
+
+</head>
+<body>
+    <div class="previewer-header">
+        <label for="component-selector">Select Component:</label>
+        <select id="component-selector">
+            <option value="">-- Loading Components --</option>
+        </select>
+    </div>
+
+    <div class="main-content">
+        <div class="component-display-area">
+            <h2>Preview:</h2>
+            <!-- The component will be rendered here -->
+            <!-- Option 1: Direct injection -->
+            <div id="component-render-target" class="component-render-target">
+                <!-- Component HTML will be injected here by JS -->
+            </div>
+            <!-- Option 2: Iframe for better isolation (more complex to manage SADS styles) -->
+            <!-- <div id="component-container-iframe">
+                <iframe id="component-iframe"></iframe>
+            </div> -->
+        </div>
+
+        <div class="attributes-inspector-area">
+            <h3>SADS Attributes Inspector</h3>
+            <p>Click on an element in the preview to see its data-sads-* attributes.</p>
+            <pre id="attributes-display">No element selected.</pre>
+        </div>
+    </div>
+
+    <!-- SADS Engine scripts -->
+    <!-- These must be loaded for SADS components to be styled -->
+    <!-- Order might matter: theme first, then engine, then manager -->
+    <script src="/js/sads-default-theme.js"></script>
+    <script src="/js/sads-style-engine.js"></script>
+    <script src="/js/modules/sadsManager.js"></script>
+    <!-- Previewer specific JavaScript -->
+    <script src="/js/sadsPreviewer.js"></script>
+</body>
+</html>

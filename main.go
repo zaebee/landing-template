@@ -353,6 +353,32 @@ func main() {
 		log.Printf("Warning: Could not load app config to register block generators: %v", err)
 	}
 	orchestrator := NewBuildOrchestrator(appConfigMgr, translationProvider, dataLoader, dataCache, pageBuilder, htmlGenerators, assetBundler)
+
+	// Add a flag for serving the previewer
+	servePreviewer := flag.Bool("serve-previewer", false, "Start the SADS component previewer API server")
+	previewerPort := flag.String("previewer-port", "8081", "Port for the SADS previewer API server")
+	flag.Parse()
+
+	if *servePreviewer {
+		log.Println("Starting SADS Previewer server...")
+		// Ensure that StartSadsPreviewerServer is accessible (it should be as it's in package main)
+		go StartSadsPreviewerServer(*previewerPort) // Run in a goroutine if you also want to build
+		// If you only want to serve and not build, you can just call it directly
+		// and the program will block here. For now, let's assume we might want to build then serve,
+		// or serve while the main app might have other functions.
+		// For this feature, perhaps it's better to *only* serve.
+		// So, removing 'go' to make it blocking if the flag is set.
+		// If the server should run *instead* of the build:
+		StartSadsPreviewerServer(*previewerPort)
+		// If it should run *after* a build, then the build logic needs to be conditional too,
+		// or this server start needs to be after the build.
+		// For now, if -serve-previewer is true, it will ONLY serve.
+		log.Println("SADS Previewer server has been started. Process will exit when server stops.")
+		return // Exit main after starting server, so build doesn't run.
+	}
+
+	// Default behavior: run the build process
+	log.Println("Running build process...")
 	if err := orchestrator.BuildAllLanguages(); err != nil { log.Fatalf("Build process failed: %v", err) }
 	log.Println("Build script finished successfully.")
 }
