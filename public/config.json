@@ -41,5 +41,6 @@
       "message_type_name": "ContactFormConfig",
       "is_list": false
     }
-  }
+  },
+  "site_logo_data_file": "data/site_logo.json"
 }

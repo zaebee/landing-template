@@ -25,9 +25,11 @@
     ]'
   >
     <div data-sads-element="logo-container">
+      {# Assuming site_logo object is passed in the context from build.py #}
       <a
-        href="#"
-        data-i18n="logo_text"
+        href="{{ site_logo.target_url | default('#') }}"
+        {# data-i18n attribute can be removed if logo_text_key is always resolved server-side #}
+        {# If client-side translation for logo text is still desired for some reason, keep data-i18n and use site_logo.logo_text_key as its value #}
         data-sads-element="logo-link"
         data-sads-text-color="text-primary"
         data-sads-text-decoration="none"

@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Natural Language to SADS Test</title>
+    <!--
+      Assuming a build process compiles TypeScript to JavaScript and places it in a 'js' directory,
+      and also potentially bundles or makes available a global CSS file if needed.
+      For SADS, the primary styling comes from the dynamically injected <style> tag.
+    -->
+    <style>
+      body {
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+          padding: 20px;
+          line-height: 1.6;
+          background-color: #f4f7f9;
+          color: #333;
+      }
+      #nl-sads-app-container {
+          background-color: #fff;
+          padding: 25px;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+          max-width: 600px;
+          margin: 20px auto;
+      }
+      h1 {
+          color: #2c3e50;
+          text-align: center;
+          margin-bottom: 25px;
+      }
+      #nl-sads-controls {
+          display: flex;
+          gap: 10px;
+          margin-bottom: 25px;
+          align-items: center;
+      }
+      label[for="nl-input"] {
+          font-weight: bold;
+          margin-right: 5px;
+          white-space: nowrap;
+      }
+      #nl-input {
+          flex-grow: 1;
+          padding: 10px 12px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          font-size: 1rem;
+      }
+      #nl-submit-button {
+          padding: 10px 18px;
+          background-color: #007bff; /* text-accent */
+          color: white;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 1rem;
+          transition: background-color 0.2s ease;
+      }
+      #nl-submit-button:hover {
+          background-color: #0056b3; /* A darker shade of text-accent */
+      }
+      #sads-target-element-container {
+          border: 2px dashed #bdc3c7;
+          padding: 20px;
+          border-radius: 4px;
+          text-align: center;
+      }
+      #sads-target-element-container p {
+          margin-bottom: 15px;
+          color: #7f8c8d;
+      }
+      #sads-target-element {
+          width: 250px; /* Adjusted width */
+          height: 120px; /* Adjusted height */
+          border: 1px solid #ccc; /* Initial border, SADS can override */
+          margin: 0 auto; /* Center the element */
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+          transition: all 0.3s ease-in-out; /* Smooth transitions for style changes */
+          /* Initial SADS attributes that will be applied by the engine */
+          data-sads-component="targetBox"
+          data-sads-bg-color="surface-accent"
+          data-sads-padding="m"
+          data-sads-text-align="center"
+          data-sads-border-radius="s"
+          data-sads-text-color="text-primary"
+      }
+      .dark-mode #sads-target-element {
+           /* Example of how a specific non-SADS dark mode style could be applied if needed,
+              though SADS itself handles dark mode for its properties. */
+      }
+    </style>
+  </head>
+  <body>
+    <div id="nl-sads-app-container">
+      <h1>Natural Language to SADS</h1>
+
+      <div id="nl-sads-controls">
+        <label for="nl-input">Style Command:</label>
+        <input
+          type="text"
+          id="nl-input"
+          placeholder="e.g., make it blue and round"
+        />
+        <button id="nl-submit-button">Apply Style</button>
+      </div>
+
+      <div id="sads-target-element-container">
+        <p>
+          This is the target element. Its style will change based on your
+          command.
+        </p>
+        <div id="sads-target-element">Target Box</div>
+      </div>
+    </div>
+
+    <!--
+        IMPORTANT: The actual paths to these .js files assume compilation output from public/ts/*
+        to public/js/compiled_ts/*.
+        The order of sads-default-theme.js and sads-style-engine.js is important when loaded as modules,
+        as nlToSadsInterface.js imports SADSEngine, which may implicitly depend on sadsDefaultTheme if not passed explicitly.
+        However, with type="module", the browser handles dependency resolution if they import each other.
+        The explicit window assignments ensure the global access for the inline script below.
+    -->
+    <script type="module" src="js/compiled_ts/sads-default-theme.js"></script>
+    <script type="module" src="js/compiled_ts/sads-style-engine.js"></script>
+    <script type="module" src="js/compiled_ts/nlToSadsInterface.js"></script>
+
+    <script>
+      // Basic initialization logic
+      // This assumes that after compilation/bundling, SADSEngine, sadsDefaultTheme,
+      // and NLToSadsInterface are available on the window object or as accessible modules.
+      document.addEventListener("DOMContentLoaded", () => {
+        try {
+          // Check if the necessary classes/objects are available (simulating module load)
+          if (
+            typeof window.SADSEngine === "undefined" ||
+            typeof window.sadsDefaultTheme === "undefined" ||
+            typeof window.NLToSadsInterface === "undefined"
+          ) {
+            console.error(
+              "SADS Engine or NL Interface or Default Theme not loaded. Ensure JS files are correctly compiled and included."
+            );
+            alert(
+              "Error: Core styling components not loaded. Please check the console."
+            );
+            return;
+          }
+
+          const sadsEngineInstance = new window.SADSEngine(
+            {},
+            window.sadsDefaultTheme
+          );
+
+          // Initialize the Natural Language to SADS interface
+          const nlInterface = new window.NLToSadsInterface(
+            sadsEngineInstance,
+            "nl-input",
+            "nl-submit-button",
+            "sads-target-element"
+          );
+
+          // Apply initial SADS styles to the target element
+          // The target element already has data-sads-* attributes.
+          // The SADSEngine needs to process any element with data-sads-component.
+          const targetElement = document.getElementById("sads-target-element");
+          if (targetElement) {
+            sadsEngineInstance.applyStylesTo(targetElement);
+          } else {
+            console.error("Target element for SADS not found.");
+          }
+
+          // Also, if there are other SADS components on the page, they should be initialized.
+          // For this demo, we only focus on the target element.
+          // Example: document.querySelectorAll('[data-sads-component]').forEach(el => sadsEngineInstance.applyStylesTo(el));
+        } catch (e) {
+          console.error("Error during SADS initialization:", e);
+          alert(
+            "An error occurred while setting up the page's styling. Please check the console."
+          );
+        }
+      });
+    </script>
+  </body>
+</html>
