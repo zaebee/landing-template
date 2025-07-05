@@ -92,17 +92,27 @@ class DefaultAssetBundler:  # Implements AssetBundler (structurally)
         # if app.js executes code at the top level that depends on modules being "loaded".
         # Given current module structure (defining functions/vars, not immediate top-level execution
         # that depends on others), this order should be fine for concatenation.
+
+        # Directory for compiled TypeScript files
+        compiled_ts_dir = os.path.join(shared_js_dir, "compiled_ts")
+
         shared_js_paths_ordered = [
-            os.path.join(shared_js_dir, "sads-default-theme.js"),
-            os.path.join(shared_js_dir, "sads-style-engine.js"),
+            # Compiled TypeScript files
+            os.path.join(compiled_ts_dir, "sads-default-theme.js"),
+            os.path.join(compiled_ts_dir, "sads-style-engine.js"),
+            os.path.join(compiled_ts_dir, "nlToSadsInterface.js"), # New NL to SADS interface
+
+            # Original JS modules
             os.path.join(modules_dir, "eventBus.js"),
             os.path.join(modules_dir, "darkMode.js"),
             os.path.join(modules_dir, "translation.js"),
-            os.path.join(modules_dir, "sadsManager.js"),
-            os.path.join(shared_js_dir, "app.js"),  # Main orchestrator
+            os.path.join(modules_dir, "sadsManager.js"), # sadsManager uses SADSEngine, so must come after compiled SADS files
+
+            # Main app orchestrator and other specific JS files
+            os.path.join(shared_js_dir, "app.js"),
             os.path.join(
                 shared_js_dir, "headerInteractions.js"
-            ),  # Header-specific interactions
+            ),
         ]
 
         processed_shared_js = []

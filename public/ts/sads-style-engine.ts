@@ -420,3 +420,8 @@ export { SADSEngine };
 //   //   });
 //   // });
 // }
+
+// To make it available globally for simple script inclusion in nl-sads-test.html:
+if (typeof window !== 'undefined') {
+  (window as any).SADSEngine = SADSEngine;
+}

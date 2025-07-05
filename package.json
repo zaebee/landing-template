@@ -2,8 +2,17 @@
   "name": "landing-template",
   "version": "1.0.0",
   "description": "Template web site with landing page to track telegram bot user source.",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "clang-format": "^1.8.0",
+    "prettier": "^3.6.2",
+    "typescript": "^5.3.3"
+  },
   "scripts": {
-    "build": "python build.py",
+    "build": "npm run compile:ts && python build.py",
+    "compile:ts": "tsc -p tsconfig.json",
     "run": "python -m http.server",
     "test": "python -m pytest",
     "lint:py": "ruff check . && mypy .",
@@ -12,12 +21,5 @@
     "lint": "npm run lint:py && npm run format && ruff format",
     "generate-proto": "mkdir -p generated && python -m grpc_tools.protoc -I./proto --python_out=./generated --pyi_out=./generated ./proto/*.proto && touch generated/__init__.py",
     "generate-proto-win": "python -m grpc_tools.protoc -I./proto --python_out=./generated --pyi_out=./generated ./proto/*.proto"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "clang-format": "^1.8.0",
-    "prettier": "^3.6.2"
   }
 }
