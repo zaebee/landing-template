@@ -6,7 +6,7 @@ import {
   SadsFontWeightToken,
   SadsBorderRadiusToken,
   // Other enums can be imported as needed, e.g., SadsFontSizeToken if we create one
-} from "./generated_proto/sads_attributes.js"; // Assuming .js extension for module imports
+} from "./generated_proto/sads_styling.v1"; // Import from the generated .ts file (extension omitted)
 
 // The theme will still store CSS string values. The SADS engine would be responsible
 // for mapping input tokens (like "m" for spacing or "surface" for color)
