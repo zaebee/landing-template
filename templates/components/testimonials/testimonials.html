@@ -53,7 +53,7 @@
           src="{{ item.author_image.src }}"
           {% set _alt_key = "" %}
           {% if item.author_image and item.author_image.alt_text and item.author_image.alt_text.key %}{% set _alt_key = item.author_image.alt_text.key %}{% endif %}
-          alt="{{ translations[_alt_key] | default:"Author image" }}"
+          alt="{{ translations[_alt_key] | default('Author image') }}"
           data-sads-width="custom:80px" {# CSS: 80px #}
           data-sads-height="custom:80px" {# CSS: 80px #}
           data-sads-border-radius="circle" {# CSS: 50% #}
@@ -76,7 +76,7 @@
       >
         {% set _quote_key = "" %}
         {% if item.text and item.text.key %}{% set _quote_key = item.text.key %}{% endif %}
-        "{{ translations[_quote_key] | default:"Testimonial text here." }}"
+        "{{ translations[_quote_key] | default('Testimonial text here.') }}"
       </p>
       <h4
         data-sads-element="author-name"
@@ -86,13 +86,13 @@
       >
         {% set _author_key = "" %}
         {% if item.author and item.author.key %}{% set _author_key = item.author.key %}{% endif %}
-        {{ translations[_author_key] | default:"Author Name" }}
+        {{ translations[_author_key] | default("Author Name") }}
       </h4>
     </article>
-    {% empty %}
+    {% else %}
     <p data-sads-element="no-items-message" data-sads-text-color="text-secondary">
       {# Corrected this final translation lookup as well #}
-      {{ translations["testimonials_no_items"] | default:"No testimonials to display at this time." }}
+      {{ translations["testimonials_no_items"] | default("No testimonials to display at this time.") }}
     </p>
     {% endfor %}
   </div>
