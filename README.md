@@ -107,6 +107,39 @@ The website generation involves two main steps:
 
    _A note on Protobuf imports in `main.go`_: The Go script imports the generated protobuf package directly (e.g., `import pb "landing-page-generator/generated/go"`). Ensure your `go.mod` file correctly names the module (e.g., `module landing-page-generator`).
 
+## SADS Component Previewer
+
+This project includes a built-in web tool to visually preview SADS components in isolation and inspect their `data-sads-*` attributes. This is useful during development and styling of components.
+
+**Running the Previewer:**
+
+1.  **Start the previewer server:**
+    Open your terminal in the project root directory and run:
+    ```bash
+    go run . -serve-previewer
+    ```
+    This command tells the Go application to start in previewer server mode instead of performing a static site build.
+
+2.  **Specify a port (optional):**
+    By default, the previewer server runs on port `8081`. You can specify a different port using the `--previewer-port` flag:
+    ```bash
+    go run . -serve-previewer --previewer-port YOUR_PORT_NUMBER
+    ```
+    Replace `YOUR_PORT_NUMBER` with your desired port (e.g., `8088`).
+
+3.  **Access in browser:**
+    Once the server is running (it will log "SADS Previewer API server starting on port..."), open your web browser and navigate to:
+    ```
+    http://localhost:PORT_NUMBER/sads_previewer.html
+    ```
+    (e.g., `http://localhost:8081/sads_previewer.html` if using the default port).
+
+**Using the Previewer:**
+
+-   Use the dropdown menu to select a component.
+-   The component will render in the preview area.
+-   Click on any element within the rendered component to see its `data-sads-*` attributes displayed in the inspector panel.
+
 ## Customization
 
 You can customize various aspects of the generated site:
