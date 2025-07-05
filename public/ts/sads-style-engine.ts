@@ -1,9 +1,6 @@
 // TypeScript type definitions and class for SADS (Semantic Attribute-Driven Styling) Engine
 
-import {
-  SadsTheme,
-  sadsDefaultTheme as importedDefaultTheme,
-} from "./sads-default-theme.js";
+import { SadsTheme } from "./sads-default-theme.js"; // Only import the SadsTheme type
 
 // Type for the structure of responsive rules parsed from the data attribute
 interface ResponsiveRuleStyle {
@@ -31,14 +28,23 @@ class SADSEngine {
     customThemeConfig: Partial<SadsTheme> = {},
     externalDefaultTheme: SadsTheme | null = null
   ) {
-    // Use externalDefaultTheme if provided, otherwise use the imported sadsDefaultTheme
-    // This provides flexibility in how the default theme is loaded.
-    const baseTheme = externalDefaultTheme || importedDefaultTheme;
+    // Use externalDefaultTheme if provided, otherwise try to access global sadsDefaultTheme
+    let baseTheme: SadsTheme | null = externalDefaultTheme;
+    if (!baseTheme && typeof window !== 'undefined' && (window as any).sadsDefaultTheme) {
+      baseTheme = (window as any).sadsDefaultTheme as SadsTheme;
+      console.log("SADS: Using global sadsDefaultTheme.");
+    }
 
-    if (Object.keys(baseTheme).length === 0) {
+    if (!baseTheme || Object.keys(baseTheme).length === 0) {
       console.warn(
-        "SADS: Default theme not found or empty. Engine might not work as expected."
+        "SADS: Default theme not found or empty. Engine might not work as expected. Ensure sadsDefaultTheme is loaded or passed."
       );
+      // Initialize with an empty theme structure to prevent errors, though functionality will be limited.
+      baseTheme = {
+        colors: {}, spacing: {}, fontSize: {}, fontWeight: {}, borderRadius: {},
+        shadow: {}, maxWidth: {}, breakpoints: {}, flexBasis: {}, objectFit: {},
+        fontStyle: {}, borderStyle: {},
+      } as unknown as SadsTheme; // Cast needed due to partial empty structure
     }
     this.theme = this._initializeTheme(baseTheme, customThemeConfig);
     this.dynamicStyleSheet = this._createDynamicStyleSheet();
@@ -130,8 +136,21 @@ class SADSEngine {
   }
 
   public updateTheme(newThemeConfig: Partial<SadsTheme>): void {
-    // Re-initialize with new config, merging with the original imported default theme as base
-    this.theme = this._initializeTheme(importedDefaultTheme, newThemeConfig);
+    // Re-initialize with new config, merging with the global sadsDefaultTheme as base
+    // (or an empty theme if global is not found)
+    let baseThemeForUpdate: SadsTheme;
+    if (typeof window !== 'undefined' && (window as any).sadsDefaultTheme) {
+      baseThemeForUpdate = (window as any).sadsDefaultTheme as SadsTheme;
+    } else {
+      console.warn("SADS.updateTheme: Global sadsDefaultTheme not found for re-initialization. Using an empty theme structure as base.");
+      baseThemeForUpdate = {
+        colors: {}, spacing: {}, fontSize: {}, fontWeight: {}, borderRadius: {},
+        shadow: {}, maxWidth: {}, breakpoints: {}, flexBasis: {}, objectFit: {},
+        fontStyle: {}, borderStyle: {},
+      } as unknown as SadsTheme;
+    }
+
+    this.theme = this._initializeTheme(baseThemeForUpdate, newThemeConfig);
     this.dynamicStyleSheet = this._createDynamicStyleSheet(); // Clears old rules
     if (typeof document !== "undefined") {
       document
