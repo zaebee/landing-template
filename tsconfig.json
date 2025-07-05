@@ -10,6 +10,7 @@
     "skipLibCheck": true,                     // Skip type checking of declaration files
     "sourceMap": true,                        // Generate source maps for debugging
     "resolveJsonModule": true,                // Allow importing JSON files
+    "moduleResolution": "node",               // Specify module resolution strategy
     "lib": ["ES2020", "DOM", "DOM.Iterable"], // Standard libraries to include
     "allowJs": false,                         // Do not allow JavaScript files to be compiled
     "checkJs": false,                         // Do not type-check JavaScript files
