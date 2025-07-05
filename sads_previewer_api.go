@@ -57,11 +57,14 @@ func listSadsComponentsHandler(w http.ResponseWriter, r *http.Request) {
 // This will require Pongo2 rendering with sample data.
 func getSadsComponentHandler(w http.ResponseWriter, r *http.Request) {
 	parts := strings.Split(r.URL.Path, "/")
-	if len(parts) < 4 {
-		http.Error(w, "Invalid component path", http.StatusBadRequest)
+	// Expected path: /api/sads/component/{name}
+	// parts will be: ["", "api", "sads", "component", "{name}"]
+	// So, we need at least 5 parts, and componentName is parts[4]
+	if len(parts) < 5 {
+		http.Error(w, "Invalid component path. Expected /api/sads/component/{name}", http.StatusBadRequest)
 		return
 	}
-	componentName := parts[3]
+	componentName := parts[4]
 	componentTemplatePath := filepath.Join(sadsComponentsPath, componentName, componentName+".html")
 
 	if _, err := os.Stat(componentTemplatePath); os.IsNotExist(err) {
@@ -198,11 +201,14 @@ func getSadsComponentHandler(w http.ResponseWriter, r *http.Request) {
 // This is more for inspection/frontend use if needed, primary rendering uses above handler
 func getSadsComponentSampleDataHandler(w http.ResponseWriter, r *http.Request) {
 	parts := strings.Split(r.URL.Path, "/")
-	if len(parts) < 5 { // /api/sads/component/{name}/sample-data
-		http.Error(w, "Invalid component data path", http.StatusBadRequest)
+	// Expected path: /api/sads/component/{name}/sample-data
+	// parts will be: ["", "api", "sads", "component", "{name}", "sample-data"]
+	// So, we need at least 6 parts, and componentName is parts[4]
+	if len(parts) < 6 {
+		http.Error(w, "Invalid component data path. Expected /api/sads/component/{name}/sample-data", http.StatusBadRequest)
 		return
 	}
-	componentName := parts[3]
+	componentName := parts[4]
 
 	// This logic will be similar to the data loading part of getSadsComponentHandler
 	// For brevity in this step, I'll sketch it out.
