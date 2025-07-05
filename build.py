@@ -5,6 +5,7 @@ using a class-based approach with protocols.
 
 import json
 import os
+import subprocess  # Added for running Go command
 import sys
 from typing import Any, Dict, List, Optional
 
@@ -25,6 +26,7 @@ if generated_dir not in sys.path:
 
 # Application-specific imports (Protobuf and services)
 # Generated Protobuf message class imports
+from build_protocols.asset_bundling import DefaultAssetBundler  # Updated import
 from build_protocols.config_management import DefaultAppConfigManager
 from build_protocols.data_loading import InMemoryDataCache, JsonProtoDataLoader
 from build_protocols.html_generation import (
@@ -32,6 +34,7 @@ from build_protocols.html_generation import (
 )
 from build_protocols.interfaces import (
     AppConfigManager,
+    AssetBundler,  # Added AssetBundler interface
     DataCache,
     DataLoader,
     HtmlBlockGenerator,
@@ -41,6 +44,7 @@ from build_protocols.interfaces import (
 )
 from build_protocols.page_assembly import DefaultPageBuilder
 from build_protocols.translation import DefaultTranslationProvider
+from generated.common_pb2 import SiteLogo  # Added import for SiteLogo
 from generated.nav_item_pb2 import Navigation
 
 
@@ -62,6 +66,7 @@ class BuildOrchestrator:
         data_cache: DataCache[Message],
         page_builder: PageBuilder,
         html_generators: Dict[str, HtmlBlockGenerator],
+        asset_bundler: AssetBundler,  # Added asset_bundler
     ):
         """Initializes the BuildOrchestrator with necessary service components.
 
@@ -77,6 +82,7 @@ class BuildOrchestrator:
             page_builder: Assembles the final HTML page from various parts.
             html_generators: A dictionary mapping block names to their
                 respective HTML generator instances.
+            asset_bundler: Handles bundling of CSS and JavaScript assets.
         """
         self.app_config_manager = app_config_manager
         self.translation_provider = translation_provider
@@ -84,27 +90,39 @@ class BuildOrchestrator:
         self.data_cache = data_cache
         self.page_builder = page_builder
         self.html_generators = html_generators
+        self.asset_bundler = asset_bundler  # Store asset_bundler instance
 
         self.app_config: Dict[str, Any] = {}
         self.nav_proto_data: Optional[Navigation] = None
+        self.site_logo_data: Optional[SiteLogo] = None  # Added for SiteLogo
 
     def load_initial_configurations(self) -> None:
-        """Loads base configurations like app config and navigation data.
+        """Loads base configurations like app config, navigation data, and site logo data.
 
-        This method populates `self.app_config` and `self.nav_proto_data`.
+        This method populates `self.app_config`, `self.nav_proto_data`, and `self.site_logo_data`.
         """
         self.app_config = self.app_config_manager.load_app_config()
 
+        # Load Navigation Data
         nav_data_file = self.app_config.get(
             "navigation_data_file", "data/navigation.json"
         )
-        # The DataLoader is generic (Message), but here we expect Navigation.
-        # A type: ignore is used as the generic loader's signature doesn't
-        # specifically guarantee Navigation without more complex generics.
         self.nav_proto_data = self.data_loader.load_dynamic_single_item_data(
-            nav_data_file,
-            Navigation,  # type: ignore
+            data_file_path=nav_data_file,
+            message_type=Navigation,  # type: ignore
         )
+
+        # Load Site Logo Data
+        site_logo_data_file = self.app_config.get("site_logo_data_file")
+        if site_logo_data_file:
+            self.site_logo_data = self.data_loader.load_dynamic_single_item_data(
+                data_file_path=site_logo_data_file,
+                message_type=SiteLogo,  # type: ignore
+            )
+        else:
+            print(
+                "Warning: 'site_logo_data_file' not found in app_config. Site logo will not be data-driven."
+            )
 
     def _process_language(
         self,
@@ -133,6 +151,7 @@ class BuildOrchestrator:
             main_content=assembled_main_content,
             navigation_items=navigation_items,
             page_title=page_title,
+            site_logo_data=self.site_logo_data,  # Pass site_logo_data
         )
 
         output_filename = f"index_{lang}.html"
@@ -149,6 +168,85 @@ class BuildOrchestrator:
         supported language to generate the respective HTML output.
         """
         self.load_initial_configurations()
+
+        # --- Compile Go WASM Module ---
+        print("Attempting to compile Go WASM module...")
+        wasm_module_path = os.path.join(project_root, "sads_wasm_poc", "sads_poc.wasm")
+        wasm_source_dir = os.path.join(project_root, "sads_wasm_poc")
+        # Ensure the source files exist (sads_wasm_bridge.go, value_resolver.go, etc.)
+        # For simplicity, we'll just point to the directory. `go build` will find .go files.
+
+        # Command to build the WASM module.
+        # Assumes all .go files in sads_wasm_poc directory are part of the 'main' package.
+        go_build_command = [
+            "go",
+            "build",
+            "-o",
+            wasm_module_path,
+            ".",  # Build all .go files in the specified directory
+        ]
+        try:
+            # Set GOOS and GOARCH environment variables for the subprocess
+            env = os.environ.copy()
+            env["GOOS"] = "js"
+            env["GOARCH"] = "wasm"
+
+            # Execute the command from within the sads_wasm_poc directory
+            # so `go build .` correctly targets the Go files there.
+            process = subprocess.run(
+                go_build_command,
+                cwd=wasm_source_dir,  # Run 'go build .' from within this directory
+                env=env,
+                check=True,  # Raise an exception for non-zero exit codes
+                capture_output=True,  # Capture stdout/stderr
+                text=True,  # Decode stdout/stderr as text
+            )
+            print(f"Go WASM module compiled successfully: {wasm_module_path}")
+            if process.stdout:
+                print("Go Build STDOUT:\n", process.stdout)
+        except subprocess.CalledProcessError as e:
+            print(f"Error compiling Go WASM module. Return code: {e.returncode}")
+            print("Go Build STDERR:\n", e.stderr)
+            print("Go Build STDOUT:\n", e.stdout)
+            # Decide if build should fail here. For now, print error and continue.
+            # return # Optionally, uncomment to stop build on WASM compilation failure
+        except FileNotFoundError:
+            print(
+                "Error: 'go' command not found. Please ensure Go is installed and in your PATH."
+            )
+            # return # Optionally, stop build
+
+        # --- Asset Bundling and Copying ---
+        # Define output directory for assets (CSS, JS, and WASM)
+        asset_output_dir = os.path.join(
+            project_root, "public", "dist", "assets"
+        )  # Target 'dist/assets'
+        # The wasm files will go into 'dist/assets/wasm' via copy_wasm_assets
+        os.makedirs(asset_output_dir, exist_ok=True)
+
+        # Bundle CSS and JS using the AssetBundler instance
+        # These will be placed directly in 'dist/assets' based on current DefaultAssetBundler logic
+        # if DefaultAssetBundler's output_dir param is 'asset_output_dir'
+        css_bundle_path = self.asset_bundler.bundle_css(
+            project_root, asset_output_dir
+        )  # Pass 'dist/assets'
+        js_bundle_path = self.asset_bundler.bundle_js(
+            project_root, asset_output_dir
+        )  # Pass 'dist/assets'
+
+        # Copy WASM assets (sads_poc.wasm from sads_wasm_poc, and wasm_exec.js)
+        # copy_wasm_assets will create 'dist/assets/wasm' and place files there.
+        if hasattr(self.asset_bundler, "copy_wasm_assets"):
+            self.asset_bundler.copy_wasm_assets(project_root, asset_output_dir)
+        else:
+            print(
+                "Warning: copy_wasm_assets method not found on asset_bundler. WASM files will not be copied."
+            )
+
+        if not css_bundle_path:
+            print("Warning: CSS bundling failed or produced no output.")
+        if not js_bundle_path:
+            print("Warning: JavaScript bundling failed or produced no output.")
 
         supported_langs: List[str] = self.app_config.get(
             "supported_langs", ["en", "es"]
@@ -454,6 +552,7 @@ def main() -> None:
         translation_provider=translation_provider_instance,
         jinja_env=jinja_env,  # Pass env to PageBuilder
     )
+    asset_bundler_instance = DefaultAssetBundler()  # Instantiate AssetBundler
 
     # Map block filenames to their specific HTML generator instances
     # Pass jinja_env to each generator
@@ -471,6 +570,7 @@ def main() -> None:
         data_cache=data_cache_instance,
         page_builder=page_builder_instance,
         html_generators=html_generator_instances,
+        asset_bundler=asset_bundler_instance,  # Pass AssetBundler instance
     )
     orchestrator.build_all_languages()
 

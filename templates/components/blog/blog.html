@@ -1,0 +1,78 @@
+<section
+    data-sads-component="blog"
+    id="blog" {# Keep ID for potential deep linking #}
+    data-sads-padding="xl" {# CSS: 2rem #}
+    data-sads-text-align="center"
+    data-sads-bg-color="blog-bg" {# Theme: #e9ecef light, #2a2a2a dark #}
+>
+  <h2
+    data-sads-element="title"
+    data-i18n="blog_title"
+    data-sads-margin-bottom="xl" {# CSS: 2rem #}
+    data-sads-font-size="custom:2rem" {# CSS: 2rem #}
+    data-sads-text-color="blog-title-text" {# Theme: #333 light, #e0e0e0 dark #}
+  >
+    {{ translations["blog_title"] | default:"Latest Posts" }}
+  </h2>
+  <div
+    data-sads-element="list"
+    data-sads-display="flex"
+    data-sads-flex-wrap="wrap"
+    data-sads-flex-justify="space-around"
+    data-sads-gap="custom:20px" {# CSS: 20px #}
+    data-sads-max-width="content-container" {# CSS: 1100px (theme) #}
+    data-sads-margin="custom:0 auto" {# CSS: margin auto #}
+    data-sads-responsive-rules='[
+        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "gap": "custom:0", "alignItems": "center" }} {# Align items center if they are full width by default #}
+    ]'
+  >
+    {% for post in items %}
+    <article
+        data-sads-element="item"
+        class="blog-item" {# Keep class for :last-child CSS rule #}
+        id="{% if post.id %}{{ post.id }}{% else %}{{"post-" + forloop.Counter }}{% endif %}"
+        data-sads-bg-color="blog-item-bg" {# Theme: #fff light, #1f1f1f dark #}
+        data-sads-padding="custom:1.5rem" {# CSS: 1.5rem #}
+        data-sads-border-radius="custom:8px" {# CSS: 8px #}
+        data-sads-shadow="blog-item-shadow" {# Theme for specific shadow normal/dark #}
+        data-sads-flex-basis="custom:calc(33.333% - 40px)" {# CSS: calc(33.333% - 40px) #}
+        data-sads-text-align="left"
+        data-sads-box-sizing="border-box"
+        data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px", "width": "full"}} {# Ensure full width on mobile if not by default from flexBasis #}
+        ]'
+        {# The :last-child rule for marginBottom:0 will be in blog.css #}
+    >
+      <h3
+        data-sads-element="item-title"
+        data-sads-margin-top="none" {# CSS: margin-top: 0 #}
+        data-sads-text-color="blog-item-title-text" {# Theme: #007bff light, #0af dark #}
+        data-sads-font-size="l" {# Assuming 'l' is appropriate for h3 #}
+      >
+        {{ translations[post.title.key] | default:post.title.key }}
+      </h3>
+      <p
+        data-sads-element="item-excerpt"
+        data-sads-font-size="custom:0.9rem" {# CSS: font-size: 0.9rem #}
+        data-sads-text-color="blog-item-excerpt-text" {# Theme: #555 light, #bbb dark #}
+        data-sads-margin-bottom="m" {# CSS: margin-bottom: 1rem (assuming theme.m) #}
+      >
+        {{ translations[post.excerpt.key] | default:post.excerpt.key }}
+      </p>
+      <a
+        data-sads-element="read-more-link"
+        class="read-more-link" {# Class for CSS hover styles #}
+        href="{{ post.cta.uri }}"
+        data-sads-display="inline-block" {# CSS: display: inline-block #}
+        data-sads-text-color="blog-readmore-text" {# Theme: #007bff light, #0af dark #}
+        data-sads-text-decoration="none" {# CSS: text-decoration: none #}
+        data-sads-font-weight="bold" {# CSS: font-weight: bold #}
+      >
+        {{ translations[post.cta.text.key] | default:post.cta.text.key }}</a
+      >
+    </article>
+    {% empty %}
+    <!-- No blog posts provided -->
+    {% endfor %}
+  </div>
+</section>

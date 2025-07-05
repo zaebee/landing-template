@@ -1,0 +1,17 @@
+/* templates/components/hero/hero.css */
+
+/* CTA Button Hover States */
+/* Targets the .cta-button class specifically within a data-sads-component="hero" context,
+   or globally if .cta-button is only used here.
+   If .cta-button can exist outside hero and needs different hovers, more specific selectors would be needed.
+   Given the plan, we assume .cta-button here is primarily for the hero.
+*/
+[data-sads-component="hero"] .cta-button:hover {
+  background-color: #e6e6e6; /* Light mode hover */
+  color: #0056b3; /* Light mode hover */
+}
+
+body.dark-mode [data-sads-component="hero"] .cta-button:hover {
+  background-color: #ccc; /* Dark mode hover */
+  color: #000; /* Dark mode hover */
+}

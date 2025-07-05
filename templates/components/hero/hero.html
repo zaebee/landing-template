@@ -1,0 +1,59 @@
+<section
+    data-sads-component="hero"
+    data-sads-padding="xxl xl" {# 4rem 2rem assuming theme mapping #}
+    data-sads-text-align="center"
+    data-sads-bg-color="hero-bg"     {# Theme: #007bff light, #0056b3 dark #}
+    data-sads-text-color="text-on-hero" {# Theme: #fff light, #e0e0e0 dark #}
+    {# data-sads-min-height="custom:75vh" - Retaining this example, can be adjusted #}
+    data-sads-display="flex"
+    data-sads-flex-direction="column"
+    data-sads-flex-justify="center"
+    data-sads-flex-align-items="center"
+>
+  {% if item %}
+  <h1
+    data-sads-element="title"
+    data-i18n="{% if item.title and item.title.key %}{{ item.title.key }}{% else %}hero_title_placeholder{% endif %}"
+    data-sads-font-size="custom:2.5rem" {# Direct value from CSS #}
+    {# text-color is inherited from parent section or can be overridden if 'text-on-hero' is not specific enough #}
+    data-sads-margin-bottom="m" {# 1rem assuming theme.m #}
+  >
+    {% set _hero_title_key = "hero_title_placeholder" %}
+    {% if item.title and item.title.key %}{% set _hero_title_key = item.title.key %}{% endif %}
+    {{ translations[_hero_title_key] | default:"Welcome to Our Site" }}
+  </h1>
+  <p
+    data-sads-element="subtitle"
+    data-i18n="{% if item.subtitle and item.subtitle.key %}{{ item.subtitle.key }}{% else %}hero_subtitle_placeholder{% endif %}"
+    data-sads-font-size="custom:1.2rem" {# Direct value from CSS #}
+    {# text-color is inherited from parent section #}
+    data-sads-margin-bottom="xl" {# 2rem assuming theme.xl #}
+    data-sads-max-width="custom:800px"
+  >
+    {% set _hero_subtitle_key = "hero_subtitle_placeholder" %}
+    {% if item.subtitle and item.subtitle.key %}{% set _hero_subtitle_key = item.subtitle.key %}{% endif %}
+    {{ translations[_hero_subtitle_key] | default:"Discover amazing things." }}
+  </p>
+  {% if item.cta %}
+  <a
+    data-sads-element="cta-button"
+    class="cta-button" {# Keep class for hero.css hover styles #}
+    href="{{ item.cta.uri }}"
+    data-sads-display="inline-block"
+    data-sads-padding="s l" {# 10px 20px assuming theme mapping #}
+    data-sads-text-decoration="none"
+    data-sads-font-weight="bold"
+    data-sads-border-radius="s" {# 5px assuming theme.s #}
+    data-sads-bg-color="cta-hero-bg"      {# Theme: #fff light, #e0e0e0 dark #}
+    data-sads-text-color="cta-hero-text"  {# Theme: #007bff light, #121212 dark #}
+    data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
+  >
+    {% set _hero_cta_key = "hero_cta_placeholder" %}
+    {% if item.cta and item.cta.text and item.cta.text.key %}{% set _hero_cta_key = item.cta.text.key %}{% endif %}
+    {{ translations[_hero_cta_key] | default:"Learn More" }}
+  </a>
+  {% endif %}
+  {% else %}
+  <p data-sads-text-color="text-error">Hero content not available.</p>
+  {% endif %}
+</section>

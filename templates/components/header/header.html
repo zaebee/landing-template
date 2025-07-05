@@ -1,0 +1,165 @@
+<header
+  data-sads-component="header"
+  data-sads-bg-color="header-bg"
+  data-sads-text-color="text-on-header-bg" {# Assuming this theme variable exists for general text like hamburger #}
+  data-sads-padding="m 0"
+  data-sads-position="sticky"
+  data-sads-top="custom:0"
+  data-sads-width="full"
+  data-sads-z-index="custom:1000"
+  data-sads-shadow="subtle"
+>
+  <nav
+    data-sads-element="navbar"
+    data-sads-display="flex"
+    data-sads-flex-justify="space-between"
+    data-sads-flex-align-items="center"
+    data-sads-max-width="content-container"
+    {# Assuming a theme variable for max content width #}
+    data-sads-margin="custom:0 auto"
+    {# Center the nav content #}
+    data-sads-padding="0 m"
+    {# Horizontal padding for content within the nav #}
+    data-sads-responsive-rules='[
+        {"breakpoint": "mobile", "styles": {"position": "relative"}}
+    ]'
+  >
+    <div data-sads-element="logo-container">
+      {# Assuming site_logo object is passed in the context from build.py #}
+      <a
+        href="{{ site_logo.get('target_url', '#') }}"
+        {# data-i18n attribute can be removed if logo_text_key is always resolved server-side #}
+        {# If client-side translation for logo text is still desired for some reason, keep data-i18n and use site_logo.logo_text_key as its value #}
+        data-sads-element="logo-link"
+        data-sads-text-color="text-primary"
+        data-sads-text-decoration="none"
+        data-sads-font-weight="bold"
+        data-sads-font-size="l"
+      >
+        {{ translations.get('logo_text', 'Logo') }}
+      </a>
+    </div>
+
+    <button
+      data-sads-element="menu-toggle"
+      aria-expanded="false"
+      aria-label="{{ translations.get('toggle_menu_label', 'Toggle menu') }}"
+      class="hamburger-menu"
+      data-sads-display="none"
+      data-sads-responsive-rules="[ {&quot;breakpoint&quot;: &quot;mobile&quot;, &quot;styles&quot;: {&quot;display&quot;: &quot;block&quot;}} ]"
+      data-sads-button-variant="icon"
+      data-sads-text-color="text-primary"
+      data-sads-cursor="pointer"
+      data-sads-bg-color="transparent"
+      data-sads-border-style="none"
+      {# From original global CSS: padding: 10px -> theme 's' or specific custom value #}
+      data-sads-padding="s"
+    >
+      {# Default: hide on larger screens #}
+      {# Assuming SADS can style a basic icon button look #}
+      {# Keep class if specific CSS for hamburger animation exists outside SADS & SADS can't do it #}
+      {# Spans for hamburger bars might need to be styled by the class if SADS can't do pseudo-elements or complex child styling for them #}
+      <span class="hamburger-bar"></span>
+      <span class="hamburger-bar"></span>
+      <span class="hamburger-bar"></span>
+    </button>
+
+    <div
+      data-sads-element="nav-items-container"
+      data-sads-display="flex"
+      data-sads-flex-align-items="center"
+      data-sads-gap="m"
+      data-sads-responsive-rules='[
+        {"breakpoint": "mobile", "styles": {"display": "none", "flexDirection": "column", "position": "absolute", "top": "custom:60px", "left": "custom:0", "width": "full", "bg-color": "header-bg", "padding": "m", "shadow": "subtle", "gap": "s", "zIndex": "custom:999" }}
+      ]'
+    >
+      {# This mobile rule attempts to make a dropdown. #}
+      {# A class like 'nav-items-container--active' toggled by JS would set display to flex for mobile #}
+      <ul
+        data-sads-element="nav-list"
+        data-sads-display="flex"
+        data-sads-gap="m"
+        data-sads-list-style="none"
+        data-sads-padding="none"
+        data-sads-margin="none"
+        data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"flexDirection": "column", "width": "full", "alignItems": "stretch", "gap": "s"}}
+        ]'
+      >
+        {% for item in navigation_items %}
+        <li data-sads-element="nav-item">
+          <a
+            href="{{ item.href }}"
+            data-i18n="{{ item.label.key }}"
+            data-sads-text-color="text-nav-link"
+            data-sads-text-decoration="none"
+            data-sads-padding-top="xs"
+            data-sads-padding-bottom="xs"
+            data-sads-padding-left="s"
+            data-sads-padding-right="s"
+            data-sads-border-radius="s"
+            data-sads-transition="custom:background-color 0.3s ease, color 0.3s ease"
+            {# data-sads-hover-text-decoration="underline" - SADS limitation for pseudo #}
+            {# data-sads-hover-bg-color="nav-link-hover-bg" - SADS limitation for pseudo #}
+          >
+            {{ translations.get(item.label.key, item.label.key) }}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+
+      <button
+        data-sads-element="dark-mode-toggle"
+        aria-label="Switch to Dark Mode"
+        id="dark-mode-toggle"
+        {# id kept for JS targeting #}
+        data-sads-button-variant="icon"
+        data-sads-text-color="text-primary"
+        data-sads-padding="xs" {# Consistent small padding for icon button via SADS #}
+        data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"marginTop": "s", "marginLeft": "custom:0", "width": "auto", "padding": "s"}}
+        ]'
+      >
+        🌙
+      </button>
+
+      <div
+        data-sads-element="language-switcher"
+        id="language-switcher"
+        {# id kept for JS targeting #}
+        data-sads-display="flex"
+        data-sads-gap="s"
+        data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"width": "full", "justifyContent": "center", "marginTop": "m", "marginLeft": "custom:0"}}
+        ]'
+      >
+        <button
+          data-lang="en"
+          data-sads-button-variant="outline"
+          data-sads-text-color="text-primary"
+          data-sads-bg-color="surface"
+          data-sads-border-color="input-border-color"
+          data-sads-padding="xs s"
+          data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"padding": "s m"}}
+          ]'
+        >
+          EN
+        </button>
+        <button
+          data-lang="es"
+          data-sads-button-variant="outline"
+          data-sads-text-color="text-primary"
+          data-sads-bg-color="surface"
+          data-sads-border-color="input-border-color"
+          data-sads-padding="xs s"
+          data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"padding": "s m"}}
+          ]'
+        >
+          ES
+        </button>
+      </div>
+    </div>
+  </nav>
+</header>

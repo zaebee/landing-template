@@ -12,444 +12,37 @@ body {
   background-color: #f4f4f4;
 }
 
-/* Header & Navigation */
-.hamburger-menu {
-  display: none; /* Hidden by default, shown in media query */
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 10px;
-  margin-left: auto; /* Pushes it to the right if nav is flex row */
-}
+/* Styles for elements previously in Header that are now managed by SADS or header.css have been removed. */
+/* These include:
+  - .hamburger-menu, .hamburger-menu .hamburger-bar
+  - header, header nav, .nav-items
+  - #dark-mode-toggle and its hover state (base styles in SADS, hover in header.css)
+  - header .logo a
+  - header ul, header ul li, header ul li a (and hover/active states)
+  - main { padding-top } (moved to header.css as it's related to sticky header height)
+  - Language Switcher styles (base in SADS, states in header.css)
+*/
 
-.hamburger-menu .hamburger-bar {
-  display: block;
-  width: 25px;
-  height: 3px;
-  background-color: #fff;
-  margin: 5px 0;
-  transition: 0.4s;
-}
+/* Hero Section styles have been migrated to templates/components/hero/hero.html (SADS)
+   and templates/components/hero/hero.css (for hover states). */
 
-/* Dark mode style for hamburger bars */
-body.dark-mode .hamburger-menu .hamburger-bar {
-  background-color: #e0e0e0;
-}
+/* Features Section styles have been migrated to templates/components/features/features.html (SADS)
+   and templates/components/features/features.css (for :last-child responsive). */
 
-header {
-  background: #333;
-  color: #fff;
-  padding: 1rem 0;
-  position: sticky;
-  top: 0;
-  width: 100%;
-  z-index: 1000;
-}
+/* Contact Form Section styles have been migrated to contact-form.html (SADS)
+   and contact-form.css (for hover/focus states). */
 
-header nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1100px;
-  margin: auto;
-  padding: 0 20px;
-}
+/* Testimonials Section styles have been migrated to testimonials.html (SADS)
+   and testimonials.css (for :last-child responsive). */
 
-.nav-items {
-  display: flex;
-  align-items: center;
-}
+/* Portfolio Section styles have been migrated to portfolio.html (SADS). */
 
-#dark-mode-toggle {
-  margin-left: 20px;
-  padding: 8px 12px;
-  background-color: #fff;
-  color: #333;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
+/* Blog Section styles have been migrated to blog.html (SADS)
+   and blog.css (for hover and :last-child responsive). */
 
-#dark-mode-toggle:hover {
-  background-color: #e6e6e6;
-}
+/* Language Switcher Styles have been moved to header.html (SADS) and header.css */
 
-/* Logo style */
-header .logo a {
-  color: #fff;
-  text-decoration: none;
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-/* Navigation list styles */
-header ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-}
-
-header ul li {
-  margin-left: 20px;
-}
-
-header ul li a {
-  color: #fff;
-  text-decoration: none;
-  padding: 5px 10px; /* Add some padding for better hover indication */
-  border-radius: 4px; /* Rounded corners for hover effect */
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease; /* Smooth transition */
-}
-
-header ul li a:hover {
-  background-color: #555; /* Darker background on hover */
-  color: #fff; /* Keep text color or change as needed */
-  text-decoration: none; /* Remove underline if hover has background */
-}
-
-/* Style for an 'active' navigation link - can be set by JavaScript if desired */
-header ul li a.active-nav-link {
-  background-color: #007bff; /* Example active color */
-  color: #fff;
-}
-
-/* Main Content Area */
-main {
-  padding-top: 20px; /* Add padding to avoid content being hidden by sticky header */
-}
-
-/* Hero Section */
-.hero {
-  background: #007bff;
-  color: #fff;
-  padding: 4rem 2rem;
-  text-align: center;
-}
-
-.hero h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-}
-
-.hero p {
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
-}
-
-.cta-button {
-  display: inline-block;
-  background: #fff;
-  color: #007bff;
-  padding: 10px 20px;
-  text-decoration: none;
-  border-radius: 5px;
-  font-weight: bold;
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
-}
-
-.cta-button:hover {
-  background-color: #e6e6e6;
-  color: #0056b3;
-}
-
-/* Features Section */
-.features {
-  padding: 2rem;
-  text-align: center;
-  background-color: #fff;
-}
-
-.features h2 {
-  margin-bottom: 2rem;
-  font-size: 2rem;
-}
-
-.feature-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  gap: 20px;
-  max-width: 1100px;
-  margin: auto;
-}
-
-.feature-item {
-  background: #f9f9f9;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
-  flex-basis: calc(33.333% - 40px); /* Adjust for gap */
-  box-sizing: border-box;
-  text-align: left;
-}
-
-.feature-item h3 {
-  margin-top: 0;
-  color: #007bff;
-}
-
-/* Contact Form Section */
-.contact-form {
-  padding: 2rem;
-  background-color: #e9ecef;
-  text-align: center;
-}
-
-.contact-form h2 {
-  margin-bottom: 2rem;
-  font-size: 2rem;
-}
-
-.contact-form form {
-  max-width: 600px;
-  margin: auto;
-  background: #fff;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
-}
-
-.contact-form label {
-  display: block;
-  margin-bottom: 0.5rem;
-  text-align: left;
-  font-weight: bold;
-}
-
-.contact-form input[type="text"],
-.contact-form input[type="email"],
-.contact-form textarea {
-  width: 100%;
-  padding: 0.75rem;
-  margin-bottom: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-
-.contact-form textarea {
-  resize: vertical;
-}
-
-.contact-form button[type="submit"] {
-  display: inline-block;
-  background: #28a745;
-  color: #fff;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-}
-
-.contact-form button[type="submit"]:hover {
-  background: #218838;
-}
-
-/* Testimonials Section */
-.testimonials {
-  padding: 2rem;
-  text-align: center;
-  background-color: #f9f9f9; /* Light background for the section */
-}
-
-.testimonials h2 {
-  margin-bottom: 2rem;
-  font-size: 2rem;
-  color: #333;
-}
-
-.testimonial-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  gap: 20px;
-  max-width: 1100px;
-  margin: auto;
-}
-
-.testimonial-item {
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
-  flex-basis: calc(33.333% - 40px); /* Adjust for gap */
-  box-sizing: border-box;
-  text-align: center;
-}
-
-.testimonial-item img {
-  border-radius: 50%;
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  margin-bottom: 1rem;
-  border: 3px solid #007bff;
-}
-
-.testimonial-item p {
-  font-style: italic;
-  color: #555;
-  margin-bottom: 1rem;
-}
-
-.testimonial-item h4 {
-  margin-top: 0;
-  color: #333;
-  font-weight: bold;
-}
-
-/* Portfolio Section */
-.portfolio {
-  padding: 2rem;
-  text-align: center;
-  background-color: #fff; /* Light background for the section */
-}
-
-.portfolio h2 {
-  margin-bottom: 2rem;
-  font-size: 2rem;
-  color: #333;
-}
-
-.portfolio-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-  max-width: 1100px;
-  margin: auto;
-}
-
-.portfolio-item {
-  background: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
-  overflow: hidden; /* Ensures image corners are rounded if image is direct child */
-  text-align: left;
-}
-
-.portfolio-item img {
-  width: 100%;
-  height: auto;
-  display: block;
-  border-bottom: 1px solid #eee; /* Optional: adds a line between img and text */
-}
-
-.portfolio-item h3 {
-  margin: 1rem 1rem 0.5rem;
-  color: #007bff;
-}
-
-.portfolio-item p {
-  margin: 0 1rem 1rem;
-  color: #555;
-  font-size: 0.9rem;
-}
-
-/* Blog Section */
-.blog {
-  padding: 2rem;
-  text-align: center;
-  background-color: #e9ecef; /* Similar to contact form for consistency */
-}
-
-.blog h2 {
-  margin-bottom: 2rem;
-  font-size: 2rem;
-  color: #333;
-}
-
-.blog-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  gap: 20px;
-  max-width: 1100px;
-  margin: auto;
-}
-
-.blog-item {
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
-  flex-basis: calc(33.333% - 40px); /* Adjust for gap */
-  box-sizing: border-box;
-  text-align: left;
-}
-
-.blog-item h3 {
-  margin-top: 0;
-  color: #007bff;
-}
-
-.blog-item p {
-  font-size: 0.9rem;
-  color: #555;
-  margin-bottom: 1rem;
-}
-
-.read-more {
-  display: inline-block;
-  color: #007bff;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.read-more:hover {
-  text-decoration: underline;
-}
-
-/* Language Switcher Styles */
-#language-switcher {
-  margin-left: 20px; /* Align with dark mode toggle */
-  display: flex;
-  align-items: center;
-}
-
-#language-switcher button {
-  padding: 8px 12px;
-  background-color: #fff;
-  color: #333;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  margin-left: 5px; /* Space between buttons */
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
-}
-
-#language-switcher button:first-child {
-  margin-left: 0;
-}
-
-#language-switcher button:hover {
-  background-color: #e6e6e6;
-}
-
-#language-switcher button.active {
-  /* Style for the currently active language */
-  background-color: #007bff;
-  color: #fff;
-  border-color: #007bff;
-}
-
-/* Footer */
-footer {
-  background: #333;
-  color: #fff;
-  text-align: center;
-  padding: 1rem 0;
-  margin-top: 20px; /* Ensure space above footer if content is short */
-}
+/* Footer styles have been moved to footer.html (SADS attributes) */
 
 /* === Dark Mode Overrides === */
 body.dark-mode {
@@ -457,283 +50,220 @@ body.dark-mode {
   color: #e0e0e0;
 }
 
-body.dark-mode header {
-  background: #1f1f1f;
-  color: #e0e0e0;
+/* Dark Mode Overrides for Header elements have been moved to header.css or are handled by SADS theme */
+
+/* Dark Mode Hero Section styles are handled by SADS theme in hero.html
+   and dark mode hover states in hero.css. */
+
+/* Dark Mode Features Section styles are handled by SADS theme in features.html. */
+
+/* Dark Mode Contact Form styles are handled by SADS theme in contact-form.html
+   and hover/focus states in contact-form.css. */
+
+/* body.dark-mode footer styles are handled by SADS theme */
+
+/* Dark mode styles for #dark-mode-toggle and #language-switcher buttons have been moved to header.css or are handled by SADS theme */
+
+/* Dark Mode for Testimonials styles are handled by SADS theme in testimonials.html. */
+
+/* Dark Mode for Portfolio styles are handled by SADS theme in portfolio.html. */
+
+/* Dark Mode for Blog Section styles are handled by SADS theme in blog.html
+   and hover states in blog.css. */
+
+/* Responsive Adjustments */
+/* Header-related responsive styles have been moved to header.css or SADS attributes in header.html */
+@media (width <= 768px) {
+  /* main { padding-top: ... } rule moved to header.css */
+
+  /* .feature-list and .feature-item responsive styles moved to SADS/features.css */
+  /* .testimonial-list and .testimonial-item responsive styles moved to SADS/testimonials.css */
+  /* .blog-list and .blog-item responsive styles moved to SADS/blog.css */
 }
 
-body.dark-mode header ul li a,
-body.dark-mode header .logo a {
-  color: #e0e0e0;
+/* --- Header Mobile Menu Active States --- */
+/* When the mobile menu is active, show the nav items container */
+.nav-items-container--active {
+  display: flex !important; /* Override SADS display:none for mobile */
+  /* Other styles like position, top, left, width, bg-color, padding, shadow, gap, zIndex
+     are handled by SADS responsive rules on the element itself.
+     This class primarily ensures it's visible.
+     Ensure flex-direction: column is set by SADS for mobile. */
 }
 
-body.dark-mode header ul li a:hover {
-  background-color: #444; /* Slightly lighter gray for hover in dark mode */
-  color: #e0e0e0;
+/* Hamburger Menu Icon Transformation (to an "X") */
+.hamburger-menu {
+  /* Basic styling for the hamburger bars if not covered by SADS */
+  /* display: flex; Already handled by SADS for mobile? Check header.html */
+  /* flex-direction: column; */
+  /* justify-content: space-around; */
+  /* width: 30px; */ /* Example width */
+  /* height: 24px; */ /* Example height */
+  /* background: transparent; Handled by SADS */
+  /* border: none; Handled by SADS */
+  /* cursor: pointer; Handled by SADS */
+  /* padding: 0; SADS has padding:s */
+  /* z-index: 1001; To be above nav items container if it has a bg */
 }
 
-body.dark-mode header ul li a.active-nav-link {
-  background-color: #0af; /* Lighter blue for active link in dark mode */
-  color: #121212; /* Dark text on light blue background */
+.hamburger-menu .hamburger-bar {
+  display: block;
+  width: 25px; /* Example width */
+  height: 3px; /* Example height */
+  background-color: currentColor; /* Inherit color from parent button's text color (set by SADS) */
+  border-radius: 3px;
+  transition: all 0.3s ease-in-out;
 }
 
-body.dark-mode .hero {
-  background: #0056b3; /* Darker blue */
-  color: #e0e0e0;
+/* body.dark-mode .hamburger-menu .hamburger-bar rule is no longer needed as currentColor handles it */
+
+.hamburger-menu.hamburger-menu--active .hamburger-bar:nth-child(1) {
+  transform: translateY(8px) rotate(45deg); /* Adjusted for 3px height + 2.5px spacing approx */
 }
 
-body.dark-mode .cta-button {
-  background: #e0e0e0;
-  color: #121212;
+.hamburger-menu.hamburger-menu--active .hamburger-bar:nth-child(2) {
+  opacity: 0;
 }
 
-body.dark-mode .cta-button:hover {
-  background-color: #ccc;
-  color: #000;
+.hamburger-menu.hamburger-menu--active .hamburger-bar:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg); /* Adjusted for 3px height + 2.5px spacing approx */
 }
 
-body.dark-mode .features {
-  background-color: #1f1f1f;
+/* Ensure hamburger bars are spaced out if not using flex properties on parent */
+.hamburger-menu .hamburger-bar + .hamburger-bar {
+  margin-top: 5px; /* Example spacing */
 }
 
-body.dark-mode .feature-item {
-  background: #2a2a2a;
-  box-shadow: 0 2px 5px rgb(255 255 255 / 10%);
+/* --- Language Switcher Active State --- */
+#language-switcher button.active-lang {
+  /* Example active state: more prominent border, different background or text weight */
+  /* These should ideally use theme variables if SADS was to control them,
+     but for a simple CSS override: */
+  font-weight: bold;
+  border-color: #007bff; /* Example: Use accent color for border */
+  color: #007bff; /* Example: Use accent color for text */
+  /* background-color: #eef; */ /* Optional: very light background */
 }
 
-body.dark-mode .feature-item h3 {
-  color: #0af; /* Lighter blue for dark mode */
+body.dark-mode #language-switcher button.active-lang {
+  border-color: #0af; /* Example: Dark mode accent color for border */
+  color: #0af; /* Example: Dark mode accent color for text */
+  /* background-color: #334; */ /* Optional: slightly different dark bg */
 }
 
-body.dark-mode .contact-form {
-  background-color: #2a2a2a;
+/* --- General Header Button Styling & Interactive States --- */
+/* Default styling for buttons in the header if SADS variants are insufficient */
+#dark-mode-toggle,
+#language-switcher button {
+  cursor: pointer;
+  padding: 0.4rem 0.8rem; /* CSS padding for consistent button size, SADS data-sads-padding provides base but this can refine */
+  /* SADS attributes will now handle:
+     - border-color (via data-sads-border-color)
+     - background-color (via data-sads-bg-color)
+     - color (via data-sads-text-color)
+  */
+  /* border: 1px solid #ccc; */ /* Now handled by SADS data-sads-border-color */
+  /* background-color: #f8f9fa; */ /* Now handled by SADS data-sads-bg-color */
+  /* color: #333; */ /* Now handled by SADS data-sads-text-color */
+  border-radius: 4px; /* Default border-radius from theme 's', can be SADS attribute too if needed */
+  transition:
+    background-color 0.2s ease-in-out,
+    border-color 0.2s ease-in-out,
+    color 0.2s ease-in-out;
+  line-height: 1; /* Ensure icon buttons don't have excessive line height */
+  min-width: 40px; /* Ensure a minimum tap target size / width */
+  min-height: 30px; /* Ensure a minimum tap target size / height */
+  display: inline-flex; /* Align icon/text nicely if it were mixed */
+  align-items: center;
+  justify-content: center;
 }
 
-body.dark-mode .contact-form form {
-  background: #1f1f1f;
-  box-shadow: 0 2px 5px rgb(255 255 255 / 10%);
+/* Specific for dark mode toggle if it's meant to be more like an icon button */
+#dark-mode-toggle {
+  background-color: transparent; /* Icon button typically has no background */
+  border: 1px solid transparent; /* No border for icon button unless explicitly desired */
+  font-size: 1.2rem; /* Make icon slightly larger */
+  /* Padding is now handled by data-sads-padding="xs" in HTML */
 }
 
-body.dark-mode .contact-form label {
-  color: #e0e0e0;
-}
-
-body.dark-mode .contact-form input[type="text"],
-body.dark-mode .contact-form input[type="email"],
-body.dark-mode .contact-form textarea {
-  background-color: #333;
-  color: #e0e0e0;
-  border: 1px solid #555;
-}
-
-body.dark-mode .contact-form button[type="submit"] {
-  background: #1a73e8; /* Google blue */
-}
-
-body.dark-mode .contact-form button[type="submit"]:hover {
-  background: #1558b0;
-}
-
-body.dark-mode footer {
-  background: #1f1f1f;
-  color: #e0e0e0;
+/* Ensure language switcher buttons use SADS text color by default, or a themed color */
+#language-switcher button {
+  /* SADS `data-sads-text-color` is not set on these buttons in HTML, so they'd inherit from header or body. */
+  /* Let's use text-primary from theme as a default via CSS if SADS doesn't set it. */
+  /* color: var(--sads-color-text-primary); Not possible directly, use fallback or theme values */
+  color: #333; /* Fallback - matches theme's text-primary */
 }
 
 body.dark-mode #dark-mode-toggle {
-  background-color: #333;
-  color: #e0e0e0;
-  border: 1px solid #555;
+  /* text color for icon should come from data-sads-text-color="text-primary" which has a dark mode variant */
 }
 
-body.dark-mode #dark-mode-toggle:hover {
-  background-color: #444;
-}
-
-/* Dark mode styles for language switcher */
 body.dark-mode #language-switcher button {
-  background-color: #333;
-  color: #e0e0e0;
-  border: 1px solid #555;
+  /* Base colors (bg, border, text) for dark mode are now handled by SADS attributes */
+  /* background-color: #3e4a58; */
+  /* border-color: #56677c; */
+  /* color: #e0e0e0; */
 }
 
-body.dark-mode #language-switcher button:hover {
-  background-color: #444;
+/* The #dark-mode-toggle specific dark mode styling for bg/border is removed as it's transparent.
+   Its text color (the icon) will be handled by its data-sads-text-color="text-primary" attribute. */
+
+/* Hover/Focus states for header buttons */
+#dark-mode-toggle:hover,
+#dark-mode-toggle:focus,
+#language-switcher button:hover,
+#language-switcher button:focus {
+  border-color: #007bff;
+  background-color: #e9ecef; /* Lighten on hover */
+  outline: none; /* Remove default focus outline if custom is preferred or not needed */
 }
 
-body.dark-mode #language-switcher button.active {
-  background-color: #0af; /* Lighter blue for dark mode active */
-  color: #121212;
+body.dark-mode #dark-mode-toggle:hover,
+body.dark-mode #dark-mode-toggle:focus,
+body.dark-mode #language-switcher button:hover,
+body.dark-mode #language-switcher button:focus {
   border-color: #0af;
+  background-color: #495a6e; /* Slightly different hover for dark mode */
 }
 
-/* Dark Mode for Testimonials */
-body.dark-mode .testimonials {
-  background-color: #1f1f1f; /* Dark background for the section in dark mode */
+/* Styling for navigation links in the header */
+header nav ul li a {
+  /* SADS already provides: text-color, text-decoration, padding, border-radius, transition */
+  display: block; /* Ensure padding and hover areas work well */
+  position: relative; /* For potential pseudo-elements if needed later */
 }
 
-body.dark-mode .testimonials h2 {
-  color: #e0e0e0;
+header nav ul li a:hover,
+header nav ul li a:focus {
+  /* SADS cannot do hover states directly. text-decoration from SADS is 'none' */
+  text-decoration: underline !important; /* Force underline on hover/focus */
+  background-color: rgba(0, 0, 0, 0.05); /* Subtle background on hover */
+  outline: none;
 }
 
-body.dark-mode .testimonial-item {
-  background: #2a2a2a; /* Darker item background */
-  box-shadow: 0 2px 5px rgb(255 255 255 / 10%);
+body.dark-mode header nav ul li a:hover,
+body.dark-mode header nav ul li a:focus {
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.1
+  ); /* Subtle background for dark mode */
 }
 
-body.dark-mode .testimonial-item img {
-  border-color: #0af; /* Lighter blue border for dark mode */
+/* Remove SADS-applied padding if CSS is taking over for specific buttons */
+/* This is a bit of a fight with SADS. Better to ensure SADS attributes are minimal if CSS handles it. */
+/* For example, if #dark-mode-toggle has `data-sads-padding` and also CSS padding, CSS might win or lose based on specificity/!important */
+
+/* General header layout refinements if SADS is not enough */
+/* Example: Ensure consistent vertical alignment in the nav bar if flex items have different heights */
+header [data-sads-element="navbar"] > div,
+header [data-sads-element="navbar"] > button {
+  /* This is a general approach, might need more specific targeting */
+  /* display: flex; */
+  /* align-items: center; */ /* Already on navbar, but maybe needed on children */
 }
 
-body.dark-mode .testimonial-item p {
-  color: #bbb; /* Lighter text for dark mode */
-}
-
-body.dark-mode .testimonial-item h4 {
-  color: #e0e0e0;
-}
-
-/* Dark Mode for Portfolio */
-body.dark-mode .portfolio {
-  background-color: #2a2a2a; /* Dark background for the section */
-}
-
-body.dark-mode .portfolio h2 {
-  color: #e0e0e0;
-}
-
-body.dark-mode .portfolio-item {
-  background: #1f1f1f; /* Darker item background */
-  box-shadow: 0 2px 5px rgb(255 255 255 / 5%);
-}
-
-body.dark-mode .portfolio-item img {
-  border-bottom: 1px solid #333;
-}
-
-body.dark-mode .portfolio-item h3 {
-  color: #0af; /* Lighter blue for dark mode */
-}
-
-body.dark-mode .portfolio-item p {
-  color: #bbb; /* Lighter text for dark mode */
-}
-
-/* Dark Mode for Blog Section */
-body.dark-mode .blog {
-  background-color: #2a2a2a; /* Dark background for the section */
-}
-
-body.dark-mode .blog h2 {
-  color: #e0e0e0;
-}
-
-body.dark-mode .blog-item {
-  background: #1f1f1f; /* Darker item background */
-  box-shadow: 0 2px 5px rgb(255 255 255 / 5%);
-}
-
-body.dark-mode .blog-item h3 {
-  color: #0af; /* Lighter blue for dark mode */
-}
-
-body.dark-mode .blog-item p {
-  color: #bbb; /* Lighter text for dark mode */
-}
-
-body.dark-mode .read-more {
-  color: #0af;
-}
-
-/* Responsive Adjustments */
-@media (width <= 768px) {
-  header nav {
-    /* flex-direction: column; */ /* Keep it row for logo and hamburger */
-    justify-content: space-between; /* Ensure logo is to the left and hamburger to the right */
-    align-items: center;
-    position: relative; /* For absolute positioning of nav-items */
-  }
-
-  .hamburger-menu {
-    display: block; /* Show hamburger on mobile */
-    /* order: 3; */ /* Not strictly needed if it's the last item in flex order */
-    /* margin-left: 15px; */ /* Let space-between handle positioning */
-  }
-
-  .nav-items {
-    display: none; /* Hide nav items by default on mobile */
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    position: absolute;
-    top: 100%; /* Position below the header */
-    left: 0;
-    background-color: #333; /* Match header background */
-    padding: 10px 0;
-    z-index: 999; /* Ensure it's above other content */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  }
-
-  .nav-items.active {
-    display: flex; /* Show nav items when active */
-  }
-
-  body.dark-mode .nav-items {
-    background-color: #1f1f1f; /* Dark mode background for dropdown */
-  }
-
-  header ul {
-    margin-top: 0; /* Reset margin as nav-items handles top margin */
-    margin-bottom: 10px; /* Space below nav links */
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-  }
-
-  header ul li {
-    margin: 8px 0; /* Increased vertical margin for touch targets */
-  }
-
-  #dark-mode-toggle {
-    margin-top: 10px; /* Space above the toggle */
-    margin-left: 0; /* Reset margin from desktop view */
-    width: auto; /* Allow button to size to content or specific width if desired */
-    padding: 10px 15px; /* Slightly larger for touch */
-  }
-
-  #language-switcher {
-    margin-top: 15px; /* Space above the switchers */
-    margin-left: 0; /* Reset margin from desktop view */
-    flex-direction: row; /* Keep buttons in a row */
-    justify-content: center; /* Center buttons within the switcher */
-    width: 100%; /* Allow switcher to take width if buttons need to wrap (less likely here) */
-  }
-
-  #language-switcher button {
-    padding: 10px 15px; /* Slightly larger for touch */
-    margin: 0 5px; /* Adjust horizontal margin between buttons */
-  }
-
-  /* Adjust main content padding if header height changes significantly */
-  main {
-    padding-top: 10px; /* Adjust as needed based on final header height */
-  }
-
-  .feature-list,
-  .testimonial-list,
-  .blog-list {
-    flex-direction: column;
-  }
-
-  .feature-item,
-  .testimonial-item,
-  .blog-item {
-    flex-basis: 100%; /* Full width on smaller screens */
-    margin-bottom: 20px;
-  }
-
-  .feature-item:last-child,
-  .testimonial-item:last-child,
-  .blog-item:last-child {
-    margin-bottom: 0;
-  }
-}
+/* Ensure the language switcher buttons themselves don't get too wide on mobile from their container */
+/* This is better handled by SADS `width="auto"` on the buttons if an issue. */
+/* body.mobile #language-switcher button { width: auto; } */

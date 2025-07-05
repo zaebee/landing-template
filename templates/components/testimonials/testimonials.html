@@ -1,0 +1,99 @@
+<section
+    data-sads-component="testimonials"
+    id="testimonials"
+    data-sads-padding="xl" {# CSS: 2rem #}
+    data-sads-text-align="center"
+    data-sads-bg-color="testimonials-bg" {# Theme: #f9f9f9 light, #1f1f1f dark #}
+>
+  <h2
+    data-sads-element="title"
+    data-i18n="testimonials_title"
+    data-sads-margin-bottom="xl" {# CSS: 2rem #}
+    data-sads-font-size="custom:2rem" {# CSS: 2rem #}
+    data-sads-text-color="testimonials-title-text" {# Theme: #333 light, #e0e0e0 dark #}
+  >
+    {{ translations.get('testimonials_title', 'Testimonials') }}
+  </h2>
+  <div
+    data-sads-element="list"
+    data-sads-display="flex"
+    {# Default flex-direction is row, CSS had column for mobile in .testimonial-list directly #}
+    {# This SADS structure makes items stack by default due to flex-basis="full" on items, then row for tablet+ #}
+    data-sads-gap="custom:20px" {# CSS: 20px #}
+    data-sads-max-width="content-container" {# CSS: 1100px (theme) #}
+    data-sads-margin="custom:0 auto" {# CSS: margin auto #}
+    data-sads-responsive-rules='[
+        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "gap": "custom:0"}}, {# Remove gap if items have margin #}
+        {"breakpoint": "tablet", "styles": {"flexDirection": "row", "flexWrap": "wrap", "flexJustify": "space-around", "alignItems": "stretch", "gap": "custom:20px"}},
+        {"breakpoint": "desktop", "styles": {"flexDirection": "row", "flexWrap": "wrap", "flexJustify": "space-around", "alignItems": "stretch", "gap": "custom:20px"}}
+    ]'
+  >
+    {% for item in items %}
+    <article
+        data-sads-element="item"
+        class="testimonial-item" {# Keep class for :last-child CSS rule #}
+        data-sads-bg-color="testimonial-item-bg" {# Theme: #fff light, #2a2a2a dark #}
+        data-sads-padding="custom:1.5rem" {# CSS: 1.5rem #}
+        data-sads-border-radius="custom:8px" {# CSS: 8px #}
+        data-sads-shadow="testimonial-item-shadow" {# Theme for the specific shadow #}
+        data-sads-box-sizing="border-box"
+        data-sads-text-align="center" {# CSS: text-align: center #}
+        data-sads-display="flex" {# To help with vertical alignment if needed, or structure inside #}
+        data-sads-flex-direction="column"
+        data-sads-flex-basis="full" {# Mobile: full width #}
+        data-sads-responsive-rules='[
+            {"breakpoint": "mobile", "styles": {"marginBottom": "custom:20px"}},
+            {"breakpoint": "tablet", "styles": {"flexBasis": "custom:calc(50% - 10px)", "marginBottom": "custom:20px"}}, {# Approx for 2 items with 20px gap #}
+            {"breakpoint": "desktop", "styles": {"flexBasis": "custom:calc(33.333% - 40px)", "marginBottom": "custom:20px"}} {# CSS: calc(33.333% - 40px) #}
+        ]'
+    >
+      {% if item.author_image and item.author_image.src %}
+        <img
+          data-sads-element="author-image"
+          src="{{ item.author_image.src }}"
+          {% set _alt_key = "" %}
+          {% if item.author_image and item.author_image.alt_text and item.author_image.alt_text.key %}{% set _alt_key = item.author_image.alt_text.key %}{% endif %}
+          alt="{{ translations[_alt_key] | default:"Author image" }}"
+          data-sads-width="custom:80px" {# CSS: 80px #}
+          data-sads-height="custom:80px" {# CSS: 80px #}
+          data-sads-border-radius="circle" {# CSS: 50% #}
+          data-sads-object-fit="cover"
+          data-sads-margin-bottom="m" {# CSS: margin-bottom: 1rem #}
+          data-sads-border-width="custom:3px"
+          data-sads-border-style="solid"
+          data-sads-border-color="testimonial-img-border" {# Theme: #007bff light, #0af dark #}
+          data-sads-margin="custom:0 auto 1rem auto" {# Center image and add bottom margin #}
+        />
+      {% endif %}
+      {# Original HTML had blockquote and figcaption. CSS was .testimonial-item p and .testimonial-item h4 #}
+      {# Assuming item.text is the main quote, and item.author is the h4 content #}
+      <p
+        data-sads-element="quote-text"
+        data-sads-font-style="italic" {# CSS: font-style: italic #}
+        data-sads-text-color="testimonial-quote-text" {# Theme: #555 light, #bbb dark #}
+        data-sads-margin-bottom="m" {# CSS: margin-bottom: 1rem #}
+        data-sads-flex-grow="1" {# If inside a flex column, allow text to take space #}
+      >
+        {% set _quote_key = "" %}
+        {% if item.text and item.text.key %}{% set _quote_key = item.text.key %}{% endif %}
+        "{{ translations[_quote_key] | default:"Testimonial text here." }}"
+      </p>
+      <h4
+        data-sads-element="author-name"
+        data-sads-margin-top="none" {# CSS: margin-top: 0 #}
+        data-sads-font-weight="bold" {# CSS: font-weight: bold #}
+        data-sads-text-color="testimonial-author-text" {# Theme: #333 light, #e0e0e0 dark #}
+      >
+        {% set _author_key = "" %}
+        {% if item.author and item.author.key %}{% set _author_key = item.author.key %}{% endif %}
+        {{ translations[_author_key] | default:"Author Name" }}
+      </h4>
+    </article>
+    {% empty %}
+    <p data-sads-element="no-items-message" data-sads-text-color="text-secondary">
+      {# Corrected this final translation lookup as well #}
+      {{ translations["testimonials_no_items"] | default:"No testimonials to display at this time." }}
+    </p>
+    {% endfor %}
+  </div>
+</section>

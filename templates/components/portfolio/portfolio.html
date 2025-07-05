@@ -1,0 +1,87 @@
+<section
+    data-sads-component="portfolio"
+    id="portfolio"
+    data-sads-padding="xl" {# CSS: 2rem #}
+    data-sads-text-align="center"
+    data-sads-bg-color="portfolio-bg" {# Theme: #fff light, #2a2a2a dark #}
+>
+  <h2
+    data-sads-element="title"
+    data-i18n="portfolio_title"
+    data-sads-margin-bottom="xl" {# CSS: 2rem #}
+    data-sads-font-size="custom:2rem" {# CSS: 2rem #}
+    data-sads-text-color="portfolio-title-text" {# Theme: #333 light, #e0e0e0 dark #}
+  >
+    {{ translations["portfolio_title"] | default:"Our Work" }}
+  </h2>
+  <div
+    data-sads-element="grid"
+    data-sads-display="grid"
+    data-sads-grid-template-columns="custom:repeat(auto-fit, minmax(280px, 1fr))" {# CSS: repeat(auto-fit, minmax(280px, 1fr)) #}
+    data-sads-gap="custom:20px" {# CSS: 20px #}
+    data-sads-max-width="content-container" {# CSS: 1100px (theme) #}
+    data-sads-margin="custom:0 auto" {# CSS: margin auto #}
+  >
+    {% for item in items %}
+    <article
+        data-sads-element="item"
+        id="{% if item.id %}{{ item.id }}{% else %}{{"portfolio-" + forloop.Counter }}{% endif %}"
+        data-sads-bg-color="portfolio-item-bg" {# Theme: #f9f9f9 light, #1f1f1f dark #}
+        data-sads-border-radius="custom:8px" {# CSS: 8px #}
+        data-sads-shadow="portfolio-item-shadow" {# Theme specific shadow for normal/dark #}
+        data-sads-overflow="hidden" {# CSS: overflow: hidden #}
+        data-sads-text-align="left"
+        {# Removed display:flex and padding from item, will apply margins to children #}
+    >
+      {% if item.image and item.image.src %}
+      <img
+        data-sads-element="item-image"
+        src="{{ item.image.src }}"
+        {% set _img_alt_key = "" %}
+        {% if item.image and item.image.alt_text and item.image.alt_text.key %}{% set _img_alt_key = item.image.alt_text.key %}{% endif %}
+        alt="{{ translations[_img_alt_key] | default:"Portfolio image" }}"
+        data-sads-width="full" {# CSS: width: 100% #}
+        data-sads-height="auto" {# CSS: height: auto #}
+        data-sads-display="block" {# CSS: display: block #}
+        data-sads-border-bottom-width="custom:1px"
+        data-sads-border-bottom-style="solid"
+        data-sads-border-bottom-color="portfolio-img-border" {# Theme: #eee light, #333 dark #}
+      />
+      {% endif %}
+      {% if item.details %}
+      <h3
+        data-sads-element="item-title"
+        data-sads-margin="custom:1rem 1rem 0.5rem" {# CSS: margin: 1rem 1rem 0.5rem #}
+        data-sads-text-color="portfolio-item-heading-text" {# Theme: #007bff light, #0af dark #}
+        data-sads-font-size="l" {# Retaining existing, assuming appropriate size #}
+      >
+        {% set _title_key = "" %}
+        {% if item.details and item.details.title and item.details.title.key %}{% set _title_key = item.details.title.key %}{% endif %}
+        {{ translations[_title_key] | default:"Portfolio Title" }}
+      </h3>
+      <p
+        data-sads-element="item-description"
+        data-sads-margin="custom:0 1rem 1rem" {# CSS: margin: 0 1rem 1rem #}
+        data-sads-text-color="portfolio-item-para-text" {# Theme: #555 light, #bbb dark #}
+        data-sads-font-size="custom:0.9rem" {# CSS: font-size: 0.9rem #}
+      >
+        {% set _desc_key = "" %}
+        {% if item.details and item.details.description and item.details.description.key %}{% set _desc_key = item.details.description.key %}{% endif %}
+        {{ translations[_desc_key] | default:"Description here." }}
+      </p>
+      {% endif %}
+      {# Add links or CTAs here if present in data structure in the future #}
+      {# Example: #}
+      {# {% if item.links %} #}
+        {# {% for link in item.links %} #}
+          {# <a href="{{link.url}}" data-sads-element="item-link">{{link.text_key | translate_key(translations)}}</a> #}
+        {# {% endfor %} #}
+      {# {% endif %} #}
+    </article>
+    {% empty %}
+    <p data-sads-element="no-items-message" data-sads-text-color="text-secondary">
+      {{ translations["portfolio_no_items"] | default:"No portfolio items to display." }}
+    </p>
+    {% endfor %}
+  </div>
+</section>

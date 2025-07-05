@@ -1,0 +1,152 @@
+/* templates/components/header/header.css */
+
+/* Hamburger Menu */
+.hamburger-menu {
+  /* SADS data-sads-display="none" and responsive rule for "block" handles visibility */
+  /* SADS data-sads-button-variant="icon" should make it look like a button */
+  /* SADS data-sads-padding="s" or similar can handle padding if needed */
+  /* background: none; done by SADS button-variant="icon" potentially or explicit data-sads-bg-color="transparent" */
+  /* border: none; done by SADS button-variant="icon" potentially or explicit data-sads-border-width="none" */
+  /* cursor: pointer; SADS: data-sads-cursor="pointer" can be added to HTML */
+  /* margin-left: auto; This might be needed if flexbox alignment in SADS isn't enough. The HTML structure with space-between on nav should handle it. */
+}
+
+.hamburger-menu .hamburger-bar {
+  display: block;
+  width: 25px;
+  height: 3px;
+  /* background-color will come from SADS text-color on parent header or specific theme value if defined */
+  /* SADS on header has data-sads-text-color="text-on-header-bg" */
+  background-color: currentColor; /* Inherits color from parent. Header text color should apply. */
+  margin: 5px 0;
+  transition: 0.4s;
+}
+
+/* body.dark-mode .hamburger-menu .hamburger-bar handled by currentColor and themed text on header */
+
+/* Navigation Link States */
+[data-sads-element="nav-list"] [data-sads-element="nav-item"] a:hover {
+  background-color: #555; /* TODO: Use SADS theme variable if possible e.g. var(--sads-color-nav-link-hover-bg) */
+  /* color: #fff; SADS should handle text color on hover if specified in theme */
+  text-decoration: none;
+}
+
+[data-sads-element="nav-list"]
+  [data-sads-element="nav-item"]
+  a.active-nav-link {
+  background-color: #007bff; /* TODO: Use SADS theme variable */
+  /* color: #fff; */
+}
+
+body.dark-mode
+  [data-sads-element="nav-list"]
+  [data-sads-element="nav-item"]
+  a:hover {
+  background-color: #444; /* TODO: Use SADS theme variable */
+  /* color: #e0e0e0; */
+}
+
+body.dark-mode
+  [data-sads-element="nav-list"]
+  [data-sads-element="nav-item"]
+  a.active-nav-link {
+  background-color: #0af; /* TODO: Use SADS theme variable */
+  color: #121212;
+}
+
+/* Dark Mode Toggle States */
+#dark-mode-toggle:hover {
+  background-color: #e6e6e6; /* TODO: Use SADS theme variable */
+}
+
+body.dark-mode #dark-mode-toggle:hover {
+  background-color: #444; /* TODO: Use SADS theme variable */
+}
+
+/* Language Switcher Button States */
+#language-switcher button:hover {
+  background-color: #e6e6e6; /* TODO: Use SADS theme variable */
+}
+
+#language-switcher button.active {
+  background-color: #007bff; /* TODO: Use SADS theme variable */
+  color: #fff;
+  border-color: #007bff; /* TODO: Use SADS theme variable */
+}
+
+body.dark-mode #language-switcher button:hover {
+  background-color: #444; /* TODO: Use SADS theme variable */
+}
+
+body.dark-mode #language-switcher button.active {
+  background-color: #0af; /* TODO: Use SADS theme variable */
+  color: #121212;
+  border-color: #0af; /* TODO: Use SADS theme variable */
+}
+
+/* Responsive Adjustments for Header */
+@media (width <= 768px) {
+  /* Hamburger menu is shown via SADS responsive rule on its element */
+  /* Nav items container (.nav-items) styling for mobile dropdown state */
+  [data-sads-element="nav-items-container"].active {
+    /* Class toggled by JS to show menu */
+    display: flex !important; /* Override SADS "display: none" from responsive rule */
+    /* Ensure other visual properties like z-index, box-shadow are set by SADS responsive rules:
+       e.g. data-sads-responsive-rules='[..., {"breakpoint": "mobile", "styles": {"zIndex": "dropdown", "shadow": "overlay"}}]'
+       The current SADS rules for nav-items-container already include:
+       "position": "absolute", "top": "custom:60px", "left": "0", "width": "full", "bg-color": "header-bg", "padding": "m", "shadow": "subtle", "gap": "s"
+       These seem largely sufficient. z-index may need to be added if "subtle" shadow isn't enough or if z-index is missing.
+    */
+  }
+  /* Dark mode for active mobile menu is handled by SADS data-sads-bg-color="header-bg" in responsive rules, assuming theme handles dark variant. */
+
+  /* Nav list (ul) specific mobile adjustments if SADS defaults are not enough */
+  /* SADS responsive rules on "nav-list": {"flexDirection": "column", "width": "full", "alignItems": "stretch", "gap": "s"} */
+  /* If margin-bottom is needed on ul: add "marginBottom": "s" to SADS responsiveStyles. */
+
+  /* Nav items (li) mobile adjustments */
+  /* SADS on nav-list parent has "gap": "s" which should create vertical spacing.
+     If specific margin like `8px 0` from original global CSS is needed and `s` is different,
+     it would require targeting `[data-sads-element="nav-item"]` within mobile media query
+     or adding responsive SADS attributes to each `<li>` or its generated class.
+     For now, assume "gap" is acceptable.
+  */
+
+  /* #dark-mode-toggle mobile adjustments */
+  /* Needs SADS responsive rules on its element in header.html:
+     data-sads-responsive-rules='[
+        {"breakpoint": "mobile", "styles": {"marginTop": "s", "marginLeft": "none", "width": "auto", "padding": "s m"}}
+     ]'
+  */
+
+  /* #language-switcher mobile adjustments */
+  /* Needs SADS responsive rules on its element in header.html:
+     data-sads-responsive-rules='[
+        {"breakpoint": "mobile", "styles": {"width": "full", "justifyContent": "center", "marginTop": "m", "marginLeft": "none"}}
+     ]'
+  */
+
+  /* #language-switcher button mobile adjustments */
+  /* Needs SADS responsive rules on button elements in header.html:
+     data-sads-responsive-rules='[
+        {"breakpoint": "mobile", "styles": {"padding": "s m"}}
+     ]'
+     The gap between buttons is handled by parent's data-sads-gap="s".
+  */
+}
+
+/* Adjust main content padding for sticky header */
+/* This should ideally use CSS custom properties set by the header component.
+   For now, providing a static value. The header's SADS definition includes data-sads-padding="m 0".
+   If 'm' is 1rem (16px), the header's own vertical padding is 32px. Content (logo, nav) adds more.
+   A common sticky header height is around 60-80px.
+*/
+main {
+  padding-top: 70px; /* Placeholder - adjust to actual header height */
+}
+
+@media (width <= 768px) {
+  main {
+    padding-top: 60px; /* Placeholder - adjust for mobile header height */
+  }
+}
