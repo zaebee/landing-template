@@ -116,32 +116,32 @@ graph TD
     A_CFG[Input: public/config.json] --> BUILD_PY{build.py BuildOrchestrator};
     A_DATA[Input: data/*.json] --> PY_DATA_HANDLING;
     C_PROTO[Input: proto/*.proto] --> D_PROTOC[Tool: protoc];
-    D_PROTOC -- protoc-gen-python --> E_PY_STUBS[Generated: generated/*.py <br> (Protobuf Python stubs)];
-    E_PY_STUBS --> PY_DATA_HANDLING[Python Data Handling Logic <br> (JsonProtoDataLoader)];
-    F_TEMPLATES[Input: templates/**/*.html <br> (Jinja2 Templates)] --> JINJA_ENV[Jinja2 Environment];
-    G_LOCALES[Input: public/locales/*.json] --> PY_TRANSLATION_SVC[Python Translation Service <br> (DefaultTranslationProvider)];
-    H_BASE_HTML[Input: templates/base.html <br> (Jinja2 Base Template)] --> PY_PAGE_BUILDER[Python Page Assembly Logic <br> (DefaultPageBuilder)];
+    D_PROTOC -- protoc-gen-python --> E_PY_STUBS[Generated: generated/*.py <br> Protobuf Python stubs];
+    E_PY_STUBS --> PY_DATA_HANDLING[Python Data Handling Logic <br> JsonProtoDataLoader];
+    F_TEMPLATES[Input: templates/**/*.html <br> Jinja2 Templates] --> JINJA_ENV[Jinja2 Environment];
+    G_LOCALES[Input: public/locales/*.json] --> PY_TRANSLATION_SVC[Python Translation Service <br> DefaultTranslationProvider];
+    H_BASE_HTML[Input: templates/base.html <br> Jinja2 Base Template] --> PY_PAGE_BUILDER[Python Page Assembly Logic <br> DefaultPageBuilder];
 
     JINJA_ENV --> PY_PAGE_BUILDER;
-    JINJA_ENV --> PY_HTML_GENERATORS[Python HTML Block Generators <br> (uses HTML_GENERATOR_REGISTRY)];
+    JINJA_ENV --> PY_HTML_GENERATORS[Python HTML Block Generators <br> uses HTML_GENERATOR_REGISTRY];
 
-    PY_DATA_HANDLING -- Protobuf Messages --> PY_DATA_CACHE[Python Data Cache <br> (InMemoryDataCache)];
+    PY_DATA_HANDLING -- Protobuf Messages --> PY_DATA_CACHE[Python Data Cache <br> InMemoryDataCache];
     PY_DATA_CACHE -- Cached Data --> BUILD_PY;
     PY_TRANSLATION_SVC -- Translations --> BUILD_PY;
     PY_PAGE_BUILDER -- Page Structuring Logic --> BUILD_PY;
 
     subgraph "build.py - BuildOrchestrator Core Logic"
         direction LR
-        INIT_CONFIG[Load Initial Configurations <br> (App Config, Nav, SiteLogo)]
-        PRELOAD_DATA_CACHE[Preload Data Cache <br> (JSON to Proto Messages)]
-        COMPILE_WASM[Compile Go WASM Module (Optional)]
-        BUNDLE_ASSETS[Bundle CSS & JS, Copy WASM <br> (DefaultAssetBundler)]
+        INIT_CONFIG[Load Initial Configurations <br> App Config, Nav, SiteLogo]
+        PRELOAD_DATA_CACHE[Preload Data Cache <br> JSON to Proto Messages]
+        COMPILE_WASM[Compile Go WASM Module Optional]
+        BUNDLE_ASSETS[Bundle CSS & JS, Copy WASM <br> DefaultAssetBundler]
         LOOP_LANG[Loop Supported Languages]
         LOAD_TRANS_FOR_LANG[Load Translations for Language]
         GEN_LANG_CONFIG_JSON[Generate Language-Specific config_lang.json]
         ASSEMBLE_MAIN_CONTENT_FOR_LANG[Assemble Main Content Blocks for Language]
-        ASSEMBLE_FULL_HTML_PAGE[Assemble Full HTML Page <br> (using DefaultPageBuilder & base.html)]
-        WRITE_HTML_FILE[Write Output HTML File (index_lang.html)]
+        ASSEMBLE_FULL_HTML_PAGE[Assemble Full HTML Page <br> using DefaultPageBuilder & base.html]
+        WRITE_HTML_FILE[Write Output HTML File index_lang.html]
     end
 
     BUILD_PY -- Uses --> INIT_CONFIG;
@@ -155,9 +155,9 @@ graph TD
 
     subgraph "Assemble Main Content Blocks (Python + Jinja2)"
         direction LR
-        GET_BLOCK_GENERATOR[Get HTMLBlockGenerator for Block <br> (from HTML_GENERATOR_REGISTRY)]
+        GET_BLOCK_GENERATOR[Get HTMLBlockGenerator for Block <br> from HTML_GENERATOR_REGISTRY]
         GET_CACHED_PROTO_DATA[Get Cached Protobuf Data for Block]
-        RENDER_BLOCK_HTML_JINJA[Render HTML for Block <br> (Jinja2 Execution via Generator)]
+        RENDER_BLOCK_HTML_JINJA[Render HTML for Block <br> Jinja2 Execution via Generator]
     end
 
     ASSEMBLE_MAIN_CONTENT_FOR_LANG -- Iterates Blocks --> GET_BLOCK_GENERATOR;
@@ -174,22 +174,22 @@ graph TD
     WRITE_HTML_FILE --> I_OUTPUT_HTML[Output: index_lang.html];
     GEN_LANG_CONFIG_JSON --> J_LANG_CONFIG_OUTPUT[Output: public/generated_configs/config_lang.json];
 
-    TS_SRC[Input: public/ts/*.ts] --> TSC[Tool: TypeScript Compiler (tsc)];
-    TSC --> COMPILED_TS_JS[Generated: public/js (compiled from TS)];
+    TS_SRC[Input: public/ts/*.ts] --> TSC[Tool: TypeScript Compiler tsc];
+    TSC --> COMPILED_TS_JS[Generated: public/js compiled from TS];
     COMPILED_TS_JS --> JS_BUNDLER_PY[Python AssetBundler];
     EXISTING_JS_MODULES[Input: public/js/modules/*.js] --> JS_BUNDLER_PY;
     CSS_FILES[Input: templates/components/*/*.css, public/style.css] --> CSS_BUNDLER_PY[Python AssetBundler];
 
     JS_BUNDLER_PY --> FINAL_MAIN_JS[Generated: public/dist/assets/main.bundle.js];
     CSS_BUNDLER_PY --> FINAL_MAIN_CSS[Generated: public/dist/assets/main.bundle.css];
-    FINAL_MAIN_JS --> H_BASE_HTML; // Linked in base.html
-    FINAL_MAIN_CSS --> H_BASE_HTML; // Linked in base.html
+    FINAL_MAIN_JS --> H_BASE_HTML[Linked in base.html];
+    FINAL_MAIN_CSS --> H_BASE_HTML[Linked in base.html];
 
-    GO_WASM_SRC[Input: sads_wasm_poc/*.go] --> GO_COMPILER[Tool: Go Compiler (for WASM)];
+    GO_WASM_SRC[Input: sads_wasm_poc/*.go] --> GO_COMPILER[Tool: Go Compiler for WASM];
     GO_COMPILER --> WASM_OUTPUT[Generated: sads_wasm_poc/sads_poc.wasm];
     WASM_OUTPUT --> WASM_COPIER_PY[Python AssetBundler];
     WASM_COPIER_PY --> FINAL_WASM_ASSET[Generated: public/dist/assets/wasm/sads_poc.wasm];
-    FINAL_WASM_ASSET --> H_BASE_HTML; // Loaded by JS in base.html
+    FINAL_WASM_ASSET --> H_BASE_HTML[Loaded by JS in base.html];
 
     style A_CFG fill:#f9f,stroke:#333,stroke-width:2px
     style A_DATA fill:#f9f,stroke:#333,stroke-width:2px
