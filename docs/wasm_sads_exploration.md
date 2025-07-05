@@ -340,13 +340,65 @@ This detailed design for the PoC function provides a clear contract for implemen
 
 The designs and concepts outlined in this document serve as a foundational guide for exploring the use of Go and WebAssembly to enhance the SADS engine.
 
-The actual implementation of the Proof-of-Concept (PoC) function (`ResolveSadsColorToken` / `resolveColor`) in Go, its compilation to WASM, and its integration into the existing JavaScript codebase (`sads-style-engine.js`) are significant development tasks. These tasks include:
+The actual implementation of the Proof-of-Concept (PoC) function (`ResolveSadsColorToken` / `resolveColor`) in Go, its compilation to WASM, and its integration into the existing TypeScript SADS engine (source: `public/ts/sads-style-engine.ts`) are significant development tasks. These tasks include:
 
 - Setting up a Go development environment suitable for WASM compilation.
 - Writing and testing the Go code for the PoC function.
 - Compiling the Go code to a `.wasm` binary file.
 - Integrating the `wasm_exec.js` glue code (or similar) for loading and running the WASM module in the browser.
-- Modifying the JavaScript SADS engine to correctly call the exported WASM function and use its results.
-- Thoroughly testing the hybrid JS/WASM functionality, including performance and bundle size analysis.
+- Modifying the TypeScript SADS engine to correctly call the exported WASM function and use its results.
+- Thoroughly testing the hybrid TS/WASM functionality, including performance and bundle size analysis.
 
 Beyond the initial PoC, porting more substantial parts of the SADS engine to Go/WASM would involve further design, implementation, and testing cycles. This document aims to provide the initial direction and considerations for such an undertaking. The user (developer) will be responsible for these implementation efforts.
+
+## 9. Next Steps: Focused PoC Implementation (Follow-up Task Brief)
+
+This section outlines the objectives and key steps for a follow-up task to implement a Proof-of-Concept (PoC) for the Go/WASM SADS engine enhancement.
+
+**Objective:**
+Implement a specific, self-contained piece of SADS core logic in Go, compile it to WebAssembly (WASM), and integrate it into the existing TypeScript-based SADS engine. The primary goal is to validate the feasibility of this hybrid approach, understand the development workflow, and assess basic interoperability. The "Resolving a Single SADS Color Token" function, as detailed in Section 7, remains a good candidate for this PoC.
+
+**Leveraging Existing Infrastructure:**
+
+- **Protobuf Definitions:** The SADS attribute schema, including tokens and value structures, is defined in `proto/sads_attributes.proto`. The Go implementation should leverage these definitions by generating Go types from this `.proto` file. This ensures data consistency between the TypeScript and Go portions of the SADS ecosystem.
+- **Build Process:**
+  - The `npm run generate-proto` script currently generates Python and TypeScript stubs. This script will need to be extended (or a new one created, e.g., `generate-proto:go`) to include `protoc-gen-go` for generating Go types from the `.proto` files into a suitable Go workspace directory.
+  - The Go WASM compilation step will need to be added to the project's build tooling (potentially as a new `npm` script).
+
+**Key Technical Steps for the Follow-up Task:**
+
+1.  **Go Environment for WASM:** Ensure a Go development environment is set up with the correct version (supporting WASM compilation, typically Go 1.11+).
+2.  **Generate Go Types from Protobuf:**
+    - Install `protoc-gen-go` and `protoc-gen-go-grpc` (if any gRPC definitions were planned, though not strictly needed for basic message types).
+    - Update `package.json`'s `generate-proto` script (or add `generate-proto:go`) to compile `.proto` files (especially `sads_attributes.proto` and its dependencies like `common.proto`) into Go data structures. These should be output to a new Go module/package dedicated to the SADS WASM logic (e.g., `wasm/sads_processor/`).
+3.  **Implement SADS Logic in Go:**
+    - Create a Go module (e.g., in a new `wasm/` directory).
+    - Implement the chosen PoC function (e.g., `ResolveSadsColorToken`). This function should accept parameters (e.g., JSON strings for SADS token, theme color map, and dark mode status) that can be easily passed from JavaScript. It should use the generated Go Protobuf types internally for processing where applicable.
+    - The function should be exposed to JavaScript using `syscall/js.FuncOf`.
+4.  **Compile Go to WASM:** Compile the Go module into a `.wasm` binary file (e.g., `sads_poc.wasm`).
+5.  **JavaScript Glue Code:**
+    - Copy or include Go's `wasm_exec.js` file into the `public/js/` (or `public/vendor/`) directory. This file is necessary to load and run Go-compiled WASM.
+    - Create a TypeScript module (e.g., `public/ts/sadsWasmLoader.ts`) responsible for:
+      - Loading the `.wasm` binary.
+      - Instantiating it using `wasm_exec.js`.
+      - Exposing the Go functions (like `sadsPocWasm.resolveColor`) in a type-safe way to the rest of the TypeScript application.
+6.  **Integrate into `SADSEngine`:**
+    - Modify `public/ts/sads-style-engine.ts` (specifically, the relevant part like color resolution in `_mapSemanticValueToActual`).
+    - Conditionally (or directly for the PoC) call the WASM-loaded function instead of the original TypeScript logic for the chosen piece of functionality.
+    - Handle any data marshalling (e.g., JS object to JSON string for Go, string from Go back to JS).
+7.  **Build Process for WASM:**
+    - Ensure the `.wasm` file and `wasm_exec.js` are copied to an appropriate directory (e.g., `public/dist/wasm/` or alongside `main.js`) by the build process (`build.py` or an npm script) so they are accessible by the client.
+    - The `asset_bundling.py` might not directly bundle `.wasm` files; they are usually loaded separately or via specific bundler plugins. For now, focus on making it available.
+8.  **Testing:**
+    - Update or create test pages (e.g., extend `nl-sads-test.html` or a new page) to specifically invoke and verify the functionality of the WASM-powered SADS logic.
+    - Compare results with the pure TypeScript implementation to ensure correctness.
+
+**Success Criteria for PoC:**
+
+- The Go function, compiled to WASM, correctly implements the targeted SADS logic (e.g., resolves color tokens accurately).
+- The TypeScript SADS engine can successfully load the WASM module and call the exported Go function.
+- The results from the WASM function are correctly used by the SADS engine.
+- The overall SADS functionality (for the tested piece) remains correct.
+- (Optional Bonus) Initial, even if qualitative, observations on any noticeable performance difference or impact on bundle size.
+
+This detailed brief should provide a clear roadmap for the engineer undertaking the Go/WASM PoC implementation.

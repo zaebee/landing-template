@@ -89,10 +89,6 @@ message ContactFormConfig {
 
 Define the structure for navigation links. `Navigation` is loaded as a single item from `data/navigation.json`.
 
-### `SadsAttributeValue`, `SadsStylingSet`, etc. (`sads_attributes.proto`)
-
-Defines the schema for SADS (Semantic Attribute-Driven Styling) attributes, including enums for semantic tokens (like spacing, colors) and messages for structuring styling rules. These definitions are used to generate TypeScript types for the SADS engine and can be used by other tools or systems (e.g., AI, Go/WASM SADS engine) that interact with SADS.
-
 ```proto
 // Message for a single navigation item.
 message NavItem {
