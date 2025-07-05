@@ -29,18 +29,6 @@ const sadsDefaultTheme = {
     "button-primary-bg-color": "#28a745",
     "button-primary-bg-color-dark": "#1a73e8",
     "button-primary-text-color": "#ffffff",
-
-    // Logo specific colors
-    logoIconPrimary: "#4F46E5", // Indigo-700
-    "logoIconPrimary-dark": "#6366F1", // Indigo-500 (lighter for dark bg)
-    logoIconAccent1: "#6366F1", // Indigo-500
-    "logoIconAccent1-dark": "#818CF8", // Indigo-400 (lighter for dark bg)
-    logoIconAccent2: "#818CF8", // Indigo-400
-    "logoIconAccent2-dark": "#A5B4FC", // Indigo-300 (lighter for dark bg)
-    logoIconArrow: "#FFFFFF", // White
-    "logoIconArrow-dark": "#E0E7FF", // Indigo-100 (slightly off-white for dark bg)
-    logoTextColor: "#1F2937", // Gray-800
-    "logoTextColor-dark": "#D1D5DB", // Gray-300
   },
   spacing: {
     none: "0",

@@ -1,0 +1,23 @@
+<svg width="190" height="40" viewBox="0 0 190 40" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(5,5)">
+    <rect x="0" y="10" width="15" height="15" rx="3" fill="#4F46E5"/>
+    <rect x="9" y="1" width="15" height="15" rx="3" fill="#6366F1"/>
+    <path d="M18 10 L28 0 L38 10 L28 20 Z" fill="#818CF8"/>
+    <path d="M24 18 L34 8 L24 13 L24 18 Z" fill="white"/>
+  </g>
+  <text x="50" y="27" font-family="'Share Tech Mono', monospace" font-size="20" fill="#1F2937" class="logo-text-svg">NeuroGen</text>
+  <style>
+    /* Basic style for the text */
+    .logo-text-svg { /* Default text color for light mode is set by 'fill' attribute on text element */ }
+    /* Dark mode text color - assumes a .dark-mode class on a parent (e.g., body) */
+    /* The SVG when used as an <img> src might not see parent CSS like .dark-mode directly */
+    /* However, if browser supports prefers-color-scheme for SVGs as src, that's an option. */
+    /* For simplicity and widest compatibility as <img>, this internal style for dark mode might not always apply. */
+    /* The fill attribute on the text tag will be the primary determinant. */
+    @media (prefers-color-scheme: dark) {
+      /* This is a more robust way for an IMG svg to adapt if the browser supports it */
+      /* Fallback to direct fill if this isn't supported when SVG is an image source */
+      .logo-text-svg { fill: #D1D5DB; }
+    }
+  </style>
+</svg>
