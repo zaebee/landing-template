@@ -6,8 +6,11 @@ from typing import Any, Dict, List, Optional
 from dotenv import load_dotenv
 
 # --- Mistral Specific Block ---
-from mistralai.client import MistralClient
-from mistralai.models.chat_completion import ChatMessage
+from mistralai import (
+    Messages,
+    Mistral,
+    UserMessage,
+)
 from openai import OpenAI
 
 
@@ -132,34 +135,28 @@ def get_sads_attributes_from_llm(
                 temperature=0.2,
                 max_tokens=150,
             )
-            response_content: Optional[str] = completion.choices[0].message.content
+            response_content: Optional[str] = str(completion.choices[0].message.content)
             return response_content.strip() if response_content else None
+            # --- End OpenAI Specific Block ---
         except Exception as e:
             print(f"Error calling OpenAI API: {e}")
             return None
     elif provider.lower() == "mistral":
         try:
-            client = MistralClient(
-                api_key=api_key
-            )  # Corrected: MistralClient not Mistral
-            messages: List[ChatMessage] = [
-                ChatMessage(role="user", content=prompt)
-            ]  # Corrected: ChatMessage not UserMessage, and ensure correct import
+            client = Mistral(api_key=api_key)
+            # Note: Mistral's API might not use a "system" prompt in the same way.
+            # The main instructions are part of the user prompt.
+            messages: List[Messages] = [UserMessage(role="user", content=prompt)]
 
-            chat_response = (
-                client.chat(  # Corrected: client.chat not client.chat.complete
-                    model=model_name,
-                    messages=messages,
-                    temperature=0.2,
-                    max_tokens=150,
-                )
+            chat_response = client.chat.complete(
+                model=model_name,  # e.g., "mistral-small-latest", "mistral-medium-latest"
+                messages=messages,
+                temperature=0.2,
+                max_tokens=150,
             )
             if chat_response.choices and chat_response.choices[0].message:
                 response_content = str(chat_response.choices[0].message.content).strip()
                 return response_content if response_content else None
-            else:  # Added else to handle no choices
-                print("Mistral API returned no choices or message content.")
-                return None
         except ImportError:
             print(
                 "Error: mistralai library not installed. Please run 'pip install mistralai'."
@@ -168,11 +165,10 @@ def get_sads_attributes_from_llm(
         except Exception as e:
             print(f"Error calling Mistral API: {e}")
             return None
-    else:
-        print(
-            f"Error: Unsupported LLM provider '{provider}'. Supported: 'openai', 'mistral'."
-        )
-        return None
+    print(
+        f"Error: Unsupported LLM provider '{provider}'. Supported: 'openai', 'mistral'."
+    )
+    return None
 
 
 def main() -> None:
@@ -307,16 +303,36 @@ def parse_llm_sads_string_to_dict(
     """
     Parses a string of data-sads-* attributes (from LLM) into a structured dictionary
     that conceptually represents a SadsStylingSet proto message.
+
+    Args:
+        sads_attributes_string: The raw string from the LLM,
+                                e.g., "data-sads-bgColor=\"primary\" data-sads-padding=\"m\""
+        theme_context: The SADS theme context to help identify known tokens.
+
+    Returns:
+        A dictionary structured like:
+        {
+            "attributes": {
+                "bgColor": {"color_token": "COLOR_TOKEN_PRIMARY"}, // or {"custom_value": "#ABC"}
+                "padding": {"spacing_token": "SPACING_TOKEN_M"}    // or {"custom_value": "10px"}
+            }
+        }
+        This conceptually mirrors the SadsStylingSet and SadsAttributeValue protos.
     """
     if not sads_attributes_string:
         return {"attributes": {}}
 
     attributes_map: Dict[str, Dict[str, str]] = {}
+
+    # Simple parsing: split by space for attributes, then by '=' for key-value.
+    # This is naive and might break with complex values or unquoted attributes from LLM.
+    # A more robust parser might use regular expressions.
     raw_attributes = sads_attributes_string.strip().split(" ")
 
     for attr in raw_attributes:
         if not attr.strip():
             continue
+
         parts = attr.split("=", 1)
         if len(parts) != 2:
             print(f"Warning: Skipping malformed attribute '{attr}'")
