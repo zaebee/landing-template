@@ -247,7 +247,12 @@ class SADSEngine {
     }
 
     // Ensure we are in a browser environment
-    if (typeof document === "undefined") return;
+    if (typeof document === "undefined") {
+      console.log("SADS.applyStylesTo: Document is undefined, exiting."); // New log
+      return;
+    }
+    console.log("SADS.applyStylesTo: Entered for rootElement:", rootElement); // New log
+
 
     const elementsToStyle: HTMLElement[] = [
       rootElement,
@@ -255,14 +260,24 @@ class SADSEngine {
         rootElement.querySelectorAll<HTMLElement>("[data-sads-element]")
       ),
     ];
+    console.log("SADS.applyStylesTo: Elements to style:", elementsToStyle); // New log
+
 
     elementsToStyle.forEach((el) => {
+      console.log("SADS.applyStylesTo: Processing element:", el); // New log
       const targetSelector = this._getTargetSelector(el);
-      const attributes = el.dataset as SadsElementDataset; // el.dataset is DOMStringMap
+      const attributes = el.dataset as SadsElementDataset;
+      // Log a serializable version of dataset for clarity, as DOMStringMap can be tricky in console
+      console.log(`SADS.applyStylesTo: Element ${targetSelector} dataset:`, JSON.parse(JSON.stringify(attributes))); // New log
+
 
       const baseCssText = this._generateBaseCss(attributes, targetSelector);
-      if (baseCssText) {
+      console.log(`SADS.applyStylesTo: Generated base CSS for ${targetSelector}: "${baseCssText.trim()}"`); // New log
+
+      if (baseCssText.trim()) { // Ensure we only add non-empty rules
         this._addCssRule(targetSelector, baseCssText);
+      } else {
+        console.log(`SADS.applyStylesTo: No base CSS generated for ${targetSelector}, skipping _addCssRule for base styles.`); // New log
       }
 
       const responsiveStyles = this._parseResponsiveRules(
