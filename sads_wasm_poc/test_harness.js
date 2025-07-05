@@ -4,11 +4,6 @@ async function main() {
   const resultsContainer = document.getElementById("results-container");
 
   function logResult(testCaseName, inputs, output, error = false) {
-    const outputString =
-      typeof output === "object" ? JSON.stringify(output) : String(output);
-    const inputsString =
-      typeof inputs === "object" ? JSON.stringify(inputs) : String(inputs);
-
     console.groupCollapsed(`Test Case: ${testCaseName}`);
     console.log("Inputs:", inputs);
     if (error) {
@@ -22,8 +17,8 @@ async function main() {
     entry.classList.add("log-entry");
     entry.innerHTML = `
             <p><strong>Test Case:</strong> ${testCaseName}</p>
-            <p><span class="log-input">Inputs:</span> <code>${inputsString}</code></p>
-            <p><span class="${error ? "log-error" : "log-output"}">Output:</span> <code>${outputString}</code></p>
+            <p><span class="log-input">Inputs:</span> <code>${JSON.stringify(inputs)}</code></p>
+            <p><span class="${error ? "log-error" : "log-output"}">Output:</span> <code>${output}</code></p>
         `;
     resultsContainer.appendChild(entry);
   }
@@ -53,23 +48,15 @@ async function main() {
       typeof window.sadsPocWasm.resolveColor !== "function"
     ) {
       const errorMsg =
-        "Critical Error: sadsPocWasm.resolveColor function not found on window. Check Go export in main(). WASM module might be loaded, but functions are not exposed.";
+        "Error: sadsPocWasm.resolveColor function not found on window. Check Go export in main().";
       console.error(errorMsg);
-      logResult("WASM Function Exposure Check", { wasmPath }, errorMsg, true);
-      // Display this critical error on the page as well
-      const errorDiv = document.createElement("div");
-      errorDiv.style.color = "red";
-      errorDiv.style.border = "2px solid red";
-      errorDiv.style.padding = "10px";
-      errorDiv.style.marginTop = "10px";
-      errorDiv.innerHTML = `<strong>WASM Function Exposure Check Failed:</strong><br>${errorMsg.replace(/\n/g, "<br>")}`;
-      resultsContainer.insertBefore(errorDiv, resultsContainer.firstChild);
-      return; // Stop further execution
+      logResult("WASM Load Check", { wasmPath }, errorMsg, true);
+      return;
     }
     logResult(
-      "WASM Function Exposure Check",
+      "WASM Load Check",
       { wasmPath },
-      "sadsPocWasm.resolveColor (and thus sadsPocWasm object) found on window.",
+      "sadsPocWasm.resolveColor found on window.",
       false
     );
 
@@ -364,22 +351,9 @@ async function main() {
       );
     }
   } catch (err) {
-    const errorMsg = `Critical Error loading or running WASM module: ${err}`;
-    console.error(errorMsg, err); // Log the full error object for more details
-    logResult(
-      "WASM Initialization",
-      { wasmPath, error: err.message },
-      errorMsg,
-      true
-    );
-    // Display this critical error on the page as well
-    const errorDiv = document.createElement("div");
-    errorDiv.style.color = "red";
-    errorDiv.style.border = "2px solid red";
-    errorDiv.style.padding = "10px";
-    errorDiv.style.marginTop = "10px";
-    errorDiv.innerHTML = `<strong>WASM Initialization Failed:</strong><br>${errorMsg.replace(/\n/g, "<br>")}<br><small>(Check console for more details)</small>`;
-    resultsContainer.insertBefore(errorDiv, resultsContainer.firstChild);
+    const errorMsg = `Error loading or running WASM module: ${err}`;
+    console.error(errorMsg);
+    logResult("WASM Initialization", { wasmPath }, errorMsg, true);
   }
 }
 

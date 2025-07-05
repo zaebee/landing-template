@@ -178,18 +178,13 @@ class BuildOrchestrator:
 
         # Command to build the WASM module.
         # Assumes all .go files in sads_wasm_poc directory are part of the 'main' package.
-        go_source_files = [
-            "sads_wasm_bridge.go",
-            "value_resolver.go",
-            "property_mapper.go",
-            "responsive_rules_parser.go",
-        ]
         go_build_command = [
             "go",
             "build",
             "-o",
             wasm_module_path,
-        ] + go_source_files  # Add the list of Go files to the command
+            ".",  # Build all .go files in the specified directory
+        ]
         try:
             # Set GOOS and GOARCH environment variables for the subprocess
             env = os.environ.copy()

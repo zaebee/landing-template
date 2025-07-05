@@ -12,7 +12,7 @@
     data-sads-font-size="custom:2rem" {# CSS: 2rem #}
     data-sads-text-color="portfolio-title-text" {# Theme: #333 light, #e0e0e0 dark #}
   >
-    {{ translations["portfolio_title"] | default("Our Work") }}
+    {{ translations["portfolio_title"] | default:"Our Work" }}
   </h2>
   <div
     data-sads-element="grid"
@@ -39,7 +39,7 @@
         src="{{ item.image.src }}"
         {% set _img_alt_key = "" %}
         {% if item.image and item.image.alt_text and item.image.alt_text.key %}{% set _img_alt_key = item.image.alt_text.key %}{% endif %}
-        alt="{{ translations[_img_alt_key] | default('Portfolio image') }}"
+        alt="{{ translations[_img_alt_key] | default:"Portfolio image" }}"
         data-sads-width="full" {# CSS: width: 100% #}
         data-sads-height="auto" {# CSS: height: auto #}
         data-sads-display="block" {# CSS: display: block #}
@@ -57,7 +57,7 @@
       >
         {% set _title_key = "" %}
         {% if item.details and item.details.title and item.details.title.key %}{% set _title_key = item.details.title.key %}{% endif %}
-        {{ translations[_title_key] | default("Portfolio Title") }}
+        {{ translations[_title_key] | default:"Portfolio Title" }}
       </h3>
       <p
         data-sads-element="item-description"
@@ -67,7 +67,7 @@
       >
         {% set _desc_key = "" %}
         {% if item.details and item.details.description and item.details.description.key %}{% set _desc_key = item.details.description.key %}{% endif %}
-        {{ translations[_desc_key] | default("Description here.") }}
+        {{ translations[_desc_key] | default:"Description here." }}
       </p>
       {% endif %}
       {# Add links or CTAs here if present in data structure in the future #}
@@ -78,9 +78,9 @@
         {# {% endfor %} #}
       {# {% endif %} #}
     </article>
-    {% else %}
+    {% empty %}
     <p data-sads-element="no-items-message" data-sads-text-color="text-secondary">
-      {{ translations["portfolio_no_items"] | default("No portfolio items to display.") }}
+      {{ translations["portfolio_no_items"] | default:"No portfolio items to display." }}
     </p>
     {% endfor %}
   </div>

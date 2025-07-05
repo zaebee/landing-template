@@ -20,7 +20,7 @@
   >
     {% set _hero_title_key = "hero_title_placeholder" %}
     {% if item.title and item.title.key %}{% set _hero_title_key = item.title.key %}{% endif %}
-    {{ translations[_hero_title_key] | default("Welcome to Our Site") }}
+    {{ translations[_hero_title_key] | default:"Welcome to Our Site" }}
   </h1>
   <p
     data-sads-element="subtitle"
@@ -32,7 +32,7 @@
   >
     {% set _hero_subtitle_key = "hero_subtitle_placeholder" %}
     {% if item.subtitle and item.subtitle.key %}{% set _hero_subtitle_key = item.subtitle.key %}{% endif %}
-    {{ translations[_hero_subtitle_key] | default("Discover amazing things.") }}
+    {{ translations[_hero_subtitle_key] | default:"Discover amazing things." }}
   </p>
   {% if item.cta %}
   <a
@@ -50,7 +50,7 @@
   >
     {% set _hero_cta_key = "hero_cta_placeholder" %}
     {% if item.cta and item.cta.text and item.cta.text.key %}{% set _hero_cta_key = item.cta.text.key %}{% endif %}
-    {{ translations[_hero_cta_key] | default("Learn More") }}
+    {{ translations[_hero_cta_key] | default:"Learn More" }}
   </a>
   {% endif %}
   {% else %}

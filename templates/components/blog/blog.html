@@ -12,7 +12,7 @@
     data-sads-font-size="custom:2rem" {# CSS: 2rem #}
     data-sads-text-color="blog-title-text" {# Theme: #333 light, #e0e0e0 dark #}
   >
-    {{ translations["blog_title"] | default("Latest Posts") }}
+    {{ translations["blog_title"] | default:"Latest Posts" }}
   </h2>
   <div
     data-sads-element="list"
@@ -49,7 +49,7 @@
         data-sads-text-color="blog-item-title-text" {# Theme: #007bff light, #0af dark #}
         data-sads-font-size="l" {# Assuming 'l' is appropriate for h3 #}
       >
-        {{ translations[post.title.key] | default("Untitled Post") }}
+        {{ translations[post.title.key] | default:post.title.key }}
       </h3>
       <p
         data-sads-element="item-excerpt"
@@ -57,7 +57,7 @@
         data-sads-text-color="blog-item-excerpt-text" {# Theme: #555 light, #bbb dark #}
         data-sads-margin-bottom="m" {# CSS: margin-bottom: 1rem (assuming theme.m) #}
       >
-        {{ translations[post.excerpt.key] | default("No excerpt available.") }}
+        {{ translations[post.excerpt.key] | default:post.excerpt.key }}
       </p>
       <a
         data-sads-element="read-more-link"
@@ -68,10 +68,10 @@
         data-sads-text-decoration="none" {# CSS: text-decoration: none #}
         data-sads-font-weight="bold" {# CSS: font-weight: bold #}
       >
-        {{ translations[post.cta.text.key] | default("Read More") }}</a
+        {{ translations[post.cta.text.key] | default:post.cta.text.key }}</a
       >
     </article>
-    {% else %}
+    {% empty %}
     <!-- No blog posts provided -->
     {% endfor %}
   </div>
