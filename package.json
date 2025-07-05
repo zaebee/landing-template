@@ -17,7 +17,6 @@
     "generate-proto:go": "mkdir -p generated/go && protoc --go_out=./generated/go --go_opt=paths=source_relative -I./proto ./proto/*.proto",
     "generate-proto:py": "mkdir -p generated && python -m grpc_tools.protoc -I./proto --python_out=./generated --pyi_out=./generated ./proto/*.proto && touch generated/__init__.py",
     "generate-proto:ts": "mkdir -p public/ts/generated_proto && npx protoc --ts_out=\"generate_dependencies:public/ts/generated_proto\" --proto_path=./proto ./proto/*.proto",
-    "generate-proto": "npm run generate-proto:go && npm run generate-proto:ts && npm run generate-proto:py",
     "generate-proto-win": "python -m grpc_tools.protoc -I./proto --python_out=./generated --pyi_out=./generated ./proto/*.proto && npx protoc --ts_out=\"generate_dependencies:public\\ts\\generated_proto\" --proto_path=./proto ./proto/*.proto"
   },
   "keywords": [],

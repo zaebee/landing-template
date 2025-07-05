@@ -142,6 +142,7 @@ This function shows how SADS keys from a `SadsStylingSet` are mapped to CSS prop
   }
 // }
 ```
+
 **Benefits:** This approach provides type safety for `SadsAttributeValue` (ensuring only defined tokens or custom values are processed) and clarity in how SADS properties are resolved.
 
 **b. Dynamic Style Reapplication using `SadsElementStyles`**
@@ -216,6 +217,7 @@ This illustrates how `applyStyles` would work if it operated on a `SadsElementSt
   }
 // }
 ```
+
 **Benefits:** Decouples parsing from application. `_applyProcessedStylesToElement` receives a clear, typed `SadsElementStyles` object, making the style application logic cleaner and more robust.
 
 ### 3.2. Parsing `data-sads-*` Attributes (Summary)
@@ -231,6 +233,7 @@ This section explores how TypeScript types (from `sads_styling.v1.proto`) can in
 The internal Go function `mapSadsKeyToCssPropertyGo` can be wrapped for WASM.
 
 **Conceptual Go/WASM Wrapper:**
+
 ```go
 // In sads_wasm_poc/sads_wasm_bridge.go (or similar)
 package main
@@ -266,6 +269,7 @@ func MapSadsKeyToCssPropertyWasm(this js.Value, args []js.Value) interface{} {
 ```
 
 **Conceptual TypeScript Call:**
+
 ```typescript
 // In public/ts/sads-style-engine.ts
 // async function someFunctionUsingWasm(sadsKey: string): Promise<string | null> {
@@ -278,7 +282,9 @@ func MapSadsKeyToCssPropertyWasm(this js.Value, args []js.Value) interface{} {
 //   return null; // Or fallback to JS _mapSadsPropertyToCss
 // }
 ```
+
 **Discussion:**
+
 - **Key-by-key calls:** Simple, but multiple JS-to-WASM calls for one element.
 - **Passing serialized `SadsStylingSet`:** TS serializes `SadsStylingSet` (JSON or binary proto) to Go, Go processes all keys, returns a map `sadsKey -> cssProperty`. Fewer calls, but more serialization logic. Binary proto is cleaner on Go side if Go types are generated from proto.
 - **Recommendation:** Start with key-by-key; optimize if it becomes a bottleneck.
@@ -288,8 +294,10 @@ func MapSadsKeyToCssPropertyWasm(this js.Value, args []js.Value) interface{} {
 The current `ParseResponsiveRules` WASM function takes many JSON strings. Proposal: Pass a serialized `SadsResponsiveStyle[]` (from TS types).
 
 **Option A: Pass Serialized `SadsResponsiveStyle[]` as JSON String**
+
 - **TS Side:** `JSON.stringify(parsedResponsiveStylesArray)`
 - **Go Side:** Define Go structs matching `SadsResponsiveStyle`, `SadsStylingSet`, `SadsAttributeValue` for `json.Unmarshal`. The Go logic would then use these typed structs.
+
   ```go
   // Go structs mirroring proto definitions for JSON unmarshalling
   type GoSadsAttributeValue struct { /* ... fields like SpacingToken, CustomValue ... */ }
@@ -306,23 +314,27 @@ The current `ParseResponsiveRules` WASM function takes many JSON strings. Propos
   //   // ... process typedRules ...
   // }
   ```
+
   Value resolution (e.g., `SadsColorToken` to actual color string) would need to be adapted in Go to work with `GoSadsAttributeValue`.
 
 **Option B: Pass Serialized `SadsResponsiveStyle[]` as Binary Protobuf**
+
 - **TS Side:** Use a Protobuf library (e.g., `protobuf-ts`) to serialize `SadsResponsiveStyle[]` into `Uint8Array`.
 - **Go Side:** Use Go Protobuf library to unmarshal bytes into Go structs generated from `sads_styling.v1.proto`.
 
 **Pros & Cons for `SadsResponsiveStyle[]` to WASM:**
+
 - **Pros:**
-    - Type safety (especially with binary Protobuf).
-    - Simpler WASM function signature (fewer arguments).
-    - Aligns data structures between TS and Go.
+  - Type safety (especially with binary Protobuf).
+  - Simpler WASM function signature (fewer arguments).
+  - Aligns data structures between TS and Go.
 - **Cons:**
-    - Serialization/deserialization overhead (though potentially offset by fewer WASM calls and faster internal Go processing).
-    - Added complexity for binary Protobuf setup (libraries on both sides).
-    - Binary data harder to debug than JSON.
+  - Serialization/deserialization overhead (though potentially offset by fewer WASM calls and faster internal Go processing).
+  - Added complexity for binary Protobuf setup (libraries on both sides).
+  - Binary data harder to debug than JSON.
 
 **Recommendation:**
+
 1. **Iterative:** JSON string of `SadsResponsiveStyle[]` (Option A) is a good first step.
 2. **Optimal:** Binary Protobuf (Option B) for better performance and type consistency in the long run.
 
