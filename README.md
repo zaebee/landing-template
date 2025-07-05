@@ -19,10 +19,14 @@ The core functionality revolves around a Go build script (`main.go`) that assemb
 
 Before you begin, ensure you have the following installed:
 
-- **Go** (version 1.18+ recommended)
-- **Node.js** (for running npm scripts, e.g., `generate-proto`, `format`)
-- **npm** (Node package manager, usually comes with Node.js)
-- **Protocol Buffer Compiler (`protoc`)** (version 3+)
+- **Go**: Version 1.18+ recommended. (Used for the main build script `main.go` and for compiling SADS Go/WASM modules).
+- **Protocol Buffer Compiler (`protoc`)**: Version 3+. Essential for generating code from `.proto` files.
+- **JavaScript Runtime & Package Manager**:
+  - **Node.js & npm**: LTS versions recommended if you choose this route. `npm` is used for running scripts defined in `package.json` (like `generate-proto`, `format`, `build`).
+  - **Bun**: Can be used as an alternative to Node.js/npm for running scripts and managing JavaScript dependencies (if any were to be added to `package.json`).
+- **Python Environment Manager (Optional but Recommended for `build.py` and linting tools)**:
+  - **uv**: A fast Python installer and resolver. If you intend to use or develop the Python scripts in `build_protocols/` or run the full `format.sh` script (which uses Python-based linters like `black`, `isort`, `autoflake`), `uv` can be used to manage these Python tool dependencies, typically defined in `pyproject.toml`. For example: `uv pip install -r requirements-dev.txt` (if you generate one from `pyproject.toml`) or `uv venv && uv pip sync`.
+  - Alternatively, standard Python `venv` and `pip` can be used.
 
 ### Installation
 
@@ -34,20 +38,40 @@ cd <repository-directory>
 ```
 
 2.  **Install Go dependencies & tools:**
-    The Go build script uses Go modules. Dependencies like Pongo2 will be downloaded automatically when you build or run the Go program (`go run main.go` or `go build`).
-    Ensure you have the Go Protocol Buffer plugins installed:
+    The Go build script uses Go modules. Dependencies like Pongo2 (for `main.go`) will be downloaded automatically when you build or run the Go program.
+
+    **Important for Go Protobuf Generation:**
+    Ensure you have the Go Protocol Buffer generator plugins installed globally and available in your system's `PATH`. `protoc` needs to find these executables.
 
     ```bash
     go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
     go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
     ```
 
-    Make sure your `GOPATH/bin` or `HOME/go/bin` (if `GOPATH` is not set) is in your system's `PATH` so that `protoc` can find these plugins.
+    After installation, verify that your Go binary path (usually `$GOPATH/bin` or `$HOME/go/bin`) is correctly added to your system's `PATH` environment variable. A new terminal session might be required for `PATH` changes to take effect. If `protoc` cannot find these plugins, the `npm run generate-proto` command will fail.
 
-3.  **Install Node.js development dependencies (for formatting, etc.):**
-    This step is mainly for tools like Prettier used in `format.sh`.
+3.  **Install JavaScript/Build Tooling Dependencies:**
+    If using `npm`:
+
     ```bash
     npm install
+    ```
+
+    If using `bun`:
+
+    ```bash
+    bun install
+    ```
+
+    This installs development tools like Prettier (used in `format.sh`) and any other JS dependencies defined in `package.json`.
+
+4.  **Setup Python Development Environment (Optional, for `build.py` / linters):**
+    If you plan to work with `build.py` or the Python-based linters in `format.sh`, set up a Python environment using `uv` (recommended) or `venv`/`pip` with the dependencies from `pyproject.toml` (e.g., by generating a `requirements-dev.txt` or using `uv pip sync`).
+    Example with `uv`:
+    ```bash
+    uv venv .venv
+    source .venv/bin/activate  # or .venv\Scripts\activate on Windows
+    uv pip install -e .[dev]   # Install project and dev dependencies
     ```
 
 ### Build Process
@@ -71,7 +95,6 @@ The website generation involves two main steps:
    ```
 
    This command runs the main `go run main.go` script (or `main.exe` if compiled). The script performs the following actions:
-
    - Reads the main configuration from `public/config.json`.
    - Loads dynamic content from `data/*.json` files, validating it against the generated Protobuf structures.
    - Loads HTML component templates from `templates/components/`.
@@ -91,7 +114,6 @@ You can customize various aspects of the generated site:
 ### Content Blocks
 
 - **Adding a New Block:**
-
   1. Create an HTML file for your block in `templates/components/<your-block-name>/<your-block-name>.html` (e.g., `templates/components/my-custom-block/my-custom-block.html`).
   2. Add the desired HTML structure. For SADS-styled blocks, use `data-sads-*` attributes. For traditional CSS, create a corresponding CSS file.
   3. Update `public/config.json` by adding the block's template name (e.g., `my-custom-block.html`) to the `blocks` array in the desired order.
@@ -105,7 +127,6 @@ You can customize various aspects of the generated site:
      - Remember to run `npm run generate-proto` after adding/modifying `.proto` files.
 
 - **Removing a Block:**
-
   1. Remove the block's template name from the `blocks` array in `public/config.json`.
   2. Optionally, delete the HTML template file from `templates/components/<your-block-name>/` and any associated CSS, data, or proto files if no longer needed.
 

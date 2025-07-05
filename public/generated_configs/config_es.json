@@ -81,6 +81,7 @@
     ]
   },
   "navigation_data_file": "data/navigation.json",
+  "site_logo_data_file": "data/site_logo.json",
   "supported_langs": ["en", "es"],
   "translations": {
     "blog_post_alpha_cta": "Leer Publicación Alfa",
@@ -113,7 +114,8 @@
     "hero_subtitle": "Esta es una sección de héroe simple para llamar la atención.",
     "hero_title": "Bienvenido a Nuestra Página de Destino",
     "light_mode_toggle": "Alternar Modo Claro",
-    "logo_text": "Logo ES",
+    "logo_alt_text": "Logo de NombreMarca",
+    "logo_text": "NombreMarca",
     "nav_blog": "Blog",
     "nav_features": "Características",
     "nav_home": "Inicio",

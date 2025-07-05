@@ -30,3 +30,12 @@ message TitledBlock {
   I18nString title = 1;
   I18nString description = 2;
 }
+
+// Message for Site Logo configuration
+message SiteLogo {
+  string image_path = 1;    // e.g., "public/assets/images/logo.svg"
+  string alt_text_key = 2;  // i18n key for the logo's alt text
+  string logo_text_key =
+      3;  // i18n key for the text displayed next to/with the logo
+  string target_url = 4;  // URL the logo links to (e.g., "/index.html", "#")
+}
