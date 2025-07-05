@@ -175,10 +175,10 @@ graph TD
 
     HTML_GENERATORS[Services: HtmlBlockGenerators<br>e.g., HeroHtmlGenerator] --> GEN_BLOCK_HTML;
 
-    EXISTING_JS_MODULES[Input: public/js/modules/*.js] --> JS_BUNDLER[Tool: AssetBundler (Python)];
+    EXISTING_JS_MODULES[Input: public/js/modules/*.js] --> JS_BUNDLER[Tool: AssetBundler Python];
     COMPILED_TS_JS --> JS_BUNDLER;
     JS_BUNDLER --> FINAL_MAIN_JS[Generated: public/dist/main.js];
-    FINAL_MAIN_JS --> H_BASE_HTML; // main.js is linked in base.html
+    FINAL_MAIN_JS --> H_BASE_HTML[main.js is linked in base.html];
 
     style A_CFG fill:#f9f,stroke:#333,stroke-width:2px
     style A_DATA fill:#f9f,stroke:#333,stroke-width:2px
