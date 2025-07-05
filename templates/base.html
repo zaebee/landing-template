@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ lang | default('en') }}">
+<html lang="{{ lang }}">
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -13,7 +13,7 @@
       name="keywords"
     />
     {% endblock head_meta %}
-    <title>{{ title | default("Simple Landing Page") }}</title>
+    <title>{{ title }}</title>
     <link href="public/style.css" rel="stylesheet" />
     <link href="public/dist/main.css" rel="stylesheet" />
     <link rel="icon" href="public/favicon.svg" type="image/svg+xml" />

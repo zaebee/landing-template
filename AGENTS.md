@@ -69,3 +69,54 @@ In the current experimental setup, this project uses the Semantic Attribute-Driv
 - **Important:** The SADS engine is an MVP (Minimum Viable Product) and has known limitations (e.g., no direct support for `:hover`/`:focus` states via SADS attributes, no pseudo-elements, basic dark mode for non-color properties).
 
 - # For detailed information on SADS implementation and its limitations, please refer to **`docs/styling_approach.md`**
+
+---
+
+## Build and Run Instructions
+
+### Preferred Full Build Process
+
+The most comprehensive way to build the entire project, including generating all necessary files (Protobuf stubs for Go/Python/TS, compiling TypeScript) and then building the static HTML pages, is to use the npm script:
+
+```bash
+npm run build
+```
+
+This script executes the following steps in order:
+
+1. `npm run generate-proto`: Generates Go, Python, and TypeScript files from `.proto` definitions. This includes:
+   - Go: `protoc --go_out=./generated/go --go_opt=paths=source_relative ...`
+   - TypeScript: `protoc --plugin=protoc-gen-ts ... --ts_out=...`
+   - Python: `python -m grpc_tools.protoc ... --python_out=...`
+2. `npm run compile:ts`: Compiles TypeScript files (e.g., SADS engine) to JavaScript.
+3. `go run main.go`: The core Go application that uses Pongo2 templates, JSON data, and the generated Go protobuf files to assemble the final static HTML pages (`index.html`, `index_es.html`, etc.).
+
+### Running the Go Static Site Generator Directly
+
+If Protobuf files and TypeScript have already been generated/compiled, you can run the Go static site generator directly:
+
+```bash
+go run main.go
+```
+
+This is the final step of the `npm run build` process and is responsible for HTML page assembly. Ensure that `generated/go/` contains up-to-date `*.pb.go` files before running this directly if you've made changes to `.proto` files.
+
+### Development Server
+
+After building the site (e.g., via `npm run build`), you can serve the static files locally using a simple HTTP server. The `package.json` includes a script for this:
+
+```bash
+npm run run
+```
+
+This typically starts `python -m http.server` in the project root, serving files on `http://localhost:8000`.
+
+### Linting
+
+To check for code style and potential errors:
+
+```bash
+npm run lint
+```
+
+This will run `ruff` and `mypy` for Python, and `prettier` for formatting various file types. Ensure Python protobuf files are up-to-date (`npm run generate-proto:py`) before running MyPy to avoid false positives.

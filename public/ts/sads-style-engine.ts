@@ -1,24 +1,29 @@
 // TypeScript type definitions and class for SADS (Semantic Attribute-Driven Styling) Engine
 
 import { SadsTheme } from "./sads-default-theme.js"; // Only import the SadsTheme type
+import {
+  SadsAttributeValue,
+  SadsBorderRadiusToken,
+  SadsColorToken,
+  SadsFontWeightToken,
+  SadsSpacingToken,
+  SadsStylingSet,
+  SadsResponsiveStyle as ProtoSadsResponsiveStyle, // Alias to avoid name clash
+  SadsElementStyles,
+} from "./generated_proto/sads_styling.v1.js";
+import type { PartialMessage } from "@protobuf-ts/runtime";
 
 // Type for the structure of responsive rules parsed from the data attribute
-interface ResponsiveRuleStyle {
-  [sadsPropertyKey: string]: string; // e.g., "padding": "s", "flexDirection": "column"
-}
-
-interface ResponsiveRule {
-  breakpoint: string; // e.g., "mobile", or a raw media query
-  styles: ResponsiveRuleStyle;
+// This is for the RAW JSON structure from data-sads-responsive-rules
+interface RawResponsiveRuleJson {
+  breakpoint: string;
+  styles: { [sadsPropertyKey: string]: string }; // e.g. { "padding": "m", "bgColor": "primary" }
 }
 
 // Type for the dataset of an HTMLElement, which is a DOMStringMap
-// Using a more specific type for attributes SADS cares about might be possible
-// but DOMStringMap is generally accurate.
 type SadsElementDataset = DOMStringMap;
 
 // SADS (Semantic Attribute-Driven Styling) Engine v0.1.2 - TypeScript Version
-
 class SADSEngine {
   public theme: SadsTheme;
   private dynamicStyleSheet: CSSStyleSheet | null;
@@ -28,7 +33,6 @@ class SADSEngine {
     customThemeConfig: Partial<SadsTheme> = {},
     externalDefaultTheme: SadsTheme | null = null
   ) {
-    // Use externalDefaultTheme if provided, otherwise try to access global sadsDefaultTheme
     let baseTheme: SadsTheme | null = externalDefaultTheme;
     if (
       !baseTheme &&
@@ -43,7 +47,6 @@ class SADSEngine {
       console.warn(
         "SADS: Default theme not found or empty. Engine might not work as expected. Ensure sadsDefaultTheme is loaded or passed."
       );
-      // Initialize with an empty theme structure to prevent errors, though functionality will be limited.
       baseTheme = {
         colors: {},
         spacing: {},
@@ -57,7 +60,7 @@ class SADSEngine {
         objectFit: {},
         fontStyle: {},
         borderStyle: {},
-      } as unknown as SadsTheme; // Cast needed due to partial empty structure
+      } as unknown as SadsTheme;
     }
     this.theme = this._initializeTheme(baseTheme, customThemeConfig);
     this.dynamicStyleSheet = this._createDynamicStyleSheet();
@@ -69,12 +72,9 @@ class SADSEngine {
     defaultConfig: SadsTheme,
     customThemeConfig: Partial<SadsTheme>
   ): SadsTheme {
-    // Deep clone defaultConfig to prevent modification of the original object
     const clonedDefaultConfig: SadsTheme = JSON.parse(
       JSON.stringify(defaultConfig)
     );
-
-    // Ensure aliases are correctly set up if they depend on other default values
     if (
       clonedDefaultConfig.colors &&
       clonedDefaultConfig.colors["text-accent"]
@@ -82,9 +82,7 @@ class SADSEngine {
       clonedDefaultConfig.colors["border-accent"] =
         clonedDefaultConfig.colors["text-accent"];
     } else {
-      console.warn(
-        "SADS: 'text-accent' not found in default theme colors for 'border-accent' alias."
-      );
+      console.warn("SADS: 'text-accent' not found for 'border-accent' alias.");
     }
     if (
       clonedDefaultConfig.colors &&
@@ -92,10 +90,7 @@ class SADSEngine {
     ) {
       clonedDefaultConfig.colors["border-accent-dark"] =
         clonedDefaultConfig.colors["text-accent-dark"];
-    } else {
-      // It's okay if text-accent-dark is not present, border-accent-dark might not be used or defined directly
     }
-
     return this._deepMergeThemes(
       clonedDefaultConfig,
       customThemeConfig
@@ -103,7 +98,7 @@ class SADSEngine {
   }
 
   private _deepMergeThemes(base: any, custom: any): any {
-    const merged = { ...base }; // Shallow clone base
+    const merged = { ...base };
     for (const key in custom) {
       if (custom.hasOwnProperty(key)) {
         const customValue = custom[key];
@@ -118,7 +113,7 @@ class SADSEngine {
         ) {
           merged[key] = this._deepMergeThemes(baseValue, customValue);
         } else {
-          merged[key] = customValue; // Custom overrides base
+          merged[key] = customValue;
         }
       }
     }
@@ -126,10 +121,7 @@ class SADSEngine {
   }
 
   private _createDynamicStyleSheet(): CSSStyleSheet | null {
-    if (typeof document === "undefined") {
-      // Guard for non-browser environments
-      return null;
-    }
+    if (typeof document === "undefined") return null;
     let styleEl = document.getElementById(
       "sads-dynamic-styles"
     ) as HTMLStyleElement | null;
@@ -138,7 +130,6 @@ class SADSEngine {
       styleEl.id = "sads-dynamic-styles";
       document.head.appendChild(styleEl);
     } else {
-      // Clear existing rules
       if (styleEl.sheet) {
         while (styleEl.sheet.cssRules.length > 0) {
           styleEl.sheet.deleteRule(0);
@@ -149,14 +140,12 @@ class SADSEngine {
   }
 
   public updateTheme(newThemeConfig: Partial<SadsTheme>): void {
-    // Re-initialize with new config, merging with the global sadsDefaultTheme as base
-    // (or an empty theme if global is not found)
     let baseThemeForUpdate: SadsTheme;
     if (typeof window !== "undefined" && (window as any).sadsDefaultTheme) {
       baseThemeForUpdate = (window as any).sadsDefaultTheme as SadsTheme;
     } else {
       console.warn(
-        "SADS.updateTheme: Global sadsDefaultTheme not found for re-initialization. Using an empty theme structure as base."
+        "SADS.updateTheme: Global sadsDefaultTheme not found. Using empty theme as base."
       );
       baseThemeForUpdate = {
         colors: {},
@@ -173,14 +162,8 @@ class SADSEngine {
         borderStyle: {},
       } as unknown as SadsTheme;
     }
-
     this.theme = this._initializeTheme(baseThemeForUpdate, newThemeConfig);
-    this.dynamicStyleSheet = this._createDynamicStyleSheet(); // Clears old rules
-    if (typeof document !== "undefined") {
-      document
-        .querySelectorAll<HTMLElement>("[data-sads-component]")
-        .forEach((rootEl) => this.applyStylesTo(rootEl));
-    }
+    this.applyStyles(); // Use the new applyStyles method
   }
 
   private _getTargetSelector(el: HTMLElement): string {
@@ -194,31 +177,453 @@ class SADSEngine {
     return `.${targetSelector}`;
   }
 
+  private _parseSadsAttributeString(
+    sadsPropertyKey: string,
+    rawValue: string
+  ): SadsAttributeValue | null {
+    const attributeValue: PartialMessage<SadsAttributeValue> = {
+      valueType: { oneofKind: undefined },
+    };
+    if (rawValue.startsWith("custom:")) {
+      attributeValue.valueType = {
+        oneofKind: "customValue",
+        customValue: rawValue.substring("custom:".length),
+      };
+      return SadsAttributeValue.create(attributeValue);
+    }
+    const normalizedKey = sadsPropertyKey.toLowerCase();
+    switch (normalizedKey) {
+      case "padding":
+      case "paddingtop":
+      case "paddingbottom":
+      case "paddingleft":
+      case "paddingright":
+      case "margin":
+      case "margintop":
+      case "marginbottom":
+      case "marginleft":
+      case "marginright":
+      case "gap":
+      case "borderwidth":
+        const spacingTokenKey = `SPACING_TOKEN_${rawValue.toUpperCase()}`;
+        if (spacingTokenKey in SadsSpacingToken) {
+          attributeValue.valueType = {
+            oneofKind: "spacingToken",
+            spacingToken:
+              SadsSpacingToken[
+                spacingTokenKey as keyof typeof SadsSpacingToken
+              ],
+          };
+        } else {
+          attributeValue.valueType = {
+            oneofKind: "customValue",
+            customValue: rawValue,
+          };
+        }
+        break;
+      case "bgcolor":
+      case "textcolor":
+      case "bordercolor":
+        const colorTokenKey = `COLOR_TOKEN_${rawValue.toUpperCase()}`;
+        if (colorTokenKey in SadsColorToken) {
+          attributeValue.valueType = {
+            oneofKind: "colorToken",
+            colorToken:
+              SadsColorToken[colorTokenKey as keyof typeof SadsColorToken],
+          };
+        } else {
+          if (rawValue.toLowerCase() === "transparent") {
+            attributeValue.valueType = {
+              oneofKind: "colorToken",
+              colorToken: SadsColorToken.COLOR_TOKEN_TRANSPARENT,
+            };
+          } else {
+            attributeValue.valueType = {
+              oneofKind: "customValue",
+              customValue: rawValue,
+            };
+          }
+        }
+        break;
+      case "fontweight":
+        const fontWeightTokenKey = `FONT_WEIGHT_TOKEN_${rawValue.toUpperCase()}`;
+        if (fontWeightTokenKey in SadsFontWeightToken) {
+          attributeValue.valueType = {
+            oneofKind: "fontWeightToken",
+            fontWeightToken:
+              SadsFontWeightToken[
+                fontWeightTokenKey as keyof typeof SadsFontWeightToken
+              ],
+          };
+        } else {
+          attributeValue.valueType = {
+            oneofKind: "customValue",
+            customValue: rawValue,
+          };
+        }
+        break;
+      case "borderradius":
+        const radiusTokenKey = `BORDER_RADIUS_TOKEN_${rawValue.toUpperCase()}`;
+        if (radiusTokenKey in SadsBorderRadiusToken) {
+          attributeValue.valueType = {
+            oneofKind: "borderRadiusToken",
+            borderRadiusToken:
+              SadsBorderRadiusToken[
+                radiusTokenKey as keyof typeof SadsBorderRadiusToken
+              ],
+          };
+        } else {
+          attributeValue.valueType = {
+            oneofKind: "customValue",
+            customValue: rawValue,
+          };
+        }
+        break;
+      case "fontsize":
+        attributeValue.valueType = {
+          oneofKind: "fontSizeValue",
+          fontSizeValue: rawValue,
+        };
+        break;
+      default:
+        attributeValue.valueType = {
+          oneofKind: "customValue",
+          customValue: rawValue,
+        };
+        break;
+    }
+    if (attributeValue.valueType.oneofKind === undefined) return null;
+    return SadsAttributeValue.create(attributeValue);
+  }
+
+  private _extractBaseStylesFromDataset(dataset: DOMStringMap): SadsStylingSet {
+    const attributes: { [key: string]: SadsAttributeValue } = {};
+    for (const key in dataset) {
+      if (
+        Object.prototype.hasOwnProperty.call(dataset, key) &&
+        key.startsWith("sads") &&
+        key.toLowerCase() !== "sadsresponsiverules" &&
+        key.toLowerCase() !== "sadscomponent" &&
+        key.toLowerCase() !== "sadselement"
+      ) {
+        const sadsPropertyKey = key.substring("sads".length);
+        const normalizedSadsKey =
+          sadsPropertyKey.charAt(0).toLowerCase() + sadsPropertyKey.slice(1);
+        const rawValue = dataset[key];
+        if (rawValue !== undefined) {
+          const parsedValue = this._parseSadsAttributeString(
+            normalizedSadsKey,
+            rawValue
+          );
+          if (parsedValue) attributes[normalizedSadsKey] = parsedValue;
+        }
+      }
+    }
+    return SadsStylingSet.create({ attributes });
+  }
+
+  private _parseResponsiveRulesTS(
+    rulesString: string | undefined
+  ): ProtoSadsResponsiveStyle[] {
+    if (!rulesString) return [];
+    const result: ProtoSadsResponsiveStyle[] = [];
+    try {
+      const rawParsedRules: RawResponsiveRuleJson[] = JSON.parse(rulesString);
+      rawParsedRules.forEach((rawRule) => {
+        const stylesAttributes: { [key: string]: SadsAttributeValue } = {};
+        for (const sadsKey in rawRule.styles) {
+          if (Object.prototype.hasOwnProperty.call(rawRule.styles, sadsKey)) {
+            const rawValue = rawRule.styles[sadsKey];
+            const parsedValue = this._parseSadsAttributeString(
+              sadsKey,
+              rawValue
+            );
+            if (parsedValue) stylesAttributes[sadsKey] = parsedValue;
+          }
+        }
+        const responsiveStyle = ProtoSadsResponsiveStyle.create({
+          breakpointKey: rawRule.breakpoint,
+          styles: SadsStylingSet.create({ attributes: stylesAttributes }),
+        });
+        result.push(responsiveStyle);
+      });
+    } catch (e) {
+      console.error(
+        `SADS TS: Error parsing responsive rules string: "${rulesString}"`,
+        e
+      );
+    }
+    return result;
+  }
+
+  private _parseElementDatasetToSadsElementStyles(
+    dataset: DOMStringMap
+  ): SadsElementStyles | null {
+    const baseStylesSet: SadsStylingSet =
+      this._extractBaseStylesFromDataset(dataset);
+    const responsiveRulesString = dataset.sadsResponsiveRules;
+    const responsiveStylesArray: ProtoSadsResponsiveStyle[] =
+      this._parseResponsiveRulesTS(responsiveRulesString);
+    const hasBaseStyles =
+      baseStylesSet.attributes &&
+      Object.keys(baseStylesSet.attributes).length > 0;
+    const hasResponsiveStyles = responsiveStylesArray.length > 0;
+    if (!hasBaseStyles && !hasResponsiveStyles) return null;
+    return SadsElementStyles.create({
+      baseStyles: hasBaseStyles ? baseStylesSet : undefined,
+      responsiveStyles: responsiveStylesArray,
+    });
+  }
+
+  private _resolveSadsAttributeValueToCss(
+    cssProperty: string | null,
+    sadsValue: SadsAttributeValue
+  ): string | null {
+    if (!cssProperty) return null;
+    const isDarkMode =
+      typeof document !== "undefined" &&
+      document.body.classList.contains("dark-mode");
+    let semanticKey: string | undefined;
+    let valueFromToken = false;
+    switch (sadsValue.valueType.oneofKind) {
+      case "customValue":
+        semanticKey = sadsValue.valueType.customValue;
+        if (semanticKey.startsWith("custom:"))
+          return semanticKey.substring("custom:".length);
+        break;
+      case "spacingToken":
+        const spacingTokenStr = SadsSpacingToken[
+          sadsValue.valueType.spacingToken
+        ]
+          ?.replace("SPACING_TOKEN_", "")
+          .toLowerCase();
+        semanticKey =
+          spacingTokenStr === "unspecified" ? undefined : spacingTokenStr;
+        valueFromToken = true;
+        break;
+      case "colorToken":
+        const colorTokenStr = SadsColorToken[sadsValue.valueType.colorToken]
+          ?.replace("COLOR_TOKEN_", "")
+          .toLowerCase();
+        semanticKey =
+          colorTokenStr === "unspecified" ? undefined : colorTokenStr;
+        if (semanticKey === "transparent") return "transparent";
+        valueFromToken = true;
+        break;
+      case "fontWeightToken":
+        const fontWeightStr = SadsFontWeightToken[
+          sadsValue.valueType.fontWeightToken
+        ]
+          ?.replace("FONT_WEIGHT_TOKEN_", "")
+          .toLowerCase();
+        semanticKey =
+          fontWeightStr === "unspecified" ? undefined : fontWeightStr;
+        valueFromToken = true;
+        break;
+      case "borderRadiusToken":
+        const radiusTokenStr = SadsBorderRadiusToken[
+          sadsValue.valueType.borderRadiusToken
+        ]
+          ?.replace("BORDER_RADIUS_TOKEN_", "")
+          .toLowerCase();
+        semanticKey =
+          radiusTokenStr === "unspecified" ? undefined : radiusTokenStr;
+        valueFromToken = true;
+        break;
+      case "fontSizeValue":
+        semanticKey = sadsValue.valueType.fontSizeValue;
+        break;
+      default:
+        return null;
+    }
+    if (
+      semanticKey === undefined ||
+      semanticKey === null ||
+      semanticKey === "unspecified"
+    )
+      return null;
+
+    const themeCategoryMap: { [cssProp: string]: keyof SadsTheme | null } = {
+      padding: "spacing",
+      "padding-top": "spacing",
+      "padding-bottom": "spacing",
+      "padding-left": "spacing",
+      "padding-right": "spacing",
+      margin: "spacing",
+      "margin-top": "spacing",
+      "margin-bottom": "spacing",
+      "margin-left": "spacing",
+      "margin-right": "spacing",
+      gap: "spacing",
+      "border-width": "spacing",
+      width: "spacing",
+      height: "spacing",
+      "background-color": "colors",
+      color: "colors",
+      "border-color": "colors",
+      "font-size": "fontSize",
+      "font-weight": "fontWeight",
+      "font-style": "fontStyle",
+      "border-radius": "borderRadius",
+      "border-style": "borderStyle",
+      "box-shadow": "shadow",
+      "max-width": "maxWidth",
+      "flex-basis": "flexBasis",
+      "object-fit": "objectFit",
+    };
+    const categoryKey = themeCategoryMap[cssProperty];
+    if (categoryKey) {
+      const themeCategory = this.theme[categoryKey] as
+        | { [key: string]: string }
+        | undefined;
+      if (themeCategory) {
+        if (categoryKey === "colors") {
+          const colorThemeKey = isDarkMode
+            ? `${semanticKey}-dark`
+            : semanticKey;
+          return (
+            themeCategory[colorThemeKey] ||
+            themeCategory[semanticKey] ||
+            (valueFromToken ? null : semanticKey)
+          );
+        }
+        const themeValue = themeCategory[semanticKey];
+        if (themeValue !== undefined) return themeValue;
+        else if (!valueFromToken) return semanticKey;
+        else return null;
+      } else if (!valueFromToken) return semanticKey;
+    }
+    if (!valueFromToken) return semanticKey;
+    return null;
+  }
+
+  private _generateCssFromSadsStylingSet(stylingSet: SadsStylingSet): string {
+    let cssText = "";
+    if (!stylingSet.attributes) return "";
+    for (const sadsKey in stylingSet.attributes) {
+      if (
+        Object.prototype.hasOwnProperty.call(stylingSet.attributes, sadsKey)
+      ) {
+        const sadsValue: SadsAttributeValue = stylingSet.attributes[sadsKey];
+        const cssProperty = this._mapSadsPropertyToCss(sadsKey);
+        if (!cssProperty) continue;
+        const actualValue = this._resolveSadsAttributeValueToCss(
+          cssProperty,
+          sadsValue
+        );
+        if (actualValue !== null)
+          cssText += `${cssProperty}: ${actualValue};\n`;
+      }
+    }
+    return cssText;
+  }
+
+  private _applyProcessedStylesToElement(
+    el: HTMLElement,
+    elementSadsConfig: SadsElementStyles
+  ): void {
+    const targetSelector = this._getTargetSelector(el);
+    if (
+      elementSadsConfig.baseStyles &&
+      elementSadsConfig.baseStyles.attributes
+    ) {
+      const baseCssText = this._generateCssFromSadsStylingSet(
+        elementSadsConfig.baseStyles
+      );
+      if (baseCssText.trim()) this._addCssRule(targetSelector, baseCssText);
+    }
+    if (
+      elementSadsConfig.responsiveStyles &&
+      elementSadsConfig.responsiveStyles.length > 0
+    ) {
+      elementSadsConfig.responsiveStyles.forEach(
+        (responsiveStyle: ProtoSadsResponsiveStyle) => {
+          if (
+            responsiveStyle.breakpointKey &&
+            responsiveStyle.styles &&
+            responsiveStyle.styles.attributes
+          ) {
+            const mediaQuery =
+              this.theme.breakpoints[responsiveStyle.breakpointKey] ||
+              responsiveStyle.breakpointKey;
+            const responsiveCssText = this._generateCssFromSadsStylingSet(
+              responsiveStyle.styles
+            );
+            if (responsiveCssText.trim())
+              this._addCssRule(targetSelector, responsiveCssText, mediaQuery);
+          }
+        }
+      );
+    }
+  }
+
+  public applyStyles(): void {
+    if (typeof document === "undefined") {
+      console.log("SADS: Document is undefined, cannot apply styles.");
+      return;
+    }
+    console.log("SADS (TS): applyStyles called using typed parsing flow.");
+    if (this.dynamicStyleSheet && this.dynamicStyleSheet.ownerNode) {
+      while (this.dynamicStyleSheet.cssRules.length > 0) {
+        this.dynamicStyleSheet.deleteRule(0);
+      }
+    } else {
+      this.dynamicStyleSheet = this._createDynamicStyleSheet();
+      if (!this.dynamicStyleSheet) {
+        console.error(
+          "SADS: Critical error - dynamic stylesheet cannot be created. Styling will not be applied."
+        );
+        return;
+      }
+    }
+    this.ruleCounter = 0;
+    document
+      .querySelectorAll<HTMLElement>("[data-sads-component]")
+      .forEach((rootEl) => {
+        const elementsToStyle: HTMLElement[] = [
+          rootEl,
+          ...Array.from(
+            rootEl.querySelectorAll<HTMLElement>("[data-sads-element]")
+          ),
+        ];
+        elementsToStyle.forEach((el) => {
+          const elementSadsConfig =
+            this._parseElementDatasetToSadsElementStyles(el.dataset);
+          if (elementSadsConfig) {
+            this._applyProcessedStylesToElement(el, elementSadsConfig);
+          }
+        });
+      });
+    console.log(
+      "SADS (TS): Style application process completed with typed parsing."
+    );
+  }
+
+  // TODO: The old _parseResponsiveRules, _generateBaseCss, and applyStylesTo (below) need to be removed.
   private _parseResponsiveRules(
     rulesString: string | undefined,
     targetSelector: string
   ): { [mediaQuery: string]: string } {
     const responsiveStyles: { [mediaQuery: string]: string } = {};
     if (!rulesString) return responsiveStyles;
-
     try {
-      const parsedRules: ResponsiveRule[] = JSON.parse(rulesString);
-      parsedRules.forEach((rule) => {
+      const parsedRulesOld: {
+        breakpoint: string;
+        styles: { [key: string]: string };
+      }[] = JSON.parse(rulesString);
+      parsedRulesOld.forEach((rule) => {
         const breakpointKey = rule.breakpoint;
         const bpQuery = this.theme.breakpoints[breakpointKey];
-
         let targetQuery: string;
         if (!bpQuery) {
           console.warn(
             `SADS: Unknown breakpoint key '${breakpointKey}' for ${targetSelector}. Raw query used: ${breakpointKey}`
           );
-          targetQuery = breakpointKey; // Use raw key as query
+          targetQuery = breakpointKey;
         } else {
           targetQuery = bpQuery;
         }
-
         responsiveStyles[targetQuery] = responsiveStyles[targetQuery] || "";
-
         for (const [respSadsPropKey, respSemanticVal] of Object.entries(
           rule.styles
         )) {
@@ -227,19 +632,18 @@ class SADSEngine {
             cssProp,
             respSemanticVal
           );
-          if (cssProp && actualVal !== null) {
+          if (cssProp && actualVal !== null)
             responsiveStyles[targetQuery] +=
               `${cssProp}: ${actualVal} !important;\n`;
-          } else if (!cssProp) {
+          else if (!cssProp)
             console.warn(
               `SADS: Unmapped SADS property '${respSadsPropKey}' in responsive rule for ${targetSelector}`
             );
-          }
         }
       });
     } catch (e) {
       console.error(
-        `SADS: Error parsing responsive rules for ${targetSelector}: "${rulesString}"`,
+        `SADS: Error parsing responsive rules (old method) for ${targetSelector}: "${rulesString}"`,
         e
       );
     }
@@ -252,7 +656,6 @@ class SADSEngine {
   ): string {
     let baseCssText = "";
     for (const attrKey in attributes) {
-      // Ensure we are only processing sads attributes, excluding special/control ones
       if (
         Object.prototype.hasOwnProperty.call(attributes, attrKey) &&
         attrKey.toLowerCase().startsWith("sads") &&
@@ -260,82 +663,34 @@ class SADSEngine {
         attrKey.toLowerCase() !== "sadscomponent" &&
         attrKey.toLowerCase() !== "sadselement"
       ) {
-        const sadsPropertyKey = attrKey.substring("sads".length); // Remove "sads" prefix
+        const sadsPropertyKey = attrKey.substring("sads".length);
         const semanticValue = attributes[attrKey];
         const cssProperty = this._mapSadsPropertyToCss(sadsPropertyKey);
         const actualValue = this._mapSemanticValueToActual(
           cssProperty,
           semanticValue
         );
-
-        if (cssProperty && actualValue !== null) {
+        if (cssProperty && actualValue !== null)
           baseCssText += `${cssProperty}: ${actualValue};\n`;
-        } else if (!cssProperty) {
-          // Warning for unmapped SADS property, excluding 'LayoutType' which is intentionally not mapped
-          if (sadsPropertyKey.toLowerCase() !== "layouttype") {
-            console.warn(
-              `SADS: Unmapped SADS property '${sadsPropertyKey}' for ${targetSelector}`
-            );
-          }
-        }
+        else if (!cssProperty && sadsPropertyKey.toLowerCase() !== "layouttype")
+          console.warn(
+            `SADS: Unmapped SADS property '${sadsPropertyKey}' for ${targetSelector}`
+          );
       }
     }
     return baseCssText;
   }
 
   public applyStylesTo(rootElement: HTMLElement | null): void {
-    if (!rootElement || !rootElement.matches("[data-sads-component]")) {
-      // console.warn("SADS: applyStylesTo called on invalid root or non-component element.", rootElement);
-      return;
-    }
-
-    // Ensure we are in a browser environment
-    if (typeof document === "undefined") {
-      console.log("SADS.applyStylesTo: Document is undefined, exiting."); // New log
-      return;
-    }
-    console.log("SADS.applyStylesTo: Entered for rootElement:", rootElement); // New log
-
-    const elementsToStyle: HTMLElement[] = [
-      rootElement,
-      ...Array.from(
-        rootElement.querySelectorAll<HTMLElement>("[data-sads-element]")
-      ),
-    ];
-    console.log("SADS.applyStylesTo: Elements to style:", elementsToStyle); // New log
-
-    elementsToStyle.forEach((el) => {
-      console.log("SADS.applyStylesTo: Processing element:", el); // New log
-      const targetSelector = this._getTargetSelector(el);
-      const attributes = el.dataset as SadsElementDataset;
-      // Log a serializable version of dataset for clarity, as DOMStringMap can be tricky in console
-      console.log(
-        `SADS.applyStylesTo: Element ${targetSelector} dataset:`,
-        JSON.parse(JSON.stringify(attributes))
-      ); // New log
-
-      const baseCssText = this._generateBaseCss(attributes, targetSelector);
-      console.log(
-        `SADS.applyStylesTo: Generated base CSS for ${targetSelector}: "${baseCssText.trim()}"`
-      ); // New log
-
-      if (baseCssText.trim()) {
-        // Ensure we only add non-empty rules
-        this._addCssRule(targetSelector, baseCssText);
-      } else {
-        console.log(
-          `SADS.applyStylesTo: No base CSS generated for ${targetSelector}, skipping _addCssRule for base styles.`
-        ); // New log
-      }
-
-      const responsiveStyles = this._parseResponsiveRules(
-        attributes.sadsResponsiveRules, // sadsResponsiveRules might be undefined
-        targetSelector
-      );
-      for (const [bpQuery, cssRules] of Object.entries(responsiveStyles)) {
-        if (cssRules) this._addCssRule(targetSelector, cssRules, bpQuery);
-      }
-    });
+    console.warn(
+      "SADS: applyStylesTo() is deprecated. Use applyStyles() instead."
+    );
+    // Call the new applyStyles method to ensure styling still occurs,
+    // but log that this entry point is deprecated.
+    // Note: applyStyles() processes all components, not just the given rootElement.
+    // If granular application is ever needed again, applyStyles would need refactoring
+    // or _applyProcessedStylesToElement could be made public.
+    this.applyStyles();
   }
 
   private _addCssRule(
@@ -343,27 +698,21 @@ class SADSEngine {
     rules: string,
     mediaQuery: string | null = null
   ): void {
-    if (!rules.trim()) return; // Do not add empty rules
-
+    if (!rules.trim()) return;
     const ruleContent = `${selector} { ${rules} }`;
     const finalRule = mediaQuery
       ? `@media ${mediaQuery} { ${ruleContent} }`
       : ruleContent;
-
-    console.log(`SADS: Attempting to add CSS rule: "${finalRule}"`); // Added log
-
+    console.log(`SADS: Attempting to add CSS rule: "${finalRule}"`);
     try {
       if (this.dynamicStyleSheet) {
         const currentRuleCount = this.dynamicStyleSheet.cssRules.length;
         this.dynamicStyleSheet.insertRule(finalRule, currentRuleCount);
-        // Verify insertion if possible (some browsers might not update length immediately or consistently)
         if (this.dynamicStyleSheet.cssRules.length > currentRuleCount) {
           console.log(
             `SADS: Successfully inserted rule. New rule count: ${this.dynamicStyleSheet.cssRules.length}`
           );
         } else {
-          // This path might be hit if insertRule succeeded but length didn't update, or if it failed silently before catch.
-          // Or if the rule was a duplicate and got ignored by some browser logic (less likely for unique SADS IDs).
           console.warn(
             `SADS: Rule insertion attempted, but cssRules.length did not increase. Rule: "${finalRule}" Current sheet content:`,
             this.dynamicStyleSheet.ownerNode?.textContent
@@ -375,38 +724,27 @@ class SADSEngine {
         );
       }
     } catch (e: any) {
-      // Explicitly type 'e' as any or unknown then check
       console.error(
         `SADS: Error inserting CSS rule: "${finalRule}"`,
         e.message,
         e.stack
       );
-      if (this.dynamicStyleSheet && this.dynamicStyleSheet.ownerNode) {
+      if (this.dynamicStyleSheet && this.dynamicStyleSheet.ownerNode)
         console.error(
           `SADS: Stylesheet ownerNode content at time of error:`,
           this.dynamicStyleSheet.ownerNode.textContent
         );
-      } else if (!this.dynamicStyleSheet) {
+      else if (!this.dynamicStyleSheet)
         console.error(`SADS: Dynamic stylesheet was null at time of error.`);
-      }
     }
   }
 
   private _mapSadsPropertyToCss(sadsPropertyKey: string): string | null {
     if (!sadsPropertyKey) return null;
-    // Ensure first char is lowercase for camelCase to kebab-case conversion
     let key =
       sadsPropertyKey.charAt(0).toLowerCase() + sadsPropertyKey.slice(1);
-    // Convert camelCase (e.g., "flexDirection") or PascalCase (e.g., "FlexDirection") to kebab-case ("flex-direction")
     let kebabKey = key.replace(/([A-Z])/g, (g) => `-${g[0].toLowerCase()}`);
-
-    // If the original sadsPropertyKey started with an uppercase letter and was not multi-word,
-    // the above might result in something like "-opacity" from "Opacity".
-    // Correct this if kebabKey starts with a dash.
-    if (kebabKey.startsWith("-")) {
-      kebabKey = kebabKey.substring(1);
-    }
-
+    if (kebabKey.startsWith("-")) kebabKey = kebabKey.substring(1);
     const propertyMap: { [key: string]: string | null } = {
       "bg-color": "background-color",
       "text-color": "color",
@@ -425,9 +763,9 @@ class SADSEngine {
       display: "display",
       "flex-direction": "flex-direction",
       "flex-wrap": "flex-wrap",
-      "flex-justify": "justify-content", // Common alias
+      "flex-justify": "justify-content",
       "justify-content": "justify-content",
-      "flex-align-items": "align-items", // Common alias
+      "flex-align-items": "align-items",
       "align-items": "align-items",
       "flex-basis": "flex-basis",
       gap: "gap",
@@ -447,15 +785,9 @@ class SADSEngine {
       cursor: "cursor",
       transition: "transition",
       "box-sizing": "box-sizing",
-      "layout-type": null, // Explicitly not a direct CSS prop
-      // Allow direct CSS properties if not in map by falling through
+      "layout-type": null,
     };
-
     if (propertyMap.hasOwnProperty(kebabKey)) return propertyMap[kebabKey];
-
-    // Fallback: assumes kebabKey is a valid CSS property if not in map
-    // This allows users to use data-sads-some-new-css-prop="value"
-    // console.warn(`SADS: Unmapped SADS property key '${sadsPropertyKey}' (kebab: ${kebabKey}). Falling back to kebabKey.`);
     return kebabKey;
   }
 
@@ -464,18 +796,13 @@ class SADSEngine {
     semanticValue: string | undefined | null
   ): string | null {
     if (semanticValue === null || semanticValue === undefined) return null;
-    if (cssProperty === null) return null; // Cannot map value if CSS property is unknown or irrelevant
-
+    if (cssProperty === null) return null;
     const valueStr = String(semanticValue);
-
-    if (valueStr.startsWith("custom:")) {
+    if (valueStr.startsWith("custom:"))
       return valueStr.substring("custom:".length);
-    }
-
     const isDarkMode =
       typeof document !== "undefined" &&
       document.body.classList.contains("dark-mode");
-
     const themeCategoryMap: { [cssProp: string]: keyof SadsTheme | null } = {
       padding: "spacing",
       "padding-top": "spacing",
@@ -489,27 +816,22 @@ class SADSEngine {
       "margin-right": "spacing",
       gap: "spacing",
       "border-width": "spacing",
-      width: "spacing", // Can use spacing scale or direct values
-      height: "spacing", // Can use spacing scale or direct values
-
+      width: "spacing",
+      height: "spacing",
       "background-color": "colors",
       color: "colors",
       "border-color": "colors",
-
       "font-size": "fontSize",
       "font-weight": "fontWeight",
-      "font-style": "fontStyle", // maps to SadsFontStyle
+      "font-style": "fontStyle",
       "border-radius": "borderRadius",
-      "border-style": "borderStyle", // maps to SadsBorderStyle
+      "border-style": "borderStyle",
       "box-shadow": "shadow",
       "max-width": "maxWidth",
       "flex-basis": "flexBasis",
-      "object-fit": "objectFit", // maps to SadsObjectFit
-      // CSS properties not needing theme category lookup (e.g. 'display', 'text-align') are not listed
+      "object-fit": "objectFit",
     };
-
     const categoryKey = themeCategoryMap[cssProperty];
-
     if (categoryKey) {
       const themeCategory = this.theme[categoryKey] as
         | { [key: string]: string }
@@ -517,42 +839,17 @@ class SADSEngine {
       if (themeCategory) {
         if (categoryKey === "colors") {
           const colorKey = isDarkMode ? `${valueStr}-dark` : valueStr;
-          // Fallback chain: dark-mode specific -> primary -> direct value
           return themeCategory[colorKey] || themeCategory[valueStr] || valueStr;
         }
-        // For other categories (spacing, fontSize, etc.)
         return themeCategory[valueStr] || valueStr;
       }
     }
-    // If no specific category mapping, or category not found in theme, return the value string directly
     return valueStr;
   }
 }
 
-// Export the class
 export { SADSEngine };
 
-// Example of how it might be instantiated (for testing or global exposure if needed by bundler)
-// This part would typically be in an app.js or similar entry point.
-//
-// if (typeof window !== 'undefined' && typeof document !== 'undefined') {
-//   // Ensure sadsDefaultTheme is available if not passed directly
-//   // For example, if sads-default-theme.ts is bundled and exports sadsDefaultTheme:
-//   // import { sadsDefaultTheme } from './sads-default-theme';
-//   // const sadsEngineInstance = new SADSEngine({}, sadsDefaultTheme);
-//
-//   // Or if relying on a global (less ideal with modules):
-//   // const sadsEngineInstance = new SADSEngine({}, (window as any).sadsDefaultTheme);
-//
-//   // (window as any).sadsEngineInstance = sadsEngineInstance;
-//   // document.addEventListener('DOMContentLoaded', () => {
-//   //   document.querySelectorAll<HTMLElement>('[data-sads-component]').forEach(el => {
-//   //     sadsEngineInstance.applyStylesTo(el);
-//   //   });
-//   // });
-// }
-
-// To make it available globally for simple script inclusion in nl-sads-test.html:
 if (typeof window !== "undefined") {
   (window as any).SADSEngine = SADSEngine;
 }

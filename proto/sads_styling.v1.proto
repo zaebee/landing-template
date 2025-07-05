@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package sads.v1;
 
-option go_package = "example.com/website_content/v1;website_content_v1";
+option go_package = ".;pb";
 
 // Enum for common spacing tokens
 enum SadsSpacingToken {
