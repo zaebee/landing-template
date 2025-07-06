@@ -13,18 +13,39 @@
       name="keywords"
     />
     {% endblock head_meta %}
-    <title>{{ title }}</title>
-    <link href="public/style.css" rel="stylesheet" />
+    <title>{{ page_title }}</title> {# Standardized to page_title used in Go context #}
+    <link href="{{ style_css_path }}" rel="stylesheet" /> {# Use variable from Go context #}
     <link rel="icon" href="public/favicon.svg" type="image/svg+xml" />
     {% block head_extra %} {% endblock head_extra %}
   </head>
   <body>
-    {% include "components/header/header.html" %}
+    {# Ensure header.html can use site_logo_data if it's responsible for rendering the logo #}
+    {% include "components/header/header.html" with site_logo_data=site_logo_data translations=translations lang=lang %}
 
     <main>{{ main_content | safe }}</main>
 
-    {% include "components/footer/footer.html" %}
-    <script type="module" src="public/js/public/ts/app.js" defer></script>
+    {% include "components/footer/footer.html" with translations=translations lang=lang %}
+
+    {# Main application script, assuming app_js_path points to the primary JS entry point #}
+    <script type="module" src="{{ app_js_path }}" defer></script>
+
+    {# Example of how other JS files like SADS engine or WASM loader might be included if not bundled into app.js #}
+    {# If sads-style-engine.js is a module imported by app.js, this might not be needed here. #}
+    {# <script type="module" src="{{ sads_style_engine_path }}" defer></script> #}
+
+    {# If wasmLoader.js is used to load wasm_exec.js and then the sads_poc.wasm #}
+    {# This assumes wasmLoader.js sets up paths correctly or they are passed via data attributes/global vars if needed #}
+    {# <script type="module" src="{{ wasm_loader_path }}" defer></script> #}
+
+    {# Add data attributes to body or a script tag to pass WASM paths to JS if needed #}
+    <script>
+      window.sadsConfig = {
+        sadsPocWasmPath: "{{ sads_poc_wasm_path }}",
+        wasmExecPath: "{{ wasm_exec_path }}",
+        sadsDefaultThemePath: "{{ sads_default_theme_path }}",
+        sadsEnginePath: "{{ sads_style_engine_path }}"
+      };
+    </script>
 
     {% block scripts %}{% endblock scripts %}
   </body>

@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2020", // Target version of JavaScript
     "module": "ESNext", // Module system
-    // "rootDir": "./public/ts", // Let tsc infer rootDir
+    "rootDir": ".", // Project root as rootDir
     "outDir": "./public/js", // Output directory for compiled JavaScript
     "baseUrl": ".", // Base directory for path mappings
     "paths": {
@@ -22,7 +22,8 @@
     // "declarationMap": true,                // Generate source maps for .d.ts files (optional for now)
   },
   "include": [
-    "./public/ts/**/*.ts" // Patterns to include
+    "public/ts/**/*.ts", // Compile files from public/ts
+    "generated/ts/**/*.ts" // Also compile generated TS files
   ],
   "exclude": [
     "node_modules", // Exclude node_modules
