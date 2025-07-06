@@ -2,53 +2,56 @@ syntax = "proto3";
 
 package sads.v1;
 
-option go_package = "example.com/project/sads/v1;sads_v1"; // Placeholder, user might want to adjust 'example.com/project'
+option go_package = "example.com/project/sads/v1;sads_v1";  // Placeholder, user might want to adjust 'example.com/project'
 
 // Enum for common spacing tokens
 enum SadsSpacingToken {
-  SPACING_TOKEN_UNSPECIFIED = 0;    // Default, should not be used directly for styling
-  SPACING_TOKEN_NONE = 1;           // "0"
-  SPACING_TOKEN_XS = 2;             // e.g., "0.25rem"
-  SPACING_TOKEN_S = 3;              // e.g., "0.5rem"
-  SPACING_TOKEN_M = 4;              // e.g., "1rem"
-  SPACING_TOKEN_L = 5;              // e.g., "1.5rem"
-  SPACING_TOKEN_XL = 6;             // e.g., "2rem"
-  SPACING_TOKEN_XXL = 7;            // e.g., "4rem"
-  SPACING_TOKEN_AUTO = 8;           // "auto"
+  SPACING_TOKEN_UNSPECIFIED =
+      0;                   // Default, should not be used directly for styling
+  SPACING_TOKEN_NONE = 1;  // "0"
+  SPACING_TOKEN_XS = 2;    // e.g., "0.25rem"
+  SPACING_TOKEN_S = 3;     // e.g., "0.5rem"
+  SPACING_TOKEN_M = 4;     // e.g., "1rem"
+  SPACING_TOKEN_L = 5;     // e.g., "1.5rem"
+  SPACING_TOKEN_XL = 6;    // e.g., "2rem"
+  SPACING_TOKEN_XXL = 7;   // e.g., "4rem"
+  SPACING_TOKEN_AUTO = 8;  // "auto"
 }
 
 // Enum for common color semantic tokens
 // These would map to keys in the theme's color palette.
 enum SadsColorToken {
   COLOR_TOKEN_UNSPECIFIED = 0;
-  COLOR_TOKEN_TRANSPARENT = 1;        // "transparent"
+  COLOR_TOKEN_TRANSPARENT = 1;  // "transparent"
   COLOR_TOKEN_SURFACE = 2;
-  COLOR_TOKEN_SURFACE_DARK = 3;       // For dark mode variant of SURFACE
+  COLOR_TOKEN_SURFACE_DARK = 3;  // For dark mode variant of SURFACE
   COLOR_TOKEN_SURFACE_ACCENT = 4;
-  COLOR_TOKEN_SURFACE_ACCENT_DARK = 5; // For dark mode variant of SURFACE_ACCENT
+  COLOR_TOKEN_SURFACE_ACCENT_DARK =
+      5;  // For dark mode variant of SURFACE_ACCENT
   COLOR_TOKEN_TEXT_PRIMARY = 6;
   COLOR_TOKEN_TEXT_PRIMARY_DARK = 7;  // For dark mode variant of TEXT_PRIMARY
   COLOR_TOKEN_TEXT_ACCENT = 8;
-  COLOR_TOKEN_TEXT_ACCENT_DARK = 9;   // For dark mode variant of TEXT_ACCENT
-  COLOR_TOKEN_BORDER_ACCENT = 10;     // Example, could be derived or a direct theme key
-                                      // Consider if _DARK variants are needed for all specific color roles
+  COLOR_TOKEN_TEXT_ACCENT_DARK = 9;  // For dark mode variant of TEXT_ACCENT
+  COLOR_TOKEN_BORDER_ACCENT =
+      10;  // Example, could be derived or a direct theme key
+           // Consider if _DARK variants are needed for all specific color roles
 }
 
 // Enum for font weight tokens
 enum SadsFontWeightToken {
   FONT_WEIGHT_TOKEN_UNSPECIFIED = 0;
-  FONT_WEIGHT_TOKEN_NORMAL = 1;       // e.g., "400"
-  FONT_WEIGHT_TOKEN_BOLD = 2;         // e.g., "700"
+  FONT_WEIGHT_TOKEN_NORMAL = 1;  // e.g., "400"
+  FONT_WEIGHT_TOKEN_BOLD = 2;    // e.g., "700"
   // Add other common weights like LIGHT, MEDIUM, SEMIBOLD if needed
 }
 
 // Enum for border radius tokens
 enum SadsBorderRadiusToken {
   BORDER_RADIUS_TOKEN_UNSPECIFIED = 0;
-  BORDER_RADIUS_TOKEN_NONE = 1;       // "0"
-  BORDER_RADIUS_TOKEN_S = 2;          // e.g., "4px"
-  BORDER_RADIUS_TOKEN_M = 3;          // e.g., "8px"
-  BORDER_RADIUS_TOKEN_L = 4;          // e.g., "16px"
+  BORDER_RADIUS_TOKEN_NONE = 1;  // "0"
+  BORDER_RADIUS_TOKEN_S = 2;     // e.g., "4px"
+  BORDER_RADIUS_TOKEN_M = 3;     // e.g., "8px"
+  BORDER_RADIUS_TOKEN_L = 4;     // e.g., "16px"
   // Add FULL or other shapes if common
 }
 
@@ -61,65 +64,79 @@ message SadsAttributeValue {
     SadsColorToken color_token = 2;
     SadsFontWeightToken font_weight_token = 3;
     SadsBorderRadiusToken border_radius_token = 4;
-    string font_size_value = 5;     // For font sizes like "1rem", "1.2em", or theme keys like "l".
-                                    // Not an enum as font sizes can be very granular or specific theme keys.
-    string custom_value = 6;        // For any other CSS value (e.g., "center" for text-align, "flex" for display),
-                                    // direct pixel/rem values (e.g., "10px", "100%"),
-                                    // or theme keys not covered by specific enums (e.g., "shadow.medium").
-                                    // Also used for "custom:<value>" passthrough from data-sads-* attributes.
+    string font_size_value =
+        5;  // For font sizes like "1rem", "1.2em", or theme keys like "l".
+            // Not an enum as font sizes can be very granular or specific theme
+            // keys.
+    string
+        custom_value =
+            6;  // For any other CSS value (e.g., "center" for text-align,
+                // "flex" for display), direct pixel/rem values (e.g., "10px",
+                // "100%"), or theme keys not covered by specific enums (e.g.,
+                // "shadow.medium"). Also used for "custom:<value>" passthrough
+                // from data-sads-* attributes.
   }
 }
 
 // A collection of SADS attributes for an element.
-// The keys in the map would be SADS property keys as used in data-sads-* attributes
-// (e.g., "bgColor", "padding", "fontSize", "borderRadius", "fontWeight", "textAlign", "display").
-// The SADS engine (JS/TS or Go/WASM) would then map these SADS property keys to actual CSS properties.
+// The keys in the map would be SADS property keys as used in data-sads-*
+// attributes (e.g., "bgColor", "padding", "fontSize", "borderRadius",
+// "fontWeight", "textAlign", "display"). The SADS engine (JS/TS or Go/WASM)
+// would then map these SADS property keys to actual CSS properties.
 message SadsStylingSet {
   map<string, SadsAttributeValue> attributes = 1;
 }
 
 // Defines styles for a specific breakpoint.
 message SadsResponsiveStyle {
-  string breakpoint_key = 1;  // e.g., "mobile", "tablet". This key maps to a media query
-                              // defined in the SADS theme's breakpoints section.
-                              // Could also be a raw media query string if not using theme keys.
-  SadsStylingSet styles = 2;  // The SADS attributes to apply at this breakpoint.
+  string breakpoint_key =
+      1;  // e.g., "mobile", "tablet". This key maps to a media query
+          // defined in the SADS theme's breakpoints section.
+          // Could also be a raw media query string if not using theme keys.
+  SadsStylingSet styles =
+      2;  // The SADS attributes to apply at this breakpoint.
 }
 
 // Represents the complete SADS styling configuration for a single HTML element.
 // This includes its base styles and any responsive overrides.
 message SadsElementStyles {
-  optional SadsStylingSet base_styles = 1;             // Styles applied by default.
-  repeated SadsResponsiveStyle responsive_styles = 2;   // Styles applied at specific breakpoints.
-  // optional string element_selector_override = 3;    // Future: If not using generated sads-id-* class.
+  optional SadsStylingSet base_styles = 1;  // Styles applied by default.
+  repeated SadsResponsiveStyle responsive_styles =
+      2;  // Styles applied at specific breakpoints.
+  // optional string element_selector_override = 3;    // Future: If not using
+  // generated sads-id-* class.
 }
 
-// Contextual information needed by the SADS engine when processing styles for an element.
+// Contextual information needed by the SADS engine when processing styles for
+// an element.
 message SadsProcessingContext {
   bool is_dark_mode = 1;
-  // Potentially add language, viewport dimensions, etc., if needed for more advanced styling logic.
+  // Potentially add language, viewport dimensions, etc., if needed for more
+  // advanced styling logic.
 }
 
-// Request to resolve a SadsElementStyles configuration into a CSS string or structured CSS rules.
-// This could be an input to a Go/WASM function.
+// Request to resolve a SadsElementStyles configuration into a CSS string or
+// structured CSS rules. This could be an input to a Go/WASM function.
 message ResolveSadsStylesRequest {
-  SadsElementStyles element_styles = 1; // The styles to resolve.
-  SadsProcessingContext context = 2;    // Context like dark mode.
+  SadsElementStyles element_styles = 1;  // The styles to resolve.
+  SadsProcessingContext context = 2;     // Context like dark mode.
   // The SADS Theme itself would also be needed. How to pass it?
   // Option 1: Pass the full theme as a JSON string here.
-  // Option 2: Assume WASM module is initialized with a theme or can fetch parts of it.
-  // For now, let's assume theme parts are passed as needed, similar to current Go functions.
-  // If we move to binary proto for calls, the theme could also be a proto message.
-  string theme_colors_json = 3;         // Example: JSON string of theme.colors
-  string theme_spacing_json = 4;        // Example: JSON string of theme.spacing
-  string theme_font_size_json = 5;      // ... and so on for other theme parts
-  string theme_breakpoints_json = 6;    // JSON string of theme.breakpoints
+  // Option 2: Assume WASM module is initialized with a theme or can fetch parts
+  // of it. For now, let's assume theme parts are passed as needed, similar to
+  // current Go functions. If we move to binary proto for calls, the theme could
+  // also be a proto message.
+  string theme_colors_json = 3;       // Example: JSON string of theme.colors
+  string theme_spacing_json = 4;      // Example: JSON string of theme.spacing
+  string theme_font_size_json = 5;    // ... and so on for other theme parts
+  string theme_breakpoints_json = 6;  // JSON string of theme.breakpoints
   // Add other theme parts as necessary: fontWeight, borderRadius, shadow, etc.
 }
 
 // Response from resolving SADS styles.
 // Could be a simple string if generating full CSS, or more structured.
 message ResolveSadsStylesResponse {
-  string css_rules = 1; // Generated CSS rules as a string.
-                        // Could also be a map<string, string> for media queries -> rules.
+  string css_rules =
+      1;  // Generated CSS rules as a string.
+          // Could also be a map<string, string> for media queries -> rules.
 }
