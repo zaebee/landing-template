@@ -9,6 +9,13 @@
       and also potentially bundles or makes available a global CSS file if needed.
       For SADS, the primary styling comes from the dynamically injected <style> tag.
     -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@protobuf-ts/runtime": "https://esm.sh/@protobuf-ts/runtime@2.9.4"
+        }
+      }
+    </script>
     <style>
       body {
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
@@ -126,9 +133,9 @@
         However, with type="module", the browser handles dependency resolution if they import each other.
         The explicit window assignments ensure the global access for the inline script below.
     -->
-    <script type="module" src="js/public/ts/sads-default-theme.js"></script>
-    <script type="module" src="js/public/ts/sads-style-engine.js"></script>
-    <script type="module" src="js/public/ts/nlToSadsInterface.js"></script>
+    <script type="module" src="dist/assets/js/sads-default-theme.js"></script>
+    <script type="module" src="dist/assets/js/sads-style-engine.js"></script>
+    <script type="module" src="dist/assets/js/nlToSadsInterface.js"></script>
 
     <script>
       // Basic initialization logic
