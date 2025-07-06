@@ -23,13 +23,13 @@
     data-sads-max-width="content-container" {# CSS: 1100px (theme) #}
     data-sads-margin="custom:0 auto" {# CSS: margin auto #}
     data-sads-responsive-rules='[
-        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "gap": "custom:0", "alignItems": "center" }} {# Align items center if they are full width by default #}
+        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "gap": "custom:20px", "alignItems": "center" }}
     ]'
   >
     {% for post in items %}
     <article
         data-sads-element="item"
-        class="blog-item" {# Keep class for :last-child CSS rule #}
+        class="blog-item" {# Class kept for potential future use, but :last-child CSS rule aims to be removed #}
         id="{% if post.id %}{{ post.id }}{% else %}{{"post-" + forloop.Counter }}{% endif %}"
         data-sads-bg-color="blog-item-bg" {# Theme: #fff light, #1f1f1f dark #}
         data-sads-padding="custom:1.5rem" {# CSS: 1.5rem #}
@@ -39,9 +39,9 @@
         data-sads-text-align="left"
         data-sads-box-sizing="border-box"
         data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px", "width": "full"}} {# Ensure full width on mobile if not by default from flexBasis #}
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "none", "width": "full"}}
         ]'
-        {# The :last-child rule for marginBottom:0 will be in blog.css #}
+        {# The :last-child rule for marginBottom:0 in blog.css should no longer be needed #}
     >
       <h3
         data-sads-element="item-title"

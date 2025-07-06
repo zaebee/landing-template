@@ -24,13 +24,13 @@
     data-sads-max-width="content-container" {# CSS: 1100px (theme variable) #}
     data-sads-margin="custom:0 auto" {# CSS: auto (for horizontal centering) #}
     data-sads-responsive-rules='[
-        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "gap": "custom:0"}} {# Remove gap for column layout if margin is on items #}
+        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "gap": "custom:20px"}}
     ]'
   >
     {% for item_data in items %}
     <div
         data-sads-element="item"
-        class="feature-item" {# Keep class for potential :last-child CSS rule #}
+        class="feature-item" {# Class kept for potential future use, :last-child CSS rule aims to be removed #}
         data-sads-bg-color="feature-item-bg" {# Theme: #f9f9f9 light, #2a2a2a dark #}
         data-sads-padding="custom:1.5rem" {# CSS: 1.5rem #}
         data-sads-border-radius="custom:8px" {# CSS: 8px #}
@@ -39,9 +39,9 @@
         data-sads-box-sizing="border-box"
         data-sads-text-align="left"
         data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px"}}
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "none"}}
         ]'
-        {# The :last-child rule for marginBottom:0 will be in features.css #}
+        {# The :last-child rule for marginBottom:0 in features.css should no longer be needed #}
     >
       {% if item_data.icon and item_data.icon.svg_content %}
       <div data-sads-element="item-icon" data-sads-margin-bottom="s">

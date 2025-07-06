@@ -62,8 +62,10 @@ The table below offers a quick glance at all proposed features, their intended f
   - Enhances SEO and user experience.
   - Automates a typically manual optimization task.
 - **Implementation Sketch**:
+
   - **Dependencies**: Add a Python image processing library like `Pillow` or `Wand`.
   - **Configuration (`public/config.json`)**:
+
     - Add an `image_optimization` object:
 
             ```json
@@ -103,6 +105,7 @@ The table below offers a quick glance at all proposed features, their intended f
   - Centralizes analytics configuration.
   - Can be easily toggled on or off.
 - **Implementation Sketch**:
+
   - **Configuration (`public/config.json`)**: - Add an `analytics` object, e.g.:
     `json
 "analytics": {
@@ -113,6 +116,7 @@ The table below offers a quick glance at all proposed features, their intended f
 `
 
 - **Build Script (`build.py`)**:
+
   - In `assemble_translated_page` (or a similar function that constructs the final HTML), check the `analytics` config.
   - If a provider is specified and configured, inject the appropriate JavaScript snippet into the `<head>` or near the closing `</body>` tag of each HTML page. The snippet would be a template string with placeholders for `tracking_id` or `domain`.
 
@@ -130,9 +134,13 @@ The table below offers a quick glance at all proposed features, their intended f
   - Ensures users always receive the latest version of CSS/JS files after an update, avoiding issues caused by browser caching of stale assets.
   - Improves site reliability when deploying updates.
 - **Implementation Sketch**:
+
   - **Build Script (`build.py`)**:
+
     - In `BuildOrchestrator` or `DefaultPageBuilder`:
+
       - When linking `public/style.css` (or any other project-specific JS files if they were added):
+
         - Calculate a hash (e.g., MD5 or SHA256) of the file's content.
         - Alternatively, use a build timestamp. A content hash is generally preferred as it only changes when the file content changes.
         - Append this hash as a query parameter to the asset URL in the generated HTML:
@@ -144,6 +152,7 @@ The table below offers a quick glance at all proposed features, their intended f
       - This logic would typically be in `DefaultPageBuilder.assemble_translated_page()` where the final HTML `<head>` is constructed, or wherever the CSS link is added.
 
   - **Configuration (`public/config.json`)**:
+
     - Could add a configuration option to enable/disable this or choose the versioning method (hash vs. timestamp), though content hashing is a good default.
 
             ```json
@@ -202,7 +211,9 @@ The table below offers a quick glance at all proposed features, their intended f
   - Improves how content appears when shared on social media platforms, potentially increasing engagement.
   - Provides control over titles, descriptions, and images used in social shares.
 - **Implementation Sketch**:
+
   - **Protobuf (`common.proto` or new `meta_tags.proto`)**:
+
     - Define a `SocialMetaTags` message:
 
             ```proto
@@ -245,7 +256,9 @@ The table below offers a quick glance at all proposed features, their intended f
   - Allows for quick switching between different looks (e.g., "dark mode", "light mode", "brand-aligned theme").
   - Content creators can focus on content, while basic styling choices are managed centrally.
 - **Implementation Sketch**:
+
   - **Configuration (`public/config.json`)**:
+
     - Add a `theme` object:
 
             ```json
@@ -261,6 +274,7 @@ The table below offers a quick glance at all proposed features, their intended f
             ```
 
 - **CSS**:
+
   - Define CSS variables in `public/style.css` for common elements (e.g., `--primary-color`, `--background-color`, `--text-color`).
   - Create alternative theme stylesheets (e.g., `public/themes/dark.css`, `public/themes/light.css`) that override these variables or provide entirely different styles.
 
