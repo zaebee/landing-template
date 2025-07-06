@@ -59,10 +59,7 @@ async function reapplySadsStyles() {
       await sadsEngineInstance.applyStyles(); // Call the new async method
       // console.log("SADS styles re-applied by sadsManager using new async applyStyles.");
     } catch (error) {
-      console.error(
-        "sadsManager: Error during sadsEngineInstance.applyStyles():",
-        error
-      );
+      console.error("sadsManager: Error during sadsEngineInstance.applyStyles():", error);
     }
   } else {
     if (typeof SADSEngine === "function" && !sadsEngineInstance) {
@@ -72,13 +69,8 @@ async function reapplySadsStyles() {
       );
     } else if (typeof SADSEngine !== "function") {
       // console.warn("sadsManager: SADSEngine class not found. Cannot re-apply styles.");
-    } else if (
-      sadsEngineInstance &&
-      typeof sadsEngineInstance.applyStyles !== "function"
-    ) {
-      console.error(
-        "sadsManager: sadsEngineInstance.applyStyles() is not a function. Did the SADS Engine change?"
-      );
+    } else if (sadsEngineInstance && typeof sadsEngineInstance.applyStyles !== "function") {
+      console.error("sadsManager: sadsEngineInstance.applyStyles() is not a function. Did the SADS Engine change?");
     }
   }
 }
