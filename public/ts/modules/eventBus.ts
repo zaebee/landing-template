@@ -1,4 +1,4 @@
-// public/js/modules/eventBus.js
+// public/ts/modules/eventBus.ts
 /**
  * @file Placeholder for a potential dedicated event bus.
  * Currently, the application uses `document.dispatchEvent` and `document.addEventListener` directly
@@ -6,41 +6,47 @@
  * This file defines common event detail types for documentation and future use.
  */
 
-/**
- * @typedef {Object} AppStateEventDetail
- * @property {boolean} [darkMode] - The current state of dark mode (true if enabled, false if not).
- * @property {boolean} [translationsLoaded] - Whether translations have been successfully loaded (true or false).
- * @global
- */
+export interface AppStateEventDetail {
+  darkMode?: boolean; // The current state of dark mode (true if enabled, false if not).
+  translationsLoaded?: boolean; // Whether translations have been successfully loaded (true or false).
+  // Add other state parts as needed, e.g.
+  // currentLanguage?: string;
+}
 
-/**
- * @typedef {Object} LanguageChangedEventDetail
- * @property {string} lang - The new language code (e.g., "en", "es").
- * @global
- */
+export interface LanguageChangedEventDetail {
+  lang: string; // The new language code (e.g., "en", "es").
+}
 
 // No actual event bus implementation is exported from this file at this time.
 // The existing pattern of using document.dispatchEvent is maintained.
 // If a more complex, namespaced, or feature-rich event bus is required later,
-// this file would be the place to implement it. Example (commented out):
+// this file would be the place to implement it.
 
 /*
-const eventEmitter = {
-  _events: {},
+interface EventCallback<T = any> {
+  (data: T): void;
+}
 
-  dispatch(event, data) {
+interface EventMap {
+  [eventName: string]: EventCallback[];
+}
+
+const eventEmitter = {
+  _events: {} as EventMap,
+
+  dispatch<T>(event: string, data: T): void {
     if (!this._events[event]) return;
     this._events[event].forEach(callback => callback(data));
   },
 
-  subscribe(event, callback) {
+  subscribe<T>(event: string, callback: EventCallback<T>): void {
     if (!this._events[event]) {
       this._events[event] = [];
     }
     this._events[event].push(callback);
   },
 
-  unsubscribe(event, callback) {
+  unsubscribe<T>(event: string, callback: EventCallback<T>): void {
     if (!this._events[event]) return;
     this._events[event] = this._events[event].filter(cb => cb !== callback);
   }
@@ -50,5 +56,5 @@ export default eventEmitter;
 */
 
 console.log(
-  "eventBus.js loaded (currently a placeholder for type definitions and future use)."
+  "eventBus.ts loaded (currently a placeholder for type definitions and future use)."
 );
