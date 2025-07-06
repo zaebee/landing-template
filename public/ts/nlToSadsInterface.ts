@@ -204,11 +204,8 @@ class NLToSadsInterface {
       "NLToSadsInterface: Attempting to call sadsEngine.applyStylesTo. sadsEngine instance:",
       this.sadsEngine
     ); // New Log
-    if (
-      this.sadsEngine &&
-      typeof this.sadsEngine.applyStylesTo === "function"
-    ) {
-      this.sadsEngine.applyStylesTo(this.targetElement);
+    if (this.sadsEngine && typeof this.sadsEngine.applyStyles === "function") {
+      this.sadsEngine.applyStyles();
     } else {
       console.error(
         "NLToSadsInterface: sadsEngine is not available or applyStylesTo is not a function!",

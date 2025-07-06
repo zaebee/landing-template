@@ -2,6 +2,5 @@ ruff
 mypy
 grpcio
 grpcio-tools
-protobuf
 clang-format
 pytest

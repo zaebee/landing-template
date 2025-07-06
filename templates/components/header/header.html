@@ -25,19 +25,47 @@
     ]'
   >
     <div data-sads-element="logo-container">
-      {# Assuming site_logo object is passed in the context from build.py #}
+      {% if site_logo_data and site_logo_data.targetUrl %}
       <a
-        href="{{ site_logo.get('target_url', '#') }}"
-        {# data-i18n attribute can be removed if logo_text_key is always resolved server-side #}
-        {# If client-side translation for logo text is still desired for some reason, keep data-i18n and use site_logo.logo_text_key as its value #}
+        href="{{ site_logo_data.targetUrl }}"
         data-sads-element="logo-link"
-        data-sads-text-color="text-primary"
+        data-sads-display="flex"
+        data-sads-flex-align-items="center"
         data-sads-text-decoration="none"
+        data-sads-gap="xs"
+      >
+        {% if site_logo_data.imagePath %}
+        <img src="{{ site_logo_data.imagePath }}" alt="{{ translations[site_logo_data.altTextKey] | default:translations['default_logo_alt_text'] | default:'Site Logo' }}" data-sads-height="custom:40px" data-sads-width="auto" />
+        {% endif %}
+        {% if site_logo_data.logoTextKey %}
+        <span
+          data-sads-font-weight="bold"
+          data-sads-font-size="l"
+          data-sads-text-color="text-primary"
+        >
+          {{ translations[site_logo_data.logoTextKey] | default:site_logo_data.logoTextKey }}
+        </span>
+        {% elif not site_logo_data.imagePath %}
+        <span
+            data-sads-font-weight="bold"
+            data-sads-font-size="l"
+            data-sads-text-color="text-primary"
+        >
+            {{ translations['logo_text'] | default:'Logo' }}
+        </span>
+        {% endif %}
+      </a>
+      {% else %}
+      {# Fallback for when there's no site_logo_data or no targetUrl, similar to original #}
+      <div
+        data-sads-element="logo-placeholder"
+        data-sads-text-color="text-primary"
         data-sads-font-weight="bold"
         data-sads-font-size="l"
       >
-        {{ translations.get('logo_text', 'Logo') }}
-      </a>
+        {{ translations['logo_text'] | default:'Logo' }}
+      </div>
+      {% endif %}
     </div>
 
     <button

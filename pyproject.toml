@@ -11,6 +11,8 @@ dependencies = [
     "grpcio-tools",
     "protobuf",
     "Jinja2>=3.0.0",
+    "ruff>=0.12.2",
+    "mypy>=1.16.1",
 ]
 
 [tool.ruff.lint]
@@ -58,7 +60,11 @@ python_version = "3.10"
 warn_return_any = true
 warn_unused_configs = true
 ignore_missing_imports = true # For libraries that might not have stubs, like bs4 initially
-exclude = ["generated/", "venv/", ".venv/"] # Exclude generated files and virtual envs
+exclude = ["generated/", "venv/", ".venv/"] # Exclude virtual envs; allow 'generated' for stubs
+
+[[tool.mypy.overrides]]
+module = "generated.py.*"
+ignore_errors = true
 
 [dependency-groups]
 dev = [

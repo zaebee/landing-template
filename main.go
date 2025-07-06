@@ -18,6 +18,9 @@ import (
 	// "google.golang.org/protobuf/types/known/anypb" // Not used
 
 	// Import the generated protobuf package
+	"os/exec"
+	"runtime"
+
 	pb "landing-page-generator/generated/go" // Alias for convenience
 )
 
@@ -33,6 +36,7 @@ func init() {
 	protoRegistry["PortfolioItem"] = (&pb.PortfolioItem{}).ProtoReflect().Type()
 	protoRegistry["BlogPost"] = (&pb.BlogPost{}).ProtoReflect().Type()
 	protoRegistry["ContactFormConfig"] = (&pb.ContactFormConfig{}).ProtoReflect().Type()
+	protoRegistry["SiteLogo"] = (&pb.SiteLogo{}).ProtoReflect().Type()
 }
 
 func newMessageInstance(typeName string) (proto.Message, error) {
@@ -63,11 +67,12 @@ type HtmlBlockGenerator interface {
 	GenerateHtml(data interface{}, translations map[string]string) (string, error)
 }
 type PageBuilder interface {
-	AssembleTranslatedPage(lang string, translations map[string]string, mainContent string, navigationItems []map[string]interface{}, pageTitle string) (string, error)
+	AssembleTranslatedPage(lang string, translations map[string]string, mainContent string, navigationItems []map[string]interface{}, pageTitle string, siteLogoData *pb.SiteLogo) (string, error)
 }
 type AssetBundler interface {
-	BundleCss(projectRoot, outputDir string) (string, error)
-	BundleJs(projectRoot, outputDir string) (string, error)
+	BundleCss(projectRoot, outputDir string) (string, error) // outputDir is base like "public/dist"
+	BundleJs(projectRoot, outputDir string) (string, error)  // outputDir is base like "public/dist"
+	CopyWasmAssets(projectRoot, outputDir string) error      // outputDir is base like "public/dist"
 }
 
 // --- Implementations ---
@@ -131,6 +136,7 @@ type BuildOrchestrator struct {
 	assetBundler AssetBundler
 	appConfig map[string]interface{}
 	navProtoData *pb.Navigation
+	siteLogoProtoData *pb.SiteLogo
 }
 
 func NewBuildOrchestrator(appConfigManager AppConfigManager, translationProvider TranslationProvider, dataLoader DataLoader, dataCache DataCache, pageBuilder PageBuilder, htmlGenerators map[string]HtmlBlockGenerator, assetBundler AssetBundler) *BuildOrchestrator {
@@ -150,6 +156,8 @@ func (o *BuildOrchestrator) LoadInitialConfigurations() error {
 	var err error
 	o.appConfig, err = o.appConfigManager.LoadAppConfig()
 	if err != nil { return fmt.Errorf("failed to load app config: %w", err) }
+
+	// Load Navigation Data
 	navDataFile, ok := o.appConfig["navigation_data_file"].(string)
 	if !ok {
 		log.Println("Warning: 'navigation_data_file' not found or not a string in app config. Using default 'data/navigation.json'.")
@@ -170,13 +178,69 @@ func (o *BuildOrchestrator) LoadInitialConfigurations() error {
 			log.Println("Navigation data loaded successfully.")
 		}
 	}
+
+	// Load Site Logo Data
+	siteLogoDataFile, ok := o.appConfig["site_logo_data_file"].(string)
+	if !ok {
+		log.Println("Warning: 'site_logo_data_file' not found or not a string in app config. Site logo might not be data-driven.")
+		siteLogoDataFile = "data/site_logo.json" // Default path, can be empty if not configured
+	}
+
+	if _, err := os.Stat(siteLogoDataFile); err == nil {
+		siteLogoMessage := &pb.SiteLogo{}
+		loadedSiteLogoData, err := o.dataLoader.LoadDynamicSingleItemData(siteLogoDataFile, siteLogoMessage)
+		if err != nil {
+			log.Printf("Warning: failed to load site logo data from %s: %v. Proceeding without site logo data.", siteLogoDataFile, err)
+			o.siteLogoProtoData = nil
+		} else {
+			concreteSiteLogoData, ok := loadedSiteLogoData.(*pb.SiteLogo)
+			if !ok {
+				log.Printf("Warning: loaded site logo data from %s is not of expected type *pb.SiteLogo. Type was %T", siteLogoDataFile, loadedSiteLogoData)
+				o.siteLogoProtoData = nil
+			} else {
+				o.siteLogoProtoData = concreteSiteLogoData
+				log.Println("Site logo data loaded successfully.")
+			}
+		}
+	} else {
+		log.Printf("Warning: Site logo data file '%s' not found. Site logo will not be data-driven.", siteLogoDataFile)
+		o.siteLogoProtoData = nil
+	}
+
 	log.Println("Initial configurations loaded.")
 	return nil
 }
 
+
+func (o *BuildOrchestrator) compileWasmModule(projectRoot string) error {
+	log.Println("Attempting to compile Go WASM module...")
+	wasmSourceDir := filepath.Join(projectRoot, "sads_wasm_poc")
+	// Output directly to a place from where it can be copied by asset bundler
+	// This path is relative to wasmSourceDir for the `go build` command.
+	wasmFileName := "sads_poc.wasm"
+	wasmOutputPath := filepath.Join(wasmSourceDir, wasmFileName) // Compiled within its source dir
+
+	cmd := exec.Command("go", "build", "-o", wasmOutputPath, ".")
+	cmd.Dir = wasmSourceDir
+	cmd.Env = append(os.Environ(), "GOOS=js", "GOARCH=wasm")
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Printf("Error compiling Go WASM module. Return code: %v", err)
+		log.Printf("Go Build Output:\n%s", string(output))
+		return fmt.Errorf("failed to compile WASM module: %w. Output: %s", err, string(output))
+	}
+	log.Printf("Go WASM module compiled successfully: %s", wasmOutputPath)
+	if len(output) > 0 {
+		log.Printf("Go Build Output:\n%s", string(output))
+	}
+	return nil
+}
+
+
 func (o *BuildOrchestrator) generateLanguageSpecificConfig(lang string, translations map[string]string) error {
 	log.Printf("Generating language specific config for '%s'", lang)
-	langSpecificConfig, err := o.appConfigManager.GenerateLanguageConfig(o.appConfig, o.navProtoData, translations, lang)
+	langSpecificConfig, err := o.appConfigManager.GenerateLanguageConfig(o.appConfig, o.navProtoData, translations, lang) // Consider passing siteLogoProtoData if needed in JSON config
 	if err != nil { return fmt.Errorf("failed to generate language config for %s: %w", lang, err) }
 	generatedConfigDir := filepath.Join("public", "generated_configs")
 	if err := os.MkdirAll(generatedConfigDir, 0755); err != nil { return fmt.Errorf("failed to create directory %s: %w", generatedConfigDir, err) }
@@ -191,15 +255,38 @@ func (o *BuildOrchestrator) generateLanguageSpecificConfig(lang string, translat
 func (o *BuildOrchestrator) BuildAllLanguages() error {
 	log.Println("Starting build for all languages...")
 	if err := o.LoadInitialConfigurations(); err != nil { return fmt.Errorf("error loading initial configurations: %w", err) }
+
 	projectRoot, err := getProjectRoot()
 	if err != nil { return fmt.Errorf("failed to get project root: %w", err) }
-	assetOutputDir := filepath.Join(projectRoot, "public", "dist")
-	if err := os.MkdirAll(assetOutputDir, 0755); err != nil { return fmt.Errorf("failed to create asset output directory %s: %w", assetOutputDir, err) }
 
-	cssBundlePath, err := o.assetBundler.BundleCss(projectRoot, assetOutputDir)
-	if err != nil { log.Printf("Warning: CSS bundling failed: %v", err) } else if cssBundlePath == "" { log.Println("Warning: CSS bundling produced no output.") } else { log.Printf("CSS bundled to: %s", cssBundlePath) }
-	jsBundlePath, err := o.assetBundler.BundleJs(projectRoot, assetOutputDir)
-	if err != nil { log.Printf("Warning: JS bundling failed: %v", err) } else if jsBundlePath == "" { log.Println("Warning: JavaScript bundling produced no output.") } else { log.Printf("JS bundled to: %s", jsBundlePath) }
+	// Compile WASM module first
+	if err := o.compileWasmModule(projectRoot); err != nil {
+		// Decide if build should fail here. For now, log and continue, but this is likely a critical step.
+		log.Printf("Critical error: WASM module compilation failed: %v. Build might be incomplete.", err)
+		// return fmt.Errorf("WASM module compilation failed: %w", err) // Uncomment to make it a fatal error
+	}
+
+	// Define the base output directory for all built assets (e.g., "public/dist")
+	// AssetBundler methods will create subdirectories like "assets/css", "assets/js", "assets/wasm" within this.
+	distOutputDir := filepath.Join(projectRoot, "public", "dist")
+	if err := os.MkdirAll(distOutputDir, 0755); err != nil {
+		return fmt.Errorf("failed to create base dist output directory %s: %w", distOutputDir, err)
+	}
+
+	// Asset Bundling (CSS, JS, WASM)
+	// The BundleCss, BundleJs, CopyWasmAssets methods should now handle placing files into "dist/assets/*"
+	cssBundlePath, err := o.assetBundler.BundleCss(projectRoot, distOutputDir) // Pass base dist dir
+	if err != nil { log.Printf("Warning: CSS bundling failed: %v", err) } else if cssBundlePath == "" { log.Println("Warning: CSS bundling produced no output path.") } else { log.Printf("CSS bundled, final path (relative to dist): %s", strings.TrimPrefix(cssBundlePath, distOutputDir+string(filepath.Separator))) }
+
+	jsBundlePath, err := o.assetBundler.BundleJs(projectRoot, distOutputDir) // Pass base dist dir
+	if err != nil { log.Printf("Warning: JS bundling failed: %v", err) } else if jsBundlePath == "" { log.Println("Warning: JavaScript bundling produced no output path.") } else { log.Printf("JS bundled, final path (relative to dist): %s", strings.TrimPrefix(jsBundlePath, distOutputDir+string(filepath.Separator))) }
+
+	if err := o.assetBundler.CopyWasmAssets(projectRoot, distOutputDir); err != nil { // Pass base dist dir
+		log.Printf("Warning: Copying WASM assets failed: %v", err)
+	} else {
+		log.Println("WASM assets copied successfully.")
+	}
+
 
 	supportedLangsRaw, ok := o.appConfig["supported_langs"].([]interface{})
 	if !ok {
@@ -232,13 +319,16 @@ func (o *BuildOrchestrator) BuildAllLanguages() error {
 		assembledMainContent, err := o.assembleMainContentForLang(lang, translations, blockLoadersConfigRaw)
 		if err != nil { log.Printf("Warning: Failed to assemble main content for lang %s: %v. Skipping page generation.", lang, err); continue }
 		pageTitleUntranslated, ok := translations["page_title_default"]
-		if !ok { pageTitleUntranslated = "Simple Landing Page" }
-		pageTitle := translations[fmt.Sprintf("page_title_landing_%s", lang)]
-		if pageTitle == "" { pageTitle = pageTitleUntranslated }
-		fullHtmlContent, err := o.pageBuilder.AssembleTranslatedPage(lang, translations, assembledMainContent, processedNavItems, pageTitle)
+		if !ok { pageTitleUntranslated = "Simple Landing Page" } // Default title
+		pageTitle := translations[fmt.Sprintf("page_title_landing_%s", lang)] // Language-specific title key
+		if pageTitle == "" { pageTitle = pageTitleUntranslated } // Fallback to default if specific not found
+
+		fullHtmlContent, err := o.pageBuilder.AssembleTranslatedPage(lang, translations, assembledMainContent, processedNavItems, pageTitle, o.siteLogoProtoData)
 		if err != nil { log.Printf("Warning: Failed to assemble translated page for lang %s: %v. Skipping page generation.", lang, err); continue }
+
 		outputFilename := fmt.Sprintf("index_%s.html", lang)
 		if lang == defaultLang { outputFilename = "index.html" }
+		// Output HTML files to the project root, not public/dist. public/dist is for assets.
 		if err := o.writeOutputFile(outputFilename, fullHtmlContent); err != nil { log.Printf("Warning: Failed to write output file %s: %v", outputFilename, err) }
 	}
 	log.Println("Build process complete.")
@@ -308,22 +398,47 @@ func NewDefaultPageBuilder(tp TranslationProvider) *DefaultPageBuilder {
 	}
 }
 
-func (pb *DefaultPageBuilder) AssembleTranslatedPage(lang string, translations map[string]string, mainContent string, navigationItems []map[string]interface{}, pageTitle string) (string, error) {
+func (pb *DefaultPageBuilder) AssembleTranslatedPage(lang string, translations map[string]string, mainContent string, navigationItems []map[string]interface{}, pageTitle string, siteLogoData *pb.SiteLogo) (string, error) {
 	log.Printf("Assembling translated page for lang: %s", lang)
 	baseTpl, err := pb.pongoSet.FromFile("base.html")
 	if err != nil { return "", fmt.Errorf("failed to load base template: %w", err) }
+
+	var siteLogoMap map[string]interface{}
+	if siteLogoData != nil {
+		logoJson, err := protojson.Marshal(siteLogoData)
+		if err != nil {
+			log.Printf("Warning: failed to marshal siteLogoData for lang %s: %v", lang, err)
+		} else {
+			if err := json.Unmarshal(logoJson, &siteLogoMap); err != nil {
+				log.Printf("Warning: failed to unmarshal siteLogoJson to map for lang %s: %v", lang, err)
+			}
+		}
+	}
+
 	context := pongo2.Context{
 		"lang": lang,
 		"translations": translations,
-		"main_content": template.HTML(mainContent),
+		"main_content": template.HTML(mainContent), // Already HTML string from block generators
 		"navigation_items": navigationItems,
 		"page_title": pageTitle,
+		"site_logo_data": siteLogoMap, // Add marshaled site logo data to context
 	}
-	context["sads_style_engine_path"] = "js/sads-style-engine.js"
-	context["sads_default_theme_path"] = "js/sads-default-theme.js"
-	context["app_js_path"] = "js/app.js"
-	context["style_css_path"] = "style.css"
-	context["config_json_path"] = fmt.Sprintf("generated_configs/config_%s.json", lang)
+
+	// Update paths to reflect the new "dist/assets/" structure
+	// These paths are relative to the output HTML file in the project root.
+	// So, they should point to "public/dist/assets/..."
+	context["sads_style_engine_path"] = "public/dist/assets/js/sads-style-engine.js" // Compiled from TS
+	context["sads_default_theme_path"] = "public/dist/assets/js/sads-default-theme.js"  // Compiled from TS
+	context["app_js_path"] = "public/dist/assets/js/app.js"  // Compiled from TS, main entry
+	context["style_css_path"] = "public/dist/assets/style.css"
+	// context["wasm_loader_path"] = "public/dist/assets/js/wasmLoader.js" // Removed as wasmLoader.js doesn't exist / isn't used directly
+	context["sads_poc_wasm_path"] = "public/dist/assets/wasm/sads_poc.wasm"
+	context["wasm_exec_path"] = "public/dist/assets/wasm/wasm_exec.js"
+
+
+	// Path for language-specific config JSON (remains in public/generated_configs)
+	context["config_json_path"] = fmt.Sprintf("public/generated_configs/config_%s.json", lang)
+
 	htmlResult, err := baseTpl.Execute(context)
 	if err != nil { return "", fmt.Errorf("failed to execute base template for lang %s: %w", lang, err) }
 	log.Printf("Successfully assembled page for lang %s", lang)
@@ -381,6 +496,33 @@ func main() {
 	// Default behavior: run the build process
 	log.Println("Running build process...")
 	if err := orchestrator.BuildAllLanguages(); err != nil { log.Fatalf("Build process failed: %v", err) }
+
+
+	// --- Register API Handlers ---
+	// Assuming api_handlers.go is in the same 'main' package
+	// http.HandleFunc("/api/generate-sads-from-nl", GenerateSadsFromNLHandler) // Defined in api_handlers.go
+
+	// Note: To actually run an HTTP server, you'd need something like:
+	// log.Println("Starting server on :8080...")
+	// if err := http.ListenAndServe(":8080", nil); err != nil {
+	// 	log.Fatalf("Failed to start server: %v", err)
+	// }
+	// For a static site generator, the server part is usually separate (like `python -m http.server`).
+	// If this `main.go` is *only* for building, then API handlers might belong in a different Go application.
+	// For now, I will add the HandleFunc but comment out ListenAndServe.
+	// The user needs to clarify if main.go should also act as a server.
+	// If it's just a builder, these API handlers might be misplaced here.
+
+	// If `main.go` is intended to *also* be a server for these APIs after building:
+	// 1. Uncomment the http.HandleFunc line below.
+	// 2. Decide on a port and uncomment ListenAndServe, or integrate with an existing server setup.
+	// 3. Ensure `api_handlers.go` is compiled with `main.go`.
+
+	// http.HandleFunc("/api/generate-sads-from-nl", GenerateSadsFromNLHandler)
+	// log.Println("Registered /api/generate-sads-from-nl handler.")
+	// log.Println("If you intend to run this as a server, uncomment ListenAndServe and ensure API key env vars are set.")
+
+
 	log.Println("Build script finished successfully.")
 }
 
@@ -461,39 +603,176 @@ func (c *InMemoryDataCache) GetItem(key string) (interface{}, bool) { item, foun
 
 type DefaultAssetBundler struct{}
 
-func (ab *DefaultAssetBundler) BundleCss(projectRoot, outputDir string) (string, error) {
+func (ab *DefaultAssetBundler) BundleCss(projectRoot, baseOutputDir string) (string, error) {
 	log.Println("AssetBundler: BundleCss called")
 	sourceCss := filepath.Join(projectRoot, "public", "style.css")
-	destDir := filepath.Join(outputDir)
-	if err := os.MkdirAll(destDir, 0755); err != nil { return "", fmt.Errorf("failed to create destination directory %s for CSS: %w", destDir, err) }
-	destCss := filepath.Join(destDir, "style.css")
-	if _, err := os.Stat(sourceCss); os.IsNotExist(err) { log.Printf("Source CSS %s does not exist. Skipping bundling.", sourceCss); return "", nil }
+	// Place CSS into outputDir/assets/style.css (or outputDir/assets/css/main.css)
+	destAssetsDir := filepath.Join(baseOutputDir, "assets")
+	if err := os.MkdirAll(destAssetsDir, 0755); err != nil {
+		return "", fmt.Errorf("failed to create assets directory %s for CSS: %w", destAssetsDir, err)
+	}
+	destCss := filepath.Join(destAssetsDir, "style.css") // Simple copy for now
+
+	if _, err := os.Stat(sourceCss); os.IsNotExist(err) {
+		log.Printf("Source CSS %s does not exist. Skipping bundling.", sourceCss)
+		return "", nil // Or return an error if CSS is mandatory
+	}
 	input, err := ioutil.ReadFile(sourceCss)
-	if err != nil { return "", fmt.Errorf("failed to read source CSS %s: %w", sourceCss, err) }
-	if err = ioutil.WriteFile(destCss, input, 0644); err != nil { return "", fmt.Errorf("failed to write destination CSS %s: %w", destCss, err) }
-	log.Printf("CSS 'bundled' to %s", destCss)
+	if err != nil {
+		return "", fmt.Errorf("failed to read source CSS %s: %w", sourceCss, err)
+	}
+	if err = ioutil.WriteFile(destCss, input, 0644); err != nil {
+		return "", fmt.Errorf("failed to write destination CSS %s: %w", destCss, err)
+	}
+	log.Printf("CSS 'copied' to %s", destCss)
 	return destCss, nil
 }
 
-func (ab *DefaultAssetBundler) BundleJs(projectRoot, outputDir string) (string, error) {
+func (ab *DefaultAssetBundler) BundleJs(projectRoot, baseOutputDir string) (string, error) {
 	log.Println("AssetBundler: BundleJs called")
-	jsFiles := []string{"app.js", "sads-default-theme.js", "sads-style-engine.js"}
-	var createdFiles []string
-	destJsDir := filepath.Join(outputDir, "js")
-	if err := os.MkdirAll(destJsDir, 0755); err != nil { return "", fmt.Errorf("failed to create destination directory %s for JS: %w", destJsDir, err) }
-	for _, jsFile := range jsFiles {
-		sourceJs := filepath.Join(projectRoot, "public", "js", jsFile)
-		destJs := filepath.Join(destJsDir, jsFile)
-		if _, err := os.Stat(sourceJs); os.IsNotExist(err) { log.Printf("Source JS %s does not exist. Skipping.", sourceJs); continue }
-		input, err := ioutil.ReadFile(sourceJs)
-		if err != nil { log.Printf("Failed to read source JS %s: %v. Skipping.", sourceJs, err); continue }
-		if err = ioutil.WriteFile(destJs, input, 0644); err != nil { log.Printf("Failed to write destination JS %s: %v. Skipping.", destJs, err); continue }
-		log.Printf("JS file 'copied' to %s", destJs)
-		createdFiles = append(createdFiles, destJs)
+	// Files to copy. This could be expanded to actual bundling/minification.
+	// With rootDir: "." and outDir: "public/js", tsc output preserves paths relative to rootDir.
+	// e.g., source public/ts/app.ts -> compiled at public/js/public/ts/app.js
+	// We want to copy these to public/dist/assets/js/app.js etc.
+	// jsFileSourcePaths lists paths relative to "public/js/" which is the tsc outDir for rootDir "."
+	// For a source file like "public/ts/app.ts", tsc places it at "public/js/public/ts/app.js".
+	// For a source file like "generated/ts/sads_styling.v1.ts", tsc places it at "public/js/generated/ts/sads_styling.v1.js".
+	jsFileSourcePaths := []string{
+		// Files from public/ts/*
+		"public/ts/app.js",
+		"public/ts/sads-default-theme.js",
+		"public/ts/sads-style-engine.js",
+		"public/ts/nlToSadsInterface.js",
+		// Files from public/ts/modules/*
+		"public/ts/modules/darkMode.js",
+		"public/ts/modules/eventBus.js",
+		"public/ts/modules/sadsManager.js",
+		"public/ts/modules/translation.js",
+		"public/ts/modules/wasmLoader.js",
+		// Files from generated/ts/* (compiled proto files)
+		"generated/ts/blog_post.js",
+		"generated/ts/common.js",
+		"generated/ts/contact_form_config.js",
+		"generated/ts/feature_item.js",
+		"generated/ts/hero_item.js",
+		"generated/ts/nav_item.js",
+		"generated/ts/portfolio_item.js",
+		"generated/ts/sads_styling.v1.js", // The critical missing file
+		"generated/ts/testimonial_item.js",
 	}
-	if len(createdFiles) > 0 { return filepath.Join(filepath.Base(outputDir), "js"), nil }
-	return "", nil
+	// Add .map files for all the .js files
+	var allJsFilesWithMaps []string
+	for _, jsFile := range jsFileSourcePaths {
+		allJsFilesWithMaps = append(allJsFilesWithMaps, jsFile)
+		allJsFilesWithMaps = append(allJsFilesWithMaps, jsFile+".map")
+	}
+	jsFileSourcePaths = allJsFilesWithMaps // Replace with the expanded list
+
+	var createdFilePaths []string
+
+	// Target directory for final JS assets: e.g. public/dist/assets/js/
+	finalDestJsAssetDir := filepath.Join(baseOutputDir, "assets", "js")
+	if err := os.MkdirAll(finalDestJsAssetDir, 0755); err != nil {
+		return "", fmt.Errorf("failed to create final assets/js directory %s: %w", finalDestJsAssetDir, err)
+	}
+
+	for _, compiledJsPathSuffix := range jsFileSourcePaths {
+		// Full path to the compiled JS file, e.g., /app/public/js/public/ts/app.js
+		sourceJs := filepath.Join(projectRoot, "public", "js", compiledJsPathSuffix)
+
+		// Determine the target path suffix relative to "public/dist/assets/js/"
+		// e.g., for "public/ts/app.js", target suffix is "app.js"
+		// e.g., for "public/ts/modules/darkMode.js", target suffix is "modules/darkMode.js"
+		targetPathSuffix := strings.TrimPrefix(compiledJsPathSuffix, "public/ts/")
+
+		// Final destination for the JS file, e.g., /app/public/dist/assets/js/app.js
+		var destJs string
+		if strings.HasPrefix(compiledJsPathSuffix, "generated/ts/") {
+			// For generated protobuf files, place them in public/dist/generated/ts/
+			// targetPathSuffix will be like "generated/ts/sads_styling.v1.js"
+			destJs = filepath.Join(baseOutputDir, targetPathSuffix) // e.g. public/dist/generated/ts/sads_styling.v1.js
+		} else {
+			// For other app-specific JS files (app.js, sads-style-engine.js, modules/*),
+			// place them in public/dist/assets/js/
+			// targetPathSuffix will be like "app.js" or "modules/darkMode.js"
+			destJs = filepath.Join(finalDestJsAssetDir, targetPathSuffix) // e.g. public/dist/assets/js/app.js
+		}
+
+		// Ensure destination subdirectory (like 'modules' or 'generated/ts') exists
+		destJsSubDir := filepath.Dir(destJs)
+		if err := os.MkdirAll(destJsSubDir, 0755); err != nil {
+			log.Printf("Failed to create destination subdirectory %s for JS file %s: %v. Skipping.", destJsSubDir, targetPathSuffix, err)
+			continue
+		}
+
+		if _, err := os.Stat(sourceJs); os.IsNotExist(err) {
+			log.Printf("Source JS %s does not exist. Skipping.", sourceJs)
+			continue
+		}
+		input, err := ioutil.ReadFile(sourceJs)
+		if err != nil {
+			log.Printf("Failed to read source JS %s: %v. Skipping.", sourceJs, err)
+			continue
+		}
+		if err = ioutil.WriteFile(destJs, input, 0644); err != nil {
+			log.Printf("Failed to write destination JS %s: %v. Skipping.", destJs, err)
+			continue
+		}
+		log.Printf("JS file 'copied' to %s", destJs)
+		createdFilePaths = append(createdFilePaths, destJs)
+	}
+
+	// Return the path to the main application JS file if it was copied, or a general directory path.
+	// For simplicity, just indicate success if any files were processed.
+	if len(createdFilePaths) > 0 {
+		// Return path to the "assets/js" directory relative to baseOutputDir for logging, or specific main file
+		return filepath.Join("assets", "js"), nil
+	}
+	return "", nil // No files copied or an error occurred
 }
+
+func (ab *DefaultAssetBundler) CopyWasmAssets(projectRoot, baseOutputDir string) error {
+	log.Println("AssetBundler: CopyWasmAssets called")
+	// Source for compiled WASM
+	wasmSourceDir := filepath.Join(projectRoot, "sads_wasm_poc")
+	compiledWasmName := "sads_poc.wasm"
+	sourceWasmFile := filepath.Join(wasmSourceDir, compiledWasmName)
+
+	// Source for wasm_exec.js
+	goRoot := runtime.GOROOT()
+	if goRoot == "" {
+		return fmt.Errorf("GOROOT not found. Cannot locate wasm_exec.js")
+	}
+	// Adjusted path based on `find` results in the environment: lib/wasm/ instead of misc/wasm/
+	sourceWasmExecJs := filepath.Join(goRoot, "lib", "wasm", "wasm_exec.js")
+
+	// Destination directory: outputDir/assets/wasm/
+	destWasmAssetDir := filepath.Join(baseOutputDir, "assets", "wasm")
+	if err := os.MkdirAll(destWasmAssetDir, 0755); err != nil {
+		return fmt.Errorf("failed to create assets/wasm directory %s: %w", destWasmAssetDir, err)
+	}
+
+	assetsToCopy := map[string]string{
+		sourceWasmFile:   filepath.Join(destWasmAssetDir, compiledWasmName),
+		sourceWasmExecJs: filepath.Join(destWasmAssetDir, "wasm_exec.js"),
+	}
+
+	for src, dest := range assetsToCopy {
+		if _, err := os.Stat(src); os.IsNotExist(err) {
+			return fmt.Errorf("source WASM asset %s not found", src)
+		}
+		input, err := ioutil.ReadFile(src)
+		if err != nil {
+			return fmt.Errorf("failed to read WASM asset %s: %w", src, err)
+		}
+		if err = ioutil.WriteFile(dest, input, 0644); err != nil {
+			return fmt.Errorf("failed to write WASM asset to %s: %w", dest, err)
+		}
+		log.Printf("WASM asset '%s' copied to '%s'", filepath.Base(src), dest)
+	}
+	return nil
+}
+
 
 func getProjectRoot() (string, error) { return os.Getwd() }
 
@@ -549,3 +828,4 @@ func (g *GenericBlockGenerator) GenerateHtml(data interface{}, translations map[
 	if err != nil { return "", fmt.Errorf("failed to execute template %s: %w", g.templatePath, err) }
 	return htmlResult, nil
 }
+

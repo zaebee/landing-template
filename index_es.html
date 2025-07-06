@@ -13,10 +13,18 @@
       name="keywords"
     />
 
-    <title></title>
-    <link href="public/style.css" rel="stylesheet" />
-    <link href="public/dist/main.css" rel="stylesheet" />
+    <title>Simple Landing Page</title>
+
+    <link href="public/dist/assets/style.css" rel="stylesheet" />
+
     <link rel="icon" href="public/favicon.svg" type="image/svg+xml" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@protobuf-ts/runtime": "https://esm.sh/@protobuf-ts/runtime@2.9.4"
+        }
+      }
+    </script>
   </head>
   <body>
     <header
@@ -44,13 +52,27 @@
       >
         <div data-sads-element="logo-container">
           <a
-            href=""
+            href="index.html"
             data-sads-element="logo-link"
-            data-sads-text-color="text-primary"
+            data-sads-display="flex"
+            data-sads-flex-align-items="center"
             data-sads-text-decoration="none"
-            data-sads-font-weight="bold"
-            data-sads-font-size="l"
+            data-sads-gap="xs"
           >
+            <img
+              src="public/logo.svg"
+              alt="Logo de NombreMarca"
+              data-sads-height="custom:40px"
+              data-sads-width="auto"
+            />
+
+            <span
+              data-sads-font-weight="bold"
+              data-sads-font-size="l"
+              data-sads-text-color="text-primary"
+            >
+              NombreMarca
+            </span>
           </a>
         </div>
 
@@ -285,7 +307,7 @@
           data-sads-max-width="content-container"
           data-sads-margin="custom:0 auto"
           data-sads-responsive-rules='[
-        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "gap": "custom:0"}} 
+        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "gap": "custom:20px"}}
     ]'
         >
           <div
@@ -299,7 +321,7 @@
             data-sads-box-sizing="border-box"
             data-sads-text-align="left"
             data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px"}}
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "none"}}
         ]'
           >
             <h3
@@ -325,7 +347,7 @@
             data-sads-box-sizing="border-box"
             data-sads-text-align="left"
             data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px"}}
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "none"}}
         ]'
           >
             <h3
@@ -351,7 +373,7 @@
             data-sads-box-sizing="border-box"
             data-sads-text-align="left"
             data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px"}}
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "none"}}
         ]'
           >
             <h3
@@ -388,7 +410,7 @@
           data-sads-max-width="content-container"
           data-sads-margin="custom:0 auto"
           data-sads-responsive-rules='[
-        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "gap": "custom:0"}}, 
+        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "gap": "custom:20px"}},
         {"breakpoint": "tablet", "styles": {"flexDirection": "row", "flexWrap": "wrap", "flexJustify": "space-around", "alignItems": "stretch", "gap": "custom:20px"}},
         {"breakpoint": "desktop", "styles": {"flexDirection": "row", "flexWrap": "wrap", "flexJustify": "space-around", "alignItems": "stretch", "gap": "custom:20px"}}
     ]'
@@ -406,9 +428,9 @@
             data-sads-flex-direction="column"
             data-sads-flex-basis="full"
             data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"marginBottom": "custom:20px"}},
-            {"breakpoint": "tablet", "styles": {"flexBasis": "custom:calc(50% - 10px)", "marginBottom": "custom:20px"}}, 
-            {"breakpoint": "desktop", "styles": {"flexBasis": "custom:calc(33.333% - 40px)", "marginBottom": "custom:20px"}} 
+            {"breakpoint": "mobile", "styles": {"marginBottom": "none"}},
+            {"breakpoint": "tablet", "styles": {"flexBasis": "custom:calc(50% - 10px)", "marginBottom": "none"}},
+            {"breakpoint": "desktop", "styles": {"flexBasis": "custom:calc(33.333% - 40px)", "marginBottom": "none"}}
         ]'
           >
             <p
@@ -443,9 +465,9 @@
             data-sads-flex-direction="column"
             data-sads-flex-basis="full"
             data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"marginBottom": "custom:20px"}},
-            {"breakpoint": "tablet", "styles": {"flexBasis": "custom:calc(50% - 10px)", "marginBottom": "custom:20px"}}, 
-            {"breakpoint": "desktop", "styles": {"flexBasis": "custom:calc(33.333% - 40px)", "marginBottom": "custom:20px"}} 
+            {"breakpoint": "mobile", "styles": {"marginBottom": "none"}},
+            {"breakpoint": "tablet", "styles": {"flexBasis": "custom:calc(50% - 10px)", "marginBottom": "none"}},
+            {"breakpoint": "desktop", "styles": {"flexBasis": "custom:calc(33.333% - 40px)", "marginBottom": "none"}}
         ]'
           >
             <p
@@ -481,9 +503,9 @@
             data-sads-flex-direction="column"
             data-sads-flex-basis="full"
             data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"marginBottom": "custom:20px"}},
-            {"breakpoint": "tablet", "styles": {"flexBasis": "custom:calc(50% - 10px)", "marginBottom": "custom:20px"}}, 
-            {"breakpoint": "desktop", "styles": {"flexBasis": "custom:calc(33.333% - 40px)", "marginBottom": "custom:20px"}} 
+            {"breakpoint": "mobile", "styles": {"marginBottom": "none"}},
+            {"breakpoint": "tablet", "styles": {"flexBasis": "custom:calc(50% - 10px)", "marginBottom": "none"}},
+            {"breakpoint": "desktop", "styles": {"flexBasis": "custom:calc(33.333% - 40px)", "marginBottom": "none"}}
         ]'
           >
             <p
@@ -785,7 +807,7 @@
           data-sads-max-width="content-container"
           data-sads-margin="custom:0 auto"
           data-sads-responsive-rules='[
-        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "gap": "custom:0", "alignItems": "center" }} 
+        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "gap": "custom:20px", "alignItems": "center" }}
     ]'
         >
           <article
@@ -800,7 +822,7 @@
             data-sads-text-align="left"
             data-sads-box-sizing="border-box"
             data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px", "width": "full"}} 
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "none", "width": "full"}}
         ]'
           >
             <h3
@@ -844,7 +866,7 @@
             data-sads-text-align="left"
             data-sads-box-sizing="border-box"
             data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px", "width": "full"}} 
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "none", "width": "full"}}
         ]'
           >
             <h3
@@ -888,7 +910,7 @@
             data-sads-text-align="left"
             data-sads-box-sizing="border-box"
             data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "custom:20px", "width": "full"}} 
+            {"breakpoint": "mobile", "styles": {"flexBasis": "full", "marginBottom": "none", "width": "full"}}
         ]'
           >
             <h3
@@ -1158,6 +1180,14 @@
       </div>
     </footer>
 
-    <script type="module" src="public/dist/main.js" defer></script>
+    <script type="module" src="public/dist/assets/js/app.js" defer></script>
+    <script>
+      window.sadsConfig = {
+        sadsPocWasmPath: "public/dist/assets/wasm/sads_poc.wasm",
+        wasmExecPath: "public/dist/assets/wasm/wasm_exec.js",
+        sadsDefaultThemePath: "public/dist/assets/js/sads-default-theme.js",
+        sadsEnginePath: "public/dist/assets/js/sads-style-engine.js",
+      };
+    </script>
   </body>
 </html>

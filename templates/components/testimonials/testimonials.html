@@ -23,7 +23,7 @@
     data-sads-max-width="content-container" {# CSS: 1100px (theme) #}
     data-sads-margin="custom:0 auto" {# CSS: margin auto #}
     data-sads-responsive-rules='[
-        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "gap": "custom:0"}}, {# Remove gap if items have margin #}
+        {"breakpoint": "mobile", "styles": {"flexDirection": "column", "gap": "custom:20px"}},
         {"breakpoint": "tablet", "styles": {"flexDirection": "row", "flexWrap": "wrap", "flexJustify": "space-around", "alignItems": "stretch", "gap": "custom:20px"}},
         {"breakpoint": "desktop", "styles": {"flexDirection": "row", "flexWrap": "wrap", "flexJustify": "space-around", "alignItems": "stretch", "gap": "custom:20px"}}
     ]'
@@ -31,7 +31,7 @@
     {% for item in items %}
     <article
         data-sads-element="item"
-        class="testimonial-item" {# Keep class for :last-child CSS rule #}
+        class="testimonial-item" {# Class kept for potential future use, :last-child CSS rule aims to be removed #}
         data-sads-bg-color="testimonial-item-bg" {# Theme: #fff light, #2a2a2a dark #}
         data-sads-padding="custom:1.5rem" {# CSS: 1.5rem #}
         data-sads-border-radius="custom:8px" {# CSS: 8px #}
@@ -42,9 +42,9 @@
         data-sads-flex-direction="column"
         data-sads-flex-basis="full" {# Mobile: full width #}
         data-sads-responsive-rules='[
-            {"breakpoint": "mobile", "styles": {"marginBottom": "custom:20px"}},
-            {"breakpoint": "tablet", "styles": {"flexBasis": "custom:calc(50% - 10px)", "marginBottom": "custom:20px"}}, {# Approx for 2 items with 20px gap #}
-            {"breakpoint": "desktop", "styles": {"flexBasis": "custom:calc(33.333% - 40px)", "marginBottom": "custom:20px"}} {# CSS: calc(33.333% - 40px) #}
+            {"breakpoint": "mobile", "styles": {"marginBottom": "none"}},
+            {"breakpoint": "tablet", "styles": {"flexBasis": "custom:calc(50% - 10px)", "marginBottom": "none"}},
+            {"breakpoint": "desktop", "styles": {"flexBasis": "custom:calc(33.333% - 40px)", "marginBottom": "none"}}
         ]'
     >
       {% if item.author_image and item.author_image.src %}
