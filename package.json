@@ -24,6 +24,7 @@
     "google-protobuf": "^3.21.4"
   },
   "devDependencies": {
+    "@bazel/bazelisk": "^1.26.0",
     "@protobuf-ts/plugin": "^2.9.4",
     "clang-format": "^1.8.0",
     "prettier": "^3.6.2",

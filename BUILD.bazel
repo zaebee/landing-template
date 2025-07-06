@@ -1,0 +1,30 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+load("@bazel_gazelle//:def.bzl", "gazelle")
+
+# gazelle:prefix landing-page-generator
+gazelle(name = "gazelle")
+
+go_library(
+    name = "landing_page_lib",
+    srcs = [
+        "main.go",
+        "api_handlers.go",
+        # Add other .go files here if any
+    ],
+    importpath = "landing-page-generator", # This is the module name from go.mod
+    visibility = ["//visibility:private"],
+    deps = [
+        "//proto:all_protos_go",  # Dependency on the generated Go protos
+        # Gazelle should help populate other dependencies from go.mod, e.g.:
+        # "@com_github_flosch_pongo2_v6//:pongo2",
+        # "@org_golang_google_protobuf//:protobuf",
+    ],
+)
+
+go_binary(
+    name = "landing_page_generator_binary",
+    embed = [":landing_page_lib"],
+    visibility = ["//visibility:public"],
+)
+
+# TODO: Add build rules for TypeScript in public/ts
