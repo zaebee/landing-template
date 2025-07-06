@@ -13,8 +13,8 @@
       name="keywords"
     />
 
-    <title></title>
-    <link href="public/style.css" rel="stylesheet" />
+    <title>Simple Landing Page</title>
+    <link href="public/dist/assets/style.css" rel="stylesheet" />
     <link rel="icon" href="public/favicon.svg" type="image/svg+xml" />
     <script type="importmap">
       {
@@ -64,6 +64,34 @@
         data-sads-font-weight="bold"
         data-sads-font-size="l"
       >
+<<<<<<< HEAD
+=======
+        <div data-sads-element="logo-container">
+          <a
+            href="index.html"
+            data-sads-element="logo-link"
+            data-sads-display="flex"
+            data-sads-flex-align-items="center"
+            data-sads-text-decoration="none"
+            data-sads-gap="xs"
+          >
+            <img
+              src="public/logo.svg"
+              alt="Logo de NombreMarca"
+              data-sads-height="custom:40px"
+              data-sads-width="auto"
+            />
+
+            <span
+              data-sads-font-weight="bold"
+              data-sads-font-size="l"
+              data-sads-text-color="text-primary"
+            >
+              NombreMarca
+            </span>
+          </a>
+        </div>
+>>>>>>> feat/refactor-components-sads-hybrid
 
       </a>
     </div>
@@ -1330,8 +1358,21 @@
   </div>
 </footer>
 
+<<<<<<< HEAD
     <script type="module" src="public/js/public/ts/app.js" defer></script>
 
 
+=======
+    <script type="module" src="public/dist/assets/js/app.js" defer></script>
+
+    <script>
+      window.sadsConfig = {
+        sadsPocWasmPath: "public/dist/assets/wasm/sads_poc.wasm",
+        wasmExecPath: "public/dist/assets/wasm/wasm_exec.js",
+        sadsDefaultThemePath: "public/dist/assets/js/sads-default-theme.js",
+        sadsEnginePath: "public/dist/assets/js/sads-style-engine.js",
+      };
+    </script>
+>>>>>>> feat/refactor-components-sads-hybrid
   </body>
 </html>

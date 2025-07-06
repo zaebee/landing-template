@@ -13,8 +13,10 @@
       name="keywords"
     />
     {% endblock head_meta %}
-    <title>{{ title }}</title>
-    <link href="public/style.css" rel="stylesheet" />
+    <title>{{ page_title }}</title>
+    {# Standardized to page_title used in Go context #}
+    <link href="{{ style_css_path }}" rel="stylesheet" />
+    {# Use variable from Go context #}
     <link rel="icon" href="public/favicon.svg" type="image/svg+xml" />
     <script type="importmap">
       {
@@ -26,12 +28,20 @@
     {% block head_extra %} {% endblock head_extra %}
   </head>
   <body>
-    {% include "components/header/header.html" %}
+    {% include "components/header/header.html" with site_logo_data=site_logo_data translations=translations lang=lang %}
 
     <main>{{ main_content | safe }}</main>
 
-    {% include "components/footer/footer.html" %}
-    <script type="module" src="public/js/public/ts/app.js" defer></script>
+    {% include "components/footer/footer.html" with translations=translations lang=lang %}
+    <script type="module" src="{{ app_js_path }}" defer></script>
+    <script>
+      window.sadsConfig = {
+        sadsPocWasmPath: "{{ sads_poc_wasm_path }}",
+        wasmExecPath: "{{ wasm_exec_path }}",
+        sadsDefaultThemePath: "{{ sads_default_theme_path }}",
+        sadsEnginePath: "{{ sads_style_engine_path }}",
+      };
+    </script>
 
     {% block scripts %}{% endblock scripts %}
   </body>
