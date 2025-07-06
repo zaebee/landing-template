@@ -89,9 +89,9 @@ This script executes the following steps in order:
    - TypeScript: `protoc --plugin=protoc-gen-ts ... --ts_out=...` (or `python -m grpc_tools.protoc ...` as per current `package.json`)
 2. `npm run compile:ts`: Compiles TypeScript files (e.g., SADS engine, other UI logic) to JavaScript. These are output to `public/js/` preserving their structure from `public/ts/` (e.g. `public/ts/app.ts` -> `public/js/public/ts/app.js`).
 3. `go run main.go`: The core Go application that:
-    - Compiles the Go WASM module for SADS (`sads_wasm_poc/sads_poc.wasm`).
-    - Bundles/copies assets (CSS, compiled JS from step 2, WASM) into the `public/dist/assets/` directory. JS files from `public/js/public/ts/...` are flattened to `public/dist/assets/js/...`.
-    - Uses Pongo2 templates, JSON data, and the generated Go protobuf files to assemble the final static HTML pages (`index.html`, `index_es.html`, etc.) in the project root.
+   - Compiles the Go WASM module for SADS (`sads_wasm_poc/sads_poc.wasm`).
+   - Bundles/copies assets (CSS, compiled JS from step 2, WASM) into the `public/dist/assets/` directory. JS files from `public/js/public/ts/...` are flattened to `public/dist/assets/js/...`.
+   - Uses Pongo2 templates, JSON data, and the generated Go protobuf files to assemble the final static HTML pages (`index.html`, `index_es.html`, etc.) in the project root.
 
 ### Running the Go Static Site Generator Directly
 
