@@ -162,7 +162,6 @@ To use Mistral (or adapt for another LLM provider):
     Ensure your `.env` file also has `OPENAI_API_KEY` if you intend to switch between providers or use OpenAI as the default.
 
 3.  **Script `generate_sads_attributes.py` is Ready for Mistral:**
-
     - The `get_sads_attributes_from_llm` function in the script now contains a functional implementation for the Mistral provider.
     - It correctly imports `MistralClient` and `ChatMessage` from the `mistralai` library.
     - It initializes the client and makes the API call as expected.

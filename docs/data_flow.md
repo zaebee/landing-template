@@ -210,7 +210,6 @@ graph TD
 The diagram illustrates the data flow and component interactions within the `main.go` script, which serves as the build orchestrator for generating static HTML pages. This process uses Pongo2 for templating and Go's native capabilities for data handling and file system operations.
 
 1. **Inputs (Pink Nodes)**:
-
    - **`public/config.json`**: Main configuration file defining site settings, supported languages, block order, and data file references.
    - **`data/*.json`**: JSON files containing content for dynamic blocks (e.g., hero text, portfolio items), structured according to Protobuf definitions.
    - **`proto/*.proto`**: Protocol Buffer files defining the schema for the data in `data/*.json`.
@@ -219,13 +218,11 @@ The diagram illustrates the data flow and component interactions within the `mai
    - **`templates/base.html`**: The main Pongo2 base template providing the overall page structure (e.g., `<html>`, `<head>`, `<body>`, header, footer placeholders).
 
 2. **Initial Processing & Tools**:
-
    - **`protoc` (Orange Node)**: The Protocol Buffer compiler.
    - **`protoc-gen-go`**: A `protoc` plugin used to generate Go source files (`.pb.go`) from `.proto` definitions.
    - **`generated/go/*.pb.go` (Light Blue Node)**: Generated Go files containing struct definitions and (un)marshalling logic for the data types defined in `.proto` files. These are compiled into the `main.go` binary.
 
 3. **Core Go Services/Logic (Light Cyan Nodes)**:
-
    - **`Go Data Handling Logic`**: Represents Go code within `main.go` (or its packages) responsible for:
      - Reading JSON files from `data/`.
      - Unmarshalling JSON data into the Go structs generated from `.pb.go` files.
@@ -235,7 +232,6 @@ The diagram illustrates the data flow and component interactions within the `mai
    - **`Go Block Generation Logic`**: Functions or methods in `main.go` responsible for rendering individual component blocks using their respective Pongo2 templates from `templates/components/`.
 
 4. **`main.go` Build Orchestrator (Dark Blue Node)**: The central Go program that drives the static site generation.
-
    - It initializes and coordinates all data loading, translation, and templating operations.
    - **Core Logic (Grey Subgraph "main.go - Core Logic")**:
      - **Load Initial Configs**: Reads `public/config.json` to get site-wide settings, language lists, block configurations, etc.
@@ -248,7 +244,6 @@ The diagram illustrates the data flow and component interactions within the `mai
      - **Write Output HTML File**: Saves the fully rendered HTML page to the root directory (e.g., `index.html` for the default language, `index_es.html` for Spanish).
 
 5. **Assemble Main Content Blocks (Go + Pongo2) (Light Grey Subgraph)**: This process is managed by `main.go` for each component.
-
    - **Load Pongo2 Block Template**: Loads the specific Pongo2 template file for the current block (e.g., `templates/components/hero/hero.html`).
    - **Get Cached Go Struct Data for Block**: Retrieves the necessary Go data structures (previously loaded and cached) for the current block.
    - **Render HTML for Block (Pongo2 Execution)**: Executes the Pongo2 template with the retrieved Go data and the current language's translations. Pongo2 processes the template logic (loops, conditionals, variable injections, filter applications) to produce the final HTML for that block.

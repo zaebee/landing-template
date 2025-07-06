@@ -41,7 +41,6 @@ Go code (`.go` files) is linted using standard Go tools:
 - **`staticcheck`**: A more advanced static analysis tool that finds bugs, performance issues, and stylistic problems. (Installation: `go install honnef.co/go/tools/cmd/staticcheck@latest`)
 
 - **Configuration**:
-
   - These tools generally work with sensible defaults. Specific checks can sometimes be disabled via comments if necessary, but this should be rare.
 
 - **Running Linters**:
@@ -64,7 +63,6 @@ _(The Python linting section below can be removed if no Python code remains in t
 Python code (`.py` files), if any remains (e.g., utility scripts), is linted using [Ruff](https://beta.ruff.rs/docs/) for formatting and general code quality (style, errors, etc.) and [MyPy](http://mypy-lang.org/) for static type checking.
 
 - **Configuration**:
-
   - Ruff is configured in `pyproject.toml` under the `[tool.ruff]` and `[tool.ruff.lint]` sections.
   - MyPy is configured in `pyproject.toml` under the `[tool.mypy]` section.
   - Development dependencies, including `ruff` and `mypy`, are listed in `requirements-dev.txt`. Install them using `pip install -r requirements-dev.txt`.
