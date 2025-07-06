@@ -2,8 +2,12 @@
   "compilerOptions": {
     "target": "ES2020", // Target version of JavaScript
     "module": "ESNext", // Module system
-    "rootDir": "./public/ts", // Root directory of TypeScript files
-    "outDir": "./public/js/compiled_ts", // Output directory for compiled JavaScript
+    // "rootDir": "./public/ts", // Let tsc infer rootDir
+    "outDir": "./public/js", // Output directory for compiled JavaScript
+    "baseUrl": ".", // Base directory for path mappings
+    "paths": {
+      "@generated/*": ["generated/ts/*"] // Alias for generated protobuf TS files
+    },
     "esModuleInterop": true, // Enables compatibility with CommonJS modules
     "forceConsistentCasingInFileNames": true, // Enforces consistent file casing
     "strict": true, // Enable all strict type-checking options
