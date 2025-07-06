@@ -8,7 +8,7 @@
 import type {
   AppStateEventDetail,
   LanguageChangedEventDetail,
-} from "./eventBus"; // Assuming types are in eventBus.ts
+} from "./eventBus.js"; // Assuming types are in eventBus.ts
 
 interface TranslationsObject {
   [key: string]: string;
