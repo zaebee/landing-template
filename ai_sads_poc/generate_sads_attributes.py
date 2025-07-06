@@ -1,13 +1,17 @@
-import os
-import json
 import argparse
-from typing import Dict, List, Optional, Any
-from openai import OpenAI
+import json
+import os
+from typing import Any, Dict, List, Optional, Union
+
 from dotenv import load_dotenv
 
 # --- Mistral Specific Block ---
-from mistralai.client import MistralClient
-from mistralai.models.chat_completion import ChatMessage
+from mistralai import (
+    Messages,
+    Mistral,
+    UserMessage,
+)
+from openai import OpenAI
 
 
 def load_sads_theme_context(json_file_path: str) -> Optional[Dict[str, Any]]:
@@ -102,7 +106,7 @@ def construct_llm_prompt(
         f"{sads_explanation}\n\n"
         f"{sads_theme_context_str}"
         f"{sads_properties_ref_str}\n\n"
-        f"SADS THEME CONTEXT:\n{sads_theme_context_str}\n\n" #This line seems redundant, will remove in next step if confirmed
+        f"SADS THEME CONTEXT:\n{sads_theme_context_str}\n\n"
         f"HTML SNIPPET:\n```html\n{html_snippet}\n```\n\n"
         f'USER STYLE DESCRIPTION: "{style_prompt}"\n\n'
         f"Generated `data-sads-*` attributes string:"
@@ -110,16 +114,36 @@ def construct_llm_prompt(
     return prompt
 
 
+def get_client(api_key: str, provider: str = "openai") -> Union[OpenAI, Mistral]:
+    """
+    Returns an initialized client for the specified LLM provider.
+    """
+    if provider.lower() == "openai":
+        return OpenAI(api_key=api_key)
+    elif provider.lower() == "mistral":
+        return Mistral(api_key=api_key)
+    else:
+        raise ValueError(
+            f"Unsupported provider '{provider}'. Supported: 'openai', 'mistral'."
+        )
+
+
 def get_sads_attributes_from_llm(
     api_key: str, model_name: str, prompt: str, provider: str = "openai"
 ) -> Optional[str]:
     """
     Calls the specified LLM API and returns the response content.
+    Currently supports OpenAI. Adaptation notes for Mistral included.
     """
-    if provider.lower() == "openai":
+    try:
+        client: Union[OpenAI, Mistral] = get_client(api_key, provider)
+    except Exception as e:
+        print(f"Error initializing client: {e}")
+        return None
+
+    if isinstance(client, OpenAI):
         try:
-            client = OpenAI(api_key=api_key)
-            completion = client.chat.completions.create(
+            completion: Any = client.chat.completions.create(
                 model=model_name,
                 messages=[
                     {
@@ -136,25 +160,18 @@ def get_sads_attributes_from_llm(
         except Exception as e:
             print(f"Error calling OpenAI API: {e}")
             return None
-    elif provider.lower() == "mistral":
+    elif isinstance(client, Mistral):
         try:
-            client = MistralClient(api_key=api_key) # Corrected: MistralClient not Mistral
-            messages: List[ChatMessage] = [ChatMessage(role="user", content=prompt)] # Corrected: ChatMessage not UserMessage, and ensure correct import
-
-            chat_response = client.chat( # Corrected: client.chat not client.chat.complete
+            messages: List[Messages] = [UserMessage(role="user", content=prompt)]
+            chat_response: Any = client.chat.complete(
                 model=model_name,
                 messages=messages,
                 temperature=0.2,
                 max_tokens=150,
             )
             if chat_response.choices and chat_response.choices[0].message:
-                response_content: Optional[str] = str(
-                    chat_response.choices[0].message.content
-                ).strip()
+                response_content = str(chat_response.choices[0].message.content).strip()
                 return response_content if response_content else None
-            else: # Added else to handle no choices
-                print("Mistral API returned no choices or message content.")
-                return None
         except ImportError:
             print(
                 "Error: mistralai library not installed. Please run 'pip install mistralai'."
@@ -163,11 +180,10 @@ def get_sads_attributes_from_llm(
         except Exception as e:
             print(f"Error calling Mistral API: {e}")
             return None
-    else:
-        print(
-            f"Error: Unsupported LLM provider '{provider}'. Supported: 'openai', 'mistral'."
-        )
-        return None
+    print(
+        f"Error: Unsupported LLM provider '{provider}'. Supported: 'openai', 'mistral'."
+    )
+    return None
 
 
 def main() -> None:
@@ -283,8 +299,10 @@ def main() -> None:
                     f"<{html_snippet.splitlines()[0].split(' ')[0]} {generated_attributes_string}>...</{html_snippet.splitlines()[0].split(' ')[0]}>"
                 )
         else:
+            # Fallback for non-HTML-like snippets or plain text
             print(f"<div {generated_attributes_string}>{html_snippet}</div>")
 
+        # Parse the string into a structured dictionary
         structured_sads_data = parse_llm_sads_string_to_dict(
             generated_attributes_string, sads_theme_context
         )
@@ -378,25 +396,45 @@ def parse_llm_sads_string_to_dict(
                         f"BORDER_RADIUS_TOKEN_{value.upper().replace('-', '_')}"
                     )
                     mapped = True
-            if not mapped:
+
+            if not mapped:  # If no token mapping found, treat as custom or direct value
+                # For keys like 'textAlign', 'display', the value is often direct
                 if sads_key.lower() in [
-                    "textalign", "display", "position", "overflow",
-                    "cursor", "transition", "boxsizing", "resize",
+                    "textalign",
+                    "display",
+                    "position",
+                    "overflow",
+                    "cursor",
+                    "transition",
+                    "boxsizing",
+                    "resize",
                 ]:
-                    attr_value_dict["custom_value"] = value
-                elif "fontsize" in sads_key.lower():
+                    attr_value_dict["custom_value"] = (
+                        value  # These are typically direct CSS values or keywords
+                    )
+                elif (
+                    "fontsize" in sads_key.lower()
+                ):  # If it wasn't a token from theme.fontSize
                     attr_value_dict["font_size_value"] = value
                 else:
+                    # Default to custom_value if no specific logic or token match
+                    # This might also catch unhandled token types if heuristics are too simple
                     attr_value_dict["custom_value"] = value
+
         if attr_value_dict:
             attributes_map[sads_key] = attr_value_dict
         else:
+            # If value couldn't be categorized, store raw, or log warning
             print(
                 f"Warning: Could not determine value type for SADS key '{sads_key}' with value '{value}'. Storing as custom."
             )
             attributes_map[sads_key] = {"custom_value": value}
+
+    # This structure conceptually mirrors SadsStylingSet message
+    # In a full Python integration with generated Protobuf classes, you would create
+    # instances of SadsStylingSet and SadsAttributeValue here.
     return {"attributes": attributes_map}
+
 
 if __name__ == "__main__":
     main()
-```

@@ -11,6 +11,8 @@ dependencies = [
     "grpcio-tools",
     "protobuf",
     "Jinja2>=3.0.0",
+    "ruff>=0.12.2",
+    "mypy>=1.16.1",
 ]
 
 [tool.ruff.lint]
