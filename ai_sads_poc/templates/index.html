@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI SADS PoC Web Interface</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; }
+        .container { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1, h2 { color: #333; }
+        label { display: block; margin-top: 10px; font-weight: bold; }
+        textarea, input[type="text"], input[type="number"], select {
+            width: calc(100% - 22px); padding: 10px; margin-top: 5px; border: 1px solid #ddd;
+            border-radius: 4px; box-sizing: border-box;
+        }
+        textarea { min-height: 100px; }
+        button {
+            background-color: #007bff; color: white; padding: 10px 15px; border: none;
+            border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 20px;
+        }
+        button:hover { background-color: #0056b3; }
+        .result-box {
+            margin-top: 20px; padding: 15px; border: 1px solid #eee; border-radius: 4px;
+            background-color: #f9f9f9; white-space: pre-wrap; word-wrap: break-word;
+        }
+        .error { color: red; font-weight: bold; margin-top: 10px; }
+        .flex-container { display: flex; gap: 20px; }
+        .flex-item { flex: 1; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI SADS PoC - Web Interface</h1>
+
+        {% if error %}
+            <p class="error">Error: {{ error }}</p>
+        {% endif %}
+
+        <form method="POST">
+            <div class="flex-container">
+                <div class="flex-item">
+                    <label for="html_snippet">HTML Snippet:</label>
+                    <textarea name="html_snippet" id="html_snippet" rows="8" required>{{ html_snippet or '' }}</textarea>
+                </div>
+                <div class="flex-item">
+                    <label for="style_prompt">Style Prompt (Natural Language):</label>
+                    <textarea name="style_prompt" id="style_prompt" rows="8" required>{{ style_prompt or '' }}</textarea>
+                </div>
+            </div>
+
+            <h2>LLM Configuration</h2>
+            <div class="flex-container">
+                <div class="flex-item">
+                    <label for="provider">Provider:</label>
+                    <select name="provider" id="provider">
+                        <option value="openai" {% if provider == 'openai' %}selected{% endif %}>OpenAI</option>
+                        <option value="mistral" {% if provider == 'mistral' %}selected{% endif %}>Mistral</option>
+                    </select>
+                </div>
+                <div class="flex-item">
+                    <label for="model_name">Model Name (optional - uses default if blank):</label>
+                    <input type="text" name="model_name" id="model_name" value="{{ model_name or '' }}" placeholder="e.g., gpt-4-turbo, mistral-large-latest">
+                </div>
+            </div>
+            <div class="flex-container">
+                <div class="flex-item">
+                    <label for="temperature">Temperature:</label>
+                    <input type="number" name="temperature" id="temperature" step="0.1" min="0" max="2" value="{{ temperature if temperature is not none else 0.2 }}">
+                </div>
+                <div class="flex-item">
+                    <label for="max_tokens">Max Tokens:</label>
+                    <input type="number" name="max_tokens" id="max_tokens" step="10" min="10" value="{{ max_tokens if max_tokens is not none else 200 }}">
+                </div>
+            </div>
+
+            <button type="submit">Generate SADS Attributes</button>
+        </form>
+
+        {% if generated_attributes_string is not none %}
+            <h2>Generated SADS Attributes String:</h2>
+            <div class="result-box" id="sads-string-output">
+                {{ generated_attributes_string }}
+            </div>
+        {% endif %}
+
+        {% if modified_html is not none %}
+            <h2>HTML with Injected Attributes:</h2>
+            <div class="result-box" id="html-output">
+                {{ modified_html }}
+            </div>
+            <h3>Rendered Preview (experimental):</h3>
+            <div class="result-box" id="html-preview" style="border: 2px dashed blue; padding: 10px; min-height: 50px;">
+                {{ modified_html | safe }}
+            </div>
+        {% endif %}
+
+        {% if parsed_sads_json is not none %}
+            <h2>Parsed SADS JSON:</h2>
+            <div class="result-box" id="json-output">
+                <pre>{{ parsed_sads_json }}</pre>
+            </div>
+        {% endif %}
+
+    </div>
+</body>
+</html>
