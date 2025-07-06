@@ -607,17 +607,40 @@ func (ab *DefaultAssetBundler) BundleJs(projectRoot, baseOutputDir string) (stri
 	// With rootDir: "." and outDir: "public/js", tsc output preserves paths relative to rootDir.
 	// e.g., source public/ts/app.ts -> compiled at public/js/public/ts/app.js
 	// We want to copy these to public/dist/assets/js/app.js etc.
-	jsFileSourcePaths := []string{ // These are paths relative to "public/js/" where compiled files are
+	// jsFileSourcePaths lists paths relative to "public/js/" which is the tsc outDir for rootDir "."
+	// For a source file like "public/ts/app.ts", tsc places it at "public/js/public/ts/app.js".
+	// For a source file like "generated/ts/sads_styling.v1.ts", tsc places it at "public/js/generated/ts/sads_styling.v1.js".
+	jsFileSourcePaths := []string{
+		// Files from public/ts/*
 		"public/ts/app.js",
 		"public/ts/sads-default-theme.js",
 		"public/ts/sads-style-engine.js",
 		"public/ts/nlToSadsInterface.js",
+		// Files from public/ts/modules/*
 		"public/ts/modules/darkMode.js",
 		"public/ts/modules/eventBus.js",
 		"public/ts/modules/sadsManager.js",
 		"public/ts/modules/translation.js",
 		"public/ts/modules/wasmLoader.js",
+		// Files from generated/ts/* (compiled proto files)
+		"generated/ts/blog_post.js",
+		"generated/ts/common.js",
+		"generated/ts/contact_form_config.js",
+		"generated/ts/feature_item.js",
+		"generated/ts/hero_item.js",
+		"generated/ts/nav_item.js",
+		"generated/ts/portfolio_item.js",
+		"generated/ts/sads_styling.v1.js", // The critical missing file
+		"generated/ts/testimonial_item.js",
 	}
+	// Add .map files for all the .js files
+	var allJsFilesWithMaps []string
+	for _, jsFile := range jsFileSourcePaths {
+		allJsFilesWithMaps = append(allJsFilesWithMaps, jsFile)
+		allJsFilesWithMaps = append(allJsFilesWithMaps, jsFile+".map")
+	}
+	jsFileSourcePaths = allJsFilesWithMaps // Replace with the expanded list
+
 	var createdFilePaths []string
 
 	// Target directory for final JS assets: e.g. public/dist/assets/js/
@@ -636,9 +659,19 @@ func (ab *DefaultAssetBundler) BundleJs(projectRoot, baseOutputDir string) (stri
 		targetPathSuffix := strings.TrimPrefix(compiledJsPathSuffix, "public/ts/")
 
 		// Final destination for the JS file, e.g., /app/public/dist/assets/js/app.js
-		destJs := filepath.Join(finalDestJsAssetDir, targetPathSuffix)
+		var destJs string
+		if strings.HasPrefix(compiledJsPathSuffix, "generated/ts/") {
+			// For generated protobuf files, place them in public/dist/generated/ts/
+			// targetPathSuffix will be like "generated/ts/sads_styling.v1.js"
+			destJs = filepath.Join(baseOutputDir, targetPathSuffix) // e.g. public/dist/generated/ts/sads_styling.v1.js
+		} else {
+			// For other app-specific JS files (app.js, sads-style-engine.js, modules/*),
+			// place them in public/dist/assets/js/
+			// targetPathSuffix will be like "app.js" or "modules/darkMode.js"
+			destJs = filepath.Join(finalDestJsAssetDir, targetPathSuffix) // e.g. public/dist/assets/js/app.js
+		}
 
-		// Ensure destination subdirectory (like 'modules') exists
+		// Ensure destination subdirectory (like 'modules' or 'generated/ts') exists
 		destJsSubDir := filepath.Dir(destJs)
 		if err := os.MkdirAll(destJsSubDir, 0755); err != nil {
 			log.Printf("Failed to create destination subdirectory %s for JS file %s: %v. Skipping.", destJsSubDir, targetPathSuffix, err)
@@ -683,7 +716,8 @@ func (ab *DefaultAssetBundler) CopyWasmAssets(projectRoot, baseOutputDir string)
 	if goRoot == "" {
 		return fmt.Errorf("GOROOT not found. Cannot locate wasm_exec.js")
 	}
-	sourceWasmExecJs := filepath.Join(goRoot, "misc", "wasm", "wasm_exec.js")
+	// Adjusted path based on `find` results in the environment: lib/wasm/ instead of misc/wasm/
+	sourceWasmExecJs := filepath.Join(goRoot, "lib", "wasm", "wasm_exec.js")
 
 	// Destination directory: outputDir/assets/wasm/
 	destWasmAssetDir := filepath.Join(baseOutputDir, "assets", "wasm")
@@ -767,3 +801,4 @@ func (g *GenericBlockGenerator) GenerateHtml(data interface{}, translations map[
 	if err != nil { return "", fmt.Errorf("failed to execute template %s: %w", g.templatePath, err) }
 	return htmlResult, nil
 }
+
