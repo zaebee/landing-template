@@ -44,8 +44,8 @@ from build_protocols.interfaces import (
 )
 from build_protocols.page_assembly import DefaultPageBuilder
 from build_protocols.translation import DefaultTranslationProvider
-from generated.common_pb2 import SiteLogo  # Added import for SiteLogo
-from generated.nav_item_pb2 import Navigation
+from generated.py.common_pb2 import SiteLogo  # Added import for SiteLogo
+from generated.py.nav_item_pb2 import Navigation
 
 
 class BuildOrchestrator:
