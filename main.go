@@ -354,6 +354,33 @@ func main() {
 	}
 	orchestrator := NewBuildOrchestrator(appConfigMgr, translationProvider, dataLoader, dataCache, pageBuilder, htmlGenerators, assetBundler)
 	if err := orchestrator.BuildAllLanguages(); err != nil { log.Fatalf("Build process failed: %v", err) }
+
+
+	// --- Register API Handlers ---
+	// Assuming api_handlers.go is in the same 'main' package
+	// http.HandleFunc("/api/generate-sads-from-nl", GenerateSadsFromNLHandler) // Defined in api_handlers.go
+
+	// Note: To actually run an HTTP server, you'd need something like:
+	// log.Println("Starting server on :8080...")
+	// if err := http.ListenAndServe(":8080", nil); err != nil {
+	// 	log.Fatalf("Failed to start server: %v", err)
+	// }
+	// For a static site generator, the server part is usually separate (like `python -m http.server`).
+	// If this `main.go` is *only* for building, then API handlers might belong in a different Go application.
+	// For now, I will add the HandleFunc but comment out ListenAndServe.
+	// The user needs to clarify if main.go should also act as a server.
+	// If it's just a builder, these API handlers might be misplaced here.
+
+	// If `main.go` is intended to *also* be a server for these APIs after building:
+	// 1. Uncomment the http.HandleFunc line below.
+	// 2. Decide on a port and uncomment ListenAndServe, or integrate with an existing server setup.
+	// 3. Ensure `api_handlers.go` is compiled with `main.go`.
+
+	// http.HandleFunc("/api/generate-sads-from-nl", GenerateSadsFromNLHandler)
+	// log.Println("Registered /api/generate-sads-from-nl handler.")
+	// log.Println("If you intend to run this as a server, uncomment ListenAndServe and ensure API key env vars are set.")
+
+
 	log.Println("Build script finished successfully.")
 }
 
