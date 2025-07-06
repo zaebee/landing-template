@@ -60,7 +60,11 @@ python_version = "3.10"
 warn_return_any = true
 warn_unused_configs = true
 ignore_missing_imports = true # For libraries that might not have stubs, like bs4 initially
-exclude = ["generated/", "venv/", ".venv/"] # Exclude generated files and virtual envs
+exclude = ["generated/", "venv/", ".venv/"] # Exclude virtual envs; allow 'generated' for stubs
+
+[[tool.mypy.overrides]]
+module = "generated.py.*"
+ignore_errors = true
 
 [dependency-groups]
 dev = [

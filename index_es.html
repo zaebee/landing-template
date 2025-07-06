@@ -14,8 +14,17 @@
     />
 
     <title>Simple Landing Page</title>
+
     <link href="public/dist/assets/style.css" rel="stylesheet" />
+
     <link rel="icon" href="public/favicon.svg" type="image/svg+xml" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@protobuf-ts/runtime": "https://esm.sh/@protobuf-ts/runtime@2.9.4"
+        }
+      }
+    </script>
   </head>
   <body>
     <header
@@ -1172,7 +1181,6 @@
     </footer>
 
     <script type="module" src="public/dist/assets/js/app.js" defer></script>
-
     <script>
       window.sadsConfig = {
         sadsPocWasmPath: "public/dist/assets/wasm/sads_poc.wasm",

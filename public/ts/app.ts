@@ -9,9 +9,9 @@ import {
   initDarkMode,
   toggleDarkMode,
   isDarkModeActive,
-} from "./modules/darkMode";
-import { initTranslations, setLanguage } from "./modules/translation"; // getCurrentTranslations not used directly by app.js
-import { initSadsEngine, reapplySadsStyles } from "./modules/sadsManager";
+} from "./modules/darkMode.js";
+import { initTranslations, setLanguage } from "./modules/translation.js"; // getCurrentTranslations not used directly by app.js
+import { initSadsEngine, reapplySadsStyles } from "./modules/sadsManager.js";
 // eventBus types AppStateEventDetail and LanguageChangedEventDetail are used by other modules,
 // but eventBus itself (if it were an actual emitter object) isn't directly used by app.js logic.
 

@@ -10,7 +10,7 @@ import {
   SadsStylingSet,
   SadsResponsiveStyle as ProtoSadsResponsiveStyle, // Alias to avoid name clash
   SadsElementStyles,
-} from "@generated/sads_styling.v1.js"; // Updated path with alias
+} from "../../generated/ts/sads_styling.v1.js"; // Updated path with alias
 import type { PartialMessage } from "@protobuf-ts/runtime";
 
 // Type for the structure of responsive rules parsed from the data attribute

@@ -18,6 +18,13 @@
     <link href="{{ style_css_path }}" rel="stylesheet" />
     {# Use variable from Go context #}
     <link rel="icon" href="public/favicon.svg" type="image/svg+xml" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@protobuf-ts/runtime": "https://esm.sh/@protobuf-ts/runtime@2.9.4"
+        }
+      }
+    </script>
     {% block head_extra %} {% endblock head_extra %}
   </head>
   <body>
