@@ -56,20 +56,17 @@ proto_library(
 # Aggregate all protos for convenience if needed, though direct dependencies are preferred.
 proto_library(
     name = "all_protos",
-    srcs = [
-        "blog_post.proto",
-        "common.proto",
-        "contact_form_config.proto",
-        "feature_item.proto",
-        "hero_item.proto",
-        "nav_item.proto",
-        "portfolio_item.proto",
-        "sads_styling.v1.proto",
-        "testimonial_item.proto",
+    deps = [
+        ":blog_post_proto",
+        ":common_proto",
+        ":contact_form_config_proto",
+        ":feature_item_proto",
+        ":hero_item_proto",
+        ":nav_item_proto",
+        ":portfolio_item_proto",
+        ":sads_styling_v1_proto",
+        ":testimonial_item_proto",
     ],
-    # This will create a descriptor set for all protos
-    # which might be useful for the genrule.
-    # However, the genrule will likely invoke protoc on each file or a glob.
 )
 
 # Go proto generation
