@@ -1,30 +1,14 @@
-interface SADSEngine {
-  [key: string]: any;
-}
-
 interface SadsManager {
   initSadsEngine(): Promise<void>;
   reapplySadsStyles(): Promise<void>;
   [key: string]: any;
 }
 
-interface SadsDefaultTheme {
-  [key: string]: any;
-}
-
-// Extend Window interface to include SADS globals (SADSEngine and SADS_DEFAULT_THEME are set on window)
-// sadsManager functions will be imported directly.
-declare global {
-  interface Window {
-    SADSEngine?: SADSEngine; // SADSEngine class is put on window by sads-style-engine.ts
-    SADS_DEFAULT_THEME?: SadsDefaultTheme; // sadsDefaultTheme object is put on window by sads-default-theme.ts
-    // sadsManager is not on window, its functions will be imported.
-  }
-}
-
 // Import functions from sadsManager
 // The .js extension is important for browser module resolution if not using a bundler/path mapping that handles .ts
 import { initSadsEngine, reapplySadsStyles } from "./modules/sadsManager.js";
+import { sadsDefaultTheme } from "./sads-default-theme.js";
+import { SADSEngine } from "./sads-style-engine.js";
 
 class SadsPreviewerApp {
   private rootElement: HTMLElement;
@@ -83,8 +67,8 @@ class SadsPreviewerApp {
     // Check for SADSEngine class and SADS_DEFAULT_THEME object on window.
     // sadsManager functions are imported, so no check for window.sadsManager.
     if (
-      typeof window.SADSEngine === "undefined" ||
-      typeof window.SADS_DEFAULT_THEME === "undefined"
+      typeof SADSEngine === "undefined" ||
+      typeof sadsDefaultTheme === "undefined"
     ) {
       console.error(
         "SADSEngine class or SADS_DEFAULT_THEME not found on window. Previewer may not function correctly."
@@ -242,7 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // However, all are type="module" defer, so they should parse, then execute in order before DOMContentLoaded.
     // We primarily need SADSEngine class and SADS_DEFAULT_THEME to be on window for sadsManager to use them internally.
     // The sadsManager functions (initSadsEngine, reapplySadsStyles) are imported directly by SadsPreviewerApp.
-    if (window.SADSEngine && window.SADS_DEFAULT_THEME) {
+    if (SADSEngine && sadsDefaultTheme) {
       new SadsPreviewerApp(previewerRootElement);
     } else {
       console.error(

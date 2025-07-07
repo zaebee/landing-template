@@ -1,6 +1,3 @@
-{# This component encapsulates the SADS Previewer UI and logic. It expects SADS
-engine, theme, manager, and sadsPreviewer.js (which defines SadsPreviewerApp) to
-be loaded on the page that includes this component. #}
 <div
   id="sads-previewer-container"
   data-sads-component="sads-previewer-layout"
@@ -11,10 +8,6 @@ be loaded on the page that includes this component. #}
   data-sads-margin="custom:0"
   data-sads-bg-color="surface"
 >
-  {# Component Attributes: ID for JavaScript to target: sads-previewer-container
-  Height: Or adjust if embedded, e.g. custom:80vh or a theme token like
-  "component-full-h" Font-family: Assuming base font from theme might not apply
-  Bg-color: Base background for the container #}
   <div
     class="previewer-header"
     data-sads-bg-color="custom:#f0f0f0"
@@ -30,11 +23,6 @@ be loaded on the page that includes this component. #}
     >
     <select
       id="component-selector"
-      {#
-      Used
-      by
-      sadsPreviewer.ts
-      #}
       data-sads-padding="custom:5px"
       data-sads-font-size="custom:1em"
     >
@@ -47,14 +35,6 @@ be loaded on the page that includes this component. #}
     data-sads-display="flex"
     data-sads-flex-grow="custom:1"
     data-sads-overflow="hidden"
-    {#
-    Important
-    for
-    flex
-    children
-    with
-    overflow-y
-    #}
   >
     <div
       class="component-display-area"
@@ -69,11 +49,6 @@ be loaded on the page that includes this component. #}
       <h2>Preview:</h2>
       <div
         id="component-render-target"
-        {#
-        Used
-        by
-        sadsPreviewer.ts
-        #}
         class="component-render-target"
         data-sads-width="custom:100%"
         data-sads-min-height="custom:300px"
@@ -101,11 +76,6 @@ be loaded on the page that includes this component. #}
       </p>
       <pre
         id="attributes-display"
-        {#
-        Used
-        by
-        sadsPreviewer.ts
-        #}
         data-sads-white-space="pre-wrap"
         data-sads-word-break="break-all"
       >
@@ -115,6 +85,10 @@ No element selected.</pre
   </div>
 </div>
 
-{# Instantiation logic is now handled by sadsPreviewer.ts itself within a
-DOMContentLoaded listener. The main page (sads_previewer_page.html) just needs
-to ensure sadsPreviewer.js and its SADS dependencies are loaded. #}
+<script type="importmap">
+  {
+    "imports": {
+      "@protobuf-ts/runtime": "https://esm.sh/@protobuf-ts/runtime@2.9.4"
+    }
+  }
+</script>
