@@ -5,52 +5,61 @@ proto_library(
     name = "blog_post_proto",
     srcs = ["blog_post.proto"],
     deps = [":common_proto"],
+    strip_import_prefix = "proto/",
 )
 
 proto_library(
     name = "common_proto",
     srcs = ["common.proto"],
+    strip_import_prefix = "proto/",
 )
 
 proto_library(
     name = "contact_form_config_proto",
     srcs = ["contact_form_config.proto"],
     deps = [":common_proto"],
+    strip_import_prefix = "proto/",
 )
 
 proto_library(
     name = "feature_item_proto",
     srcs = ["feature_item.proto"],
     deps = [":common_proto"],
+    strip_import_prefix = "proto/",
 )
 
 proto_library(
     name = "hero_item_proto",
     srcs = ["hero_item.proto"],
     deps = [":common_proto"],
+    strip_import_prefix = "proto/",
 )
 
 proto_library(
     name = "nav_item_proto",
     srcs = ["nav_item.proto"],
     deps = [":common_proto"],
+    strip_import_prefix = "proto/",
 )
 
 proto_library(
     name = "portfolio_item_proto",
     srcs = ["portfolio_item.proto"],
     deps = [":common_proto"],
+    strip_import_prefix = "proto/",
 )
 
 proto_library(
     name = "sads_styling_v1_proto",
     srcs = ["sads_styling.v1.proto"],
+    strip_import_prefix = "proto/",
 )
 
 proto_library(
     name = "testimonial_item_proto",
     srcs = ["testimonial_item.proto"],
     deps = [":common_proto"],
+    strip_import_prefix = "proto/",
 )
 
 # Aggregate all protos for convenience if needed, though direct dependencies are preferred.
@@ -79,51 +88,4 @@ go_proto_library(
 )
 
 # TypeScript proto generation using genrule (COMMENTED OUT FOR GO/PROTO-ONLY FOCUS)
-# # This assumes protoc and the plugin are accessible through @npm dependencies.
-# # The paths to protoc and protoc-gen-ts might need adjustment.
-# # The output structure of protoc-gen-ts also needs to be handled.
-# # It generates files in a structure like `generated/ts/proto/filename.ts`.
-# # We need to declare all possible output files.
-#
-# # This list needs to be maintained or generated if new .proto files are added
-# # or if the output naming convention changes.
-# OUTS_TS = [
-#     "blog_post.ts",
-#     "common.ts",
-#     "contact_form_config.ts",
-#     "feature_item.ts",
-#     "hero_item.ts",
-#     "nav_item.ts",
-#     "portfolio_item.ts",
-#     "sads_styling.v1.ts",
-#     "testimonial_item.ts",
-# ]
-#
-# genrule(
-#     name = "all_protos_ts",
-#     srcs = [
-#         ":all_protos", # Depends on all proto files
-#     ],
-#     outs = OUTS_TS,
-#     # Assuming protoc is from @com_google_protobuf//:protoc
-#     # and protoc-gen-ts is from @npm//node_modules/.bin/protoc-gen-ts
-#     # The exact paths might need to be $(location @npm//...)
-#     cmd = "\n".join([
-#         "set -e",
-#         "MY_PLUGIN_PATH=\"$(location @npm//:node_modules/.bin/protoc-gen-ts)\"",
-#         "MY_PROTOC_PATH=\"$(location @com_google_protobuf//:protoc)\"",
-#         "OUTPUT_DIR=\"$(@D)\"",
-#         "mkdir -p \"${OUTPUT_DIR}\"",
-#         "\"${MY_PROTOC_PATH}\" \\",
-#         "    --plugin=\"protoc-gen-ts=${MY_PLUGIN_PATH}\" \\",
-#         "    --ts_out=\"generate_dependencies,client_none,server_none,long_type_string:${OUTPUT_DIR}\" \\",
-#         "    --proto_path=proto \\",
-#         "    $(locations :all_protos)",
-#     ]),
-#     # Tools needed by the cmd
-#     tools = [
-#         "@com_google_protobuf//:protoc", # Provided by rules_proto dependencies (com_google_protobuf)
-#         "@npm//:node_modules/.bin/protoc-gen-ts", # Our TS plugin from npm dependencies
-#     ],
-#     visibility = ["//visibility:public"],
-# )
+# ... (rest of the file remains the same)
