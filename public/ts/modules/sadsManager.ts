@@ -4,8 +4,8 @@
  */
 
 import { SADSEngine } from "../sads-style-engine.js"; // Path relative to output dir after compilation
-// sads-default-theme is typically passed during SADSEngine instantiation if not using global
 // If sadsDefaultTheme is needed directly here, it should also be imported.
+import { sadsDefaultTheme } from "../sads-default-theme.js"; // Import the theme directly
 
 let sadsEngineInstance: SADSEngine | null = null;
 
@@ -19,10 +19,9 @@ export async function initSadsEngine(): Promise<void> {
   // Check if SADSEngine constructor is available and if an instance doesn't already exist.
   // SADSEngine is imported, so `typeof SADSEngine` check is for class availability.
   if (SADSEngine && !sadsEngineInstance) {
-    // Accessing global sadsDefaultTheme. If it's also a module, it should be imported.
-    const defaultTheme = (window as any).sadsDefaultTheme || {};
-    sadsEngineInstance = new SADSEngine({}, defaultTheme);
-    console.log("SADS Engine Initialized by sadsManager.");
+    // Use the directly imported sadsDefaultTheme
+    sadsEngineInstance = new SADSEngine({}, sadsDefaultTheme); // Pass the imported theme
+    console.log("SADS Engine Initialized by sadsManager with imported theme.");
     await reapplySadsStyles();
   } else if (sadsEngineInstance) {
     console.warn("SADS Engine already initialized. Re-applying styles.");
