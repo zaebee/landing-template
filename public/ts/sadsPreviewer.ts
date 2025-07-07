@@ -12,16 +12,19 @@ interface SadsDefaultTheme {
   [key: string]: any;
 }
 
-// Extend Window interface to include SADS globals
-// Ensure this file is treated as a module by TypeScript for global augmentation to work.
-// Adding an export {} at the end of the file achieves this.
+// Extend Window interface to include SADS globals (SADSEngine and SADS_DEFAULT_THEME are set on window)
+// sadsManager functions will be imported directly.
 declare global {
   interface Window {
-    SADSEngine?: SADSEngine;
-    sadsManager?: SadsManager;
-    SADS_DEFAULT_THEME?: SadsDefaultTheme;
+    SADSEngine?: SADSEngine; // SADSEngine class is put on window by sads-style-engine.ts
+    SADS_DEFAULT_THEME?: SadsDefaultTheme; // sadsDefaultTheme object is put on window by sads-default-theme.ts
+    // sadsManager is not on window, its functions will be imported.
   }
 }
+
+// Import functions from sadsManager
+// The .js extension is important for browser module resolution if not using a bundler/path mapping that handles .ts
+import { initSadsEngine, reapplySadsStyles } from "./modules/sadsManager.js";
 
 class SadsPreviewerApp {
   private rootElement: HTMLElement;
@@ -77,19 +80,20 @@ class SadsPreviewerApp {
       return;
     }
 
+    // Check for SADSEngine class and SADS_DEFAULT_THEME object on window.
+    // sadsManager functions are imported, so no check for window.sadsManager.
     if (
       typeof window.SADSEngine === "undefined" ||
-      typeof window.sadsManager === "undefined" ||
       typeof window.SADS_DEFAULT_THEME === "undefined"
     ) {
       console.error(
-        "SADS Engine, Manager, or Default Theme not loaded. Previewer may not function correctly."
+        "SADSEngine class or SADS_DEFAULT_THEME not found on window. Previewer may not function correctly."
       );
       this.componentRenderTarget.innerHTML =
-        '<p style="color: red;">Error: SADS scripts not loaded. Previewer functionality is limited.</p>';
+        '<p style="color: red;">Error: SADS core scripts (engine class, theme) not loaded. Previewer functionality is limited.</p>';
     } else {
-      window.sadsManager
-        .initSadsEngine()
+      // Call the imported initSadsEngine function.
+      initSadsEngine()
         .then(() => {
           console.log("SADS Engine initialized by previewer instance.");
         })
@@ -150,12 +154,10 @@ class SadsPreviewerApp {
         })
         .then((htmlContent) => {
           this.componentRenderTarget.innerHTML = htmlContent;
-          if (
-            window.sadsManager &&
-            typeof window.sadsManager.reapplySadsStyles === "function"
-          ) {
-            window.sadsManager
-              .reapplySadsStyles()
+          // Call the imported reapplySadsStyles function.
+          // Check if the function itself is available (it should be if imported).
+          if (typeof reapplySadsStyles === "function") {
+            reapplySadsStyles()
               .then(() => {
                 console.log(`SADS styles reapplied for ${componentName}`);
               })
@@ -166,8 +168,9 @@ class SadsPreviewerApp {
                 );
               });
           } else {
+            // This case should ideally not be reached if imports are working.
             console.warn(
-              "sadsManager.reapplySadsStyles() is not available. SADS styles might not be applied to dynamic content."
+              "reapplySadsStyles function is not available. SADS styles might not be applied to dynamic content."
             );
           }
           this.attributesDisplay.textContent =
@@ -235,19 +238,20 @@ document.addEventListener("DOMContentLoaded", () => {
   );
   if (previewerRootElement) {
     // Check if SADS globals are ready before instantiating.
-    // This is a simple check; a more robust solution might involve promises or events
-    // if script loading order of sadsManager etc. is not guaranteed before this.
+    // This is a simple check; a more robust solution might involve promises or events.
     // However, all are type="module" defer, so they should parse, then execute in order before DOMContentLoaded.
-    if (window.sadsManager && window.SADSEngine && window.SADS_DEFAULT_THEME) {
+    // We primarily need SADSEngine class and SADS_DEFAULT_THEME to be on window for sadsManager to use them internally.
+    // The sadsManager functions (initSadsEngine, reapplySadsStyles) are imported directly by SadsPreviewerApp.
+    if (window.SADSEngine && window.SADS_DEFAULT_THEME) {
       new SadsPreviewerApp(previewerRootElement);
     } else {
       console.error(
-        "SADS core scripts (manager, engine, theme) not ready on DOMContentLoaded. SADS Previewer will not initialize."
+        "SADSEngine class or SADS_DEFAULT_THEME not found on window. SADS Previewer will not initialize."
       );
       const body = document.querySelector("body");
       if (body) {
         body.innerHTML =
-          '<p style="color: red; font-family: sans-serif; padding: 20px;">Critical Error: SADS core scripts not ready. Previewer initialization failed.</p>';
+          '<p style="color: red; font-family: sans-serif; padding: 20px;">Critical Error: SADSEngine class or SADS_DEFAULT_THEME not found. Previewer initialization failed.</p>';
       }
     }
   } else {
