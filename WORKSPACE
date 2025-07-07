@@ -27,27 +27,27 @@ go_register_toolchains(version = "1.21.0") # Explicitly set Go version
 gazelle_dependencies()
 
 # Node.js rules (for TypeScript, plugins, etc.)
-http_archive(
-    name = "build_bazel_rules_nodejs", # Renamed for rules_nodejs 4.4.6
-    sha256 = "cfc289523cf1594598215901154a6c2515e8bf3671fd708264a6f6aefe02bf39", # Updated from Bazel download for 4.4.6
-    # strip_prefix removed
-    urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_nodejs/releases/download/4.4.6/rules_nodejs-4.4.6.tar.gz",
-        "https://github.com/bazelbuild/rules_nodejs/releases/download/4.4.6/rules_nodejs-4.4.6.tar.gz",
-    ],
-)
+# http_archive(
+#     name = "build_bazel_rules_nodejs", # Renamed for rules_nodejs 4.4.6
+#     sha256 = "cfc289523cf1594598215901154a6c2515e8bf3671fd708264a6f6aefe02bf39", # Updated from Bazel download for 4.4.6
+#     # strip_prefix removed
+#     urls = [
+#         "https://mirror.bazel.build/github.com/bazelbuild/rules_nodejs/releases/download/4.4.6/rules_nodejs-4.4.6.tar.gz",
+#         "https://github.com/bazelbuild/rules_nodejs/releases/download/4.4.6/rules_nodejs-4.4.6.tar.gz",
+#     ],
+# )
 
-load("@build_bazel_rules_nodejs//:index.bzl", "npm_install", "node_repositories") # Updated load for 4.4.6
+# load("@build_bazel_rules_nodejs//:index.bzl", "npm_install", "node_repositories") # Updated load for 4.4.6
 
-node_repositories(
-    package_json = ["//:package.json"], # Assuming root package.json is the main one
-)
+# node_repositories(
+#     package_json = ["//:package.json"], # Assuming root package.json is the main one
+# )
 
-npm_install(
-    name = "npm",
-    package_json = "//:package.json",
-    package_lock_json = "//:package-lock.json",
-)
+# npm_install(
+#     name = "npm",
+#     package_json = "//:package.json",
+#     package_lock_json = "//:package-lock.json",
+# )
 
 # Protocol Buffers rules
 http_archive(
@@ -72,20 +72,25 @@ rules_proto_toolchains()
 # package_lock_json = "//:package-lock.json",
 # )
 # TypeScript rules
-http_archive(
-    name = "build_bazel_rules_typescript",
-    sha256 = "0a0a5342630a6300093976f33a40698049d15758d01a59a9063b30cc772429a6", # For rules_typescript 2.3.0
-    strip_prefix = "rules_typescript-v2.3.0",
-    urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_typescript/releases/download/v2.3.0/rules_typescript-v2.3.0.tar.gz",
-        "https://github.com/bazelbuild/rules_typescript/releases/download/v2.3.0/rules_typescript-v2.3.0.tar.gz",
-    ],
-)
+# http_archive(
+#     name = "build_bazel_rules_typescript",
+#     sha256 = "0a0a5342630a6300093976f33a40698049d15758d01a59a9063b30cc772429a6", # For rules_typescript 2.3.0
+#     strip_prefix = "rules_typescript-v2.3.0",
+#     urls = [
+#         "https://mirror.bazel.build/github.com/bazelbuild/rules_typescript/releases/download/v2.3.0/rules_typescript-v2.3.0.tar.gz",
+#         "https://github.com/bazelbuild/rules_typescript/releases/download/v2.3.0/rules_typescript-v2.3.0.tar.gz",
+#     ],
+# )
 
-load("@build_bazel_rules_typescript//ts:deps.bzl", "ts_setup_workspace") # Standard load for newer versions
+# load("@build_bazel_rules_typescript//ts:deps.bzl", "ts_setup_workspace") # Standard load for newer versions
 
-ts_setup_workspace()
+# ts_setup_workspace()
 
 # Placeholder for how protoc-gen-ts is integrated.
 # We will use the "npm" dependency for the plugin itself,
 # and might use a genrule or a custom macro for the proto compilation.
+# For Go/Proto only, the npm_install for the TS plugin is not strictly needed yet,
+# but the genrule in proto/BUILD.bazel for TS protos will fail if @npm is not available.
+# For now, let's comment out the genrule's dependency on @npm if focusing only on Go.
+# Alternatively, keep npm_install for protoc-gen-ts if we want to see TS protos generated,
+# even if not compiled further. Given the focus, let's simplify fully.

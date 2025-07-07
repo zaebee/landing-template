@@ -82,52 +82,52 @@ go_proto_library(
     visibility = ["//visibility:public"],
 )
 
-# TypeScript proto generation using genrule
-# This assumes protoc and the plugin are accessible through @npm dependencies.
-# The paths to protoc and protoc-gen-ts might need adjustment.
-# The output structure of protoc-gen-ts also needs to be handled.
-# It generates files in a structure like `generated/ts/proto/filename.ts`.
-# We need to declare all possible output files.
-
-# This list needs to be maintained or generated if new .proto files are added
-# or if the output naming convention changes.
-OUTS_TS = [
-    "blog_post.ts",
-    "common.ts",
-    "contact_form_config.ts",
-    "feature_item.ts",
-    "hero_item.ts",
-    "nav_item.ts",
-    "portfolio_item.ts",
-    "sads_styling.v1.ts",
-    "testimonial_item.ts",
-]
-
-genrule(
-    name = "all_protos_ts",
-    srcs = [
-        ":all_protos", # Depends on all proto files
-    ],
-    outs = OUTS_TS,
-    # Assuming protoc is from @com_google_protobuf//:protoc
-    # and protoc-gen-ts is from @npm//node_modules/.bin/protoc-gen-ts
-    # The exact paths might need to be $(location @npm//...)
-    cmd = "\n".join([
-        "set -e",
-        "MY_PLUGIN_PATH=\"$(location @npm//:node_modules/.bin/protoc-gen-ts)\"",
-        "MY_PROTOC_PATH=\"$(location @com_google_protobuf//:protoc)\"",
-        "OUTPUT_DIR=\"$(@D)\"",
-        "mkdir -p \"${OUTPUT_DIR}\"",
-        "\"${MY_PROTOC_PATH}\" \\",
-        "    --plugin=\"protoc-gen-ts=${MY_PLUGIN_PATH}\" \\",
-        "    --ts_out=\"generate_dependencies,client_none,server_none,long_type_string:${OUTPUT_DIR}\" \\",
-        "    --proto_path=proto \\",
-        "    $(locations :all_protos)",
-    ]),
-    # Tools needed by the cmd
-    tools = [
-        "@com_google_protobuf//:protoc", # Provided by rules_proto dependencies (com_google_protobuf)
-        "@npm//:node_modules/.bin/protoc-gen-ts", # Our TS plugin from npm dependencies
-    ],
-    visibility = ["//visibility:public"],
-)
+# TypeScript proto generation using genrule (COMMENTED OUT FOR GO/PROTO-ONLY FOCUS)
+# # This assumes protoc and the plugin are accessible through @npm dependencies.
+# # The paths to protoc and protoc-gen-ts might need adjustment.
+# # The output structure of protoc-gen-ts also needs to be handled.
+# # It generates files in a structure like `generated/ts/proto/filename.ts`.
+# # We need to declare all possible output files.
+#
+# # This list needs to be maintained or generated if new .proto files are added
+# # or if the output naming convention changes.
+# OUTS_TS = [
+#     "blog_post.ts",
+#     "common.ts",
+#     "contact_form_config.ts",
+#     "feature_item.ts",
+#     "hero_item.ts",
+#     "nav_item.ts",
+#     "portfolio_item.ts",
+#     "sads_styling.v1.ts",
+#     "testimonial_item.ts",
+# ]
+#
+# genrule(
+#     name = "all_protos_ts",
+#     srcs = [
+#         ":all_protos", # Depends on all proto files
+#     ],
+#     outs = OUTS_TS,
+#     # Assuming protoc is from @com_google_protobuf//:protoc
+#     # and protoc-gen-ts is from @npm//node_modules/.bin/protoc-gen-ts
+#     # The exact paths might need to be $(location @npm//...)
+#     cmd = "\n".join([
+#         "set -e",
+#         "MY_PLUGIN_PATH=\"$(location @npm//:node_modules/.bin/protoc-gen-ts)\"",
+#         "MY_PROTOC_PATH=\"$(location @com_google_protobuf//:protoc)\"",
+#         "OUTPUT_DIR=\"$(@D)\"",
+#         "mkdir -p \"${OUTPUT_DIR}\"",
+#         "\"${MY_PROTOC_PATH}\" \\",
+#         "    --plugin=\"protoc-gen-ts=${MY_PLUGIN_PATH}\" \\",
+#         "    --ts_out=\"generate_dependencies,client_none,server_none,long_type_string:${OUTPUT_DIR}\" \\",
+#         "    --proto_path=proto \\",
+#         "    $(locations :all_protos)",
+#     ]),
+#     # Tools needed by the cmd
+#     tools = [
+#         "@com_google_protobuf//:protoc", # Provided by rules_proto dependencies (com_google_protobuf)
+#         "@npm//:node_modules/.bin/protoc-gen-ts", # Our TS plugin from npm dependencies
+#     ],
+#     visibility = ["//visibility:public"],
+# )
