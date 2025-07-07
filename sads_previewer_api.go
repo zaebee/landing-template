@@ -301,6 +301,26 @@ func getSadsComponentSampleDataHandler(w http.ResponseWriter, r *http.Request) {
 func StartSadsPreviewerServer(port string) {
 	mux := http.NewServeMux()
 
+	// Pongo2 template set for the previewer page
+	// Note: Using a unique name for the loader to avoid conflicts if other pongo sets exist.
+	previewerPageTplSet := pongo2.NewSet("sads-previewer-page-loader", pongo2.MustNewLocalFileSystemLoader("templates"))
+
+	// Handler for the new SADS previewer page
+	mux.HandleFunc("/dev/sads-previewer", func(w http.ResponseWriter, r *http.Request) {
+		tpl, err := previewerPageTplSet.FromFile("sads_previewer_page.html")
+		if err != nil {
+			http.Error(w, "Error loading SADS previewer page template: "+err.Error(), http.StatusInternalServerError)
+			log.Printf("Error loading sads_previewer_page.html: %v", err)
+			return
+		}
+		// Empty context for now, can be expanded if needed
+		err = tpl.ExecuteWriter(pongo2.Context{}, w)
+		if err != nil {
+			http.Error(w, "Error rendering SADS previewer page template: "+err.Error(), http.StatusInternalServerError)
+			log.Printf("Error executing sads_previewer_page.html: %v", err)
+		}
+	})
+
 	// API Handlers
 	// This single registration for "/api/sads/component/" handles both:
 	// - /api/sads/component/{name}
