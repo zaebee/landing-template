@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package website_content.v1;
 
-import "common.proto";
+import "proto/common.proto";
 
 option go_package = ".;pb";
 option java_package = "com.website_content.v1";
