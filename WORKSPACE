@@ -23,7 +23,7 @@ load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_depe
 load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
 
 go_rules_dependencies()
-go_register_toolchains(version = "1.21.0") # Explicitly set Go version
+go_register_toolchains(version = "1.21.9") # Updated Go version to 1.21.9
 gazelle_dependencies()
 
 # Node.js rules (for TypeScript, plugins, etc.)
