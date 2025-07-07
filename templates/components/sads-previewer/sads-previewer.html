@@ -115,32 +115,6 @@ No element selected.</pre
   </div>
 </div>
 
-{# Script to initialize the SadsPreviewerApp. This assumes SadsPreviewerApp
-class is globally available when this script runs. The necessary script tags
-(sads-default-theme, sads-style-engine, sadsManager, sadsPreviewer) must be
-included on the main page that renders this component. #}
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const previewerRootElement = document.getElementById(
-      "sads-previewer-container"
-    );
-    if (previewerRootElement && typeof SadsPreviewerApp === "function") {
-      new SadsPreviewerApp(previewerRootElement);
-    } else {
-      if (!previewerRootElement)
-        console.error(
-          "SADS Previewer root element (#sads-previewer-container) not found within component."
-        );
-      if (typeof SadsPreviewerApp !== "function")
-        console.error(
-          "SadsPreviewerApp class not found. Ensure sadsPreviewer.js is loaded and SadsPreviewerApp is globally available before this component's script runs."
-        );
-      // Optionally, display an error message within the component's area if it cannot initialize.
-      const container = document.getElementById("sads-previewer-container");
-      if (container) {
-        container.innerHTML =
-          '<p style="color: red; padding: 20px;">Critical Error: SADS Previewer component could not be initialized. Check console.</p>';
-      }
-    }
-  });
-</script>
+{# Instantiation logic is now handled by sadsPreviewer.ts itself within a
+DOMContentLoaded listener. The main page (sads_previewer_page.html) just needs
+to ensure sadsPreviewer.js and its SADS dependencies are loaded. #}

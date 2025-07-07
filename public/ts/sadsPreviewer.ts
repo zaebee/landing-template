@@ -227,9 +227,40 @@ class SadsPreviewerApp {
 //    }
 //  });
 // </script>
-// For now, we'll keep the global script loading and instantiate from sads_previewer.html directly.
-// Making SadsPreviewerApp available globally for instantiation from HTML:
-(window as any).SadsPreviewerApp = SadsPreviewerApp;
+// SadsPreviewerApp will now self-initialize. No need to expose it globally.
+
+document.addEventListener("DOMContentLoaded", () => {
+  const previewerRootElement = document.getElementById(
+    "sads-previewer-container"
+  );
+  if (previewerRootElement) {
+    // Check if SADS globals are ready before instantiating.
+    // This is a simple check; a more robust solution might involve promises or events
+    // if script loading order of sadsManager etc. is not guaranteed before this.
+    // However, all are type="module" defer, so they should parse, then execute in order before DOMContentLoaded.
+    if (window.sadsManager && window.SADSEngine && window.SADS_DEFAULT_THEME) {
+      new SadsPreviewerApp(previewerRootElement);
+    } else {
+      console.error(
+        "SADS core scripts (manager, engine, theme) not ready on DOMContentLoaded. SADS Previewer will not initialize."
+      );
+      const body = document.querySelector("body");
+      if (body) {
+        body.innerHTML =
+          '<p style="color: red; font-family: sans-serif; padding: 20px;">Critical Error: SADS core scripts not ready. Previewer initialization failed.</p>';
+      }
+    }
+  } else {
+    console.error(
+      "SADS Previewer root element (#sads-previewer-container) not found. Previewer will not initialize."
+    );
+    const body = document.querySelector("body");
+    if (body) {
+      body.innerHTML =
+        '<p style="color: red; font-family: sans-serif; padding: 20px;">Critical Error: SADS Previewer application could not find its root HTML element. Initialization failed.</p>';
+    }
+  }
+});
 
 // Add this to ensure the file is treated as a module by TypeScript.
 export {};
