@@ -74,15 +74,15 @@ rules_proto_toolchains()
 # TypeScript rules
 http_archive(
     name = "build_bazel_rules_typescript",
-    sha256 = "b9849202a0820a85597093f118031cd877bbbe0092a390979164a0301886422e", # For rules_typescript 0.25.0
-    strip_prefix = "rules_typescript-0.25.0",
+    sha256 = "0a0a5342630a6300093976f33a40698049d15758d01a59a9063b30cc772429a6", # For rules_typescript 2.3.0
+    strip_prefix = "rules_typescript-v2.3.0",
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_typescript/releases/download/0.25.0/rules_typescript-0.25.0.tar.gz",
-        "https://github.com/bazelbuild/rules_typescript/releases/download/0.25.0/rules_typescript-0.25.0.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_typescript/releases/download/v2.3.0/rules_typescript-v2.3.0.tar.gz",
+        "https://github.com/bazelbuild/rules_typescript/releases/download/v2.3.0/rules_typescript-v2.3.0.tar.gz",
     ],
 )
 
-load("@build_bazel_rules_typescript//ts:deps.bzl", "ts_setup_workspace") # This load might change for older version
+load("@build_bazel_rules_typescript//ts:deps.bzl", "ts_setup_workspace") # Standard load for newer versions
 
 ts_setup_workspace()
 
