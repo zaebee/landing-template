@@ -1,17 +1,20 @@
-{# This component encapsulates the SADS Previewer UI and logic.
-   It expects SADS engine, theme, manager, and sadsPreviewer.js (which defines SadsPreviewerApp)
-   to be loaded on the page that includes this component.
-#}
+{# This component encapsulates the SADS Previewer UI and logic. It expects SADS
+engine, theme, manager, and sadsPreviewer.js (which defines SadsPreviewerApp) to
+be loaded on the page that includes this component. #}
 <div
-  id="sads-previewer-container" {# ID for JavaScript to target #}
+  id="sads-previewer-container"
   data-sads-component="sads-previewer-layout"
   data-sads-display="flex"
   data-sads-flex-direction="column"
-  data-sads-height="custom:100vh" {# Or adjust if embedded, e.g. custom:80vh or a theme token like "component-full-h" #}
-  data-sads-font-family="custom:sans-serif" {# Assuming base font from theme might not apply #}
+  data-sads-height="custom:100vh"
+  data-sads-font-family="custom:sans-serif"
   data-sads-margin="custom:0"
-  data-sads-bg-color="surface" {# Base background for the container #}
+  data-sads-bg-color="surface"
 >
+  {# Component Attributes: ID for JavaScript to target: sads-previewer-container
+  Height: Or adjust if embedded, e.g. custom:80vh or a theme token like
+  "component-full-h" Font-family: Assuming base font from theme might not apply
+  Bg-color: Base background for the container #}
   <div
     class="previewer-header"
     data-sads-bg-color="custom:#f0f0f0"
@@ -26,7 +29,12 @@
       >Select Component:</label
     >
     <select
-      id="component-selector" {# Used by sadsPreviewer.ts #}
+      id="component-selector"
+      {#
+      Used
+      by
+      sadsPreviewer.ts
+      #}
       data-sads-padding="custom:5px"
       data-sads-font-size="custom:1em"
     >
@@ -38,7 +46,15 @@
     class="main-content"
     data-sads-display="flex"
     data-sads-flex-grow="custom:1"
-    data-sads-overflow="hidden" {# Important for flex children with overflow-y #}
+    data-sads-overflow="hidden"
+    {#
+    Important
+    for
+    flex
+    children
+    with
+    overflow-y
+    #}
   >
     <div
       class="component-display-area"
@@ -52,7 +68,12 @@
     >
       <h2>Preview:</h2>
       <div
-        id="component-render-target" {# Used by sadsPreviewer.ts #}
+        id="component-render-target"
+        {#
+        Used
+        by
+        sadsPreviewer.ts
+        #}
         class="component-render-target"
         data-sads-width="custom:100%"
         data-sads-min-height="custom:300px"
@@ -76,35 +97,49 @@
     >
       <h3 data-sads-margin-top="custom:0">SADS Attributes Inspector</h3>
       <p>
-        Click on an element in the preview to see its data-sads-*
-        attributes.
+        Click on an element in the preview to see its data-sads-* attributes.
       </p>
       <pre
-        id="attributes-display" {# Used by sadsPreviewer.ts #}
+        id="attributes-display"
+        {#
+        Used
+        by
+        sadsPreviewer.ts
+        #}
         data-sads-white-space="pre-wrap"
         data-sads-word-break="break-all"
-      >No element selected.</pre>
+      >
+No element selected.</pre
+      >
     </div>
   </div>
 </div>
 
-{# Script to initialize the SadsPreviewerApp.
-   This assumes SadsPreviewerApp class is globally available when this script runs.
-   The necessary script tags (sads-default-theme, sads-style-engine, sadsManager, sadsPreviewer)
-   must be included on the main page that renders this component.
-#}
+{# Script to initialize the SadsPreviewerApp. This assumes SadsPreviewerApp
+class is globally available when this script runs. The necessary script tags
+(sads-default-theme, sads-style-engine, sadsManager, sadsPreviewer) must be
+included on the main page that renders this component. #}
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    const previewerRootElement = document.getElementById("sads-previewer-container");
-    if (previewerRootElement && typeof SadsPreviewerApp === 'function') {
+    const previewerRootElement = document.getElementById(
+      "sads-previewer-container"
+    );
+    if (previewerRootElement && typeof SadsPreviewerApp === "function") {
       new SadsPreviewerApp(previewerRootElement);
     } else {
-      if (!previewerRootElement) console.error("SADS Previewer root element (#sads-previewer-container) not found within component.");
-      if (typeof SadsPreviewerApp !== 'function') console.error("SadsPreviewerApp class not found. Ensure sadsPreviewer.js is loaded and SadsPreviewerApp is globally available before this component's script runs.");
+      if (!previewerRootElement)
+        console.error(
+          "SADS Previewer root element (#sads-previewer-container) not found within component."
+        );
+      if (typeof SadsPreviewerApp !== "function")
+        console.error(
+          "SadsPreviewerApp class not found. Ensure sadsPreviewer.js is loaded and SadsPreviewerApp is globally available before this component's script runs."
+        );
       // Optionally, display an error message within the component's area if it cannot initialize.
       const container = document.getElementById("sads-previewer-container");
       if (container) {
-          container.innerHTML = '<p style="color: red; padding: 20px;">Critical Error: SADS Previewer component could not be initialized. Check console.</p>';
+        container.innerHTML =
+          '<p style="color: red; padding: 20px;">Critical Error: SADS Previewer component could not be initialized. Check console.</p>';
       }
     }
   });
