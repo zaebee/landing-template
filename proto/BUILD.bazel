@@ -5,61 +5,52 @@ proto_library(
     name = "blog_post_proto",
     srcs = ["blog_post.proto"],
     deps = [":common_proto"],
-    strip_import_prefix = ".",
 )
 
 proto_library(
     name = "common_proto",
     srcs = ["common.proto"],
-    strip_import_prefix = ".",
 )
 
 proto_library(
     name = "contact_form_config_proto",
     srcs = ["contact_form_config.proto"],
     deps = [":common_proto"],
-    strip_import_prefix = ".",
 )
 
 proto_library(
     name = "feature_item_proto",
     srcs = ["feature_item.proto"],
     deps = [":common_proto"],
-    strip_import_prefix = ".",
 )
 
 proto_library(
     name = "hero_item_proto",
     srcs = ["hero_item.proto"],
     deps = [":common_proto"],
-    strip_import_prefix = ".",
 )
 
 proto_library(
     name = "nav_item_proto",
     srcs = ["nav_item.proto"],
     deps = [":common_proto"],
-    strip_import_prefix = ".",
 )
 
 proto_library(
     name = "portfolio_item_proto",
     srcs = ["portfolio_item.proto"],
     deps = [":common_proto"],
-    strip_import_prefix = ".",
 )
 
 proto_library(
     name = "sads_styling_v1_proto",
     srcs = ["sads_styling.v1.proto"],
-    strip_import_prefix = ".",
 )
 
 proto_library(
     name = "testimonial_item_proto",
     srcs = ["testimonial_item.proto"],
     deps = [":common_proto"],
-    strip_import_prefix = ".",
 )
 
 # Aggregate all protos for convenience if needed, though direct dependencies are preferred.
@@ -82,8 +73,8 @@ proto_library(
 go_proto_library(
     name = "all_protos_go",
     proto = ":all_protos",
-    compilers = ["@io_bazel_rules_go//proto:go_grpc"], # Add this if you use gRPC services
-    importpath = "app/generated/go", # This should match the go_prefix in main BUILD file or go.mod
+    compilers = ["@io_bazel_rules_go//proto:go_grpc"],
+    importpath = "app/generated/go",
     visibility = ["//visibility:public"],
 )
 
