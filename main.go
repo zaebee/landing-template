@@ -20,7 +20,7 @@ import (
 	"os/exec"
 	"runtime"
 
-	pb "landing-page-generator/generated/go" // Alias for convenience
+	pb "app/generated/go/pb" // Alias for convenience; updated for Bazel importpath
 )
 
 // --- Type Registry for Proto Messages ---
