@@ -17,15 +17,7 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	pb "app/generated/go" // Assumes generated Go files are in 'generated/go' relative to GOPATH or module root
-	// If your go.mod is in /app, and generated files are in /app/generated/go, then it might be "app/generated/go"
-	// Or, if main.go is in /app/cmd/server and go.mod is in /app, then "app/generated/go" or "github.com/youruser/yourrepo/generated/go"
-	// For this sandbox, let's assume 'app/generated/go' can be resolved.
-	// The build command `go run main.go` is run from the root, so "app/generated/go" might not be correct.
-	// Let's try a relative path from `cmd/server` to `generated/go` for now.
-	// Correct path would be relative to the module root if this is a module.
-	// Assuming module root is /app, then "generated/go" should work if main.go is part of "app" module.
-	// The `go run cmd/server/main.go` implies /app is the module root.
+	pb "landing-page-generator/generated/go"
 )
 
 // Client represents a single SSE client connection.
