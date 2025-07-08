@@ -14,6 +14,7 @@ import { initTranslations, setLanguage } from "./modules/translation.js"; // get
 import { initSadsEngine, reapplySadsStyles } from "./modules/sadsManager.js";
 // eventBus types AppStateEventDetail and LanguageChangedEventDetail are used by other modules,
 // but eventBus itself (if it were an actual emitter object) isn't directly used by app.js logic.
+import { initMcpComponent } from "./components/mcp.js"; // Added for MCP component
 
 // Define the appGlobal structure for window augmentation
 interface AppGlobal {
@@ -49,6 +50,9 @@ async function initializeApp(): Promise<void> {
 
   // 3. Initialize SADS Engine.
   await initSadsEngine();
+
+  // 4. Initialize specific components that require JS interaction.
+  initMcpComponent(); // Initialize the MCP component
 
   console.log(
     `App Initialized: Dark Mode = ${isDarkModeActive()}, Language = ${document.documentElement.lang}`

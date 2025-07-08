@@ -540,6 +540,49 @@ The following ideas were generated during a recent analysis session. They are pr
 
 ---
 
+### 18. MCP (Model Context Protocol) Component for AI-Driven Styling
+
+- **Priority**: Medium (New Feature - Experimental Integration)
+- **Impact**: Medium-High (Introduces dynamic AI interaction for styling)
+- **Effort**: Medium (Frontend component + API interaction logic)
+- **Concept**: A new SADS component (`mcp.html`) designed to interact with an AI service (e.g., the AI SADS PoC) to dynamically generate and apply `data-sads-*` attributes to a target area within itself. Users can input a natural language style prompt, and the component fetches SADS attributes from the AI to alter its appearance in real-time.
+- **Benefits**:
+  - Demonstrates dynamic application of SADS attributes based on AI generation.
+  - Allows users to experiment with natural language style prompts to visually customize a component section.
+  - Provides a PoC for integrating AI-driven design capabilities directly into a SADS component.
+- **Implementation Sketch**:
+  - **HTML Template (`templates/components/mcp/mcp.html`)**:
+    - Contains a main container styled with initial SADS attributes.
+    - Includes a `textarea` for users to input a style prompt (e.g., "Make this section look like a warning panel").
+    - A "Generate & Apply Styles" button to trigger the AI interaction.
+    - A dedicated `div` element (e.g., `data-sads-element="mcp-target-area"`) that is the target for the AI-generated styles. This area will initially contain placeholder content.
+    - A message area to display status (loading, success, error).
+  - **TypeScript Logic (`public/ts/components/mcp.ts`)**:
+    - `initMcpComponent()`: Sets up event listeners on the generate button.
+    - On button click:
+      - Reads the style prompt from the `textarea`.
+      - Reads the current inner HTML of the `mcp-target-area` (this HTML snippet is sent to the AI).
+      - Displays a loading message.
+      - Makes an asynchronous `fetch` request to a backend API endpoint (e.g., `/api/generate-sads-attributes`). The request payload includes the HTML snippet and the style prompt.
+      - The API is expected to return a JSON object containing a string of `data-sads-*` attributes (e.g., `{ "sads_attributes": "data-sads-bgColor='warning-subtle' data-sads-border-color='warning-default'" }`).
+      - On receiving a successful response:
+        - Clears any previous `data-sads-*` attributes from the `mcp-target-area` element (preserving essential attributes like `data-sads-element` or `data-sads-id`).
+        - Parses the received SADS attribute string and applies each attribute to the `mcp-target-area` element.
+        - Calls `sadsManager.reapplySadsStyles()` to instruct the SADS engine to process the newly applied attributes and update the component's styling.
+        - Displays a success message.
+      - Handles API errors and displays appropriate error messages.
+  - **AI SADS PoC API (Hypothetical Backend)**:
+    - An API endpoint (e.g., `/api/generate-sads-attributes`) needs to be available.
+    - This API would take the HTML snippet and style prompt, interact with an LLM (similar to `ai_sads_poc/generate_sads_attributes.py`), and return the SADS attribute string.
+    - The implementation of this API is separate from the frontend component but crucial for its functionality.
+  - **SADS Integration**:
+    - The component is styled using `data-sads-*` attributes, both for its static parts and the dynamically styled target area.
+    - Leverages the existing `sadsManager` to refresh styles.
+- **Styling**: Primarily achieved via `data-sads-*` attributes, with dynamic updates to the target area.
+- **Data**: No specific `data/mcp_config.json` or Protobuf schema is required for the initial version, as its configuration is minimal and its core content (the style prompt) is user-generated at runtime.
+
+---
+
 ### 15. Build-time Link Checker & Unused Asset Finder
 
 - **Priority**: High

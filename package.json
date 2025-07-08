@@ -5,7 +5,7 @@
   "scripts": {
     "build": "npm run generate-proto && npm run compile:ts && go run .",
     "compile:ts": "tsc -p tsconfig.json",
-    "run": "python -m http.server",
+    "run": "go run cmd/server/main.go",
     "test": "echo \"No Go tests implemented yet\"",
     "lint:py": "ruff check . && mypy .",
     "lint:py:fix": "ruff check . --fix && mypy .",
@@ -24,7 +24,7 @@
     "google-protobuf": "^3.21.4"
   },
   "devDependencies": {
-    "@protobuf-ts/plugin": "^2.9.4",
+    "@protobuf-ts/plugin": "^2.11.1",
     "clang-format": "^1.8.0",
     "prettier": "^3.6.2",
     "typescript": "^5.3.3"

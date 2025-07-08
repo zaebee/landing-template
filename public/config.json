@@ -4,6 +4,7 @@
     "components/features/features.html",
     "components/testimonials/testimonials.html",
     "components/chat/chat.html",
+    "components/mcp/mcp.html",
     "components/portfolio/portfolio.html",
     "components/blog/blog.html",
     "components/contact-form/contact-form.html"
