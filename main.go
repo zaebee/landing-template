@@ -639,10 +639,10 @@ func (ab *DefaultAssetBundler) BundleJs(projectRoot, baseOutputDir string) (stri
 		"generated/ts/portfolio_item.js",
 		"generated/ts/sads_styling.v1.js",
 		"generated/ts/testimonial_item.js",
-		"generated/ts/mcp.js", // Added
 		// Files from generated/ts/google/protobuf/*
 		"generated/ts/google/protobuf/struct.js", // Added
 		"generated/ts/google/protobuf/timestamp.js", // Added
+		"generated/ts/mcp.js", // Added
 	}
 	// Add .map files for all the .js files
 	var allJsFilesWithMaps []string
