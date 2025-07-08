@@ -111,7 +111,7 @@ After building the site (e.g., via `npm run build`), you can serve the static fi
 npm run run
 ```
 
-This typically starts `python -m http.server` in the project root, serving files on `http://localhost:8000`.
+This now starts a Go-based HTTP server (`go run cmd/server/main.go`) in the project root, typically serving files on `http://localhost:8080`.
 
 ### Linting
 

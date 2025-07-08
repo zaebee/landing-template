@@ -5,7 +5,7 @@
   "scripts": {
     "build": "npm run generate-proto && npm run compile:ts && go run main.go",
     "compile:ts": "tsc -p tsconfig.json",
-    "run": "python -m http.server",
+    "run": "go run cmd/server/main.go",
     "test": "echo \"No Go tests implemented yet\"",
     "lint:py": "ruff check . && mypy .",
     "lint:py:fix": "ruff check . --fix && mypy .",
