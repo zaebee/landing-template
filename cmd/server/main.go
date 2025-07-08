@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bytes"
+	// "bytes" // Removed unused import
 	"encoding/base64"
 	"flag"
 	"fmt"
@@ -222,18 +222,19 @@ func (s *MCPService) simulateAgentProcessing(incomingMsg *pb.Message) {
 			ExplanationText: fmt.Sprintf("This is a mock explanation for your code snippet:\n```\n%s\n```\nThe agent %s thinks it's interesting!", codeSnippet, incomingMsg.Receiver.GetAgentId()),
 			Language: "plaintext", // Or derive from request
 		}
-		structPayload, err := structpb.NewStruct(map[string]interface{}{
-			"explanation": pb.IdeCodeExplanationResponse.ProtoReflect(explanationResp).Interface(), // This might not be direct, need to convert to map/struct
-		})
-        // A simpler way for Struct for PoC:
-        explanationMap, _ := structpb.NewStruct(map[string]interface{}{
+        // Removed problematic structPayload and ProtoReflect approach.
+        // Using the simpler map approach directly.
+        explanationMap, mapErr := structpb.NewStruct(map[string]interface{}{
             "explanation_text": explanationResp.ExplanationText,
             "language": explanationResp.Language,
         })
-		if err == nil { // if structpb.NewStruct worked
-			resultDetailsMap["ide_code_explanation_response"] = explanationMap // This is how client might expect it.
+		if mapErr == nil {
+			resultDetailsMap["ide_code_explanation_response"] = explanationMap
+		} else {
+			log.Printf("MCP Service: Error creating Struct for IdeCodeExplanationResponse: %v", mapErr)
+			// Optionally add a simpler error placeholder to resultDetailsMap
+			resultDetailsMap["ide_code_explanation_response_error"] = "Failed to structure explanation response"
 		}
-
 
 	} else if incomingMsg.Ontology == "elizaos:ide:refactor_suggestion" {
 		 refactorResp := &pb.IdeRefactorSuggestionResponse{
