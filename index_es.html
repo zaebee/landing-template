@@ -601,6 +601,98 @@
       </section>
 
       <section
+        data-sads-component="mcp"
+        data-sads-scope="true"
+        data-sads-display="flex"
+        data-sads-flex-direction="column"
+        data-sads-align-items="center"
+        data-sads-padding="l"
+        data-sads-gap="m"
+        data-sads-bg-color="background-default"
+        data-sads-border-color="neutral-subtle"
+        data-sads-border-style="solid"
+        data-sads-border-width="custom:1px"
+        data-sads-border-radius="m"
+      >
+        <h2
+          data-sads-typography="heading-m"
+          data-sads-text-color="text-primary"
+        >
+          MCP Component (AI-Driven Styling)
+        </h2>
+
+        <div
+          data-sads-element="mcp-controls"
+          data-sads-display="flex"
+          data-sads-flex-direction="column"
+          data-sads-gap="m"
+          data-sads-width="custom:clamp(300px,80%,600px)"
+        >
+          <textarea
+            data-sads-element="mcp-style-prompt"
+            placeholder="Describe the desired style (e.g., 'Make it look like a futuristic button', 'Apply a warm, inviting theme')"
+            data-sads-padding="s"
+            data-sads-border-radius="s"
+            data-sads-border-color="input-border-color"
+            data-sads-border-width="custom:1px"
+            data-sads-border-style="solid"
+            data-sads-bg-color="input-bg-color"
+            data-sads-text-color="text-primary"
+            data-sads-min-height="custom:80px"
+            data-sads-typography="body-m"
+          ></textarea>
+
+          <button
+            data-sads-element="mcp-generate-button"
+            data-sads-bg-color="button-primary-bg-color"
+            data-sads-text-color="button-primary-text-color"
+            data-sads-padding="s m"
+            data-sads-border-radius="s"
+            data-sads-cursor="pointer"
+            data-sads-typography="label-l"
+            data-sads-hover-bg-color="button-primary-bg-hover-color"
+          >
+            Generate & Apply Styles
+          </button>
+        </div>
+
+        <div
+          data-sads-element="mcp-message-area"
+          data-sads-padding="m"
+          data-sads-min-height="custom:30px"
+          data-sads-text-color="text-secondary"
+          data-sads-typography="body-s"
+        >
+          {/* Status messages will appear here */}
+        </div>
+
+        <div
+          data-sads-element="mcp-target-area"
+          data-sads-id="mcp-dynamic-content"
+          data-sads-padding="xl"
+          data-sads-margin="m"
+          data-sads-border-color="neutral-subtle"
+          data-sads-border-style="dashed"
+          data-sads-border-width="custom:2px"
+          data-sads-border-radius="m"
+          data-sads-min-height="custom:150px"
+          data-sads-width="custom:clamp(300px,80%,600px)"
+          data-sads-display="flex"
+          data-sads-align-items="center"
+          data-sads-justify-content="center"
+          data-sads-bg-color="surface-default"
+          data-sads-transition="all-short"
+        >
+          <p
+            data-sads-typography="body-l"
+            data-sads-text-color="text-placeholder"
+          >
+            This area will be styled by AI.
+          </p>
+        </div>
+      </section>
+
+      <section
         data-sads-component="portfolio"
         id="portfolio"
         data-sads-padding="xl"
