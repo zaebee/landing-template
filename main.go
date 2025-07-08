@@ -624,6 +624,11 @@ func (ab *DefaultAssetBundler) BundleJs(projectRoot, baseOutputDir string) (stri
 		"public/ts/modules/wasmLoader.js",
 		// Files from public/ts/components/*
 		"public/ts/components/mcp.js",
+		"public/ts/components/ide_agent_panel.js", // Added
+		// Files from public/ts/services/*
+		"public/ts/services/mcp_client.js", // Added
+		// Files from public/ts/* (root)
+		"public/ts/config.js", // Added
 		// Files from generated/ts/* (compiled proto files)
 		"generated/ts/blog_post.js",
 		"generated/ts/common.js",
@@ -632,8 +637,12 @@ func (ab *DefaultAssetBundler) BundleJs(projectRoot, baseOutputDir string) (stri
 		"generated/ts/hero_item.js",
 		"generated/ts/nav_item.js",
 		"generated/ts/portfolio_item.js",
-		"generated/ts/sads_styling.v1.js", // The critical missing file
+		"generated/ts/sads_styling.v1.js",
 		"generated/ts/testimonial_item.js",
+		"generated/ts/mcp.js", // Added
+		// Files from generated/ts/google/protobuf/*
+		"generated/ts/google/protobuf/struct.js", // Added
+		"generated/ts/google/protobuf/timestamp.js", // Added
 	}
 	// Add .map files for all the .js files
 	var allJsFilesWithMaps []string
@@ -658,22 +667,37 @@ func (ab *DefaultAssetBundler) BundleJs(projectRoot, baseOutputDir string) (stri
 		// Determine the target path suffix relative to "public/dist/assets/js/"
 		// e.g., for "public/ts/app.js", target suffix is "app.js"
 		// e.g., for "public/ts/modules/darkMode.js", target suffix is "modules/darkMode.js"
-		targetPathSuffix := strings.TrimPrefix(compiledJsPathSuffix, "public/ts/")
 
-		// Final destination for the JS file, e.g., /app/public/dist/assets/js/app.js
+		// Determine the target path suffix for the final asset structure.
+        // Files from "public/ts/" should be flattened into "assets/js/" or subdirs.
+        // Files from "generated/ts/" should go into "generated/ts/" under "public/dist/".
+        var targetPathSuffix string
+        var isGeneratedProto bool
+
+        if strings.HasPrefix(compiledJsPathSuffix, "public/ts/") {
+            targetPathSuffix = strings.TrimPrefix(compiledJsPathSuffix, "public/ts/")
+            isGeneratedProto = false
+        } else if strings.HasPrefix(compiledJsPathSuffix, "generated/ts/") {
+            targetPathSuffix = strings.TrimPrefix(compiledJsPathSuffix, "generated/ts/")
+            isGeneratedProto = true
+        } else {
+            log.Printf("Warning: Unrecognized JS source path prefix for %s. Skipping.", compiledJsPathSuffix)
+            continue
+        }
+
+		// Final destination for the JS file
 		var destJs string
-		if strings.HasPrefix(compiledJsPathSuffix, "generated/ts/") {
-			// For generated protobuf files, place them in public/dist/generated/ts/
-			// targetPathSuffix will be like "generated/ts/sads_styling.v1.js"
-			destJs = filepath.Join(baseOutputDir, targetPathSuffix) // e.g. public/dist/generated/ts/sads_styling.v1.js
+		if isGeneratedProto {
+            // e.g. public/dist/generated/ts/mcp.js or public/dist/generated/ts/google/protobuf/struct.js
+            // The targetPathSuffix already includes "google/protobuf/" if present.
+			destJs = filepath.Join(baseOutputDir, "generated", "ts", targetPathSuffix)
 		} else {
-			// For other app-specific JS files (app.js, sads-style-engine.js, modules/*),
-			// place them in public/dist/assets/js/
-			// targetPathSuffix will be like "app.js" or "modules/darkMode.js"
-			destJs = filepath.Join(finalDestJsAssetDir, targetPathSuffix) // e.g. public/dist/assets/js/app.js
+            // e.g. public/dist/assets/js/app.js or public/dist/assets/js/components/ide_agent_panel.js
+            // The targetPathSuffix includes subdirectories like "components/" or "services/".
+			destJs = filepath.Join(finalDestJsAssetDir, targetPathSuffix)
 		}
 
-		// Ensure destination subdirectory (like 'modules' or 'generated/ts') exists
+		// Ensure destination subdirectory (like 'modules' or 'generated/ts' or 'generated/ts/google/protobuf') exists
 		destJsSubDir := filepath.Dir(destJs)
 		if err := os.MkdirAll(destJsSubDir, 0755); err != nil {
 			log.Printf("Failed to create destination subdirectory %s for JS file %s: %v. Skipping.", destJsSubDir, targetPathSuffix, err)
