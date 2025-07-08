@@ -1,0 +1,202 @@
+syntax = "proto3";
+
+package elizaos.mcp.v1;
+
+import "google/protobuf/struct.proto"; // For flexible payloads if needed
+import "google/protobuf/timestamp.proto";
+
+option go_package = ".;pb";  // Adjust if your Go output structure is different
+option java_package = "com.elizaos.mcp.v1";
+option java_multiple_files = true;
+option java_outer_classname = "McpProto";
+
+// -----------------------------------------------------------------------------
+// Core MCP Message Structure (based on MCP_DRAFT.md Section 3)
+// -----------------------------------------------------------------------------
+
+message Identifier {
+  string agent_id = 1;  // e.g., "jules", "eddy", "ide_plugin_user_xyz"
+  // Potentially add more fields like group_id, capabilities, etc. in future
+}
+
+enum Performative {
+  PERFORMATIVE_UNSPECIFIED = 0;
+  TASK_REQUEST = 1;
+  TASK_ACCEPT = 2;
+  INFORM_RESULT = 3;
+  QUERY_IF = 4;   // Asks if a statement is true
+  QUERY_REF = 5;  // Asks for the value of a reference
+  TASK_REJECT = 6;
+  FAILURE = 7;  // General action execution failure
+  NOT_UNDERSTOOD = 8;
+  // Future performatives: SUBSCRIBE, CANCEL, PROPOSE, etc.
+}
+
+message Message {
+  string mcp_version = 1;  // e.g., "0.1.0"
+  string message_id = 2;   // UUID
+  Performative performative = 3;
+  Identifier sender = 4;
+  Identifier receiver = 5;
+  string in_reply_to = 6;  // Optional: message_id being replied to
+  string reply_with = 7;   // Optional: identifier expected in reply
+  string language = 8;     // e.g., "en", "application/json" for payload
+  string ontology = 9;     // e.g., "elizaos:ontology:code/python/debug_request"
+  google.protobuf.Timestamp timestamp = 10;  // ISO 8601 datetime UTC
+
+  // Payload will be one of the specific payload types using a oneof field.
+  // This ensures that each message has a clearly defined payload structure
+  // corresponding to its performative.
+  oneof payload {
+    TaskRequestPayload task_request_payload = 11;
+    TaskAcceptPayload task_accept_payload = 12;
+    InformResultPayload inform_result_payload = 13;
+    QueryIfPayload query_if_payload = 14;
+    QueryRefPayload query_ref_payload = 15;
+    TaskRejectPayload task_reject_payload = 16;
+    FailurePayload failure_payload = 17;
+    NotUnderstoodPayload not_understood_payload = 18;
+
+    // IDE-specific payloads (can also be nested within TaskRequestPayload if
+    // preferred)
+    IdeCodeExplanationRequest ide_code_explanation_request = 30;
+    IdeRefactorSuggestionRequest ide_refactor_suggestion_request = 31;
+    IdeRefactorSuggestionResponse ide_refactor_suggestion_response =
+        32;  // As part of InformResult
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Performative-Specific Payloads (based on MCP_DRAFT.md Section 4 & 6)
+// -----------------------------------------------------------------------------
+
+// 4.1. TASK_REQUEST
+message TaskRequestPayload {
+  string task_type =
+      1;  // e.g., "debug_code", "refactor_code_snippet", "explain_code"
+  string task_description = 2;  // Human-readable description
+  google.protobuf.Struct task_parameters =
+      3;  // Flexible parameters, e.g., {"code_to_debug": "...", "language":
+          // "python"}
+  string priority = 4;  // Optional: "low", "medium", "high"
+
+  // Example for IDE interaction (can be part of task_parameters or standalone
+  // if Message.oneof points here directly) If using this, the main
+  // Message.ontology would be generic like "elizaos:ide:task" and this payload
+  // would specify the concrete IDE task. For now, assuming task_parameters will
+  // hold specific fields.
+}
+
+// Payload for elizaos:ide:explain_code (used within
+// TaskRequestPayload.task_parameters or directly in Message.payload)
+message IdeCodeExplanationRequest {
+  string code_snippet = 1;
+  string language = 2;
+  string user_query =
+      3;  // e.g., "Explain this code", "What does this function do?"
+}
+
+// Payload for elizaos:ide:refactor_suggestion (used within
+// TaskRequestPayload.task_parameters or directly in Message.payload)
+message IdeRefactorSuggestionRequest {
+  string code_snippet = 1;
+  string language = 2;
+  string user_query = 3;  // e.g., "Suggest refactoring for this code", "How can
+                          // I improve this?"
+  // Could add things like "desired_outcome": "improve readability and
+  // performance"
+}
+
+// 4.2. TASK_ACCEPT
+message TaskAcceptPayload {
+  string status = 1;            // Should be "accepted"
+  string task_id_assigned = 2;  // Optional: receiver's internal task ID
+  string estimated_completion_time_seconds =
+      3;  // Optional: e.g., "300" (ISO duration like PT5M is also an option as
+          // string)
+  string comments = 4;  // Optional: "Starting task now."
+}
+
+// 4.3. INFORM_RESULT
+enum TaskStatus {
+  TASK_STATUS_UNSPECIFIED = 0;
+  TASK_SUCCESS = 1;
+  TASK_FAILURE =
+      2;  // Logical failure of the task, not execution failure of the agent
+  TASK_PARTIAL_SUCCESS = 3;
+}
+
+message InformResultPayload {
+  TaskStatus task_status = 1;
+  string result_summary = 2;  // Human-readable summary
+  google.protobuf.Struct result_details =
+      3;  // Flexible, content varies. For IDE, might contain
+          // IdeRefactorSuggestionResponse
+  repeated Artifact artifacts =
+      4;  // Optional list of created/modified files or resources
+}
+
+message Artifact {
+  string type = 1;         // e.g., "file", "log", "diff_text"
+  string path = 2;         // Optional, if it's a file path
+  string content = 3;      // Optional, if content is embedded
+  string description = 4;  // Optional
+}
+
+// Example for IDE refactoring response (used within
+// InformResultPayload.result_details)
+message IdeRefactorSuggestionResponse {
+  string original_snippet = 1;
+  repeated RefactoringSuggestion suggestions = 2;
+}
+
+message RefactoringSuggestion {
+  string change_type = 1;  // e.g., "rename_variable", "extract_method"
+  string description = 2;
+  string suggested_code_diff = 3;  // Or full suggested code block
+  double confidence = 4;           // Optional: 0.0 to 1.0
+  // Could add line numbers, specific locations for changes, etc.
+}
+
+// Payload for elizaos:ide:explain_code (used within
+// InformResultPayload.result_details)
+message IdeCodeExplanationResponse {
+  string explanation_text = 1;  // Markdown or plain text
+  string language = 2;          // language of the original snippet
+  // could add things like "identified_apis", "potential_issues"
+}
+
+// 4.4. QUERY_IF
+message QueryIfPayload {
+  google.protobuf.Struct condition =
+      1;  // Statement or condition to verify
+          // e.g., {"agent_status": {"agent_id": "Jules", "is_busy": true}}
+}
+
+// 4.4. QUERY_REF
+message QueryRefPayload {
+  string reference = 1;  // Identifier of the information sought
+                         // e.g., "agent_capabilities.jules", "elizaos_version"
+}
+
+// 4.5. TASK_REJECT
+message TaskRejectPayload {
+  string status = 1;  // Should be "rejected"
+  string reason_code =
+      2;  // Optional: "busy", "incapable", "unauthorized", "max_load_reached"
+  string reason_text = 3;  // Optional: human-readable explanation
+}
+
+// 4.6. FAILURE (General Action Failure)
+message FailurePayload {
+  string status = 1;      // Should be "failure"
+  string error_code = 2;  // Optional: agent-specific or system error code
+  string error_text = 3;  // Description of the failure
+}
+
+// 4.7. NOT_UNDERSTOOD
+message NotUnderstoodPayload {
+  string reason_code = 1;  // e.g., "unknown_performative", "parsing_error",
+                           // "unknown_ontology", "invalid_payload_structure"
+  string reason_text = 2;  // Optional: explanation
+}

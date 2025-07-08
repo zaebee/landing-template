@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en" data-sads-theme="default" data-sads-mode="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MCP Agent Debug Panel</title>
+    <!-- Link to global stylesheet if any, or SADS engine handles styles -->
+    <link rel="stylesheet" href="/style.css" />
+    <!-- Assuming a global style.css for base styles -->
+    <script>
+      // Define a global config object for the MCP client or other components
+      // This would typically be generated or served by the server with actual config values
+      window.AppConfig = {
+        mcpServerUrl: "http://localhost:8000/mcp/sse", // Default SSE endpoint for MCP
+        clientAgentIdPrefix: "ide_debug_panel_client_",
+        // Add other global configs if needed by components
+      };
+    </script>
+  </head>
+  <body
+    data-sads-bg-color="bg-default-app"
+    data-sads-text-color="text-primary-app"
+    data-sads-padding="l"
+  >
+    <h1 data-sads-typography="display-l" data-sads-margin-bottom="l">
+      MCP Agent Debug Panel
+    </h1>
+
+    <div data-sads-element="panel-container">
+      <!-- The IDE Agent Panel component will be dynamically initialized here by TypeScript -->
+      <!-- For SADS to pick it up, we need the HTML structure -->
+      <!-- We can either include it directly or have main.go template it in -->
+      <!-- For a static HTML test page, including it directly: -->
+      <div
+        data-sads-component="ide-agent-panel"
+        data-sads-scope="ide-agent-panel-scope"
+        data-sads-layout-type="flex"
+        data-sads-flex-direction="column"
+        data-sads-padding="m"
+        data-sads-gap="m"
+        data-sads-border="custom:1px_solid_neutral-border"
+        data-sads-bg-color="bg-default"
+        data-sads-width="custom:400px"
+        data-sads-height="custom:600px"
+        data-sads-text-color="text-primary"
+      >
+        <h2 data-sads-typography="heading-m" data-sads-margin-bottom="s">
+          ElizaOS Agent Interaction
+        </h2>
+
+        <div
+          data-sads-element="status-area"
+          data-sads-padding="s"
+          data-sads-bg-color="bg-subtle"
+          data-sads-border-radius="s"
+          data-sads-min-height="custom:40px"
+          data-sads-text-color="text-secondary"
+        >
+          Status: Initializing...
+        </div>
+
+        <div
+          data-sads-layout-type="flex"
+          data-sads-flex-direction="column"
+          data-sads-gap="s"
+        >
+          <label for="agent-id-input" data-sads-typography="label-default"
+            >Target Agent ID (e.g., jules, eddy):</label
+          >
+          <input
+            type="text"
+            id="agent-id-input"
+            data-sads-element="agent-id-input"
+            value="jules"
+            data-sads-input-bg-color="bg-input"
+            data-sads-input-text-color="text-input"
+            data-sads-input-border="custom:1px_solid_neutral-border"
+            data-sads-padding="s"
+            data-sads-border-radius="s"
+          />
+        </div>
+
+        <div
+          data-sads-layout-type="flex"
+          data-sads-flex-direction="column"
+          data-sads-gap="s"
+        >
+          <label for="code-snippet-input" data-sads-typography="label-default"
+            >Code Snippet / Input:</label
+          >
+          <textarea
+            id="code-snippet-input"
+            data-sads-element="code-snippet-input"
+            rows="8"
+            data-sads-input-bg-color="bg-input"
+            data-sads-input-text-color="text-input"
+            data-sads-input-border="custom:1px_solid_neutral-border"
+            data-sads-padding="s"
+            data-sads-font-family="monospace"
+            data-sads-border-radius="s"
+          ></textarea>
+        </div>
+
+        <div
+          data-sads-layout-type="flex"
+          data-sads-flex-direction="column"
+          data-sads-gap="s"
+        >
+          <label for="user-query-input" data-sads-typography="label-default"
+            >Your Query / Request:</label
+          >
+          <input
+            type="text"
+            id="user-query-input"
+            data-sads-element="user-query-input"
+            value="Explain this code."
+            data-sads-input-bg-color="bg-input"
+            data-sads-input-text-color="text-input"
+            data-sads-input-border="custom:1px_solid_neutral-border"
+            data-sads-padding="s"
+            data-sads-border-radius="s"
+          />
+        </div>
+
+        <div
+          data-sads-layout-type="flex"
+          data-sads-gap="m"
+          data-sads-flex-wrap="wrap"
+        >
+          <button
+            data-sads-element="explain-code-button"
+            data-sads-button-variant="primary"
+            data-sads-padding-x="m"
+            data-sads-padding-y="s"
+          >
+            Ask to Explain
+          </button>
+          <button
+            data-sads-element="refactor-code-button"
+            data-sads-button-variant="secondary"
+            data-sads-padding-x="m"
+            data-sads-padding-y="s"
+          >
+            Suggest Refactor
+          </button>
+        </div>
+
+        <div
+          data-sads-layout-type="flex"
+          data-sads-flex-direction="column"
+          data-sads-gap="s"
+          data-sads-margin-top="m"
+        >
+          <h3 data-sads-typography="heading-s">Agent Response:</h3>
+          <div
+            data-sads-element="response-area"
+            data-sads-padding="m"
+            data-sads-bg-color="bg-subtle"
+            data-sads-border="custom:1px_solid_neutral-border-soft"
+            data-sads-min-height="custom:100px"
+            data-sads-max-height="custom:300px"
+            data-sads-overflow-y="auto"
+            data-sads-border-radius="s"
+            data-sads-text-color="text-primary"
+            style="white-space: pre-wrap; word-wrap: break-word"
+          >
+            Awaiting response...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main application script -->
+    <!-- The paths for JS files need to be correct based on the output of `npm run compile:ts` -->
+    <!-- `compile:ts` in package.json: `tsc -p tsconfig.json` -->
+    <!-- `tsconfig.json` has `outDir: "../js"` and `rootDir: "."` -->
+    <!-- So public/ts/app.ts becomes public/js/public/ts/app.js -->
+    <!-- The build script (go run main.go) then flattens public/js/public/ts/app.js to public/dist/assets/js/app.js -->
+    <!-- For local dev with `go run cmd/server/main.go` serving from root, we'd need paths like `/public/js/public/ts/app.js` if not using the full build -->
+    <!-- Let's assume for now the server serves from project root, and compiled JS is in `public/js/public/ts/` -->
+    <script type="module" src="/public/js/public/ts/app.js"></script>
+  </body>
+</html>
