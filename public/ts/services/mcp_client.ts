@@ -1,13 +1,13 @@
 // public/ts/services/mcp_client.ts
 
-import { Message, Performative, Identifier } from "../../../generated/ts/mcp"; // Adjust path as necessary
+import { Message, Performative, Identifier } from "../../../generated/ts/mcp.js"; // Adjust path as necessary
 import {
   TaskRequestPayload,
   TaskAcceptPayload,
   InformResultPayload,
-} from "../../../generated/ts/mcp"; // Specific payloads
-import { Timestamp } from "../../../generated/ts/google/protobuf/timestamp";
-import { mcpServerUrl as configuredMcpServerUrl } from "../config"; // Actual config file
+} from "../../../generated/ts/mcp.js"; // Specific payloads
+import { Timestamp } from "../../../generated/ts/google/protobuf/timestamp.js";
+import { mcpServerUrl as configuredMcpServerUrl } from "../config.js"; // Actual config file
 
 export interface McpEventHandler {
   onOpen?: (event: Event) => void;

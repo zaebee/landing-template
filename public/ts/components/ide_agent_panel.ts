@@ -1,5 +1,5 @@
 // public/ts/components/ide_agent_panel.ts
-import { MCPClient, McpEventHandler } from "../services/mcp_client";
+import { MCPClient, McpEventHandler } from "../services/mcp_client.js";
 import {
   Message,
   Performative,
@@ -11,15 +11,15 @@ import {
   TaskStatus,
   IdeCodeExplanationResponse,
   IdeRefactorSuggestionResponse,
-} from "../../../generated/ts/mcp"; // Adjust path as necessary
-import { Struct } from "../../../generated/ts/google/protobuf/struct";
-import { Timestamp } from "../../../generated/ts/google/protobuf/timestamp";
+} from "../../../generated/ts/mcp.js"; // Adjust path as necessary
+import { Struct } from "../../../generated/ts/google/protobuf/struct.js";
+import { Timestamp } from "../../../generated/ts/google/protobuf/timestamp.js";
 // import { قيمة } from "@protobuf-ts/runtime"; // Removed problematic import. Use message.payload.oneofKind directly.
 import {
   mcpServerUrl,
   clientAgentIdPrefix,
   defaultTargetAgentId,
-} from "../config";
+} from "../config.js";
 
 interface ActiveRequest {
   messageId: string;
