@@ -1,6 +1,10 @@
 // public/ts/services/mcp_client.ts
 
-import { Message, Performative, Identifier } from "../../../generated/ts/mcp.js"; // Adjust path as necessary
+import {
+  Message,
+  Performative,
+  Identifier,
+} from "../../../generated/ts/mcp.js"; // Adjust path as necessary
 import {
   TaskRequestPayload,
   TaskAcceptPayload,
