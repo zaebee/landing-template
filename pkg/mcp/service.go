@@ -533,9 +533,9 @@ func (s *Service) sendFailureResponse(incomingMsg *pb.Message, targetAgentID str
 		Timestamp:    timestamppb.Now(),
 		Payload: &pb.Message_FailurePayload{
 			FailurePayload: &pb.FailurePayload{
-				Reason:      reason,
-				ErrorCode:   "TASK_EXECUTION_ERROR", // Generic error code
-				ErrorDetail: nil,                    // Can be a Struct with more details if needed
+				Status:     "failure", // As per proto definition
+				ErrorText:  reason,
+				ErrorCode:  "TASK_EXECUTION_ERROR", // Generic error code
 			},
 		},
 	}
