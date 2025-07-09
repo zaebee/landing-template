@@ -1,0 +1,94 @@
+<div
+  id="sads-previewer-container"
+  data-sads-component="sads-previewer-layout"
+  data-sads-display="flex"
+  data-sads-flex-direction="column"
+  data-sads-height="custom:100vh"
+  data-sads-font-family="custom:sans-serif"
+  data-sads-margin="custom:0"
+  data-sads-bg-color="surface"
+>
+  <div
+    class="previewer-header"
+    data-sads-bg-color="custom:#f0f0f0"
+    data-sads-padding="custom:10px"
+    data-sads-border-bottom-width="custom:1px"
+    data-sads-border-bottom-style="solid"
+    data-sads-border-bottom-color="custom:#ccc"
+    data-sads-display="flex"
+    data-sads-align-items="center"
+  >
+    <label for="component-selector" data-sads-margin-right="custom:10px"
+      >Select Component:</label
+    >
+    <select
+      id="component-selector"
+      data-sads-padding="custom:5px"
+      data-sads-font-size="custom:1em"
+    >
+      <option value="">-- Loading Components --</option>
+    </select>
+  </div>
+
+  <div
+    class="main-content"
+    data-sads-display="flex"
+    data-sads-flex-grow="custom:1"
+    data-sads-overflow="hidden"
+  >
+    <div
+      class="component-display-area"
+      data-sads-flex-grow="custom:3"
+      data-sads-padding="custom:20px"
+      data-sads-overflow-y="auto"
+      data-sads-border-right-width="custom:1px"
+      data-sads-border-right-style="solid"
+      data-sads-border-right-color="custom:#ccc"
+      data-sads-bg-color="custom:#fff"
+    >
+      <h2>Preview:</h2>
+      <div
+        id="component-render-target"
+        class="component-render-target"
+        data-sads-width="custom:100%"
+        data-sads-min-height="custom:300px"
+        data-sads-border-width="custom:1px"
+        data-sads-border-style="solid"
+        data-sads-border-color="custom:#ccc"
+        data-sads-overflow="auto"
+      >
+        <!-- Component HTML will be injected here by JS -->
+      </div>
+    </div>
+
+    <div
+      class="attributes-inspector-area"
+      data-sads-flex-grow="custom:1"
+      data-sads-padding="custom:20px"
+      data-sads-overflow-y="auto"
+      data-sads-bg-color="custom:#f9f9f9"
+      data-sads-font-family="custom:monospace"
+      data-sads-font-size="custom:0.9em"
+    >
+      <h3 data-sads-margin-top="custom:0">SADS Attributes Inspector</h3>
+      <p>
+        Click on an element in the preview to see its data-sads-* attributes.
+      </p>
+      <pre
+        id="attributes-display"
+        data-sads-white-space="pre-wrap"
+        data-sads-word-break="break-all"
+      >
+No element selected.</pre
+      >
+    </div>
+  </div>
+</div>
+
+<script type="importmap">
+  {
+    "imports": {
+      "@protobuf-ts/runtime": "https://esm.sh/@protobuf-ts/runtime@2.9.4"
+    }
+  }
+</script>

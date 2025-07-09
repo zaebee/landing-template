@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Template web site with landing page to track telegram bot user source.",
   "scripts": {
-    "build": "npm run generate-proto && npm run compile:ts && go run main.go",
+    "build": "npm run generate-proto && npm run compile:ts && go run .",
     "compile:ts": "tsc -p tsconfig.json",
     "run": "go run cmd/server/main.go",
     "test": "echo \"No Go tests implemented yet\"",

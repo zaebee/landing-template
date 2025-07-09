@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SADS Component Previewer (Component)</title>
+    <!-- Link to global styles; SADS engine will inject its own style tag. -->
+    <link rel="stylesheet" href="/style.css" />
+    <style>
+      /* Minimal body style to ensure full height if content is less */
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: sans-serif; /* Basic fallback font */
+      }
+    </style>
+  </head>
+  <body>
+    {% include "components/sads-previewer/sads-previewer.html" %}
+
+    <!-- SADS Engine and Previewer App Scripts -->
+    <!-- These paths are relative to the 'public' directory being served -->
+    <script
+      type="module"
+      src="/js/public/ts/sads-default-theme.js"
+      defer
+    ></script>
+    <script
+      type="module"
+      src="/js/public/ts/sads-style-engine.js"
+      defer
+    ></script>
+    <script
+      type="module"
+      src="/js/public/ts/modules/sadsManager.js"
+      defer
+    ></script>
+    <script type="module" src="/js/public/ts/sadsPreviewer.js" defer></script>
+  </body>
+</html>
