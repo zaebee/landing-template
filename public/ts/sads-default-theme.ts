@@ -71,6 +71,16 @@ export interface SadsColors {
   "text-negative-dark"?: string;
   "text-warning"?: string;
   "text-warning-dark"?: string;
+  // Chat widget specific colors
+  "chat-widget-bg"?: string;
+  "chat-widget-bg-dark"?: string;
+  "chat-message-area-bg-dark"?: string;
+  "chat-widget-border-color"?: string;
+  "chat-widget-border-color-dark"?: string;
+  "chat-user-message-bg"?: string;
+  "chat-user-message-bg-dark"?: string;
+  "chat-other-message-bg"?: string;
+  "chat-other-message-bg-dark"?: string;
   [key: string]: string | undefined; // Allow other string properties, e.g. "button-primary-bg-color"
 }
 
@@ -254,6 +264,16 @@ export const sadsDefaultTheme: SadsTheme = {
     "text-negative-dark": "#f8d7da", // Text color for errors or negative states (dark mode)
     "text-warning": "#ffc107", // Text color for warnings or cautionary states
     "text-warning-dark": "#fff3cd", // Text color for warnings or cautionary states (dark mode)
+    // Chat widget specific colors
+    "chat-widget-bg": "#f8f9fa", // Light gray
+    "chat-widget-bg-dark": "#343a40", // Dark gray
+    "chat-message-area-bg-dark": "#212529", // Very dark gray for message area in dark mode
+    "chat-widget-border-color": "#dee2e6", // Light border
+    "chat-widget-border-color-dark": "#495057", // Darker border for dark mode
+    "chat-user-message-bg": "#e9f5ff", // Very light blue for user messages
+    "chat-user-message-bg-dark": "#004a7c", // Deeper blue for user messages in dark mode
+    "chat-other-message-bg": "#f1f3f5", // Neutral light gray for other messages
+    "chat-other-message-bg-dark": "#2c2e30", // Neutral dark gray for other messages in dark mode
   },
   spacing: {
     none: "0",
