@@ -322,16 +322,16 @@ func (s *Service) simulateAgentProcessing(incomingMsg *pb.Message) {
 			ExplanationText: fmt.Sprintf("This is a mock explanation for your code snippet:\n```\n%s\n```\nThe agent %s thinks it's interesting!", codeSnippet, incomingMsg.Receiver.GetAgentId()),
 			Language:        "plaintext", // Or derive from request
 		}
-		explanationMap, mapErr := structpb.NewStruct(map[string]interface{}{
+		// Store as a map[string]interface{} directly.
+		// The final structpb.NewStruct(resultDetailsMap) will handle the conversion.
+		resultDetailsMap["ide_code_explanation_response"] = map[string]interface{}{
 			"explanation_text": explanationResp.ExplanationText,
 			"language":         explanationResp.Language,
-		})
-		if mapErr == nil {
-			resultDetailsMap["ide_code_explanation_response"] = explanationMap
-		} else {
-			log.Printf("MCP Service: Error creating Struct for IdeCodeExplanationResponse: %v", mapErr)
-			resultDetailsMap["ide_code_explanation_response_error"] = "Failed to structure explanation response"
 		}
+		// Note: The previous mapErr check for this specific struct conversion is removed
+		// as direct map assignment won't fail in the same way structpb.NewStruct could.
+		// Any issues with the content of this map would be caught by the later, all-encompassing
+		// structpb.NewStruct(resultDetailsMap) call.
 
 	} else if incomingMsg.Ontology == "elizaos:ide:refactor_suggestion" {
 		refactorResp := &pb.IdeRefactorSuggestionResponse{
@@ -354,11 +354,12 @@ func (s *Service) simulateAgentProcessing(incomingMsg *pb.Message) {
 				"confidence":          sug.Confidence,
 			})
 		}
-		refactorMap, _ := structpb.NewStruct(map[string]interface{}{
+		// Store as a map[string]interface{} directly.
+		// The final structpb.NewStruct(resultDetailsMap) will handle the conversion.
+		resultDetailsMap["ide_refactor_suggestion_response"] = map[string]interface{}{
 			"original_snippet": refactorResp.OriginalSnippet,
 			"suggestions":      suggestionsList,
-		})
-		resultDetailsMap["ide_refactor_suggestion_response"] = refactorMap
+		}
 	}
 
 	// This part is for non-chat message responses
