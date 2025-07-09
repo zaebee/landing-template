@@ -43,7 +43,10 @@ export class MCPClient {
     }
 
     this.eventHandler = handler;
-    this.eventSource = new EventSource(this.url);
+    // Append clientAgentId as a query parameter to the SSE URL
+    const sseUrl = new URL(this.url);
+    sseUrl.searchParams.append("agentId", this.clientAgentId);
+    this.eventSource = new EventSource(sseUrl.toString());
 
     this.eventSource.onopen = (event) => {
       this.isConnected = true;
