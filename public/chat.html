@@ -196,6 +196,51 @@
         </button>
       </div>
 
+      <!-- New Section for Generate SADS from NL -->
+      <div data-sads-border="custom:1px_solid_neutral-border-soft" data-sads-padding="m" data-sads-border-radius="m" data-sads-margin-top="m">
+        <h3 data-sads-typography="heading-s" data-sads-margin-bottom="s">Generate SADS from Natural Language</h3>
+        <div data-sads-layout-type="flex" data-sads-flex-direction="column" data-sads-gap="s">
+          <label for="gen-sads-html-snippet-input" data-sads-typography="label-default">HTML Snippet:</label>
+          <textarea id="gen-sads-html-snippet-input" data-sads-element="gen-sads-html-snippet-input" rows="3"
+            data-sads-input-bg-color="bg-input" data-sads-input-text-color="text-input"
+            data-sads-input-border="custom:1px_solid_neutral-border" data-sads-padding="s"
+            data-sads-font-family="monospace" data-sads-border-radius="s"></textarea>
+
+          <label for="gen-sads-style-prompt-input" data-sads-typography="label-default">Style Prompt:</label>
+          <input type="text" id="gen-sads-style-prompt-input" data-sads-element="gen-sads-style-prompt-input"
+            data-sads-input-bg-color="bg-input" data-sads-input-text-color="text-input"
+            data-sads-input-border="custom:1px_solid_neutral-border" data-sads-padding="s" data-sads-border-radius="s" />
+
+          <label for="gen-sads-theme-context-input" data-sads-typography="label-default">SADS Theme Context (JSON):</label>
+          <textarea id="gen-sads-theme-context-input" data-sads-element="gen-sads-theme-context-input" rows="3"
+            data-sads-input-bg-color="bg-input" data-sads-input-text-color="text-input"
+            data-sads-input-border="custom:1px_solid_neutral-border" data-sads-padding="s"
+            data-sads-font-family="monospace" data-sads-border-radius="s"
+            placeholder='{ "colors": { "primary": "#007bff" } }'></textarea>
+
+          <div data-sads-layout-type="flex" data-sads-gap="m" data-sads-flex-wrap="wrap">
+            <div data-sads-layout-type="flex" data-sads-flex-direction="column" data-sads-gap="xs" data-sads-flex="1">
+              <label for="gen-sads-provider-input" data-sads-typography="label-default">Provider:</label>
+              <input type="text" id="gen-sads-provider-input" data-sads-element="gen-sads-provider-input" value="openai"
+                data-sads-input-bg-color="bg-input" data-sads-input-text-color="text-input"
+                data-sads-input-border="custom:1px_solid_neutral-border" data-sads-padding="s" data-sads-border-radius="s" />
+            </div>
+            <div data-sads-layout-type="flex" data-sads-flex-direction="column" data-sads-gap="xs" data-sads-flex="1">
+              <label for="gen-sads-model-input" data-sads-typography="label-default">Model:</label>
+              <input type="text" id="gen-sads-model-input" data-sads-element="gen-sads-model-input" value="gpt-3.5-turbo"
+                data-sads-input-bg-color="bg-input" data-sads-input-text-color="text-input"
+                data-sads-input-border="custom:1px_solid_neutral-border" data-sads-padding="s" data-sads-border-radius="s" />
+            </div>
+          </div>
+
+          <button data-sads-element="generate-sads-button" data-sads-button-variant="call-to-action"
+            data-sads-padding-x="m" data-sads-padding-y="s" data-sads-margin-top="s">
+            Generate SADS Attributes
+          </button>
+        </div>
+      </div>
+      <!-- End New Section -->
+
       <div
         data-sads-layout-type="flex"
         data-sads-flex-direction="column"

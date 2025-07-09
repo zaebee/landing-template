@@ -623,9 +623,7 @@ func (ab *DefaultAssetBundler) BundleJs(projectRoot, baseOutputDir string) (stri
 		"public/ts/modules/translation.js",
 		"public/ts/modules/wasmLoader.js",
 		// Files from public/ts/components/*
-		"public/ts/components/chat.js",
 		"public/ts/components/mcp.js",
-		"public/ts/components/ide_agent_panel.ts",
 		// Files from generated/ts/* (compiled proto files)
 		"generated/ts/blog_post.js",
 		"generated/ts/common.js",

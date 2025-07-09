@@ -111,6 +111,7 @@ export function initIdeAgentPanel(): void {
   if (genSadsProviderInput) genSadsProviderInput.value = "openai";
   if (genSadsModelInput) genSadsModelInput.value = "gpt-3.5-turbo";
 
+
   // Generate a unique client agent ID for this session/panel instance
   const clientAgentId = `${clientAgentIdPrefix}${Math.random().toString(36).substring(2, 9)}`;
   // Pass only clientAgentId to constructor, serverUrl is picked from config by MCPClient itself
@@ -211,10 +212,7 @@ export function initIdeAgentPanel(): void {
                     });
                   }
                 }
-              } else if (
-                matchingRequest?.ontology ===
-                "elizaos:lpg:generate_sads_from_nl"
-              ) {
+              } else if (matchingRequest?.ontology === "elizaos:lpg:generate_sads_from_nl") {
                 // Specific handling for SADS NL response
                 if (typeof details === "object" && details !== null) {
                   const sadsResult = details as any; // Cast for easier access
@@ -225,9 +223,8 @@ export function initIdeAgentPanel(): void {
                   if (sadsResult.parsed_sads_attributes) {
                     responseText += `Parsed SADS Attributes:\n${JSON.stringify(sadsResult.parsed_sads_attributes, null, 2)}\n`;
                   }
-                  if (sadsResult.error) {
-                    // If the API itself reported an error in its valid JSON response
-                    responseText += `\nAPI Error: ${sadsResult.error}\n`;
+                  if (sadsResult.error) { // If the API itself reported an error in its valid JSON response
+                     responseText += `\nAPI Error: ${sadsResult.error}\n`;
                   }
                 }
               }
@@ -400,11 +397,11 @@ export function initIdeAgentPanel(): void {
       // You could also try to parse it here to validate JSON
       return;
     }
-    if (!provider.trim()) {
+     if (!provider.trim()) {
       alert("Please enter a provider (e.g., openai).");
       return;
     }
-    if (!model.trim()) {
+     if (!model.trim()) {
       alert("Please enter a model (e.g., gpt-3.5-turbo).");
       return;
     }
