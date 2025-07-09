@@ -65,5 +65,13 @@
   "logo_text": "NombreMarca",
   "logo_alt_text": "Logo de NombreMarca",
   "toggle_menu_label": "Alternar menú",
-  "footer_text": "&copy; 2024 Página de Destino Simple. Todos los derechos reservados."
+  "footer_text": "&copy; 2024 Página de Destino Simple. Todos los derechos reservados.",
+  "slider_alt_nature_water": "Imagen de diapositiva de naturaleza y agua",
+  "slider_caption_nature_water": "Paisaje Hermoso: Naturaleza y Agua",
+  "slider_alt_city_architecture": "Imagen de diapositiva de una ciudad y arquitectura",
+  "slider_caption_city_architecture": "Exploración Urbana: Ciudad y Arquitectura",
+  "slider_alt_tech_future": "Imagen de diapositiva representando tecnología y el futuro",
+  "slider_caption_tech_future": "Hacia el Futuro: Tecnología Hoy",
+  "slider_alt_food_fruit": "Imagen de diapositiva de comida deliciosa y fruta",
+  "slider_caption_food_fruit": "Bocados Frescos: Comida y Fruta"
 }

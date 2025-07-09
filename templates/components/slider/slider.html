@@ -1,4 +1,4 @@
-{# templates/components/slider/slider.html #}
+{% if item and item.items and item.items | length > 0 %}
 <section
   data-sads-component="image-slider"
   data-sads-width="full"
@@ -6,61 +6,28 @@
   data-sads-margin="m auto"
   data-sads-position="relative"
   data-sads-overflow="hidden"
-  data-sads-border-radius="m" {# Added border radius for the main container #}
-  data-sads-shadow="medium"    {# Added a subtle shadow #}
+  data-sads-border-radius="m"
+  data-sads-shadow="medium"
   aria-roledescription="carousel"
   aria-label="Image Slider"
+  data-sads-autoplay="{{ item.autoplay }}"
+  data-sads-autoplay-interval="{{ item.autoplay_interval_ms }}"
 >
   <div
     data-sads-element="slides-container"
     data-sads-display="flex"
     data-sads-width="full"
     data-sads-height="custom:400px"
-    data-sads-position="relative" {# Needed for absolute positioned captions within slides if not on slide itself #}
+    data-sads-position="relative"
   >
-    {# Slide 1 #}
+    {% for slide_item in item.items %}
     <div
       data-sads-element="slide"
+      {% if loop.first %}
       data-sads-display="flex"
-      data-sads-flex-direction="column" {# Content inside slide (img, caption) stacks vertically #}
-      data-sads-align-items="center"   {# Center content like caption if it's not full width #}
-      data-sads-justify-content="center" {# Center content vertically if needed #}
-      data-sads-width="full"
-      data-sads-height="full"
-      data-sads-position="relative" {# For caption positioning if needed #}
-      aria-roledescription="slide"
-      aria-label="Slide 1 of 3"
-      style="flex-shrink: 0;"
-    >
-      <img
-        data-sads-element="slide-image"
-        src="https://via.placeholder.com/800x400/007bff/ffffff?text=Slide+1"
-        alt="Placeholder Image 1"
-        data-sads-width="full"
-        data-sads-height="full"
-        data-sads-object-fit="cover"
-      />
-      <div
-        data-sads-element="slide-caption"
-        data-sads-position="absolute"
-        data-sads-bottom="s"
-        data-sads-left="m"
-        data-sads-right="m"
-        data-sads-padding="s m" {# Increased horizontal padding #}
-        data-sads-bg-color="custom:rgba(0,0,0,0.6)" {# Slightly darker bg for better contrast #}
-        data-sads-text-color="custom:white"
-        data-sads-font-size="s"
-        data-sads-border-radius="s"
-        data-sads-text-align="center"
-      >
-        Optional Caption for Slide 1
-      </div>
-    </div>
-
-    {# Slide 2 #}
-    <div
-      data-sads-element="slide"
+      {% else %}
       data-sads-display="none"
+      {% endif %}
       data-sads-flex-direction="column"
       data-sads-align-items="center"
       data-sads-justify-content="center"
@@ -68,156 +35,22 @@
       data-sads-height="full"
       data-sads-position="relative"
       aria-roledescription="slide"
-      aria-label="Slide 2 of 3"
-      style="flex-shrink: 0;"
+      style="flex-shrink: 0"
     >
-      <img
-        data-sads-element="slide-image"
-        src="https://via.placeholder.com/800x400/28a745/ffffff?text=Slide+2"
-        alt="Placeholder Image 2"
-        data-sads-width="full"
-        data-sads-height="full"
-        data-sads-object-fit="cover"
-      />
-      <div
-        data-sads-element="slide-caption"
-        data-sads-position="absolute"
-        data-sads-bottom="s"
-        data-sads-left="m"
-        data-sads-right="m"
-        data-sads-padding="s m"
-        data-sads-bg-color="custom:rgba(0,0,0,0.6)"
-        data-sads-text-color="custom:white"
-        data-sads-font-size="s"
-        data-sads-border-radius="s"
-        data-sads-text-align="center"
-      >
-        Caption for Slide 2
-      </div>
+      Slide {{ loop.index }}
     </div>
-
-    {# Slide 3 #}
-    <div
-      data-sads-element="slide"
-      data-sads-display="none"
-      data-sads-flex-direction="column"
-      data-sads-align-items="center"
-      data-sads-justify-content="center"
-      data-sads-width="full"
-      data-sads-height="full"
-      data-sads-position="relative"
-      aria-roledescription="slide"
-      aria-label="Slide 3 of 3"
-      style="flex-shrink: 0;"
-    >
-      <img
-        data-sads-element="slide-image"
-        src="https://via.placeholder.com/800x400/ffc107/000000?text=Slide+3"
-        alt="Placeholder Image 3"
-        data-sads-width="full"
-        data-sads-height="full"
-        data-sads-object-fit="cover"
-      />
-      {# No caption for this slide to show it's optional #}
-    </div>
+    {% endfor %}
   </div>
 
-  {# Navigation Buttons #}
-  <button
-    type="button"
-    data-sads-element="nav-prev"
-    aria-label="Previous slide"
-    data-sads-position="absolute"
-    data-sads-top="custom:50%"
-    data-sads-left="m"
-    data-sads-transform="custom:translateY(-50%)"
-    data-sads-bg-color="custom:rgba(40,40,40,0.5)" {# Darker, less obtrusive #}
-    data-sads-text-color="custom:white"
-    data-sads-font-size="l" {# Larger icon text #}
-    data-sads-font-weight="bold"
-    data-sads-border-radius="s"
-    data-sads-padding="xs s" {# Adjusted padding for button size #}
-    data-sads-border-style="none"
-    data-sads-cursor="pointer"
-    data-sads-transition="custom:background-color 0.2s"
-    {# Add hover/focus styles later if SADS supports it or via JS #}
-  >
-    &lt;
-  </button>
-  <button
-    type="button"
-    data-sads-element="nav-next"
-    aria-label="Next slide"
-    data-sads-position="absolute"
-    data-sads-top="custom:50%"
-    data-sads-right="m"
-    data-sads-transform="custom:translateY(-50%)"
-    data-sads-bg-color="custom:rgba(40,40,40,0.5)"
-    data-sads-text-color="custom:white"
-    data-sads-font-size="l"
-    data-sads-font-weight="bold"
-    data-sads-border-radius="s"
-    data-sads-padding="xs s"
-    data-sads-border-style="none"
-    data-sads-cursor="pointer"
-    data-sads-transition="custom:background-color 0.2s"
-  >
-    &gt;
-  </button>
-
-  {# Dot Indicators #}
-  <div
-    data-sads-element="nav-dots"
-    aria-label="Slide navigation"
-    data-sads-position="absolute"
-    data-sads-bottom="m"
-    data-sads-left="custom:50%"
-    data-sads-transform="custom:translateX(-50%)"
-    data-sads-display="flex"
-    data-sads-gap="s"
-  >
-    <button
-      type="button"
-      data-sads-element="nav-dot"
-      aria-label="Go to slide 1"
-      data-sads-width="custom:12px"
-      data-sads-height="custom:12px"
-      data-sads-border-radius="custom:50%"
-      data-sads-border-width="custom:1px"
-      data-sads-border-style="solid"
-      data-sads-border-color="neutral-subtle" {# Theme color for border #}
-      data-sads-bg-color="transparent" {# Default state #}
-      data-sads-cursor="pointer"
-      data-sads-transition="custom:background-color 0.2s"
-      data-sads-active="true" {# Active state will be managed by TS #}
-    ></button>
-    <button
-      type="button"
-      data-sads-element="nav-dot"
-      aria-label="Go to slide 2"
-      data-sads-width="custom:12px"
-      data-sads-height="custom:12px"
-      data-sads-border-radius="custom:50%"
-      data-sads-border-width="custom:1px"
-      data-sads-border-style="solid"
-      data-sads-border-color="neutral-subtle"
-      data-sads-bg-color="transparent"
-      data-sads-cursor="pointer"
-      data-sads-transition="custom:background-color 0.2s"
-    ></button>
-    <button
-      type="button"
-      data-sads-element="nav-dot"
-      aria-label="Go to slide 3"
-      data-sads-width="custom:12px"
-      data-sads-height="custom:12px"
-      data-sads-border-radius="custom:50%"
-      data-sads-border-width="custom:1px"
-      data-sads-border-style="solid"
-      data-sads-border-color="neutral-subtle"
-      data-sads-bg-color="transparent"
-      data-sads-cursor="pointer"
-      data-sads-transition="custom:background-color 0.2s"
-    ></button>
-  </div>
+  {% if item.items | length > 1 %}
+  {% endif %}
 </section>
+{% else %}
+<div
+  data-sads-padding="m"
+  data-sads-text-align="center"
+  data-sads-text-color="text-secondary"
+>
+  Image slider data is not available or empty.
+</div>
+{% endif %}

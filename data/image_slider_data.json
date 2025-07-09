@@ -1,0 +1,28 @@
+{
+  "items": [
+    {
+      "image_url": "https://source.unsplash.com/random/800x400?nature,water",
+      "alt_text": { "key": "slider_alt_nature_water" },
+      "caption": { "key": "slider_caption_nature_water" },
+      "link_url": "/nature-collection"
+    },
+    {
+      "image_url": "https://source.unsplash.com/random/800x400?city,architecture",
+      "alt_text": { "key": "slider_alt_city_architecture" },
+      "caption": { "key": "slider_caption_city_architecture" },
+      "link_url": ""
+    },
+    {
+      "image_url": "https://source.unsplash.com/random/800x400?technology,future",
+      "alt_text": { "key": "slider_alt_tech_future" },
+      "caption": { "key": "slider_caption_tech_future" }
+    },
+    {
+      "image_url": "https://source.unsplash.com/random/800x400?food,fruit",
+      "alt_text": { "key": "slider_alt_food_fruit" },
+      "caption": { "key": "slider_caption_food_fruit" }
+    }
+  ],
+  "autoplay": true,
+  "autoplay_interval_ms": 4500
+}

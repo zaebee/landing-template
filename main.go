@@ -19,6 +19,7 @@ import (
 	// Import the generated protobuf package
 	"os/exec"
 	"runtime"
+	"time" // Added for unique names
 
 	pb "landing-page-generator/generated/go" // Alias for convenience
 )
@@ -36,6 +37,8 @@ func init() {
 	protoRegistry["BlogPost"] = (&pb.BlogPost{}).ProtoReflect().Type()
 	protoRegistry["ContactFormConfig"] = (&pb.ContactFormConfig{}).ProtoReflect().Type()
 	protoRegistry["SiteLogo"] = (&pb.SiteLogo{}).ProtoReflect().Type()
+	protoRegistry["ImageSliderItem"] = (&pb.ImageSliderItem{}).ProtoReflect().Type()
+	protoRegistry["ImageSliderComponentData"] = (&pb.ImageSliderComponentData{}).ProtoReflect().Type()
 }
 
 func newMessageInstance(typeName string) (proto.Message, error) {
@@ -452,6 +455,7 @@ func main() {
 	dataCache := NewInMemoryDataCache()
 	pageBuilder := NewDefaultPageBuilder(translationProvider)
 	assetBundler := &DefaultAssetBundler{}
+	// pongo2.Debug = true // This was incorrect for v6; caching is bypassed in GenericBlockGenerator now.
 	pongoSet := pongo2.NewSet("file-loader", pongo2.MustNewLocalFileSystemLoader("templates"))
 	htmlGenerators := make(map[string]HtmlBlockGenerator)
 	if appCfg, err := appConfigMgr.LoadAppConfig(); err == nil {
@@ -625,7 +629,7 @@ func (ab *DefaultAssetBundler) BundleJs(projectRoot, baseOutputDir string) (stri
 		// Files from public/ts/components/*
 		"public/ts/components/chat.js",
 		"public/ts/components/mcp.js",
-		"public/ts/components/ide_agent_panel.ts",
+		"public/ts/components/ide_agent_panel.js",
 		// Files from generated/ts/* (compiled proto files)
 		"generated/ts/blog_post.js",
 		"generated/ts/common.js",
@@ -768,7 +772,12 @@ func NewGenericBlockGenerator(pongoSet *pongo2.TemplateSet, blockFilename string
 
 func (g *GenericBlockGenerator) GenerateHtml(data interface{}, translations map[string]string) (string, error) {
 	log.Printf("GenericBlockGenerator: Generating HTML for template %s", g.templatePath)
-	tpl, err := g.pongoSet.FromFile(g.templatePath)
+
+	// Create a new TemplateSet for each call to bypass caching and ensure fresh template loading.
+	// This is suitable for a build script; for a live server, this would be inefficient.
+	freshPongoSet := pongo2.NewSet(fmt.Sprintf("file-loader-%s-%d", g.templatePath, time.Now().UnixNano()), pongo2.MustNewLocalFileSystemLoader("templates"))
+
+	tpl, err := freshPongoSet.FromFile(g.templatePath)
 	if err != nil { return "", fmt.Errorf("failed to load template %s: %w", g.templatePath, err) }
 	var itemsData interface{}
 	var itemData interface{}

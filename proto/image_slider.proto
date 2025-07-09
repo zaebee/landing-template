@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package website_content.v1;
+
+import "common.proto"; // For I18nString
+
+option go_package = ".;pb";
+option java_package = "com.website_content.v1";
+option java_multiple_files = true;
+option java_outer_classname = "ImageSliderProto";
+
+// Message for a single item in the image slider.
+message ImageSliderItem {
+  string image_url = 1;     // Direct URL for the image
+  I18nString alt_text = 2;  // Alt text for accessibility
+  I18nString caption = 3;   // Optional caption for the slide
+  string link_url = 4;      // Optional URL to link the entire slide to
+}
+
+// Message to hold data for an image slider component instance.
+message ImageSliderComponentData {
+  repeated ImageSliderItem items = 1;
+  bool autoplay = 2;               // Whether autoplay is enabled
+  int32 autoplay_interval_ms = 3;  // Autoplay interval in milliseconds
+}

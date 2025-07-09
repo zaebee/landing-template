@@ -3,6 +3,7 @@
     "components/hero/hero.html",
     "components/features/features.html",
     "components/testimonials/testimonials.html",
+    "components/slider/slider.html",
     "components/portfolio/portfolio.html",
     "components/blog/blog.html",
     "components/contact-form/contact-form.html"
@@ -39,6 +40,11 @@
     "components/contact-form/contact-form.html": {
       "data_file": "data/contact_form_config.json",
       "message_type_name": "ContactFormConfig",
+      "is_list": false
+    },
+    "components/slider/slider.html": {
+      "data_file": "data/image_slider_data.json",
+      "message_type_name": "ImageSliderComponentData",
       "is_list": false
     }
   },

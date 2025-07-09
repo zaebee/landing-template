@@ -28,13 +28,11 @@
     {% block head_extra %} {% endblock head_extra %}
   </head>
   <body>
-    {% include "components/header/header.html" with
-    site_logo_data=site_logo_data translations=translations lang=lang %}
+    {% include "components/header/header.html" with site_logo_data=site_logo_data translations=translations lang=lang %}
 
     <main>{{ main_content | safe }}</main>
 
-    {% include "components/footer/footer.html" with translations=translations
-    lang=lang %}
+    {% include "components/footer/footer.html" with translations=translations lang=lang %}
     <script type="module" src="{{ app_js_path }}" defer></script>
     <script>
       window.sadsConfig = {

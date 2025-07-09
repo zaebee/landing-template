@@ -65,5 +65,13 @@
   "logo_text": "BrandName",
   "logo_alt_text": "BrandName Logo",
   "toggle_menu_label": "Toggle menu",
-  "footer_text": "&copy; 2024 Simple Landing Page. All rights reserved."
+  "footer_text": "&copy; 2024 Simple Landing Page. All rights reserved.",
+  "slider_alt_nature_water": "Slide image of nature and water",
+  "slider_caption_nature_water": "Beautiful Scenery: Nature and Water",
+  "slider_alt_city_architecture": "Slide image of a city and architecture",
+  "slider_caption_city_architecture": "Urban Exploration: City & Architecture",
+  "slider_alt_tech_future": "Slide image representing technology and the future",
+  "slider_caption_tech_future": "Into the Future: Technology Today",
+  "slider_alt_food_fruit": "Slide image of delicious food and fruit",
+  "slider_caption_food_fruit": "Fresh Bites: Food and Fruit"
 }
