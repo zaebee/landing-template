@@ -33,6 +33,11 @@ export interface SadsColors {
   "text-on-header-bg-dark": string;
   "text-nav-link": string;
   "text-nav-link-dark": string;
+  "nav-link-hover-bg-dark"?: string; // Added for dark theme nav hover
+  "nav-link-active-bg-dark"?: string; // Added for dark theme nav active
+  "nav-link-active-text-dark"?: string; // Added for dark theme nav active text
+  "header-button-hover-bg-dark"?: string; // Added for dark theme header button hover bg
+  "header-button-hover-border-dark"?: string; // Added for dark theme header button hover border
   "border-accent"?: string; // Optional as it's aliased
   "border-accent-dark"?: string; // Optional as it's aliased
   "blog-section-bg": string;
@@ -169,22 +174,31 @@ export interface SadsTheme {
 export const sadsDefaultTheme: SadsTheme = {
   colors: {
     surface: "#FFFFFF",
-    "surface-dark": "#2a2a2a",
+    "surface-dark": "#2a2a2a", // Base dark surface
     "surface-accent": "#f9f9f9",
-    "surface-accent-dark": "#1f1f1f",
+    "surface-accent-dark": "#1f1f1f", // Slightly darker accent for dark
     "text-primary": "#333333",
-    "text-primary-dark": "#e0e0e0",
+    "text-primary-dark": "#e0e0e0", // Main text on dark surfaces
     "text-accent": "#007bff",
-    "text-accent-dark": "#0af",
+    "text-accent-dark": "#0af", // Accent text (e.g. links not in nav)
     transparent: "transparent",
     "text-secondary": "#555555",
-    "text-secondary-dark": "#bbbbbb",
+    "text-secondary-dark": "#bbbbbb", // Secondary text on dark surfaces
+
     "header-bg": "#ffffff",
-    "header-bg-dark": "#2c3e50",
+    "header-bg-dark": "#2c3e50", // Dark slate/blue for header
     "text-on-header-bg": "#333333",
-    "text-on-header-bg-dark": "#ecf0f1",
+    "text-on-header-bg-dark": "#ecf0f1", // Light text on dark header
+
     "text-nav-link": "#007bff",
-    "text-nav-link-dark": "#3498db",
+    "text-nav-link-dark": "#3498db", // Nav link text (soft blue)
+    "nav-link-hover-bg-dark": "rgba(255, 255, 255, 0.08)", // Subtle white tint for nav link hover
+    "nav-link-active-bg-dark": "#0088cc", // Deeper blue for active nav link background
+    "nav-link-active-text-dark": "#ffffff", // White text on active nav link background
+
+    "header-button-hover-bg-dark": "#374a5c", // Harmonized hover for header buttons (dark mode toggle, lang)
+    "header-button-hover-border-dark": "#3498db", // Consistent border hover with nav links
+
     // "border-accent" will be aliased by the engine from "text-accent"
     // "border-accent-dark" will be aliased by the engine from "text-accent-dark"
     "blog-section-bg": "#e9ecef",

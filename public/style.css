@@ -3,20 +3,17 @@ html {
   scroll-behavior: smooth;
 }
 
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  line-height: 1.6;
-  color: #333;
-  background-color: #f4f4f4;
-}
+/*
+  Base body styles for font-family, margin, padding, line-height, color,
+  and background-color are now handled by SADS attributes on the <body> tag
+  in index.html (data-sads-bg-color="surface", data-sads-text-color="text-primary").
+  The SADS engine will apply these from the theme, including dark mode variants.
+*/
 
-/* === Dark Mode Overrides === */
-body.dark-mode {
-  background-color: #121212;
-  color: #e0e0e0;
-}
+/*
+  The body.dark-mode specific overrides for background-color and color
+  are also now handled by the SADS theming for the body component.
+*/
 
 /* === Header Specific Styles (Consolidated) === */
 
@@ -86,24 +83,19 @@ header nav ul li a:focus {
 
 body.dark-mode header nav ul li a:hover,
 body.dark-mode header nav ul li a:focus {
-  background-color: rgba(
-    255,
-    255,
-    255,
-    0.1
-  ); /* Subtle background for dark mode */
+  background-color: rgba(255, 255, 255, 0.08); /* Corresponds to nav-link-hover-bg-dark */
 }
 
 /* Active state for nav links (e.g., for current page) */
 /* Assumes JS adds 'active-nav-link' class */
 header nav ul li a.active-nav-link {
-  background-color: #007bff; /* TODO: Theme variable */
+  background-color: #007bff; /* Standard blue for light mode active link */
   /* color: #fff; /* Text color should ideally be handled by SADS or contrast automatically */
 }
 
 body.dark-mode header nav ul li a.active-nav-link {
-  background-color: #0af; /* TODO: Theme variable */
-  color: #121212; /* Ensure contrast for dark mode active link */
+  background-color: #0088cc; /* Corresponds to nav-link-active-bg-dark */
+  color: #ffffff; /* Corresponds to nav-link-active-text-dark */
 }
 
 /* --- Header Buttons (Dark Mode Toggle & Language Switcher) --- */
@@ -147,8 +139,8 @@ body.dark-mode #language-switcher button {
 #dark-mode-toggle:focus,
 #language-switcher button:hover,
 #language-switcher button:focus {
-  border-color: #007bff; /* TODO: Theme variable for accent border */
-  background-color: #e9ecef; /* TODO: Theme variable for subtle hover bg */
+  border-color: #007bff; /* Standard blue for light mode hover border */
+  background-color: #e9ecef; /* Light grey for light mode hover background */
   outline: none;
 }
 
@@ -156,8 +148,8 @@ body.dark-mode #dark-mode-toggle:hover,
 body.dark-mode #dark-mode-toggle:focus,
 body.dark-mode #language-switcher button:hover,
 body.dark-mode #language-switcher button:focus {
-  border-color: #0af; /* TODO: Theme variable for dark accent border */
-  background-color: #495a6e; /* TODO: Theme variable for dark subtle hover bg */
+  border-color: #3498db; /* Corresponds to header-button-hover-border-dark */
+  background-color: #374a5c; /* Corresponds to header-button-hover-bg-dark */
 }
 
 /* Active state for Language Switcher buttons */
