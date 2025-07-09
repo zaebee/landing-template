@@ -33,29 +33,114 @@ export interface SadsColors {
   "text-on-header-bg-dark": string;
   "text-nav-link": string;
   "text-nav-link-dark": string;
-  "nav-link-hover-bg-dark"?: string; // Added for dark theme nav hover
-  "nav-link-active-bg-dark"?: string; // Added for dark theme nav active
-  "nav-link-active-text-dark"?: string; // Added for dark theme nav active text
-  "header-button-hover-bg-dark"?: string; // Added for dark theme header button hover bg
-  "header-button-hover-border-dark"?: string; // Added for dark theme header button hover border
-  "border-accent"?: string; // Optional as it's aliased
-  "border-accent-dark"?: string; // Optional as it's aliased
-  "blog-section-bg": string;
-  "blog-section-bg-dark": string;
-  "blog-item-bg": string;
-  "blog-item-bg-dark": string;
-  "contact-section-bg": string;
-  "contact-section-bg-dark": string;
-  "contact-form-bg": string;
-  "contact-form-bg-dark": string;
+  "nav-link-hover-bg-dark"?: string;
+  "nav-link-active-bg-dark"?: string;
+  "nav-link-active-text-dark"?: string;
+  "header-button-hover-bg-dark"?: string;
+  "header-button-hover-border-dark"?: string;
+  "border-accent"?: string;
+  "border-accent-dark"?: string;
+
+  // Hero Section
+  "hero-bg"?: string;
+  "hero-bg-dark"?: string;
+  "text-on-hero"?: string;
+  "text-on-hero-dark"?: string;
+
+  // Features Section
+  "features-bg"?: string;
+  "features-bg-dark"?: string;
+  "feature-item-bg"?: string;
+  "feature-item-bg-dark"?: string;
+  "feature-item-title-text"?: string;
+  "feature-item-title-text-dark"?: string;
+
+  // Testimonials Section
+  "testimonials-bg"?: string;
+  "testimonials-bg-dark"?: string;
+  "testimonials-title-text"?: string;
+  "testimonials-title-text-dark"?: string;
+  "testimonial-item-bg"?: string;
+  "testimonial-item-bg-dark"?: string;
+  "testimonial-quote-text"?: string;
+  "testimonial-quote-text-dark"?: string;
+  "testimonial-author-text"?: string;
+  "testimonial-author-text-dark"?: string;
+
+  // Chat Section
+  "chat-bg"?: string;
+  "chat-bg-dark"?: string;
+  "chat-messages-bg"?: string;
+  "chat-messages-bg-dark"?: string;
+
+  // MCP Section
+  "neutral-subtle"?: string;
+  "neutral-subtle-dark"?: string;
+  "button-primary-bg-hover-color"?: string; // Note: SADS engine doesn't auto-apply hover states
+  "button-primary-bg-hover-color-dark"?: string;
+
+  // Portfolio Section
+  "portfolio-bg"?: string;
+  "portfolio-bg-dark"?: string;
+  "portfolio-title-text"?: string;
+  "portfolio-title-text-dark"?: string;
+  "portfolio-item-bg"?: string;
+  "portfolio-item-bg-dark"?: string;
+  "portfolio-img-border"?: string;
+  "portfolio-img-border-dark"?: string;
+  "portfolio-item-heading-text"?: string;
+  "portfolio-item-heading-text-dark"?: string;
+  "portfolio-item-para-text"?: string;
+  "portfolio-item-para-text-dark"?: string;
+
+  // Blog Section
+  "blog-section-bg": string; // Existing
+  "blog-section-bg-dark": string; // Existing
+  "blog-title-text"?: string;
+  "blog-title-text-dark"?: string;
+  "blog-item-bg": string; // Existing
+  "blog-item-bg-dark": string; // Existing
+  "blog-item-title-text"?: string;
+  "blog-item-title-text-dark"?: string;
+  "blog-item-excerpt-text"?: string;
+  "blog-item-excerpt-text-dark"?: string;
+  "blog-readmore-text"?: string;
+  "blog-readmore-text-dark"?: string;
+
+  // Contact Form Section
+  "contact-section-bg": string; // Existing
+  "contact-section-bg-dark": string; // Existing
+  "contact-form-bg": string; // Existing
+  "contact-form-bg-dark": string; // Existing
+  "contact-label-text"?: string;
+  "contact-label-text-dark"?: string;
+  "contact-input-border"?: string;
+  "contact-input-border-dark"?: string;
+  "contact-input-bg"?: string;
+  "contact-input-bg-dark"?: string;
+  "contact-input-text"?: string;
+  "contact-input-text-dark"?: string;
+  "contact-submit-bg"?: string;
+  "contact-submit-bg-dark"?: string;
+  "contact-submit-text"?: string;
+  "contact-submit-text-dark"?: string;
+
+  // Footer Section
+  "footer-bg"?: string;
+  "footer-bg-dark"?: string;
+  "text-footer"?: string;
+  "text-footer-dark"?: string;
+
+  // Generic Input and Button styles (already well-defined)
   "input-border-color": string;
   "input-border-color-dark": string;
   "input-bg-color": string;
   "input-bg-color-dark": string;
   "button-primary-bg-color": string;
   "button-primary-bg-color-dark": string;
-  "button-primary-text-color": string;
-  [key: string]: string | undefined; // Allow other string properties, e.g. "button-primary-bg-color"
+  "button-primary-text-color": string; // Assuming this works for dark bg too
+
+  [key: string]: string | undefined;
 }
 
 export interface SadsSpacing {
@@ -166,6 +251,8 @@ export interface SadsTheme {
   objectFit: SadsObjectFit;
   fontStyle: SadsFontStyle;
   borderStyle: SadsBorderStyle;
+  fontFamily?: { [key: string]: string }; // Added for default font family
+  lineHeight?: { [key: string]: string }; // Added for default line height
   [key: string]: any; // For extensibility if new top-level categories are added
 }
 
@@ -196,26 +283,108 @@ export const sadsDefaultTheme: SadsTheme = {
     "nav-link-active-bg-dark": "#0088cc", // Deeper blue for active nav link background
     "nav-link-active-text-dark": "#ffffff", // White text on active nav link background
 
-    "header-button-hover-bg-dark": "#374a5c", // Harmonized hover for header buttons (dark mode toggle, lang)
-    "header-button-hover-border-dark": "#3498db", // Consistent border hover with nav links
+    "header-button-hover-bg-dark": "#374a5c",
+    "header-button-hover-border-dark": "#3498db",
 
-    // "border-accent" will be aliased by the engine from "text-accent"
-    // "border-accent-dark" will be aliased by the engine from "text-accent-dark"
-    "blog-section-bg": "#e9ecef",
-    "blog-section-bg-dark": "#2a2a2a",
-    "blog-item-bg": "#ffffff",
-    "blog-item-bg-dark": "#1f1f1f",
-    "contact-section-bg": "#e9ecef",
-    "contact-section-bg-dark": "#2a2a2a",
-    "contact-form-bg": "#ffffff",
-    "contact-form-bg-dark": "#1f1f1f",
+    // Hero Section
+    "hero-bg": "#e9ecef",
+    "hero-bg-dark": "#2c3e50", // Using header dark bg as a starting point
+    "text-on-hero": "#212529",
+    "text-on-hero-dark": "#f8f9fa",
+
+    // Features Section
+    "features-bg": "#ffffff",
+    "features-bg-dark": "#212529",
+    "feature-item-bg": "#f8f9fa",
+    "feature-item-bg-dark": "#2c3e50", // Slightly lighter than section bg
+    "feature-item-title-text": "#007bff",
+    "feature-item-title-text-dark": "#3498db",
+
+    // Testimonials Section
+    "testimonials-bg": "#f8f9fa",
+    "testimonials-bg-dark": "#212529",
+    "testimonials-title-text": "#333333",
+    "testimonials-title-text-dark": "#e0e0e0",
+    "testimonial-item-bg": "#ffffff",
+    "testimonial-item-bg-dark": "#2c3e50", // Slightly lighter than section bg
+    "testimonial-quote-text": "#555555",
+    "testimonial-quote-text-dark": "#bbbbbb",
+    "testimonial-author-text": "#212529",
+    "testimonial-author-text-dark": "#f8f9fa",
+
+    // Chat Section
+    "chat-bg": "#f4f4f4",
+    "chat-bg-dark": "#1c1c1c",
+    "chat-messages-bg": "#ffffff",
+    "chat-messages-bg-dark": "#2b2b2b",
+
+    // MCP Section
+    "neutral-subtle": "#e9ecef",
+    "neutral-subtle-dark": "#4a4a4a", // Darker grey for subtle lines
+    "button-primary-bg-hover-color": "#218838",
+    "button-primary-bg-hover-color-dark": "#1558b0",
+
+
+    // Portfolio Section
+    "portfolio-bg": "#ffffff",
+    "portfolio-bg-dark": "#212529",
+    "portfolio-title-text": "#333333",
+    "portfolio-title-text-dark": "#e0e0e0",
+    "portfolio-item-bg": "#f8f9fa",
+    "portfolio-item-bg-dark": "#2c3e50", // Slightly lighter than section bg
+    "portfolio-img-border": "#dddddd",
+    "portfolio-img-border-dark": "#4a4a4a",
+    "portfolio-item-heading-text": "#007bff",
+    "portfolio-item-heading-text-dark": "#3498db",
+    "portfolio-item-para-text": "#555555",
+    "portfolio-item-para-text-dark": "#bbbbbb",
+
+    // Blog Section
+    "blog-section-bg": "#e9ecef", // Existing
+    "blog-section-bg-dark": "#2a2a2a", // Existing
+    "blog-title-text": "#333333",
+    "blog-title-text-dark": "#e0e0e0",
+    "blog-item-bg": "#ffffff", // Existing
+    "blog-item-bg-dark": "#1f1f1f", // Existing
+    "blog-item-title-text": "#007bff",
+    "blog-item-title-text-dark": "#3498db",
+    "blog-item-excerpt-text": "#555555",
+    "blog-item-excerpt-text-dark": "#bbbbbb",
+    "blog-readmore-text": "#007bff",
+    "blog-readmore-text-dark": "#3498db",
+
+    // Contact Form Section
+    "contact-section-bg": "#e9ecef", // Existing
+    "contact-section-bg-dark": "#2a2a2a", // Existing
+    "contact-form-bg": "#ffffff", // Existing
+    "contact-form-bg-dark": "#1f1f1f", // Existing
+    "contact-label-text": "#333333",
+    "contact-label-text-dark": "#e0e0e0",
+    "contact-input-border": "#cccccc",
+    "contact-input-border-dark": "#555555", // Using existing input-border-color-dark
+    "contact-input-bg": "#ffffff",
+    "contact-input-bg-dark": "#333333", // Using existing input-bg-color-dark
+    "contact-input-text": "#333333",
+    "contact-input-text-dark": "#e0e0e0", // Using existing text-primary-dark
+    "contact-submit-bg": "#28a745", // Using existing button-primary-bg-color
+    "contact-submit-bg-dark": "#1a73e8", // Using existing button-primary-bg-color-dark
+    "contact-submit-text": "#ffffff", // Using existing button-primary-text-color
+    // contact-submit-text-dark is not defined, assuming #ffffff is fine.
+
+    // Footer Section
+    "footer-bg": "#343a40",
+    "footer-bg-dark": "#212529",
+    "text-footer": "#f8f9fa",
+    "text-footer-dark": "#adb5bd",
+
+    // Generic Input and Button styles (already well-defined)
     "input-border-color": "#cccccc",
     "input-border-color-dark": "#555555",
     "input-bg-color": "#ffffff",
     "input-bg-color-dark": "#333333",
     "button-primary-bg-color": "#28a745",
     "button-primary-bg-color-dark": "#1a73e8",
-    "button-primary-text-color": "#ffffff",
+    "button-primary-text-color": "#ffffff", // Assuming this works for dark bg too
   },
   spacing: {
     none: "0",
@@ -271,6 +440,14 @@ export const sadsDefaultTheme: SadsTheme = {
     solid: "solid",
     dashed: "dashed",
     dotted: "dotted",
+  },
+  fontFamily: {
+    default: "Arial, sans-serif",
+    monospace: "monospace", // Example other font
+  },
+  lineHeight: {
+    default: "1.6",
+    condensed: "1.2", // Example other line height
   },
 };
 
