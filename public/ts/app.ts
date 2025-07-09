@@ -2,7 +2,7 @@
 /**
  * @file Main application orchestrator.
  * Imports and initializes all core application modules (dark mode, translations, SADS styling).
- * Exposes global functions for HTML event handlers if necessary.
+ * Exposes global functions for HTML event handlers if necessary and attaches them.
  */
 
 import {
@@ -36,6 +36,43 @@ declare global {
 window.appGlobal = window.appGlobal || {};
 
 /**
+ * Attaches event listeners to interactive elements.
+ * Should be called after the DOM is ready and elements are available.
+ * @private
+ */
+function _attachEventListeners(): void {
+  // Dark Mode Toggle Button
+  const darkModeButton = document.getElementById("dark-mode-toggle");
+  if (darkModeButton && window.appGlobal.handleDarkModeToggle) {
+    darkModeButton.addEventListener("click", window.appGlobal.handleDarkModeToggle);
+    console.log("Dark mode toggle event listener attached.");
+  } else {
+    console.warn("Dark mode toggle button or handler not found. Listener not attached.");
+  }
+
+  // Language Switcher Buttons
+  // Example: Assuming language buttons have a common class or parent
+  const languageSwitcher = document.getElementById("language-switcher");
+  if (languageSwitcher && window.appGlobal.setAppLanguage) {
+    const langButtons = languageSwitcher.querySelectorAll<HTMLButtonElement>("button[data-lang]");
+    langButtons.forEach(button => {
+      const lang = button.dataset.lang;
+      if (lang) {
+        button.addEventListener("click", () => {
+          if (window.appGlobal.setAppLanguage) { // Check again for type safety in closure
+            window.appGlobal.setAppLanguage(lang);
+          }
+        });
+      }
+    });
+    console.log("Language switcher event listeners attached.");
+  } else {
+    console.warn("Language switcher or setAppLanguage handler not found. Listeners not attached.");
+  }
+}
+
+
+/**
  * Initializes the core application modules in the correct order.
  * This function is set to run when the DOM is fully loaded.
  * @async
@@ -44,13 +81,13 @@ window.appGlobal = window.appGlobal || {};
 async function initializeApp(): Promise<void> {
   console.log("Initializing App modules...");
 
-  // 1. Initialize Dark Mode.
+  // 1. Initialize Dark Mode (sets up state and initial body class).
   initDarkMode();
 
-  // 2. Initialize Translations.
+  // 2. Initialize Translations (may depend on dark mode state for initial load).
   await initTranslations(isDarkModeActive());
 
-  // 3. Initialize SADS Engine.
+  // 3. Initialize SADS Engine (applies initial styles based on body class etc.).
   await initSadsEngine();
 
   // 4. Initialize specific components that require JS interaction.
@@ -58,14 +95,18 @@ async function initializeApp(): Promise<void> {
   initIdeAgentPanel(); // Initialize the new IDE Agent Panel
   initChatComponent(); // Initialize the Chat Component
 
+  // 5. Attach event listeners now that everything is initialized.
+  _attachEventListeners();
+
+
   console.log(
     `App Initialized: Dark Mode = ${isDarkModeActive()}, Language = ${document.documentElement.lang}`
   );
 }
 
+// Define global handlers
 window.appGlobal.handleDarkModeToggle = async function (): Promise<void> {
-  toggleDarkMode();
-  await reapplySadsStyles();
+  await toggleDarkMode(); // toggleDarkMode now calls reapplySadsStyles internally
 };
 
 window.appGlobal.setAppLanguage = async function (lang: string): Promise<void> {
@@ -76,10 +117,11 @@ window.appGlobal.setAppLanguage = async function (lang: string): Promise<void> {
     );
     return;
   }
-  await setLanguage(lang, isDarkModeActive());
-  await reapplySadsStyles(); // Ensure this is awaited if setLanguage itself doesn't trigger it reliably enough
+  await setLanguage(lang, isDarkModeActive()); // setLanguage updates translations
+  await reapplySadsStyles(); // Reapply SADS styles after language change in case text direction/content affects layout
 };
 
+// Main entry point: Wait for DOM to be ready, then initialize.
 document.addEventListener("DOMContentLoaded", initializeApp);
 
 console.log(
@@ -87,6 +129,4 @@ console.log(
 );
 
 // Export something to make it a module, if nothing else is exported.
-// This can be useful if other TS files might want to import types or utilities from app.ts in the future,
-// though for now, its primary role is to orchestrate and attach to window.
 export {};
