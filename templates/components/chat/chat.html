@@ -12,36 +12,28 @@
     data-sads-gap="m"
   >
     <div
+      id="chat-messages-list"
       data-sads-element="messages"
       data-sads-padding="m"
       data-sads-bg-color="chat-messages-bg"
       data-sads-border-radius="m"
       data-sads-min-height="custom:200px"
       data-sads-shadow="subtle"
+      data-sads-overflow-y="auto"
+      data-sads-display="flex"
+      data-sads-flex-direction="column"
+      data-sads-gap="s"
     >
-      <!-- Example messages (static for now) -->
-      <div
-        data-sads-element="message"
-        data-sads-padding="s"
-        data-sads-margin-bottom="s"
-      >
-        <span data-sads-font-weight="bold">User 1:</span> Hello there!
-      </div>
-      <div
-        data-sads-element="message"
-        data-sads-padding="s"
-        data-sads-bg-color="surface-accent"
-        data-sads-border-radius="s"
-      >
-        <span data-sads-font-weight="bold">User 2:</span> Hi! How are you?
-      </div>
+      <!-- Messages will be dynamically inserted here -->
     </div>
     <form
+      id="chat-form"
       data-sads-element="input-form"
       data-sads-display="flex"
       data-sads-gap="s"
     >
       <input
+        id="chat-message-input"
         data-sads-element="input"
         type="text"
         placeholder="Type a message..."
@@ -54,6 +46,7 @@
         data-sads-bg-color="input-bg-color"
       />
       <button
+        id="chat-send-button"
         data-sads-element="send-btn"
         type="submit"
         data-sads-bg-color="button-primary-bg-color"

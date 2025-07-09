@@ -16,6 +16,7 @@ import { initSadsEngine, reapplySadsStyles } from "./modules/sadsManager.js";
 // but eventBus itself (if it were an actual emitter object) isn't directly used by app.js logic.
 import { initMcpComponent } from "./components/mcp.js"; // This is for the SADS AI test component
 import { initIdeAgentPanel } from "./components/ide_agent_panel.js"; // New IDE Agent Panel
+import { initChatComponent } from "./components/chat.js"; // Import the new chat component initializer
 
 // Define the appGlobal structure for window augmentation
 interface AppGlobal {
@@ -55,6 +56,7 @@ async function initializeApp(): Promise<void> {
   // 4. Initialize specific components that require JS interaction.
   initMcpComponent(); // Initialize the SADS AI test MCP component
   initIdeAgentPanel(); // Initialize the new IDE Agent Panel
+  initChatComponent(); // Initialize the Chat Component
 
   console.log(
     `App Initialized: Dark Mode = ${isDarkModeActive()}, Language = ${document.documentElement.lang}`

@@ -213,7 +213,100 @@ func (s *Service) simulateAgentProcessing(incomingMsg *pb.Message) {
 		"status_text": "Mock processing complete.",
 	}
 
-	if incomingMsg.Ontology == "elizaos:ide:explain_code" {
+	// Check for the new chat message ontology
+	taskRequestPayload, ok := incomingMsg.GetPayload().(*pb.Message_TaskRequestPayload)
+	if !ok {
+		log.Printf("MCP Service: Received message is not a TaskRequestPayload, skipping special processing. Performative: %s", incomingMsg.Performative)
+		// Fall through to generic processing if any, or just handle standard responses.
+		// For now, we assume non-TaskRequest payloads don't need this specific handling.
+	} else if taskRequestPayload.TaskRequestPayload.GetTaskType() == "elizaos:chat:message" {
+		log.Printf("MCP Service: Received chat message from %s", originalSenderAgentID)
+
+		chatMessageStruct := taskRequestPayload.TaskRequestPayload.GetTaskParameters()
+		if chatMessageStruct == nil {
+			log.Printf("MCP Service: Chat message from %s has no parameters.", originalSenderAgentID)
+			// Optionally send a FAILURE back to the sender
+			return
+		}
+
+		// The chatMessageStruct itself is the pb.ChatMessage, but wrapped in a structpb.Struct.
+		// We need to ensure the client sends it correctly, likely as a single field within the struct.
+		// For example, client might send: task_parameters: {"chat_message": {"user_id": "...", "text": "..."}}
+		// Or, if the client sends the ChatMessage fields directly as top-level fields in task_parameters:
+		// task_parameters: {"user_id": "...", "text": "...", "user_name": "...", "timestamp": "..."}
+
+		// Let's assume the client sends the ChatMessage fields directly as task_parameters.
+		// We'll reconstruct a pb.ChatMessage from the structpb.Struct fields.
+		// This is a bit manual; a cleaner way might be for the client to send
+		// a single field in task_parameters, e.g., "chat_message_data", which is a serialized ChatMessage.
+		// For now, direct field extraction:
+		userID := chatMessageStruct.Fields["user_id"].GetStringValue()
+		userName := chatMessageStruct.Fields["user_name"].GetStringValue()
+		text := chatMessageStruct.Fields["text"].GetStringValue()
+		// Timestamp handling: client will send it as string, convert to timestamppb.Timestamp
+		// For simplicity, we'll use server time for broadcast messages for now.
+		// A more robust solution would parse the client's timestamp.
+
+		if userID == "" || text == "" {
+			log.Printf("MCP Service: Invalid chat message from %s. Missing user_id or text.", originalSenderAgentID)
+			// Optionally send a FAILURE back
+			return
+		}
+
+		// Construct the ChatMessage protobuf object to be broadcast
+		// We use current server time for broadcast consistency.
+		// The original sender's timestamp is available if needed: chatMessageStruct.Fields["timestamp"]
+		broadcastChatMessage := &pb.ChatMessage{
+			UserId:    userID,
+			UserName:  userName, // If not provided, client might need to send it or server looks it up
+			Text:      text,
+			Timestamp: timestamppb.Now(), // Server timestamp for broadcast
+		}
+
+		// Convert the pb.ChatMessage to a structpb.Value so it can be embedded in result_details
+		// One way is to convert pb.ChatMessage to map[string]interface{} then to structpb.Struct
+		chatMessageMap := map[string]interface{}{
+			"user_id":   broadcastChatMessage.UserId,
+			"user_name": broadcastChatMessage.UserName,
+			"text":      broadcastChatMessage.Text,
+			"timestamp": broadcastChatMessage.Timestamp.AsTime().Format(time.RFC3339Nano), // Send as string
+		}
+		chatMessageForDetails, err := structpb.NewStruct(chatMessageMap)
+		if err != nil {
+			log.Printf("MCP Service: Error creating Struct for broadcast ChatMessage: %v", err)
+			return
+		}
+
+		// Create the INFORM_RESULT message to broadcast
+		broadcastInformMsg := &pb.Message{
+			McpVersion:   "0.1.0",
+			MessageId:    fmt.Sprintf("server-chat-broadcast-%s", incomingMsg.MessageId),
+			Performative: pb.Performative_INFORM_RESULT,
+			Sender:       &pb.Identifier{AgentId: "chat_service"}, // Or incomingMsg.Receiver.GetAgentId() if that's the chat "room"
+			// Receiver is not set for broadcast, handled by broadcastMessageToAll
+			Language:  "application/protobuf",
+			Ontology:  "elizaos:chat:message_broadcast", // New ontology for clients to identify chat broadcasts
+			Timestamp: timestamppb.Now(),
+			Payload: &pb.Message_InformResultPayload{
+				InformResultPayload: &pb.InformResultPayload{
+					TaskStatus:    pb.TaskStatus_TASK_SUCCESS, // Or a more suitable status for broadcast
+					ResultSummary: fmt.Sprintf("New chat message from %s", userName),
+					ResultDetails: chatMessageForDetails,
+				},
+			},
+		}
+
+		// Broadcast this message to all clients
+		s.broadcastMessageToAll(broadcastInformMsg, originalSenderAgentID) // Pass originalSenderAgentID to optionally exclude them
+
+		// Chat messages don't typically get a direct TASK_ACCEPT or INFORM_RESULT back to the sender in the same way
+		// other tasks do. The broadcast itself is the result.
+		// So, we might not need to add to `responseMessages` for the original sender here,
+		// unless we want to send a specific confirmation that their message was broadcast.
+		// For now, skip direct response to sender, they will receive the broadcast.
+		return // End chat message processing here
+
+	} else if incomingMsg.Ontology == "elizaos:ide:explain_code" {
 		// Assuming task_parameters had IdeCodeExplanationRequest
 		// For PoC, just create a mock explanation
 		var codeSnippet string
@@ -227,70 +320,64 @@ func (s *Service) simulateAgentProcessing(incomingMsg *pb.Message) {
 
 		explanationResp := &pb.IdeCodeExplanationResponse{
 			ExplanationText: fmt.Sprintf("This is a mock explanation for your code snippet:\n```\n%s\n```\nThe agent %s thinks it's interesting!", codeSnippet, incomingMsg.Receiver.GetAgentId()),
-			Language: "plaintext", // Or derive from request
+			Language:        "plaintext", // Or derive from request
 		}
-        // Removed problematic structPayload and ProtoReflect approach.
-        // Using the simpler map approach directly.
-        explanationMap, mapErr := structpb.NewStruct(map[string]interface{}{
-            "explanation_text": explanationResp.ExplanationText,
-            "language": explanationResp.Language,
-        })
+		explanationMap, mapErr := structpb.NewStruct(map[string]interface{}{
+			"explanation_text": explanationResp.ExplanationText,
+			"language":         explanationResp.Language,
+		})
 		if mapErr == nil {
 			resultDetailsMap["ide_code_explanation_response"] = explanationMap
 		} else {
 			log.Printf("MCP Service: Error creating Struct for IdeCodeExplanationResponse: %v", mapErr)
-			// Optionally add a simpler error placeholder to resultDetailsMap
 			resultDetailsMap["ide_code_explanation_response_error"] = "Failed to structure explanation response"
 		}
 
 	} else if incomingMsg.Ontology == "elizaos:ide:refactor_suggestion" {
-		 refactorResp := &pb.IdeRefactorSuggestionResponse{
-            OriginalSnippet: "Original code snippet here...",
-            Suggestions: []*pb.RefactoringSuggestion{
-                {
-                    ChangeType: "rename_variable",
-                    Description: "Consider renaming 'x' to 'index' for clarity.",
-                    SuggestedCodeDiff: "- var x = 10;\n+ var index = 10;",
-                    Confidence: 0.8,
-                },
-            },
-        }
-        // Convert to map for Struct
-         suggestionsList := []interface{}{}
-        for _, sug := range refactorResp.Suggestions {
-            suggestionsList = append(suggestionsList, map[string]interface{}{
-                "change_type": sug.ChangeType,
-                "description": sug.Description,
-                "suggested_code_diff": sug.SuggestedCodeDiff,
-                "confidence": sug.Confidence,
-            })
-        }
-        refactorMap, _ := structpb.NewStruct(map[string]interface{}{
-            "original_snippet": refactorResp.OriginalSnippet,
-            "suggestions": suggestionsList,
-        })
-        resultDetailsMap["ide_refactor_suggestion_response"] = refactorMap
+		refactorResp := &pb.IdeRefactorSuggestionResponse{
+			OriginalSnippet: "Original code snippet here...",
+			Suggestions: []*pb.RefactoringSuggestion{
+				{
+					ChangeType:        "rename_variable",
+					Description:       "Consider renaming 'x' to 'index' for clarity.",
+					SuggestedCodeDiff: "- var x = 10;\n+ var index = 10;",
+					Confidence:        0.8,
+				},
+			},
+		}
+		suggestionsList := []interface{}{}
+		for _, sug := range refactorResp.Suggestions {
+			suggestionsList = append(suggestionsList, map[string]interface{}{
+				"change_type":         sug.ChangeType,
+				"description":         sug.Description,
+				"suggested_code_diff": sug.SuggestedCodeDiff,
+				"confidence":          sug.Confidence,
+			})
+		}
+		refactorMap, _ := structpb.NewStruct(map[string]interface{}{
+			"original_snippet": refactorResp.OriginalSnippet,
+			"suggestions":      suggestionsList,
+		})
+		resultDetailsMap["ide_refactor_suggestion_response"] = refactorMap
 	}
 
-
+	// This part is for non-chat message responses
 	resultDetailsStruct, err := structpb.NewStruct(resultDetailsMap)
 	if err != nil {
 		log.Printf("MCP Service: Error creating Struct for InformResult: %v", err)
-		// Send a FAILURE message instead or simplify details
 		resultDetailsStruct, _ = structpb.NewStruct(map[string]interface{}{"error": "failed to prepare detailed result"})
 	}
 
-
 	informMsg := &pb.Message{
-		McpVersion: "0.1.0",
-		MessageId:  fmt.Sprintf("server-inform-%s", incomingMsg.MessageId),
+		McpVersion:   "0.1.0",
+		MessageId:    fmt.Sprintf("server-inform-%s", incomingMsg.MessageId),
 		Performative: pb.Performative_INFORM_RESULT,
-		Sender:     &pb.Identifier{AgentId: incomingMsg.Receiver.GetAgentId()}, // Agent (e.g. Jules) sends this
-		Receiver:   &pb.Identifier{AgentId: originalSenderAgentID},      // To original requester
-		InReplyTo:  incomingMsg.MessageId,
-		Language:   "application/protobuf",
-		Ontology:   "elizaos:ontology:general/inform_result", // Generic, or specific to the original request's domain
-		Timestamp:  timestamppb.Now(),
+		Sender:       &pb.Identifier{AgentId: incomingMsg.Receiver.GetAgentId()},
+		Receiver:     &pb.Identifier{AgentId: originalSenderAgentID},
+		InReplyTo:    incomingMsg.MessageId,
+		Language:     "application/protobuf",
+		Ontology:     "elizaos:ontology:general/inform_result",
+		Timestamp:    timestamppb.Now(),
 		Payload: &pb.Message_InformResultPayload{
 			InformResultPayload: &pb.InformResultPayload{
 				TaskStatus:    pb.TaskStatus_TASK_SUCCESS,
@@ -301,14 +388,13 @@ func (s *Service) simulateAgentProcessing(incomingMsg *pb.Message) {
 	}
 	responseMessages = append(responseMessages, informMsg)
 
-	// Send the responses
-	for _, respMsg :=  range responseMessages {
+	// Send the responses (only for non-chat messages now)
+	for _, respMsg := range responseMessages {
 		s.sendMessageToAgent(originalSenderAgentID, respMsg)
 	}
 }
 
 // sendMessageToAgent serializes and sends an MCP message to a specific agent via SSE.
-// Note: Unexported as it's an internal helper.
 func (s *Service) sendMessageToAgent(targetAgentID string, msg *pb.Message) {
 	msgBytes, err := proto.Marshal(msg)
 	if err != nil {
@@ -320,30 +406,18 @@ func (s *Service) sendMessageToAgent(targetAgentID string, msg *pb.Message) {
 	defer s.mu.Unlock()
 
 	foundClient := false
-	for _, c := range s.clients { // Renamed loop variable
-		// This logic is simplified: it sends to ALL clients that have claimed the targetAgentID
-		// Or, if client.agentID is not yet set, it might not send.
-		// A more robust system needs better client identification and agentID mapping.
-		// For PoC, if the client's agentID matches the targetAgentID of the message, send it.
-		// The client.agentID should ideally be set when the client connects and identifies itself.
-		// For now, the MCPClient sets its sender.agent_id. We need to map this to an sse client.
-		// Let's assume the client.agentID is set by the first message it sends via POST.
-		// This is still imperfect.
-		// A simpler broadcast for PoC to all clients might be easier if routing is complex.
-
-		// For this PoC, we'll search for a client whose agentID matches the targetAgentID.
-		// This agentID would have been set on the client struct when it first sent a message via POST.
-		// Now client.agentID is set from the SSE query parameter.
-		// We send the message if the targetAgentID (which is the original sender of the request)
-		// matches the agentID this SSE client registered with.
-		if c.agentID == targetAgentID {
+	for _, client := range s.clients {
+		if client.agentID == targetAgentID {
 			select {
-			case c.sendChan <- msgBytes:
-				log.Printf("MCP Service: Sent message ID %s to agent %s (Client SSE ID: %s)", msg.MessageId, targetAgentID, c.id)
+			case client.sendChan <- msgBytes:
+				log.Printf("MCP Service: Sent message ID %s to agent %s (Client SSE ID: %s)", msg.MessageId, targetAgentID, client.id)
 				foundClient = true
 			default:
-				log.Printf("MCP Service: Client %s (Agent: %s) send channel full for message ID %s. Dropping.", c.id, targetAgentID, msg.MessageId)
+				log.Printf("MCP Service: Client %s (Agent: %s) send channel full for message ID %s. Dropping.", client.id, targetAgentID, msg.MessageId)
 			}
+			// Assuming one agentID maps to one client. If multiple clients can have the same agentID,
+			// we might need to send to all or break after first. For now, this is okay.
+			// break
 		}
 	}
 
@@ -351,6 +425,39 @@ func (s *Service) sendMessageToAgent(targetAgentID string, msg *pb.Message) {
 		log.Printf("MCP Service: No SSE client found for agent %s to send message ID %s. Message not sent.", targetAgentID, msg.MessageId)
 	}
 }
+
+// broadcastMessageToAll sends a message to all connected SSE clients, optionally excluding one.
+func (s *Service) broadcastMessageToAll(msg *pb.Message, excludeAgentID ...string) {
+	msgBytes, err := proto.Marshal(msg)
+	if err != nil {
+		log.Printf("MCP Service: Error marshalling broadcast protobuf: %v", err)
+		return
+	}
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	var excluded string
+	if len(excludeAgentID) > 0 {
+		excluded = excludeAgentID[0]
+	}
+
+	log.Printf("MCP Service: Broadcasting message ID %s to all clients (excluding %s if specified)", msg.MessageId, excluded)
+
+	for _, client := range s.clients {
+		if excluded != "" && client.agentID == excluded {
+			// log.Printf("MCP Service: Skipping broadcast to sender %s (Client SSE ID: %s)", excluded, client.id)
+			continue // Optionally skip sending the message back to the original sender
+		}
+		select {
+		case client.sendChan <- msgBytes:
+			log.Printf("MCP Service: Broadcast message ID %s sent to client %s (Agent: %s)", msg.MessageId, client.id, client.agentID)
+		default:
+			log.Printf("MCP Service: Client %s (Agent: %s) send channel full for broadcast message ID %s. Dropping.", client.id, client.agentID, msg.MessageId)
+		}
+	}
+}
+
 
 // Note: The main function, along with its related setup (flags, static file serving),
 // has been moved to cmd/server/main.go. This file now only contains MCP service-specific logic.
