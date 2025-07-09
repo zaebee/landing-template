@@ -1,34 +1,102 @@
 // public/ts/components/mcp.ts
 import { reapplySadsStyles } from "../modules/sadsManager.js";
+import { MCPClient, McpEventHandler } from "../services/mcp_client.js";
+import {
+  Message,
+  Performative,
+  TaskRequestPayload,
+  InformResultPayload,
+} from "../../../generated/ts/mcp.js"; // Adjust if your generated files are elsewhere
+import { Struct } from "../../../generated/ts/google/protobuf/struct.js"; // For Struct
+import { mcpServerUrl } from "../config.js";
 
 const MCP_COMPONENT_SELECTOR = '[data-sads-component="mcp"]';
 const STYLE_PROMPT_SELECTOR = '[data-sads-element="mcp-style-prompt"]';
 const GENERATE_BUTTON_SELECTOR = '[data-sads-element="mcp-generate-button"]';
 const MESSAGE_AREA_SELECTOR = '[data-sads-element="mcp-message-area"]';
-const TARGET_AREA_SELECTOR = '[data-sads-element="mcp-target-area"]'; // This is the element to get HTML from and apply styles to.
+const TARGET_AREA_SELECTOR = '[data-sads-element="mcp-target-area"]';
 
-interface AiSadsRequest {
-  html_snippet: string;
-  style_prompt: string;
-  // Potentially add theme_context if the API requires it and it can be sourced from frontend
+const SADS_GENERATION_ONTOLOGY = "elizaos:sads:generate_attributes";
+const SADS_GENERATOR_AGENT_ID = "sads_generator_agent"; // Server-side agent
+const MCP_CLIENT_AGENT_ID = "sads_ui_mcp_client_" + Date.now(); // Basic unique ID
+
+let mcpClient: MCPClient | null = null;
+let sadsThemeContext: string | null = null;
+// const pendingRequests: Map<string, (message: Message) => void> = new Map(); // Old way
+
+interface ActiveSadsRequest {
+  messageId: string;
+  startTime: number;
+  // Add any other contextual info needed for SADS requests if necessary
+}
+let activeRequests: ActiveSadsRequest[] = [];
+
+async function fetchSadsThemeContext(): Promise<string> {
+  if (sadsThemeContext) {
+    return sadsThemeContext;
+  }
+  try {
+    const response = await fetch("/public/sads_theme_context.json"); // Assuming step 5 will make this available
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch SADS theme context: ${response.statusText}`
+      );
+    }
+    const context = await response.json();
+    sadsThemeContext = JSON.stringify(context);
+    return sadsThemeContext;
+  } catch (error) {
+    console.error("Error fetching SADS theme context:", error);
+    throw error; // Propagate error to be handled by UI
+  }
 }
 
-interface AiSadsResponse {
-  sads_attributes: string; // e.g., "data-sads-bgColor='primary' data-sads-padding='m'"
-  error?: string;
+function applySadsAttributes(targetEl: HTMLElement, sadsAttributes: string) {
+  // Clear existing sads attributes from the target element
+  for (let i = targetEl.attributes.length - 1; i >= 0; i--) {
+    const attr = targetEl.attributes[i];
+    if (attr.name.startsWith("data-sads-")) {
+      if (
+        attr.name !== "data-sads-scope" &&
+        attr.name !== "data-sads-component" &&
+        attr.name !== "data-sads-element" &&
+        attr.name !== "data-sads-id"
+      ) {
+        targetEl.removeAttribute(attr.name);
+      }
+    }
+  }
+
+  // Apply new SADS attributes
+  const attributes = sadsAttributes.match(
+    /data-sads-[^=]+=(?:'[^']*'|"[^"]*")/g
+  );
+  if (attributes) {
+    attributes.forEach((attr) => {
+      const parts = attr.match(/^([^=]+)=(.*)$/);
+      if (parts && parts.length === 3) {
+        const name = parts[1];
+        let value = parts[2];
+        if (
+          (value.startsWith("'") && value.endsWith("'")) ||
+          (value.startsWith('"') && value.endsWith('"'))
+        ) {
+          value = value.substring(1, value.length - 1);
+        }
+        targetEl.setAttribute(name, value);
+      }
+    });
+  }
 }
 
 /**
- * Initializes the MCP component, setting up event listeners.
+ * Initializes the MCP component, setting up event listeners and MCPClient.
  */
 export function initMcpComponent(): void {
   const mcpComponent = document.querySelector<HTMLElement>(
     MCP_COMPONENT_SELECTOR
   );
-  if (!mcpComponent) {
-    // console.warn("MCP component not found on this page.");
-    return;
-  }
+  if (!mcpComponent) return;
 
   const stylePromptEl = mcpComponent.querySelector<HTMLTextAreaElement>(
     STYLE_PROMPT_SELECTOR
@@ -43,15 +111,7 @@ export function initMcpComponent(): void {
     mcpComponent.querySelector<HTMLElement>(TARGET_AREA_SELECTOR);
 
   if (!stylePromptEl || !generateButtonEl || !messageAreaEl || !targetAreaEl) {
-    console.error(
-      "MCP component is missing one or more critical elements. Aborting initialization.",
-      {
-        stylePromptEl,
-        generateButtonEl,
-        messageAreaEl,
-        targetAreaEl,
-      }
-    );
+    console.error("MCP component missing critical elements.");
     if (messageAreaEl) {
       messageAreaEl.textContent =
         "Error: Component elements missing. Cannot initialize.";
@@ -60,133 +120,237 @@ export function initMcpComponent(): void {
     return;
   }
 
+  // Initialize MCPClient
+  mcpClient = new MCPClient(MCP_CLIENT_AGENT_ID, mcpServerUrl);
+  const mcpEventHandler: McpEventHandler = {
+    onOpen: () => {
+      console.log("MCP Connection Opened for SADS component.");
+      messageAreaEl.textContent = "MCP connected. Ready for SADS generation.";
+      messageAreaEl.setAttribute("data-sads-text-color", "text-neutral");
+      reapplySadsStyles();
+    },
+    onMessage: (message: Message) => {
+      console.log("MCP Message Received in SADS component:", message);
+      const requestIndex = activeRequests.findIndex(
+        (req) => req.messageId === message.inReplyTo
+      );
+
+      if (
+        requestIndex === -1 &&
+        message.performative !== Performative.TASK_ACCEPT
+      ) {
+        // TASK_ACCEPT might arrive before the request is fully tracked or if multiple accepts are sent.
+        // Or it could be a message not related to a pending request.
+        console.warn(
+          "Received message for an unknown or already handled request:",
+          message
+        );
+        return;
+      }
+
+      const matchingRequest =
+        requestIndex !== -1 ? activeRequests[requestIndex] : undefined;
+
+      try {
+        switch (message.performative) {
+          case Performative.TASK_ACCEPT:
+            if (message.payload.oneofKind === "taskAcceptPayload") {
+              const acceptPayload = message.payload.taskAcceptPayload;
+              messageAreaEl.textContent = `Agent ${message.sender?.agentId} accepted SADS generation task. ${acceptPayload.comments || ""}`;
+              messageAreaEl.setAttribute(
+                "data-sads-text-color",
+                "text-neutral"
+              );
+            }
+            // Do not remove from activeRequests here, wait for INFORM_RESULT or FAILURE
+            break;
+
+          case Performative.INFORM_RESULT:
+            if (message.payload.oneofKind === "informResultPayload") {
+              const informPayload = message.payload.informResultPayload;
+              const resultDetails = informPayload.resultDetails
+                ? Struct.toJson(informPayload.resultDetails)
+                : {};
+
+              // @ts-ignore Struct.toJson returns any
+              const sadsAttributes =
+                resultDetails?.sads_attributes_string as string;
+              // @ts-ignore
+              const error = resultDetails?.error as string;
+
+              if (error) {
+                throw new Error(error);
+              }
+
+              if (sadsAttributes) {
+                applySadsAttributes(targetAreaEl, sadsAttributes);
+                messageAreaEl.textContent =
+                  "SADS attributes applied successfully via MCP!";
+                messageAreaEl.setAttribute(
+                  "data-sads-text-color",
+                  "text-positive"
+                );
+              } else {
+                messageAreaEl.textContent =
+                  "Received empty SADS attributes via MCP.";
+                messageAreaEl.setAttribute(
+                  "data-sads-text-color",
+                  "text-warning"
+                );
+              }
+              if (matchingRequest) activeRequests.splice(requestIndex, 1);
+            } else {
+              throw new Error(
+                "INFORM_RESULT received without InformResultPayload"
+              );
+            }
+            break;
+
+          case Performative.FAILURE:
+          case Performative.TASK_REJECT:
+            let errorMsg = "SADS generation failed or was rejected by agent.";
+            if (message.payload.oneofKind === "failurePayload") {
+              errorMsg = `SADS Generation Error (Agent Failure ${message.sender?.agentId || "Unknown"}): ${message.payload.failurePayload.errorText || "No details."}`;
+            } else if (message.payload.oneofKind === "taskRejectPayload") {
+              errorMsg = `SADS Generation Task Rejected (Agent ${message.sender?.agentId || "Unknown"}): ${message.payload.taskRejectPayload.reasonText || "No reason given."}`;
+            }
+            throw new Error(errorMsg);
+
+          default:
+            console.warn(
+              `Received unexpected performative: ${Performative[message.performative]} from ${message.sender?.agentId}`
+            );
+            // Optionally keep the request in activeRequests or remove it based on policy for unhandled performatives
+            return; // Don't proceed to common finally block for UI if it's not a final state for this request
+        }
+      } catch (err) {
+        console.error("Error processing SADS response from MCP:", err);
+        messageAreaEl.textContent = `Error: ${(err as Error).message}`;
+        messageAreaEl.setAttribute("data-sads-text-color", "text-negative");
+        if (matchingRequest) activeRequests.splice(requestIndex, 1);
+      } finally {
+        // Only re-enable button if the request is no longer active (i.e., it was a final response)
+        const stillActive = activeRequests.some(
+          (req) => req.messageId === matchingRequest?.messageId
+        );
+        if (
+          !stillActive &&
+          (message.performative === Performative.INFORM_RESULT ||
+            message.performative === Performative.FAILURE ||
+            message.performative === Performative.TASK_REJECT)
+        ) {
+          generateButtonEl.disabled = false;
+          generateButtonEl.removeAttribute("data-sads-opacity");
+        }
+        reapplySadsStyles();
+      }
+    },
+    onError: (event) => {
+      console.error("MCP Connection Error in SADS component:", event);
+      messageAreaEl.textContent = "MCP Connection Error. Please refresh.";
+      messageAreaEl.setAttribute("data-sads-text-color", "text-negative");
+      reapplySadsStyles();
+    },
+    onClose: () => {
+      console.log("MCP Connection Closed for SADS component.");
+      messageAreaEl.textContent = "MCP Connection Closed.";
+      messageAreaEl.setAttribute("data-sads-text-color", "text-warning"); // Or neutral
+      reapplySadsStyles();
+    },
+  };
+
+  if (messageAreaEl) {
+    // Initial message before connect() is called
+    messageAreaEl.textContent =
+      "MCP component initializing. Attempting to connect...";
+    messageAreaEl.setAttribute("data-sads-text-color", "text-neutral");
+    Promise.resolve().then(reapplySadsStyles);
+  }
+  mcpClient.connect(mcpEventHandler);
+
   generateButtonEl.addEventListener("click", async () => {
+    if (!mcpClient) {
+      messageAreaEl.textContent = "MCP client not initialized.";
+      messageAreaEl.setAttribute("data-sads-text-color", "text-negative");
+      await reapplySadsStyles();
+      return;
+    }
+
     const stylePrompt = stylePromptEl.value.trim();
     if (!stylePrompt) {
       messageAreaEl.textContent = "Please enter a style prompt.";
       messageAreaEl.setAttribute("data-sads-text-color", "text-warning");
-      await reapplySadsStyles(); // To apply warning color
+      await reapplySadsStyles();
       return;
     }
 
-    // Get the inner HTML of the target area to send to the AI
-    // Or, we can send a predefined snippet if the AI is meant to style a generic structure
-    // For this iteration, let's send the current content of the target area.
     const htmlSnippet = targetAreaEl.innerHTML;
+    let currentThemeContext: string;
+    try {
+      currentThemeContext = await fetchSadsThemeContext();
+    } catch (error) {
+      messageAreaEl.textContent = `Error: ${(error as Error).message}`;
+      messageAreaEl.setAttribute("data-sads-text-color", "text-negative");
+      await reapplySadsStyles();
+      return;
+    }
 
-    messageAreaEl.textContent = "Generating styles...";
+    messageAreaEl.textContent = "Requesting SADS generation via MCP...";
     messageAreaEl.setAttribute("data-sads-text-color", "text-neutral");
     generateButtonEl.disabled = true;
     generateButtonEl.setAttribute("data-sads-opacity", "custom:0.5");
     await reapplySadsStyles();
 
-    try {
-      const requestPayload: AiSadsRequest = {
-        html_snippet: htmlSnippet,
-        style_prompt: stylePrompt,
-      };
+    const taskParameters = Struct.fromJson({
+      html_snippet: htmlSnippet,
+      style_prompt: stylePrompt,
+      sads_theme_context_json: currentThemeContext,
+      provider: "openai", // Hardcoded for now
+      model: "gpt-3.5-turbo", // Hardcoded for now
+    });
 
-      // Log the request being sent
-      // console.log("Sending request to AI SADS PoC:", JSON.stringify(requestPayload, null, 2));
+    const taskRequestPayload: TaskRequestPayload = {
+      taskType: SADS_GENERATION_ONTOLOGY, // Using ontology as task_type for routing
+      taskDescription: "Generate SADS attributes based on HTML and prompt",
+      taskParameters: taskParameters,
+      priority: "medium",
+    };
 
-      const response = await fetch("/api/generate-sads-attributes", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestPayload),
-      });
+    const messageId = mcpClient.sendMessage(
+      Performative.TASK_REQUEST,
+      SADS_GENERATOR_AGENT_ID,
+      taskRequestPayload,
+      SADS_GENERATION_ONTOLOGY
+    );
 
-      if (!response.ok) {
-        let errorMsg = `Error: ${response.status} ${response.statusText}`;
-        try {
-          const errorData = await response.json();
-          errorMsg = errorData.error || errorData.message || errorMsg;
-        } catch (e) {
-          // Ignore if error response is not JSON
-        }
-        throw new Error(errorMsg);
-      }
+    // Add to active requests
+    activeRequests.push({ messageId, startTime: Date.now() });
+    // The actual response handling logic will be moved to onMessage in the next step.
+    // For now, the old pendingRequests.set logic is effectively orphaned and will be removed.
 
-      const result = (await response.json()) as AiSadsResponse;
-      // console.log("Received response from AI SADS PoC:", JSON.stringify(result, null, 2));
-
-      if (result.error) {
-        throw new Error(result.error);
-      }
-
-      if (result.sads_attributes) {
-        // Clear existing sads attributes from the target element
-        for (let i = targetAreaEl.attributes.length - 1; i >= 0; i--) {
-          const attr = targetAreaEl.attributes[i];
-          if (attr.name.startsWith("data-sads-")) {
-            // Keep scope and component/element defining attributes
-            if (
-              attr.name !== "data-sads-scope" &&
-              attr.name !== "data-sads-component" &&
-              attr.name !== "data-sads-element" &&
-              attr.name !== "data-sads-id"
-            ) {
-              targetAreaEl.removeAttribute(attr.name);
-            }
-          }
-        }
-
-        // Apply new SADS attributes. The attribute string is space-separated: "data-sads-foo='bar' data-sads-baz='qux'"
-        const attributes = result.sads_attributes.match(
-          /data-sads-[^=]+=(?:'[^']*'|"[^"]*")/g
-        );
-        if (attributes) {
-          attributes.forEach((attr) => {
-            const parts = attr.match(/^([^=]+)=(.*)$/);
-            if (parts && parts.length === 3) {
-              const name = parts[1];
-              let value = parts[2];
-              // Remove quotes from value
-              if (
-                (value.startsWith("'") && value.endsWith("'")) ||
-                (value.startsWith('"') && value.endsWith('"'))
-              ) {
-                value = value.substring(1, value.length - 1);
-              }
-              targetAreaEl.setAttribute(name, value);
-            }
-          });
-        }
-
-        messageAreaEl.textContent = "Styles applied successfully!";
-        messageAreaEl.setAttribute("data-sads-text-color", "text-positive");
-      } else {
-        messageAreaEl.textContent =
-          "Received empty attributes. No changes applied.";
+    // Timeout for the request - will be adapted in the next step to work with activeRequests
+    setTimeout(() => {
+      const requestIndex = activeRequests.findIndex(
+        (req) => req.messageId === messageId
+      );
+      if (requestIndex !== -1) {
+        activeRequests.splice(requestIndex, 1); // Remove from active requests
+        messageAreaEl.textContent = "SADS generation request timed out.";
         messageAreaEl.setAttribute("data-sads-text-color", "text-warning");
+        generateButtonEl.disabled = false;
+        generateButtonEl.removeAttribute("data-sads-opacity");
+        reapplySadsStyles();
+        console.log(
+          `Request ${messageId} timed out and removed from activeRequests.`
+        );
       }
-    } catch (error) {
-      console.error("Error generating SADS attributes:", error);
-      messageAreaEl.textContent = `Error: ${error instanceof Error ? error.message : String(error)}`;
-      messageAreaEl.setAttribute("data-sads-text-color", "text-negative");
-    } finally {
-      generateButtonEl.disabled = false;
-      generateButtonEl.removeAttribute("data-sads-opacity");
-      await reapplySadsStyles(); // Crucial to apply new SADS attributes or clear opacity/colors
-    }
+    }, 30000); // 30-second timeout
   });
 
-  // console.log("MCP Component Initialized");
   if (messageAreaEl) {
     messageAreaEl.textContent =
-      "MCP component ready. Enter a style prompt and click generate.";
+      "MCP component ready. Enter style prompt and click generate.";
     messageAreaEl.setAttribute("data-sads-text-color", "text-neutral");
-    // Initial reapply is good practice if attributes were set in HTML for the message area
     Promise.resolve().then(reapplySadsStyles);
   }
 }
-
-// Self-initialize if this script is loaded directly and the component exists.
-// However, a more robust approach is to call initMcpComponent from app.ts after DOMContentLoaded.
-// For now, let's assume app.ts will handle calling this.
-// if (document.readyState === "loading") {
-//   document.addEventListener("DOMContentLoaded", initMcpComponent);
-// } else {
-//   initMcpComponent();
-// }
