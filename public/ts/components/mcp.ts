@@ -1,9 +1,6 @@
 // public/ts/components/mcp.ts
 import { reapplySadsStyles } from "../modules/sadsManager.js";
-import {
-  MCPClient,
-  McpEventHandler,
-} from "../services/mcp_client.js";
+import { MCPClient, McpEventHandler } from "../services/mcp_client.js";
 import {
   Message,
   Performative,
@@ -47,10 +44,7 @@ async function fetchSadsThemeContext(): Promise<string> {
   }
 }
 
-function applySadsAttributes(
-  targetEl: HTMLElement,
-  sadsAttributes: string
-) {
+function applySadsAttributes(targetEl: HTMLElement, sadsAttributes: string) {
   // Clear existing sads attributes from the target element
   for (let i = targetEl.attributes.length - 1; i >= 0; i--) {
     const attr = targetEl.attributes[i];
@@ -217,7 +211,8 @@ export function initMcpComponent(): void {
             : {};
 
           // @ts-ignore Struct.toJson returns any, we know the structure
-          const sadsAttributes = resultDetails?.sads_attributes_string as string;
+          const sadsAttributes =
+            resultDetails?.sads_attributes_string as string;
           // @ts-ignore
           const error = resultDetails?.error as string;
 
@@ -229,17 +224,11 @@ export function initMcpComponent(): void {
             applySadsAttributes(targetAreaEl, sadsAttributes);
             messageAreaEl.textContent =
               "SADS attributes applied successfully via MCP!";
-            messageAreaEl.setAttribute(
-              "data-sads-text-color",
-              "text-positive"
-            );
+            messageAreaEl.setAttribute("data-sads-text-color", "text-positive");
           } else {
             messageAreaEl.textContent =
               "Received empty SADS attributes via MCP.";
-            messageAreaEl.setAttribute(
-              "data-sads-text-color",
-              "text-warning"
-            );
+            messageAreaEl.setAttribute("data-sads-text-color", "text-warning");
           }
         } else if (
           responseMessage.performative === Performative.FAILURE ||
