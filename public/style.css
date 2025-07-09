@@ -80,7 +80,12 @@ header nav ul li a:focus {
 
 body.dark-mode header nav ul li a:hover,
 body.dark-mode header nav ul li a:focus {
-  background-color: rgba(255, 255, 255, 0.08); /* Corresponds to nav-link-hover-bg-dark */
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.08
+  ); /* Corresponds to nav-link-hover-bg-dark */
 }
 
 /* Active state for nav links (e.g., for current page) */

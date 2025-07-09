@@ -44,22 +44,29 @@ function _attachEventListeners(): void {
   // Dark Mode Toggle Button
   const darkModeButton = document.getElementById("dark-mode-toggle");
   if (darkModeButton && window.appGlobal.handleDarkModeToggle) {
-    darkModeButton.addEventListener("click", window.appGlobal.handleDarkModeToggle);
+    darkModeButton.addEventListener(
+      "click",
+      window.appGlobal.handleDarkModeToggle
+    );
     console.log("Dark mode toggle event listener attached.");
   } else {
-    console.warn("Dark mode toggle button or handler not found. Listener not attached.");
+    console.warn(
+      "Dark mode toggle button or handler not found. Listener not attached."
+    );
   }
 
   // Language Switcher Buttons
   // Example: Assuming language buttons have a common class or parent
   const languageSwitcher = document.getElementById("language-switcher");
   if (languageSwitcher && window.appGlobal.setAppLanguage) {
-    const langButtons = languageSwitcher.querySelectorAll<HTMLButtonElement>("button[data-lang]");
-    langButtons.forEach(button => {
+    const langButtons =
+      languageSwitcher.querySelectorAll<HTMLButtonElement>("button[data-lang]");
+    langButtons.forEach((button) => {
       const lang = button.dataset.lang;
       if (lang) {
         button.addEventListener("click", () => {
-          if (window.appGlobal.setAppLanguage) { // Check again for type safety in closure
+          if (window.appGlobal.setAppLanguage) {
+            // Check again for type safety in closure
             window.appGlobal.setAppLanguage(lang);
           }
         });
@@ -67,10 +74,11 @@ function _attachEventListeners(): void {
     });
     console.log("Language switcher event listeners attached.");
   } else {
-    console.warn("Language switcher or setAppLanguage handler not found. Listeners not attached.");
+    console.warn(
+      "Language switcher or setAppLanguage handler not found. Listeners not attached."
+    );
   }
 }
-
 
 /**
  * Initializes the core application modules in the correct order.
@@ -97,7 +105,6 @@ async function initializeApp(): Promise<void> {
 
   // 5. Attach event listeners now that everything is initialized.
   _attachEventListeners();
-
 
   console.log(
     `App Initialized: Dark Mode = ${isDarkModeActive()}, Language = ${document.documentElement.lang}`
