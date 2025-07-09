@@ -1,11 +1,11 @@
 {
   "blocks": [
     "components/hero/hero.html",
-    "components/features/features.html",
-    "components/testimonials/testimonials.html",
     "components/chat/chat.html",
-    "components/mcp/mcp.html",
     "components/ide_agent_panel/ide_agent_panel.html",
+    "components/testimonials/testimonials.html",
+    "components/features/features.html",
+    "components/mcp/mcp.html",
     "components/portfolio/portfolio.html",
     "components/blog/blog.html",
     "components/contact-form/contact-form.html"
