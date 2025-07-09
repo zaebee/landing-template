@@ -1,9 +1,6 @@
 // public/ts/components/mcp.ts
 import { reapplySadsStyles } from "../modules/sadsManager.js";
-import {
-  MCPClient,
-  McpEventHandler,
-} from "../services/mcp_client.js";
+import { MCPClient, McpEventHandler } from "../services/mcp_client.js";
 import {
   Message,
   Performative,
@@ -54,10 +51,7 @@ async function fetchSadsThemeContext(): Promise<string> {
   }
 }
 
-function applySadsAttributes(
-  targetEl: HTMLElement,
-  sadsAttributes: string
-) {
+function applySadsAttributes(targetEl: HTMLElement, sadsAttributes: string) {
   // Clear existing sads attributes from the target element
   for (let i = targetEl.attributes.length - 1; i >= 0; i--) {
     const attr = targetEl.attributes[i];
@@ -141,14 +135,21 @@ export function initMcpComponent(): void {
         (req) => req.messageId === message.inReplyTo
       );
 
-      if (requestIndex === -1 && message.performative !== Performative.TASK_ACCEPT) {
+      if (
+        requestIndex === -1 &&
+        message.performative !== Performative.TASK_ACCEPT
+      ) {
         // TASK_ACCEPT might arrive before the request is fully tracked or if multiple accepts are sent.
         // Or it could be a message not related to a pending request.
-        console.warn("Received message for an unknown or already handled request:", message);
+        console.warn(
+          "Received message for an unknown or already handled request:",
+          message
+        );
         return;
       }
 
-      const matchingRequest = requestIndex !== -1 ? activeRequests[requestIndex] : undefined;
+      const matchingRequest =
+        requestIndex !== -1 ? activeRequests[requestIndex] : undefined;
 
       try {
         switch (message.performative) {
@@ -156,7 +157,10 @@ export function initMcpComponent(): void {
             if (message.payload.oneofKind === "taskAcceptPayload") {
               const acceptPayload = message.payload.taskAcceptPayload;
               messageAreaEl.textContent = `Agent ${message.sender?.agentId} accepted SADS generation task. ${acceptPayload.comments || ""}`;
-              messageAreaEl.setAttribute("data-sads-text-color", "text-neutral");
+              messageAreaEl.setAttribute(
+                "data-sads-text-color",
+                "text-neutral"
+              );
             }
             // Do not remove from activeRequests here, wait for INFORM_RESULT or FAILURE
             break;
@@ -169,7 +173,8 @@ export function initMcpComponent(): void {
                 : {};
 
               // @ts-ignore Struct.toJson returns any
-              const sadsAttributes = resultDetails?.sads_attributes_string as string;
+              const sadsAttributes =
+                resultDetails?.sads_attributes_string as string;
               // @ts-ignore
               const error = resultDetails?.error as string;
 
@@ -179,15 +184,25 @@ export function initMcpComponent(): void {
 
               if (sadsAttributes) {
                 applySadsAttributes(targetAreaEl, sadsAttributes);
-                messageAreaEl.textContent = "SADS attributes applied successfully via MCP!";
-                messageAreaEl.setAttribute("data-sads-text-color", "text-positive");
+                messageAreaEl.textContent =
+                  "SADS attributes applied successfully via MCP!";
+                messageAreaEl.setAttribute(
+                  "data-sads-text-color",
+                  "text-positive"
+                );
               } else {
-                messageAreaEl.textContent = "Received empty SADS attributes via MCP.";
-                messageAreaEl.setAttribute("data-sads-text-color", "text-warning");
+                messageAreaEl.textContent =
+                  "Received empty SADS attributes via MCP.";
+                messageAreaEl.setAttribute(
+                  "data-sads-text-color",
+                  "text-warning"
+                );
               }
               if (matchingRequest) activeRequests.splice(requestIndex, 1);
             } else {
-                throw new Error("INFORM_RESULT received without InformResultPayload");
+              throw new Error(
+                "INFORM_RESULT received without InformResultPayload"
+              );
             }
             break;
 
@@ -195,14 +210,16 @@ export function initMcpComponent(): void {
           case Performative.TASK_REJECT:
             let errorMsg = "SADS generation failed or was rejected by agent.";
             if (message.payload.oneofKind === "failurePayload") {
-              errorMsg = `SADS Generation Error (Agent Failure ${message.sender?.agentId || 'Unknown'}): ${message.payload.failurePayload.errorText || "No details."}`;
+              errorMsg = `SADS Generation Error (Agent Failure ${message.sender?.agentId || "Unknown"}): ${message.payload.failurePayload.errorText || "No details."}`;
             } else if (message.payload.oneofKind === "taskRejectPayload") {
-              errorMsg = `SADS Generation Task Rejected (Agent ${message.sender?.agentId || 'Unknown'}): ${message.payload.taskRejectPayload.reasonText || "No reason given."}`;
+              errorMsg = `SADS Generation Task Rejected (Agent ${message.sender?.agentId || "Unknown"}): ${message.payload.taskRejectPayload.reasonText || "No reason given."}`;
             }
             throw new Error(errorMsg);
 
           default:
-            console.warn(`Received unexpected performative: ${Performative[message.performative]} from ${message.sender?.agentId}`);
+            console.warn(
+              `Received unexpected performative: ${Performative[message.performative]} from ${message.sender?.agentId}`
+            );
             // Optionally keep the request in activeRequests or remove it based on policy for unhandled performatives
             return; // Don't proceed to common finally block for UI if it's not a final state for this request
         }
@@ -213,10 +230,17 @@ export function initMcpComponent(): void {
         if (matchingRequest) activeRequests.splice(requestIndex, 1);
       } finally {
         // Only re-enable button if the request is no longer active (i.e., it was a final response)
-        const stillActive = activeRequests.some(req => req.messageId === matchingRequest?.messageId);
-        if (!stillActive && (message.performative === Performative.INFORM_RESULT || message.performative === Performative.FAILURE || message.performative === Performative.TASK_REJECT)) {
-            generateButtonEl.disabled = false;
-            generateButtonEl.removeAttribute("data-sads-opacity");
+        const stillActive = activeRequests.some(
+          (req) => req.messageId === matchingRequest?.messageId
+        );
+        if (
+          !stillActive &&
+          (message.performative === Performative.INFORM_RESULT ||
+            message.performative === Performative.FAILURE ||
+            message.performative === Performative.TASK_REJECT)
+        ) {
+          generateButtonEl.disabled = false;
+          generateButtonEl.removeAttribute("data-sads-opacity");
         }
         reapplySadsStyles();
       }
@@ -235,13 +259,14 @@ export function initMcpComponent(): void {
     },
   };
 
-  if (messageAreaEl) { // Initial message before connect() is called
-    messageAreaEl.textContent = "MCP component initializing. Attempting to connect...";
+  if (messageAreaEl) {
+    // Initial message before connect() is called
+    messageAreaEl.textContent =
+      "MCP component initializing. Attempting to connect...";
     messageAreaEl.setAttribute("data-sads-text-color", "text-neutral");
     Promise.resolve().then(reapplySadsStyles);
   }
   mcpClient.connect(mcpEventHandler);
-
 
   generateButtonEl.addEventListener("click", async () => {
     if (!mcpClient) {
@@ -305,7 +330,9 @@ export function initMcpComponent(): void {
 
     // Timeout for the request - will be adapted in the next step to work with activeRequests
     setTimeout(() => {
-      const requestIndex = activeRequests.findIndex(req => req.messageId === messageId);
+      const requestIndex = activeRequests.findIndex(
+        (req) => req.messageId === messageId
+      );
       if (requestIndex !== -1) {
         activeRequests.splice(requestIndex, 1); // Remove from active requests
         messageAreaEl.textContent = "SADS generation request timed out.";
@@ -313,7 +340,9 @@ export function initMcpComponent(): void {
         generateButtonEl.disabled = false;
         generateButtonEl.removeAttribute("data-sads-opacity");
         reapplySadsStyles();
-        console.log(`Request ${messageId} timed out and removed from activeRequests.`);
+        console.log(
+          `Request ${messageId} timed out and removed from activeRequests.`
+        );
       }
     }, 30000); // 30-second timeout
   });
