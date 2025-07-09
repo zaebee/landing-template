@@ -17,7 +17,10 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
+	"landing-page-generator/pkg/api" // Added for API request/response structs
 	pb "landing-page-generator/generated/go"
+	"bytes" // Added for HTTP request body
+	"encoding/json" // Added for JSON marshalling/unmarshalling
 )
 
 // client represents a single SSE client connection.
@@ -306,7 +309,128 @@ func (s *Service) simulateAgentProcessing(incomingMsg *pb.Message) {
 		// For now, skip direct response to sender, they will receive the broadcast.
 		return // End chat message processing here
 
-	} else if incomingMsg.Ontology == "elizaos:ide:explain_code" {
+	} else if taskRequestPayload.TaskRequestPayload.GetTaskType() == "elizaos:lpg:generate_sads_from_nl" {
+		log.Printf("MCP Service: Received generate_sads_from_nl task %s from %s", incomingMsg.MessageId, originalSenderAgentID)
+		params := taskRequestPayload.TaskRequestPayload.GetTaskParameters()
+		if params == nil || params.Fields == nil {
+			log.Printf("MCP Service: Task %s from %s has no parameters.", incomingMsg.MessageId, originalSenderAgentID)
+			s.sendFailureResponse(incomingMsg, originalSenderAgentID, "Task parameters are missing for generate_sads_from_nl.")
+			return
+		}
+
+		// Extract parameters
+		htmlSnippet := params.Fields["html_snippet"].GetStringValue()
+		stylePrompt := params.Fields["style_prompt"].GetStringValue()
+		sadsThemeContextJSON := params.Fields["sads_theme_context_json"].GetStringValue()
+		provider := params.Fields["provider"].GetStringValue()
+		model := params.Fields["model"].GetStringValue()
+
+		if htmlSnippet == "" || stylePrompt == "" || sadsThemeContextJSON == "" || provider == "" || model == "" {
+			log.Printf("MCP Service: Task %s from %s is missing required parameters for generate_sads_from_nl.", incomingMsg.MessageId, originalSenderAgentID)
+			s.sendFailureResponse(incomingMsg, originalSenderAgentID, "Missing one or more required parameters for generate_sads_from_nl: html_snippet, style_prompt, sads_theme_context_json, provider, model.")
+			return
+		}
+
+		apiRequest := api.GenerateSadsRequest{
+			HTMLSnippet:          htmlSnippet,
+			StylePrompt:          stylePrompt,
+			SadsThemeContextJSON: sadsThemeContextJSON,
+			Provider:             provider,
+			Model:                model,
+		}
+
+		jsonBody, err := json.Marshal(apiRequest)
+		if err != nil {
+			log.Printf("MCP Service: Error marshalling API request for task %s: %v", incomingMsg.MessageId, err)
+			s.sendFailureResponse(incomingMsg, originalSenderAgentID, fmt.Sprintf("Internal server error: failed to create API request for generate_sads_from_nl: %v", err))
+			return
+		}
+
+		apiURL := fmt.Sprintf("http://localhost:%s/api/generate-sads-from-nl", s.serverPort)
+		// Create a new HTTP client with a timeout
+		httpClient := &http.Client{Timeout: 30 * time.Second} // 30 seconds timeout
+		httpResp, err := httpClient.Post(apiURL, "application/json", bytes.NewBuffer(jsonBody))
+		if err != nil {
+			log.Printf("MCP Service: Error calling API for task %s: %v", incomingMsg.MessageId, err)
+			s.sendFailureResponse(incomingMsg, originalSenderAgentID, fmt.Sprintf("API call to generate_sads_from_nl failed: %v", err))
+			return
+		}
+		defer httpResp.Body.Close()
+
+		if httpResp.StatusCode != http.StatusOK {
+			bodyBytes, _ := io.ReadAll(httpResp.Body)
+			log.Printf("MCP Service: API call for task %s returned status %d: %s", incomingMsg.MessageId, httpResp.StatusCode, string(bodyBytes))
+			s.sendFailureResponse(incomingMsg, originalSenderAgentID, fmt.Sprintf("API call to generate_sads_from_nl failed with status %d: %s", httpResp.StatusCode, string(bodyBytes)))
+			return
+		}
+
+		var apiResponse api.SadsGenerationResponse
+		if err := json.NewDecoder(httpResp.Body).Decode(&apiResponse); err != nil {
+			log.Printf("MCP Service: Error decoding API response for task %s: %v", incomingMsg.MessageId, err)
+			s.sendFailureResponse(incomingMsg, originalSenderAgentID, fmt.Sprintf("Failed to decode API response from generate_sads_from_nl: %v", err))
+			return
+		}
+
+		if apiResponse.Error != "" {
+			log.Printf("MCP Service: API response for task %s contained an error: %s", incomingMsg.MessageId, apiResponse.Error)
+			s.sendFailureResponse(incomingMsg, originalSenderAgentID, fmt.Sprintf("API for generate_sads_from_nl returned an error: %s", apiResponse.Error))
+			return
+		}
+
+		// Prepare result details
+		resultDetailsMap := map[string]interface{}{
+			"sads_attributes_string": apiResponse.SadsAttributesString,
+		}
+		if apiResponse.ParsedSadsAttributes != nil {
+			parsedAttrsInterfaceMap := make(map[string]interface{})
+			for k, v := range apiResponse.ParsedSadsAttributes {
+				innerMap := make(map[string]interface{})
+				for ik, iv := range v {
+					innerMap[ik] = iv
+				}
+				// Ensure the inner map can be converted to structpb.Value
+				structValue, err := structpb.NewValue(innerMap)
+				if err != nil {
+					log.Printf("MCP Service: Error converting inner map for ParsedSadsAttributes for task %s: %v", incomingMsg.MessageId, err)
+					// Skip this attribute or handle error as appropriate
+					continue
+				}
+				parsedAttrsInterfaceMap[k] = structValue
+			}
+			resultDetailsMap["parsed_sads_attributes"] = parsedAttrsInterfaceMap
+		}
+
+		resultDetailsStruct, err := structpb.NewStruct(resultDetailsMap)
+		if err != nil {
+			log.Printf("MCP Service: Error creating Struct for InformResult (generate_sads_from_nl) task %s: %v", incomingMsg.MessageId, err)
+			s.sendFailureResponse(incomingMsg, originalSenderAgentID, fmt.Sprintf("Failed to prepare result details for generate_sads_from_nl: %v", err))
+			return
+		}
+
+		informMsg := &pb.Message{
+			McpVersion:   "0.1.0",
+			MessageId:    fmt.Sprintf("server-inform-%s", incomingMsg.MessageId),
+			Performative: pb.Performative_INFORM_RESULT,
+			Sender:       &pb.Identifier{AgentId: incomingMsg.Receiver.GetAgentId()},
+			Receiver:     &pb.Identifier{AgentId: originalSenderAgentID},
+			InReplyTo:    incomingMsg.MessageId,
+			Language:     "application/protobuf",
+			Ontology:     taskRequestPayload.TaskRequestPayload.GetTaskType(), // Use the original task type as ontology for this response
+			Timestamp:    timestamppb.Now(),
+			Payload: &pb.Message_InformResultPayload{
+				InformResultPayload: &pb.InformResultPayload{
+					TaskStatus:    pb.TaskStatus_TASK_SUCCESS,
+					ResultSummary: "Successfully generated SADS attributes via API for generate_sads_from_nl.",
+					ResultDetails: resultDetailsStruct,
+				},
+			},
+		}
+		// The TASK_ACCEPT was already sent. Now send the INFORM_RESULT.
+		// Note: responseMessages isn't used for this path currently, direct send.
+		s.sendMessageToAgent(originalSenderAgentID, informMsg)
+		return // End elizaos:lpg:generate_sads_from_nl processing
+
+	} else if incomingMsg.Ontology == "elizaos:ide:explain_code" { // This was the original check
 		// Assuming task_parameters had IdeCodeExplanationRequest
 		// For PoC, just create a mock explanation
 		var codeSnippet string
@@ -393,6 +517,29 @@ func (s *Service) simulateAgentProcessing(incomingMsg *pb.Message) {
 	for _, respMsg := range responseMessages {
 		s.sendMessageToAgent(originalSenderAgentID, respMsg)
 	}
+}
+
+// sendFailureResponse constructs and sends a standard FAILURE message.
+func (s *Service) sendFailureResponse(incomingMsg *pb.Message, targetAgentID string, reason string) {
+	failureMsg := &pb.Message{
+		McpVersion:   "0.1.0",
+		MessageId:    fmt.Sprintf("server-failure-%s", incomingMsg.MessageId),
+		Performative: pb.Performative_FAILURE,
+		Sender:       &pb.Identifier{AgentId: incomingMsg.Receiver.GetAgentId()}, // Server (agent) is sender
+		Receiver:     &pb.Identifier{AgentId: targetAgentID},               // Original requester
+		InReplyTo:    incomingMsg.MessageId,
+		Language:     "application/protobuf",
+		Ontology:     incomingMsg.Ontology, // Echo back original ontology or a general failure ontology
+		Timestamp:    timestamppb.Now(),
+		Payload: &pb.Message_FailurePayload{
+			FailurePayload: &pb.FailurePayload{
+				Reason:      reason,
+				ErrorCode:   "TASK_EXECUTION_ERROR", // Generic error code
+				ErrorDetail: nil,                    // Can be a Struct with more details if needed
+			},
+		},
+	}
+	s.sendMessageToAgent(targetAgentID, failureMsg)
 }
 
 // sendMessageToAgent serializes and sends an MCP message to a specific agent via SSE.
