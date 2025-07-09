@@ -55,6 +55,22 @@ export interface SadsColors {
   "button-primary-bg-color": string;
   "button-primary-bg-color-dark": string;
   "button-primary-text-color": string;
+  "chat-local-user-bg"?: string;
+  "chat-local-user-bg-dark"?: string;
+  "chat-local-user-text"?: string;
+  "chat-local-user-text-dark"?: string;
+  "chat-other-user-bg"?: string;
+  "chat-other-user-bg-dark"?: string;
+  "chat-other-user-text"?: string;
+  "chat-other-user-text-dark"?: string;
+  "chat-system-message-bg"?: string;
+  "chat-system-message-bg-dark"?: string;
+  "chat-system-message-text"?: string;
+  "chat-system-message-text-dark"?: string;
+  "text-negative"?: string;
+  "text-negative-dark"?: string;
+  "text-warning"?: string;
+  "text-warning-dark"?: string;
   [key: string]: string | undefined; // Allow other string properties, e.g. "button-primary-bg-color"
 }
 
@@ -216,6 +232,28 @@ export const sadsDefaultTheme: SadsTheme = {
     "button-primary-bg-color": "#28a745",
     "button-primary-bg-color-dark": "#1a73e8",
     "button-primary-text-color": "#ffffff",
+
+    // Chat message colors
+    "chat-local-user-bg": "#e0f0ff", // Background for local user's messages
+    "chat-local-user-bg-dark": "#004080", // Background for local user's messages (dark mode)
+    "chat-local-user-text": "#111111", // Text color for local user's messages
+    "chat-local-user-text-dark": "#e0e0e0", // Text color for local user's messages (dark mode)
+
+    "chat-other-user-bg": "#f0f0f0", // Background for other users' messages
+    "chat-other-user-bg-dark": "#3a3a3a", // Background for other users' messages (dark mode)
+    "chat-other-user-text": "#111111", // Text color for other users' messages
+    "chat-other-user-text-dark": "#e0e0e0", // Text color for other users' messages (dark mode)
+
+    "chat-system-message-bg": "#fff9c4", // Background for system messages
+    "chat-system-message-bg-dark": "#424220", // Background for system messages (dark mode)
+    "chat-system-message-text": "#333333", // Text color for system messages
+    "chat-system-message-text-dark": "#e0e0e0", // Text color for system messages (dark mode)
+
+    // General semantic text colors
+    "text-negative": "#dc3545", // Text color for errors or negative states
+    "text-negative-dark": "#f8d7da", // Text color for errors or negative states (dark mode)
+    "text-warning": "#ffc107", // Text color for warnings or cautionary states
+    "text-warning-dark": "#fff3cd", // Text color for warnings or cautionary states (dark mode)
   },
   spacing: {
     none: "0",
