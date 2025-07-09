@@ -212,30 +212,42 @@ export function initMcpComponent(): void {
         ) {
           const informPayload = responseMessage.payload
             .informResultPayload as InformResultPayload;
-          const resultDetails = informPayload.resultDetails
+          const resultDetailsJson = informPayload.resultDetails
             ? Struct.toJson(informPayload.resultDetails)
-            : {};
+            : null;
 
-          // @ts-ignore Struct.toJson returns any, we know the structure
-          const sadsAttributes = resultDetails?.sads_attributes_string as string;
-          // @ts-ignore
-          const error = resultDetails?.error as string;
+          if (resultDetailsJson && typeof resultDetailsJson === 'object' && !Array.isArray(resultDetailsJson)) {
+            const sadsData = resultDetailsJson as Record<string, any>;
+            const sadsAttributes = sadsData.sads_attributes_string as string | undefined;
+            const error = sadsData.error as string | undefined;
 
-          if (error) {
-            throw new Error(error);
-          }
+            if (error) {
+              throw new Error(error);
+            }
 
-          if (sadsAttributes) {
-            applySadsAttributes(targetAreaEl, sadsAttributes);
-            messageAreaEl.textContent =
-              "SADS attributes applied successfully via MCP!";
-            messageAreaEl.setAttribute(
-              "data-sads-text-color",
-              "text-positive"
-            );
+            if (sadsAttributes) {
+              applySadsAttributes(targetAreaEl, sadsAttributes);
+              messageAreaEl.textContent =
+                "SADS attributes applied successfully via MCP!";
+              messageAreaEl.setAttribute(
+                "data-sads-text-color",
+                "text-positive"
+              );
+            } else {
+              // This case handles if sadsAttributes is null or undefined, but error is not set.
+              messageAreaEl.textContent =
+                "Received no SADS attributes (but no error) from MCP.";
+              messageAreaEl.setAttribute(
+                "data-sads-text-color",
+                "text-warning"
+              );
+            }
           } else {
+            // This case handles if resultDetailsJson is null, not an object, or is an array,
+            // or if the structure doesn't match expectations.
+            console.warn("Received SADS response with invalid or null resultDetails structure:", resultDetailsJson);
             messageAreaEl.textContent =
-              "Received empty SADS attributes via MCP.";
+              "Received invalid or empty SADS data from MCP.";
             messageAreaEl.setAttribute(
               "data-sads-text-color",
               "text-warning"
