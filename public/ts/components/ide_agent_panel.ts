@@ -62,6 +62,26 @@ export function initIdeAgentPanel(): void {
     '[data-sads-element="response-area"]'
   );
 
+  // New elements for Generate SADS from NL
+  const genSadsHtmlSnippetInput = panel.querySelector<HTMLTextAreaElement>(
+    '[data-sads-element="gen-sads-html-snippet-input"]'
+  );
+  const genSadsStylePromptInput = panel.querySelector<HTMLInputElement>(
+    '[data-sads-element="gen-sads-style-prompt-input"]'
+  );
+  const genSadsThemeContextInput = panel.querySelector<HTMLTextAreaElement>(
+    '[data-sads-element="gen-sads-theme-context-input"]'
+  );
+  const genSadsProviderInput = panel.querySelector<HTMLInputElement>(
+    '[data-sads-element="gen-sads-provider-input"]'
+  );
+  const genSadsModelInput = panel.querySelector<HTMLInputElement>(
+    '[data-sads-element="gen-sads-model-input"]'
+  );
+  const generateSadsButton = panel.querySelector<HTMLButtonElement>(
+    '[data-sads-element="generate-sads-button"]'
+  );
+
   if (
     !statusArea ||
     !agentIdInput ||
@@ -69,12 +89,28 @@ export function initIdeAgentPanel(): void {
     !userQueryInput ||
     !explainCodeButton ||
     !refactorCodeButton ||
-    !responseArea
+    !responseArea ||
+    // Check new elements for SADS NL
+    !genSadsHtmlSnippetInput ||
+    !genSadsStylePromptInput ||
+    !genSadsThemeContextInput ||
+    !genSadsProviderInput ||
+    !genSadsModelInput ||
+    !generateSadsButton
   ) {
-    console.error("IDE Agent Panel is missing one or more critical elements.");
-    if (statusArea) statusArea.textContent = "Error: Panel elements missing.";
+    console.error(
+      "IDE Agent Panel is missing one or more critical elements (standard or SADS NL)."
+    );
+    if (statusArea)
+      statusArea.textContent =
+        "Error: Panel elements missing (standard or SADS NL).";
     return;
   }
+
+  // Set default values for SADS NL provider and model if elements exist
+  if (genSadsProviderInput) genSadsProviderInput.value = "openai";
+  if (genSadsModelInput) genSadsModelInput.value = "gpt-3.5-turbo";
+
 
   // Generate a unique client agent ID for this session/panel instance
   const clientAgentId = `${clientAgentIdPrefix}${Math.random().toString(36).substring(2, 9)}`;
@@ -168,13 +204,27 @@ export function initIdeAgentPanel(): void {
                   typeof refactorRespFromDetails === "object" &&
                   refactorRespFromDetails !== null
                 ) {
-                  const refactorResp = refactorRespFromDetails as any; // Cast to any for easier access to sub-properties
+                  const refactorResp = refactorRespFromDetails as any;
                   responseText = `Refactor suggestions from ${message.sender?.agentId}:\nOriginal: ${refactorResp.original_snippet}\n`;
                   if (Array.isArray(refactorResp.suggestions)) {
                     refactorResp.suggestions.forEach((sug: any) => {
-                      // Define interface for sug for better type safety
                       responseText += `  - ${sug.description} (Type: ${sug.change_type}, Confidence: ${sug.confidence})\n    Diff: ${sug.suggested_code_diff}\n`;
                     });
+                  }
+                }
+              } else if (matchingRequest?.ontology === "elizaos:lpg:generate_sads_from_nl") {
+                // Specific handling for SADS NL response
+                if (typeof details === "object" && details !== null) {
+                  const sadsResult = details as any; // Cast for easier access
+                  responseText = `SADS Generation Result from ${message.sender?.agentId}:\n`;
+                  if (sadsResult.sads_attributes_string) {
+                    responseText += `SADS Attributes String:\n${sadsResult.sads_attributes_string}\n\n`;
+                  }
+                  if (sadsResult.parsed_sads_attributes) {
+                    responseText += `Parsed SADS Attributes:\n${JSON.stringify(sadsResult.parsed_sads_attributes, null, 2)}\n`;
+                  }
+                  if (sadsResult.error) { // If the API itself reported an error in its valid JSON response
+                     responseText += `\nAPI Error: ${sadsResult.error}\n`;
                   }
                 }
               }
@@ -323,6 +373,52 @@ export function initIdeAgentPanel(): void {
           string,
           any
         >;
+      }
+    );
+  });
+
+  generateSadsButton.addEventListener("click", () => {
+    const htmlSnippet = genSadsHtmlSnippetInput.value;
+    const stylePrompt = genSadsStylePromptInput.value;
+    const sadsThemeContextJson = genSadsThemeContextInput.value;
+    const provider = genSadsProviderInput.value;
+    const model = genSadsModelInput.value;
+
+    if (!htmlSnippet.trim()) {
+      alert("Please enter an HTML snippet.");
+      return;
+    }
+    if (!stylePrompt.trim()) {
+      alert("Please enter a style prompt.");
+      return;
+    }
+    if (!sadsThemeContextJson.trim()) {
+      alert("Please enter SADS Theme Context JSON.");
+      // You could also try to parse it here to validate JSON
+      return;
+    }
+     if (!provider.trim()) {
+      alert("Please enter a provider (e.g., openai).");
+      return;
+    }
+     if (!model.trim()) {
+      alert("Please enter a model (e.g., gpt-3.5-turbo).");
+      return;
+    }
+
+    handleRequest(
+      "elizaos:lpg:generate_sads_from_nl",
+      "Generate SADS from NL",
+      () => {
+        // This structure must match what the Go API handler (GenerateSadsRequest)
+        // and the MCP service (simulateAgentProcessing) expect.
+        return {
+          html_snippet: htmlSnippet,
+          style_prompt: stylePrompt,
+          sads_theme_context_json: sadsThemeContextJson,
+          provider: provider,
+          model: model,
+        };
       }
     );
   });
