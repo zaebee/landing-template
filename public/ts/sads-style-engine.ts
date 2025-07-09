@@ -285,14 +285,6 @@ class SADSEngine {
           fontSizeValue: rawValue,
         };
         break;
-      // fontfamily and lineheight are not tokenized yet in proto, handle as custom string
-      case "fontfamily":
-      case "lineheight":
-        attributeValue.valueType = {
-          oneofKind: "customValue", // Treat as custom string for now, resolved against theme
-          customValue: rawValue,
-        };
-        break;
       default:
         attributeValue.valueType = {
           oneofKind: "customValue",
@@ -440,8 +432,6 @@ class SADSEngine {
         break;
       case "fontSizeValue":
         semanticKey = sadsValue.valueType.fontSizeValue;
-        // For fontfamily and lineheight, if they were tokenized, they'd have their own cases.
-        // Since they are customValue here, semanticKey is already set if not custom:
         break;
       default:
         return null;
@@ -474,8 +464,6 @@ class SADSEngine {
       "font-size": "fontSize",
       "font-weight": "fontWeight",
       "font-style": "fontStyle",
-      "font-family": "fontFamily", // Added mapping
-      "line-height": "lineHeight", // Added mapping
       "border-radius": "borderRadius",
       "border-style": "borderStyle",
       "box-shadow": "shadow",
@@ -836,8 +824,6 @@ class SADSEngine {
       "font-size": "fontSize",
       "font-weight": "fontWeight",
       "font-style": "fontStyle",
-      "font-family": "fontFamily", // Added mapping
-      "line-height": "lineHeight", // Added mapping
       "border-radius": "borderRadius",
       "border-style": "borderStyle",
       "box-shadow": "shadow",
@@ -855,11 +841,9 @@ class SADSEngine {
           const colorKey = isDarkMode ? `${valueStr}-dark` : valueStr;
           return themeCategory[colorKey] || themeCategory[valueStr] || valueStr;
         }
-        // For other categories like fontFamily, lineHeight, spacing, etc.
         return themeCategory[valueStr] || valueStr;
       }
     }
-    // Fallback for values not in theme or not mapped (e.g. custom CSS values passed directly)
     return valueStr;
   }
 }
