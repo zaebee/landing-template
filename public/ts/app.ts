@@ -17,6 +17,7 @@ import { initSadsEngine, reapplySadsStyles } from "./modules/sadsManager.js";
 import { initMcpComponent } from "./components/mcp.js"; // This is for the SADS AI test component
 import { initIdeAgentPanel } from "./components/ide_agent_panel.js"; // New IDE Agent Panel
 import { initChatComponent } from "./components/chat.js"; // Import the new chat component initializer
+import { initSliderComponent } from "./components/slider.js"; // Import the new slider component initializer
 
 // Define the appGlobal structure for window augmentation
 interface AppGlobal {
@@ -102,6 +103,7 @@ async function initializeApp(): Promise<void> {
   initMcpComponent(); // Initialize the SADS AI test MCP component
   initIdeAgentPanel(); // Initialize the new IDE Agent Panel
   initChatComponent(); // Initialize the Chat Component
+  initSliderComponent(); // Initialize the Image Slider Component
 
   // 5. Attach event listeners now that everything is initialized.
   _attachEventListeners();
