@@ -68,10 +68,7 @@ main {
 
 /* --- Header Navigation Links --- */
 /* Base styling for nav links (padding, etc.) is by SADS attributes */
-header nav ul li a {
-  display: block; /* Ensures padding and hover areas work well */
-  position: relative; /* For potential future pseudo-elements if needed */
-}
+/* SADS attributes data-sads-display="block" and data-sads-position="relative" have been added to the <a> tags. */
 
 /* Hover/Focus states for nav links */
 header nav ul li a:hover,
@@ -99,40 +96,15 @@ body.dark-mode header nav ul li a.active-nav-link {
 }
 
 /* --- Header Buttons (Dark Mode Toggle & Language Switcher) --- */
-/* General styling for header buttons if SADS attributes are not sufficient */
-#dark-mode-toggle,
-#language-switcher button {
-  cursor: pointer;
-  padding: 0.4rem 0.8rem; /* Base padding, can be refined by SADS attributes */
-  border-radius: 4px; /* Default, can be SADS attribute */
-  transition:
-    background-color 0.2s ease-in-out,
-    border-color 0.2s ease-in-out,
-    color 0.2s ease-in-out;
-  line-height: 1;
-  min-width: 40px;
-  min-height: 30px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  /* SADS attributes handle base bg-color, text-color, border-color */
-}
-
-/* Dark Mode Toggle specific base styles */
-#dark-mode-toggle {
-  background-color: transparent; /* Icon button style */
-  border: 1px solid transparent; /* Icon button style */
-  font-size: 1.2rem; /* Larger icon */
-  /* SADS data-sads-padding="xs" provides its specific padding */
-}
-
-/* Language Switcher buttons base text color (if not set by SADS) */
-#language-switcher button {
-  color: #333; /* Fallback if SADS doesn't provide text-color */
-}
-body.dark-mode #language-switcher button {
-  /* SADS attributes should handle dark mode text color, bg, border for these */
-}
+/*
+  Base styling for these buttons (cursor, padding, border-radius, transition,
+  line-height, min-width, min-height, display, align-items, justify-content)
+  are now handled by SADS attributes on the button elements in index.html.
+  Specifics like font-size for dark-mode-toggle, and transparent bg/border
+  are also SADS attributes.
+  The fallback color for language-switcher buttons is also removed as SADS
+  data-sads-text-color="text-primary" is applied.
+*/
 
 /* Hover/Focus states for Dark Mode Toggle and Language Switcher buttons */
 #dark-mode-toggle:hover,
