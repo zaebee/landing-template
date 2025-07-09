@@ -210,9 +210,15 @@ export function initMcpComponent(): void {
             ? Struct.toJson(informPayload.resultDetails)
             : null;
 
-          if (resultDetailsJson && typeof resultDetailsJson === 'object' && !Array.isArray(resultDetailsJson)) {
+          if (
+            resultDetailsJson &&
+            typeof resultDetailsJson === "object" &&
+            !Array.isArray(resultDetailsJson)
+          ) {
             const sadsData = resultDetailsJson as Record<string, any>;
-            const sadsAttributes = sadsData.sads_attributes_string as string | undefined;
+            const sadsAttributes = sadsData.sads_attributes_string as
+              | string
+              | undefined;
             const error = sadsData.error as string | undefined;
 
             if (error) {
@@ -239,13 +245,13 @@ export function initMcpComponent(): void {
           } else {
             // This case handles if resultDetailsJson is null, not an object, or is an array,
             // or if the structure doesn't match expectations.
-            console.warn("Received SADS response with invalid or null resultDetails structure:", resultDetailsJson);
+            console.warn(
+              "Received SADS response with invalid or null resultDetails structure:",
+              resultDetailsJson
+            );
             messageAreaEl.textContent =
               "Received invalid or empty SADS data from MCP.";
-            messageAreaEl.setAttribute(
-              "data-sads-text-color",
-              "text-warning"
-            );
+            messageAreaEl.setAttribute("data-sads-text-color", "text-warning");
           }
         } else if (
           responseMessage.performative === Performative.FAILURE ||
