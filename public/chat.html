@@ -227,12 +227,12 @@
       // but including for consistency with base.html.
       window.sadsConfig = {
         sadsPocWasmPath: "/public/dist/assets/wasm/sads_poc.wasm", // Adjusted path
-        wasmExecPath: "/public/dist/assets/wasm/wasm_exec.js",     // Adjusted path
+        wasmExecPath: "/public/dist/assets/wasm/wasm_exec.js", // Adjusted path
         // sadsDefaultThemePath and sadsEnginePath are typically not loaded this way
         // if sadsManager in app.ts directly imports and initializes the theme and engine.
         // For SADS V2, these might not be used from window.sadsConfig by app.ts.
         sadsDefaultThemePath: "", // Placeholder, app.ts imports theme directly
-        sadsEnginePath: "",       // Placeholder, app.ts imports engine directly
+        sadsEnginePath: "", // Placeholder, app.ts imports engine directly
       };
     </script>
     <script type="module" src="/public/dist/assets/js/app.js" defer></script>
