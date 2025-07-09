@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Flow Viewer Demo</title>
+    <!-- 1. Include Mermaid.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <!-- 2. Include the Web Component Definition -->
+    <script type="module" src="/js/components/task-flow-viewer.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        header h1 {
+            margin-bottom: 5px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .component-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .component-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        h2 {
+            font-size: 1.2em;
+            color: #555;
+            margin-bottom:10px;
+        }
+        /* Basic styling for potential controls if added later */
+        .controls {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .controls label {
+            margin-right: 10px;
+        }
+        .controls select, .controls button {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Task Flow Viewer Web Component Demo</h1>
+        <p>Demonstrating the <code>&lt;task-flow-viewer&gt;</code> custom element.</p>
+    </header>
+
+    <div class="container">
+        <div class="controls">
+            <p><em>(Future controls like a dropdown to select different flows could go here)</em></p>
+        </div>
+
+        <section class="component-section">
+            <h2>Viewing 'generate_sads_from_nl.flow.json'</h2>
+            <!-- 3. Use the Web Component -->
+            <task-flow-viewer flow-src="/task_flows/generate_sads_from_nl.flow.json"></task-flow-viewer>
+        </section>
+
+        <section class="component-section">
+            <h2>Viewing a Non-Existent Flow (Error Handling Demo)</h2>
+            <task-flow-viewer flow-src="/task_flows/non_existent_flow.json"></task-flow-viewer>
+        </section>
+
+        <section class="component-section">
+            <h2>Viewing with Empty flow-src (Error Handling Demo)</h2>
+            <task-flow-viewer flow-src=""></task-flow-viewer>
+        </section>
+
+        <!--
+        To add another valid flow, first create another .json file in public/task_flows/
+        For example, if you had 'public/task_flows/another_example.flow.json':
+
+        <section class="component-section">
+            <h2>Viewing 'another_example.flow.json'</h2>
+            <task-flow-viewer flow-src="/task_flows/another_example.flow.json"></task-flow-viewer>
+        </section>
+        -->
+    </div>
+
+    <script>
+        // Initialize Mermaid.js.
+        // Note: task-flow-viewer.js calls mermaid.run() internally after content is ready.
+        // Global initialization might also be done here if preferred for some Mermaid configurations.
+        // mermaid.initialize({ startOnLoad: true }); // This is often default.
+        // If startOnLoad is true, ensure component's JS is loaded as type="module" or deferred
+        // so that `customElements.define` runs before Mermaid tries to initialize elements that don't exist yet.
+        // The component itself now calls mermaid.run(), so global initialize might not be strictly needed
+        // if mermaid.js is loaded. However, it's good practice to ensure Mermaid is configured.
+        mermaid.initialize({
+            startOnLoad: false, // We will manually trigger rendering via mermaid.run() in the component
+            // Example of theme selection:
+            // theme: 'default',
+            // securityLevel: 'loose' // If you have issues with scripts/styles in SVG
+        });
+    </script>
+</body>
+</html>
