@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "ES2020", // Target version of JavaScript
+    "module": "ESNext", // Module system
+    "rootDir": ".", // Project root as rootDir
+    "outDir": "./public/js", // Output directory for compiled JavaScript
+    "baseUrl": ".", // Base directory for path mappings
+    "paths": {
+      "@generated/*": ["generated/ts/*"] // Alias for generated protobuf TS files
+    },
+    "esModuleInterop": true, // Enables compatibility with CommonJS modules
+    "forceConsistentCasingInFileNames": true, // Enforces consistent file casing
+    "strict": true, // Enable all strict type-checking options
+    "skipLibCheck": true, // Skip type checking of declaration files
+    "sourceMap": true, // Generate source maps for debugging
+    "resolveJsonModule": true, // Allow importing JSON files
+    "moduleResolution": "node", // Specify module resolution strategy - Changed from "node"
+    "lib": ["ES2020", "DOM", "DOM.Iterable"], // Standard libraries to include
+    "allowJs": false, // Do not allow JavaScript files to be compiled
+    "checkJs": false // Do not type-check JavaScript files
+    // "declaration": true,                   // Generate .d.ts files (optional for now)
+    // "declarationMap": true,                // Generate source maps for .d.ts files (optional for now)
+  },
+  "include": [
+    "public/ts/**/*.ts", // Compile files from public/ts
+    "generated/ts/**/*.ts" // Also compile generated TS files
+  ],
+  "exclude": [
+    "node_modules", // Exclude node_modules
+    "**/*.spec.ts", // Exclude test files if any
+    "build_protocols" // Exclude python files if accidentally matched
+  ]
+}

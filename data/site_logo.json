@@ -1,0 +1,6 @@
+{
+  "image_path": "public/logo.svg",
+  "alt_text_key": "logo_alt_text",
+  "logo_text_key": "logo_text",
+  "target_url": "index.html"
+}

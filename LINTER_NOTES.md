@@ -4,11 +4,11 @@ This document outlines known linting issues that are best addressed by configuri
 
 ## HTMLHint: `doctype-first`
 
-- **Issue**: HTMLHint (via Super-linter) reports a `doctype-first` error for all HTML files in the `blocks/` directory (e.g., `blocks/hero.html`, `blocks/features.html`, etc.).
+- **Issue**: HTMLHint (via Super-linter) reports a `doctype-first` error for HTML partials (e.g., `blocks/hero.html`, `templates/components/features/features.html`, etc.). Some partials are in `blocks/` while newer components might be in `templates/components/`.
 - **Reason**: These files are HTML partials, intended to be included in the main `index.html` by the `build.py` script. As partials, they should not contain a `<!DOCTYPE html>` declaration. The `doctype-first` rule is intended for complete HTML documents.
 - **Suggested Solution**: Configure HTMLHint in the CI pipeline to:
-  - Ignore the `doctype-first` rule specifically for files within the `blocks/` directory.
-  - Alternatively, if HTMLHint is invoked directly, adjust its ruleset (e.g., via an `.htmlhintrc` file if Super-Linter picks it up) to accommodate these partials. For example, exclude the `blocks/` directory from this specific rule or from HTMLHint checks altogether if they are only meant to be validated as part of the assembled `index.html`.
+  - Ignore the `doctype-first` rule specifically for files within the `blocks/` and `templates/components/` directories.
+  - Alternatively, if HTMLHint is invoked directly, adjust its ruleset (e.g., via an `.htmlhintrc` file if Super-Linter picks it up) to accommodate these partials. For example, exclude these directories from this specific rule or from HTMLHint checks altogether if they are only meant to be validated as part of the assembled `index.html`.
 
 ## JSCPD: Duplication Warnings
 
@@ -33,12 +33,36 @@ CSS files (`.css`) are linted using [Stylelint](https://stylelint.io/).
   - `npm run lint:css` - Runs stylelint to check CSS files.
   - `npm run lint:css:fix` - Runs stylelint and attempts to automatically fix issues.
 
-## Python Linting (Ruff & MyPy)
+## Go Linting (Staticcheck & Go Vet)
 
-Python code (`.py` files) is linted using [Ruff](https://beta.ruff.rs/docs/) for formatting and general code quality (style, errors, etc.) and [MyPy](http://mypy-lang.org/) for static type checking.
+Go code (`.go` files) is linted using standard Go tools:
+
+- **`go vet`**: A built-in tool that examines Go source code and reports suspicious constructs, such as Printf calls whose arguments do not align with the format string.
+- **`staticcheck`**: A more advanced static analysis tool that finds bugs, performance issues, and stylistic problems. (Installation: `go install honnef.co/go/tools/cmd/staticcheck@latest`)
 
 - **Configuration**:
+  - These tools generally work with sensible defaults. Specific checks can sometimes be disabled via comments if necessary, but this should be rare.
 
+- **Running Linters**:
+  - `go vet ./...` - Runs `go vet` on all packages in the current module.
+  - `staticcheck ./...` - Runs `staticcheck` on all packages.
+  - These can be added to `package.json` scripts, for example:
+    ```json
+    "scripts": {
+      // ... other scripts
+      "lint:go": "go vet ./... && staticcheck ./...",
+      "lint": "npm run lint:css && npm run lint:go && npm run format"
+    }
+    ```
+  - The `format.sh` script might also be updated to include `gofmt` or `goimports` for Go code formatting.
+
+_(The Python linting section below can be removed if no Python code remains in the project, or kept if utility scripts in Python are still used.)_
+
+## Python Linting (Ruff & MyPy)
+
+Python code (`.py` files), if any remains (e.g., utility scripts), is linted using [Ruff](https://beta.ruff.rs/docs/) for formatting and general code quality (style, errors, etc.) and [MyPy](http://mypy-lang.org/) for static type checking.
+
+- **Configuration**:
   - Ruff is configured in `pyproject.toml` under the `[tool.ruff]` and `[tool.ruff.lint]` sections.
   - MyPy is configured in `pyproject.toml` under the `[tool.mypy]` section.
   - Development dependencies, including `ruff` and `mypy`, are listed in `requirements-dev.txt`. Install them using `pip install -r requirements-dev.txt`.

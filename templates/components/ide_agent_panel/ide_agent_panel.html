@@ -1,0 +1,138 @@
+<!-- templates/components/ide_agent_panel/ide_agent_panel.html -->
+<div
+  data-sads-component="ide-agent-panel"
+  data-sads-scope="ide-agent-panel-scope"
+  data-sads-layout-type="flex"
+  data-sads-flex-direction="column"
+  data-sads-padding="m"
+  data-sads-gap="m"
+  data-sads-border="custom:1px_solid_neutral-border"
+  data-sads-bg-color="bg-default"
+  data-sads-width="custom:400px"
+  data-sads-height="custom:600px"
+  data-sads-text-color="text-primary"
+>
+  <h2 data-sads-typography="heading-m" data-sads-margin-bottom="s">
+    ElizaOS Agent Interaction
+  </h2>
+
+  <div
+    data-sads-element="status-area"
+    data-sads-padding="s"
+    data-sads-bg-color="bg-subtle"
+    data-sads-border-radius="s"
+    data-sads-min-height="custom:40px"
+    data-sads-text-color="text-secondary"
+  >
+    Status: Not Connected
+  </div>
+
+  <div
+    data-sads-layout-type="flex"
+    data-sads-flex-direction="column"
+    data-sads-gap="s"
+  >
+    <label for="agent-id-input" data-sads-typography="label-default"
+      >Target Agent ID (e.g., jules, eddy):</label
+    >
+    <input
+      type="text"
+      id="agent-id-input"
+      data-sads-element="agent-id-input"
+      value="jules"
+      data-sads-input-bg-color="bg-input"
+      data-sads-input-text-color="text-input"
+      data-sads-input-border="custom:1px_solid_neutral-border"
+      data-sads-padding="s"
+      data-sads-border-radius="s"
+    />
+  </div>
+
+  <div
+    data-sads-layout-type="flex"
+    data-sads-flex-direction="column"
+    data-sads-gap="s"
+  >
+    <label for="code-snippet-input" data-sads-typography="label-default"
+      >Code Snippet / Input:</label
+    >
+    <textarea
+      id="code-snippet-input"
+      data-sads-element="code-snippet-input"
+      rows="8"
+      data-sads-input-bg-color="bg-input"
+      data-sads-input-text-color="text-input"
+      data-sads-input-border="custom:1px_solid_neutral-border"
+      data-sads-padding="s"
+      data-sads-font-family="monospace"
+      data-sads-border-radius="s"
+    ></textarea>
+  </div>
+
+  <div
+    data-sads-layout-type="flex"
+    data-sads-flex-direction="column"
+    data-sads-gap="s"
+  >
+    <label for="user-query-input" data-sads-typography="label-default"
+      >Your Query / Request:</label
+    >
+    <input
+      type="text"
+      id="user-query-input"
+      data-sads-element="user-query-input"
+      value="Explain this code."
+      data-sads-input-bg-color="bg-input"
+      data-sads-input-text-color="text-input"
+      data-sads-input-border="custom:1px_solid_neutral-border"
+      data-sads-padding="s"
+      data-sads-border-radius="s"
+    />
+  </div>
+
+  <div
+    data-sads-layout-type="flex"
+    data-sads-gap="m"
+    data-sads-flex-wrap="wrap"
+  >
+    <button
+      data-sads-element="explain-code-button"
+      data-sads-button-variant="primary"
+      data-sads-padding-x="m"
+      data-sads-padding-y="s"
+    >
+      Ask to Explain
+    </button>
+    <button
+      data-sads-element="refactor-code-button"
+      data-sads-button-variant="secondary"
+      data-sads-padding-x="m"
+      data-sads-padding-y="s"
+    >
+      Suggest Refactor
+    </button>
+  </div>
+
+  <div
+    data-sads-layout-type="flex"
+    data-sads-flex-direction="column"
+    data-sads-gap="s"
+    data-sads-margin-top="m"
+  >
+    <h3 data-sads-typography="heading-s">Agent Response:</h3>
+    <div
+      data-sads-element="response-area"
+      data-sads-padding="m"
+      data-sads-bg-color="bg-subtle"
+      data-sads-border="custom:1px_solid_neutral-border-soft"
+      data-sads-min-height="custom:100px"
+      data-sads-max-height="custom:300px"
+      data-sads-overflow-y="auto"
+      data-sads-border-radius="s"
+      data-sads-text-color="text-primary"
+      style="white-space: pre-wrap; word-wrap: break-word"
+    >
+      Awaiting response...
+    </div>
+  </div>
+</div>

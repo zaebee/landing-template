@@ -1,0 +1,216 @@
+<section
+  data-sads-component="contact-form"
+  id="contact" {# Keep ID for potential navigation #}
+  data-sads-padding="xl" {# CSS: 2rem #}
+  data-sads-bg-color="contact-section-bg" {# Theme: #e9ecef light, #2a2a2a dark #}
+  data-sads-text-align="center" {# CSS: text-align: center for the section block #}
+>
+  <div
+    data-sads-element="container" {# This is the form wrapper div #}
+    data-sads-max-width="custom:600px" {# CSS: max-width: 600px #}
+    data-sads-margin="custom:0 auto" {# CSS: margin: auto #}
+    data-sads-bg-color="contact-form-inner-bg" {# Theme: #fff light, #1f1f1f dark #}
+    data-sads-padding="xl" {# CSS: padding: 2rem #}
+    data-sads-border-radius="custom:8px" {# CSS: border-radius: 8px #}
+    data-sads-shadow="contact-form-shadow" {# Theme: 0 2px 5px rgb(0 0 0 / 10%) light, 0 2px 5px rgb(255 255 255 / 10%) dark #}
+  >
+    <h2
+      data-sads-element="title"
+      data-i18n="contact_title"
+      data-sads-font-size="custom:2rem" {# CSS: font-size: 2rem #}
+      data-sads-text-color="text-primary" {# Retaining existing, ensure theme supports dark mode #}
+      data-sads-margin-bottom="xl" {# CSS: margin-bottom: 2rem #}
+      data-sads-text-align="center"
+    >
+      {{ translations["contact_title"] | default:"Contact Us" }}
+    </h2>
+    <form
+      data-sads-element="form"
+      class="contact-form-tag" {# Added class for CSS targeting if needed for submit hover #}
+      id="contactForm" {# ID is used by the script #}
+      method="POST"
+      action="{% if config and config.form_action_uri %}{{ config.form_action_uri }}{% else %}#{% endif %}"
+      data-form-action-url="{% if config and config.form_action_uri %}{{ config.form_action_uri }}{% else %}#{% endif %}"
+      data-success-message="{% if config and config.success_message_key %}{{ translations[config.success_message_key] | default:"Message sent!" }}{% else %}Message sent!{% endif %}"
+      data-error-message="{% if config and config.error_message_key %}{{ translations[config.error_message_key] | default:"Error sending message." }}{% else %}Error sending message.{% endif %}"
+      data-sads-display="flex"
+      data-sads-flex-direction="column"
+      data-sads-gap="m"
+    >
+      <div>
+        <label
+          for="name"
+          data-i18n="contact_name_label"
+          data-sads-element="label"
+          data-sads-display="block"
+          data-sads-margin-bottom="xs" {# CSS: margin-bottom: 0.5rem #}
+          data-sads-font-weight="bold"
+          data-sads-text-color="contact-label-text" {# Theme for label text, esp. for dark mode #}
+          data-sads-text-align="left"
+        >
+          {{ translations["contact_name_label"] | default:"Name:" }}
+        </label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          required
+          data-sads-element="input"
+          data-sads-width="full" {# CSS: width: 100% #}
+          data-sads-padding="custom:0.75rem" {# CSS: padding: 0.75rem #}
+          data-sads-border-width="custom:1px" {# CSS: border: 1px solid #ccc #}
+          data-sads-border-style="solid"
+          data-sads-border-color="contact-input-border" {# Theme: #ccc light, #555 dark #}
+          data-sads-border-radius="custom:4px" {# CSS: border-radius: 4px #}
+          data-sads-box-sizing="border-box" {# CSS: box-sizing: border-box #}
+          data-sads-bg-color="contact-input-bg" {# Theme: input bg light (e.g. #fff), #333 dark #}
+          data-sads-text-color="contact-input-text" {# Theme: input text light (e.g. #333), #e0e0e0 dark #}
+        />
+      </div>
+
+      <div>
+        <label
+          for="email"
+          data-i18n="contact_email_label"
+          data-sads-element="label"
+          data-sads-display="block"
+          data-sads-margin-bottom="xs" {# CSS: margin-bottom: 0.5rem #}
+          data-sads-font-weight="bold"
+          data-sads-text-color="contact-label-text" {# Theme for label text, esp. for dark mode #}
+          data-sads-text-align="left"
+        >
+          {{ translations["contact_email_label"] | default:"Email:" }}
+        </label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          required
+          data-sads-element="input"
+          data-sads-width="full" {# CSS: width: 100% #}
+          data-sads-padding="custom:0.75rem" {# CSS: padding: 0.75rem #}
+          data-sads-border-width="custom:1px" {# CSS: border: 1px solid #ccc #}
+          data-sads-border-style="solid"
+          data-sads-border-color="contact-input-border" {# Theme: #ccc light, #555 dark #}
+          data-sads-border-radius="custom:4px" {# CSS: border-radius: 4px #}
+          data-sads-box-sizing="border-box" {# CSS: box-sizing: border-box #}
+          data-sads-bg-color="contact-input-bg" {# Theme: input bg light (e.g. #fff), #333 dark #}
+          data-sads-text-color="contact-input-text" {# Theme: input text light (e.g. #333), #e0e0e0 dark #}
+        />
+      </div>
+
+      <div>
+        <label
+          for="message"
+          data-i18n="contact_message_label"
+          data-sads-element="label"
+          data-sads-display="block"
+          data-sads-margin-bottom="xs" {# CSS: margin-bottom: 0.5rem #}
+          data-sads-font-weight="bold"
+          data-sads-text-color="contact-label-text" {# Theme for label text, esp. for dark mode #}
+          data-sads-text-align="left"
+        >
+          {{ translations["contact_message_label"] | default:"Message:" }}
+        </label>
+        <textarea
+          id="message"
+          name="message"
+          rows="4"
+          required
+          data-sads-element="textarea"
+          data-sads-width="full" {# CSS: width: 100% #}
+          data-sads-padding="custom:0.75rem" {# CSS: padding: 0.75rem #}
+          data-sads-border-width="custom:1px" {# CSS: border: 1px solid #ccc #}
+          data-sads-border-style="solid"
+          data-sads-border-color="contact-input-border" {# Theme: #ccc light, #555 dark #}
+          data-sads-border-radius="custom:4px" {# CSS: border-radius: 4px #}
+          data-sads-box-sizing="border-box" {# CSS: box-sizing: border-box #}
+          data-sads-bg-color="contact-input-bg" {# Theme: input bg light (e.g. #fff), #333 dark #}
+          data-sads-text-color="contact-input-text" {# Theme: input text light (e.g. #333), #e0e0e0 dark #}
+          data-sads-resize="vertical" {# CSS: resize: vertical #}
+        ></textarea>
+      </div>
+
+      <button
+        type="submit"
+        class="contact-submit-button" {# Class for CSS hover styles #}
+        data-i18n="contact_send_button"
+        data-sads-element="button"
+        data-sads-width="full" {# CSS: display: inline-block, but width full takes precedence #}
+        data-sads-padding="custom:10px 20px" {# CSS: padding: 10px 20px #}
+        data-sads-bg-color="contact-submit-bg" {# Theme: #28a745 light, #1a73e8 dark #}
+        data-sads-text-color="contact-submit-text" {# Theme: #fff light (dark could be inferred or set) #}
+        data-sads-border-style="none" {# CSS: border: none #}
+        data-sads-border-radius="custom:5px" {# CSS: border-radius: 5px #}
+        data-sads-cursor="pointer" {# CSS: cursor: pointer #}
+        data-sads-font-size="custom:1rem" {# CSS: font-size: 1rem #}
+        data-sads-font-weight="bold" {# CSS: font-weight: bold #}
+        data-sads-transition="custom:background-color 0.3s ease" {# CSS: transition #}
+      >
+        {{ translations["contact_send_button"] | default:"Send Message" }}
+      </button>
+      <div
+        data-sads-element="status-message"
+        id="contactFormStatus" {# ID is used by the script #}
+        role="status"
+        data-sads-min-height="custom:1.5em" {# Reserve space for message #}
+        data-sads-margin-top="s"
+        data-sads-text-align="center"
+        data-sads-font-size="s"
+        {# SADS could have attributes for success/error text colors e.g. data-sads-text-color-success, data-sads-text-color-error #}
+        {# These would be dynamically applied by JS if SADS supports it, or use classes as current script does #}
+      ></div>
+    </form>
+  </div>
+</section>
+
+{# The script part remains the same as it's client-side JavaScript #}
+{# It's already designed to pick up data attributes from the form tag and target IDs #}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("contactForm");
+    if (form) {
+      const statusDiv = document.getElementById("contactFormStatus");
+      const actionUrl = form.dataset.formActionUrl;
+      const successMessage = form.dataset.successMessage;
+      const errorMessage = form.dataset.errorMessage;
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const formData = new FormData(form);
+        statusDiv.textContent = "";
+        statusDiv.classList.remove("success", "error"); // Keep class-based styling for status messages for now
+
+        fetch(actionUrl, {
+          method: "POST",
+          body: formData,
+          headers: {
+            Accept: "application/json",
+          },
+        })
+          .then((response) => {
+            if (response.ok) {
+              statusDiv.textContent = successMessage;
+              statusDiv.classList.add("success"); // JS adds 'success' class
+              form.reset();
+            } else {
+              response.json().then((data) => {
+                if (Object.hasOwn(data, "errors")) {
+                  statusDiv.textContent = data["errors"]
+                    .map((error) => error["message"])
+                    .join(", ");
+                } else {
+                  statusDiv.textContent = errorMessage;
+                }
+                statusDiv.classList.add("error"); // JS adds 'error' class
+              });
+            }
+          })
+          .catch((error) => {
+            statusDiv.textContent = errorMessage;
+            statusDiv.classList.add("error");
+          });
+      });
+    }
+  });
+</script>

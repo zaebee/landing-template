@@ -7,6 +7,7 @@ __pycache__/
 env/
 venv/
 .venv/
+.env
 
 # MyPy
 .mypy_cache/
@@ -19,6 +20,8 @@ venv/
 
 # Protobuf generated files
 generated/
+public/generated_configs/
+public/js/
 
 # Node / NPM
 node_modules/
@@ -39,6 +42,7 @@ Thumbs.db
 # Build output
 dist/
 build/
+public/js/compiled_ts/
 *.egg-info/
 *.egg
 
