@@ -175,10 +175,10 @@ message IdeCodeExplanationResponse {
 // within google.protobuf.Struct for task_parameters (when sending)
 // or result_details (when receiving/broadcasting).
 message ChatMessage {
-  string user_id = 1;    // Unique identifier for the user sending the message
-  string user_name = 2;  // Display name of the user
-  string text = 3;       // Content of the chat message
-  google.protobuf.Timestamp timestamp = 4;  // Time the message was sent
+  string user_id = 1;         // Unique identifier for the user sending the message
+  string user_name = 2;       // Display name of the user
+  string text = 3;            // Content of the chat message
+  google.protobuf.Timestamp timestamp = 4; // Time the message was sent
 }
 
 // 4.4. QUERY_IF

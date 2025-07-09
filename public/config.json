@@ -1,11 +1,8 @@
 {
   "blocks": [
     "components/hero/hero.html",
-    "components/chat/chat.html",
-    "components/ide_agent_panel/ide_agent_panel.html",
-    "components/testimonials/testimonials.html",
     "components/features/features.html",
-    "components/mcp/mcp.html",
+    "components/testimonials/testimonials.html",
     "components/portfolio/portfolio.html",
     "components/blog/blog.html",
     "components/contact-form/contact-form.html"
@@ -42,11 +39,6 @@
     "components/contact-form/contact-form.html": {
       "data_file": "data/contact_form_config.json",
       "message_type_name": "ContactFormConfig",
-      "is_list": false
-    },
-    "components/.ide_agent_panel/ide_agent_panel.htm": {
-      "data_file": "data/mcp.json",
-      "message_type_name": "Mcp",
       "is_list": false
     }
   },

@@ -11,7 +11,6 @@ import (
 	"strings"
 
 	"github.com/flosch/pongo2/v6"
-	"flag"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
@@ -469,32 +468,6 @@ func main() {
 		log.Printf("Warning: Could not load app config to register block generators: %v", err)
 	}
 	orchestrator := NewBuildOrchestrator(appConfigMgr, translationProvider, dataLoader, dataCache, pageBuilder, htmlGenerators, assetBundler)
-
-	// Add a flag for serving the previewer
-	servePreviewer := flag.Bool("serve-previewer", false, "Start the SADS component previewer API server")
-	previewerPort := flag.String("previewer-port", "8081", "Port for the SADS previewer API server")
-	flag.Parse()
-
-	if *servePreviewer {
-		log.Println("Starting SADS Previewer server...")
-		// Ensure that StartSadsPreviewerServer is accessible (it should be as it's in package main)
-		// go StartSadsPreviewerServer(*previewerPort) // Run in a goroutine if you also want to build
-		// If you only want to serve and not build, you can just call it directly
-		// and the program will block here. For now, let's assume we might want to build then serve,
-		// or serve while the main app might have other functions.
-		// For this feature, perhaps it's better to *only* serve.
-		// So, removing 'go' to make it blocking if the flag is set.
-		// If the server should run *instead* of the build:
-		StartSadsPreviewerServer(*previewerPort)
-		// If it should run *after* a build, then the build logic needs to be conditional too,
-		// or this server start needs to be after the build.
-		// For now, if -serve-previewer is true, it will ONLY serve.
-		log.Println("SADS Previewer server has been started. Process will exit when server stops.")
-		return // Exit main after starting server, so build doesn't run.
-	}
-
-	// Default behavior: run the build process
-	log.Println("Running build process...")
 	if err := orchestrator.BuildAllLanguages(); err != nil { log.Fatalf("Build process failed: %v", err) }
 
 
@@ -650,13 +623,7 @@ func (ab *DefaultAssetBundler) BundleJs(projectRoot, baseOutputDir string) (stri
 		"public/ts/modules/translation.js",
 		"public/ts/modules/wasmLoader.js",
 		// Files from public/ts/components/*
-		"public/ts/components/chat.js",
 		"public/ts/components/mcp.js",
-		"public/ts/components/ide_agent_panel.js", // Added
-		// Files from public/ts/services/*
-		"public/ts/services/mcp_client.js", // Added
-		// Files from public/ts/* (root)
-		"public/ts/config.js", // Added
 		// Files from generated/ts/* (compiled proto files)
 		"generated/ts/blog_post.js",
 		"generated/ts/common.js",
@@ -665,12 +632,8 @@ func (ab *DefaultAssetBundler) BundleJs(projectRoot, baseOutputDir string) (stri
 		"generated/ts/hero_item.js",
 		"generated/ts/nav_item.js",
 		"generated/ts/portfolio_item.js",
-		"generated/ts/sads_styling.v1.js",
+		"generated/ts/sads_styling.v1.js", // The critical missing file
 		"generated/ts/testimonial_item.js",
-		// Files from generated/ts/google/protobuf/*
-		"generated/ts/google/protobuf/struct.js", // Added
-		"generated/ts/google/protobuf/timestamp.js", // Added
-		"generated/ts/mcp.js", // Added
 	}
 	// Add .map files for all the .js files
 	var allJsFilesWithMaps []string
@@ -695,37 +658,22 @@ func (ab *DefaultAssetBundler) BundleJs(projectRoot, baseOutputDir string) (stri
 		// Determine the target path suffix relative to "public/dist/assets/js/"
 		// e.g., for "public/ts/app.js", target suffix is "app.js"
 		// e.g., for "public/ts/modules/darkMode.js", target suffix is "modules/darkMode.js"
+		targetPathSuffix := strings.TrimPrefix(compiledJsPathSuffix, "public/ts/")
 
-		// Determine the target path suffix for the final asset structure.
-        // Files from "public/ts/" should be flattened into "assets/js/" or subdirs.
-        // Files from "generated/ts/" should go into "generated/ts/" under "public/dist/".
-        var targetPathSuffix string
-        var isGeneratedProto bool
-
-        if strings.HasPrefix(compiledJsPathSuffix, "public/ts/") {
-            targetPathSuffix = strings.TrimPrefix(compiledJsPathSuffix, "public/ts/")
-            isGeneratedProto = false
-        } else if strings.HasPrefix(compiledJsPathSuffix, "generated/ts/") {
-            targetPathSuffix = strings.TrimPrefix(compiledJsPathSuffix, "generated/ts/")
-            isGeneratedProto = true
-        } else {
-            log.Printf("Warning: Unrecognized JS source path prefix for %s. Skipping.", compiledJsPathSuffix)
-            continue
-        }
-
-		// Final destination for the JS file
+		// Final destination for the JS file, e.g., /app/public/dist/assets/js/app.js
 		var destJs string
-		if isGeneratedProto {
-            // e.g. public/dist/generated/ts/mcp.js or public/dist/generated/ts/google/protobuf/struct.js
-            // The targetPathSuffix already includes "google/protobuf/" if present.
-			destJs = filepath.Join(baseOutputDir, "generated", "ts", targetPathSuffix)
+		if strings.HasPrefix(compiledJsPathSuffix, "generated/ts/") {
+			// For generated protobuf files, place them in public/dist/generated/ts/
+			// targetPathSuffix will be like "generated/ts/sads_styling.v1.js"
+			destJs = filepath.Join(baseOutputDir, targetPathSuffix) // e.g. public/dist/generated/ts/sads_styling.v1.js
 		} else {
-            // e.g. public/dist/assets/js/app.js or public/dist/assets/js/components/ide_agent_panel.js
-            // The targetPathSuffix includes subdirectories like "components/" or "services/".
-			destJs = filepath.Join(finalDestJsAssetDir, targetPathSuffix)
+			// For other app-specific JS files (app.js, sads-style-engine.js, modules/*),
+			// place them in public/dist/assets/js/
+			// targetPathSuffix will be like "app.js" or "modules/darkMode.js"
+			destJs = filepath.Join(finalDestJsAssetDir, targetPathSuffix) // e.g. public/dist/assets/js/app.js
 		}
 
-		// Ensure destination subdirectory (like 'modules' or 'generated/ts' or 'generated/ts/google/protobuf') exists
+		// Ensure destination subdirectory (like 'modules' or 'generated/ts') exists
 		destJsSubDir := filepath.Dir(destJs)
 		if err := os.MkdirAll(destJsSubDir, 0755); err != nil {
 			log.Printf("Failed to create destination subdirectory %s for JS file %s: %v. Skipping.", destJsSubDir, targetPathSuffix, err)

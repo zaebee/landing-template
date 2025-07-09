@@ -67,6 +67,7 @@ This component is part of a larger web application. To "install" or run this PoC
 
 1.  Ensure the MCP server (`cmd/server/main.go`) is running.
 2.  Open `public/mcp_debug_panel.html` in your web browser (e.g., `http://localhost:8000/public/mcp_debug_panel.html`).
+    *   Alternatively, the IDE Agent Panel, along with a Chat component, can be found on `public/chat.html`.
 3.  The panel will attempt to connect to the MCP server. The status should update to "Connected".
 4.  **Enter Target Agent ID:** Specify which ElizaOS agent to send the request to (e.g., "jules", "eddy").
 5.  **Enter Code Snippet:** If applicable (for code explanation or refactoring), paste the code into the text area.

@@ -28,11 +28,7 @@ let chatInputEl: HTMLInputElement | null = null;
 let chatFormEl: HTMLFormElement | null = null;
 
 // Generate a simple unique ID for this chat client
-const clientAgentId =
-  "chat_client_" +
-  Date.now() +
-  "_" +
-  Math.random().toString(36).substring(2, 7);
+const clientAgentId = "chat_client_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7);
 let currentUserName = `User_${Math.random().toString(36).substring(2, 7)}`; // Simple random user name
 
 function displayMessage(chatMessage: ChatMessage): void {
@@ -48,10 +44,11 @@ function displayMessage(chatMessage: ChatMessage): void {
     messageDiv.setAttribute("data-sads-bg-color", "surface-accent"); // Example: own messages have a different bg
     messageDiv.setAttribute("data-sads-border-radius", "s");
     messageDiv.setAttribute("data-sads-align-self", "flex-end"); // Align own messages to the right
-    messageDiv.style.marginLeft = "auto"; // Basic right alignment
+     messageDiv.style.marginLeft = "auto"; // Basic right alignment
   } else {
     messageDiv.style.marginRight = "auto"; // Basic left alignment for others
   }
+
 
   const senderSpan = document.createElement("span");
   senderSpan.setAttribute("data-sads-font-weight", "bold");
@@ -117,9 +114,7 @@ async function handleSendMessage(event: Event): Promise<void> {
 }
 
 export function initChatComponent(): void {
-  const chatComponent = document.querySelector<HTMLElement>(
-    CHAT_COMPONENT_SELECTOR
-  );
+  const chatComponent = document.querySelector<HTMLElement>(CHAT_COMPONENT_SELECTOR);
   if (!chatComponent) {
     // console.log("Chat component not found on this page.");
     return;
@@ -127,33 +122,27 @@ export function initChatComponent(): void {
 
   // Assign IDs to elements for easier selection if not already present
   // This is a bit of a workaround; ideally templates have stable IDs.
-  chatMessagesEl = chatComponent.querySelector<HTMLElement>(
-    CHAT_MESSAGES_SELECTOR
-  );
-  if (chatMessagesEl && !chatMessagesEl.id)
-    chatMessagesEl.id = "chat-messages-list";
+  chatMessagesEl = chatComponent.querySelector<HTMLElement>(CHAT_MESSAGES_SELECTOR);
+  if (chatMessagesEl && !chatMessagesEl.id) chatMessagesEl.id = "chat-messages-list";
 
-  chatInputEl =
-    chatComponent.querySelector<HTMLInputElement>(CHAT_INPUT_SELECTOR);
+  chatInputEl = chatComponent.querySelector<HTMLInputElement>(CHAT_INPUT_SELECTOR);
   if (chatInputEl && !chatInputEl.id) chatInputEl.id = "chat-message-input";
 
   chatFormEl = chatComponent.querySelector<HTMLFormElement>(CHAT_FORM_SELECTOR);
   if (chatFormEl && !chatFormEl.id) chatFormEl.id = "chat-form";
 
-  const sendButtonEl = chatComponent.querySelector<HTMLButtonElement>(
-    CHAT_SEND_BTN_SELECTOR
-  );
+  const sendButtonEl = chatComponent.querySelector<HTMLButtonElement>(CHAT_SEND_BTN_SELECTOR);
   if (sendButtonEl && !sendButtonEl.id) sendButtonEl.id = "chat-send-button";
 
+
   if (!chatMessagesEl || !chatInputEl || !chatFormEl) {
-    console.error(
-      "Chat component missing critical elements (messages area, input, or form)."
-    );
+    console.error("Chat component missing critical elements (messages area, input, or form).");
     return;
   }
 
   // Clear any static example messages
   chatMessagesEl.innerHTML = "";
+
 
   // Prompt for username
   const name = prompt("Enter your name for chat:", currentUserName);
@@ -161,13 +150,12 @@ export function initChatComponent(): void {
     currentUserName = name.trim();
   }
 
+
   mcpClient = new MCPClient(clientAgentId, mcpServerUrl);
 
   const mcpEventHandler: McpEventHandler = {
     onOpen: () => {
-      console.log(
-        `MCP Connection Opened for Chat (Client ID: ${clientAgentId}, User: ${currentUserName}).`
-      );
+      console.log(`MCP Connection Opened for Chat (Client ID: ${clientAgentId}, User: ${currentUserName}).`);
       const statusMsg = document.createElement("div");
       statusMsg.textContent = "Connected to chat service.";
       statusMsg.setAttribute("data-sads-text-style", "italic");
@@ -183,17 +171,12 @@ export function initChatComponent(): void {
         message.ontology === CHAT_BROADCAST_ONTOLOGY &&
         message.payload.oneofKind === "informResultPayload"
       ) {
-        const informPayload = message.payload
-          .informResultPayload as InformResultPayload;
+        const informPayload = message.payload.informResultPayload as InformResultPayload;
         if (informPayload.resultDetails) {
           const resultDetailsJson = Struct.toJson(informPayload.resultDetails);
 
           // Add null check for resultDetailsJson and type assertion for property access
-          if (
-            resultDetailsJson &&
-            typeof resultDetailsJson === "object" &&
-            !Array.isArray(resultDetailsJson)
-          ) {
+          if (resultDetailsJson && typeof resultDetailsJson === 'object' && !Array.isArray(resultDetailsJson)) {
             const chatData = resultDetailsJson as Record<string, any>;
             const receivedChatMessage: Partial<ChatMessage> = {
               userId: chatData.user_id as string,
@@ -205,18 +188,12 @@ export function initChatComponent(): void {
 
             // Basic validation
             if (receivedChatMessage.text) {
-              displayMessage(receivedChatMessage as ChatMessage); // Cast after validation
+               displayMessage(receivedChatMessage as ChatMessage); // Cast after validation
             } else {
-              console.warn(
-                "Received chat broadcast with missing text field:",
-                resultDetailsJson
-              );
+              console.warn("Received chat broadcast with missing text field:", resultDetailsJson);
             }
           } else {
-            console.warn(
-              "Received chat broadcast with invalid resultDetails structure:",
-              resultDetailsJson
-            );
+            console.warn("Received chat broadcast with invalid resultDetails structure:", resultDetailsJson);
           }
         }
       }
@@ -233,7 +210,7 @@ export function initChatComponent(): void {
     },
     onClose: () => {
       console.log("Chat MCP Connection Closed.");
-      const statusMsg = document.createElement("div");
+       const statusMsg = document.createElement("div");
       statusMsg.textContent = "Chat connection closed.";
       statusMsg.setAttribute("data-sads-text-style", "italic");
       statusMsg.setAttribute("data-sads-text-color", "text-warning");

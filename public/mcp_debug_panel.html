@@ -185,9 +185,6 @@
     <!-- The build script (go run main.go) then flattens public/js/public/ts/app.js to public/dist/assets/js/app.js -->
     <!-- For local dev with `go run cmd/server/main.go` serving from root, we'd need paths like `/public/js/public/ts/app.js` if not using the full build -->
     <!-- Let's assume for now the server serves from project root, and compiled JS is in `public/js/public/ts/` -->
-    <script type="module" src="dist/assets/js/sads-default-theme.js"></script>
-    <script type="module" src="dist/assets/js/sads-style-engine.js"></script>
-    <script type="module" src="dist/assets/js/nlToSadsInterface.js"></script>
     <script type="module" src="/public/js/public/ts/app.js"></script>
   </body>
 </html>
