@@ -36,21 +36,43 @@ const clientAgentId =
 let currentUserName = `User_${Math.random().toString(36).substring(2, 7)}`; // Simple random user name
 
 function displayMessage(chatMessage: ChatMessage): void {
-  if (!chatMessagesEl) return;
+  console.log(
+    "[Chat] displayMessage - received chatMessage:",
+    JSON.parse(JSON.stringify(chatMessage))
+  ); // DEBUG LOG
+  if (!chatMessagesEl) {
+    console.error("[Chat] displayMessage - chatMessagesEl is null!");
+    return;
+  }
 
   const messageDiv = document.createElement("div");
   messageDiv.setAttribute("data-sads-element", "message");
   messageDiv.setAttribute("data-sads-padding", "s");
   messageDiv.setAttribute("data-sads-margin-bottom", "s");
+  messageDiv.setAttribute("data-sads-border-radius", "m"); // Consistent border radius
 
-  // Basic styling differentiation for own messages vs others - can be enhanced
+  // Future: Introduce chatMessage.messageType for server-sent system messages
+  // if (chatMessage.messageType === 'system') {
+  //   messageDiv.setAttribute("data-sads-bg-color", "chat-system-message-bg");
+  //   messageDiv.setAttribute("data-sads-text-color", "chat-system-message-text");
+  //   messageDiv.setAttribute("data-sads-align-self", "stretch"); // Full width
+  //   messageDiv.setAttribute("data-sads-text-align", "center");
+  //   // Potentially hide senderSpan for system messages or use a system sender name
+  // } else
   if (chatMessage.userId === clientAgentId) {
-    messageDiv.setAttribute("data-sads-bg-color", "surface-accent"); // Example: own messages have a different bg
-    messageDiv.setAttribute("data-sads-border-radius", "s");
-    messageDiv.setAttribute("data-sads-align-self", "flex-end"); // Align own messages to the right
-    messageDiv.style.marginLeft = "auto"; // Basic right alignment
+    // Local user's message
+    messageDiv.setAttribute("data-sads-bg-color", "chat-local-user-bg");
+    messageDiv.setAttribute("data-sads-text-color", "chat-local-user-text");
+    messageDiv.setAttribute("data-sads-align-self", "flex-end");
+    // Ensure the parent 'messages' div is a flex container with appropriate alignment properties
+    // The `data-sads-align-self` should handle the alignment.
+    // No need for messageDiv.style.marginLeft = "auto";
   } else {
-    messageDiv.style.marginRight = "auto"; // Basic left alignment for others
+    // Other user's message
+    messageDiv.setAttribute("data-sads-bg-color", "chat-other-user-bg");
+    messageDiv.setAttribute("data-sads-text-color", "chat-other-user-text");
+    messageDiv.setAttribute("data-sads-align-self", "flex-start");
+    // No need for messageDiv.style.marginRight = "auto";
   }
 
   const senderSpan = document.createElement("span");
@@ -68,6 +90,54 @@ function displayMessage(chatMessage: ChatMessage): void {
   // Important: Reapply SADS styles if new SADS attributes were added dynamically
   // or if the structure significantly changed affecting SADS.
   // For simple text appends, might not be strictly needed unless new SADS attributes are on messageDiv
+  reapplySadsStyles(); // Apply styles globally
+}
+
+// New function to display system messages
+function displaySystemMessage(
+  text: string,
+  type: "info" | "error" | "warning" = "info"
+): void {
+  if (!chatMessagesEl) return;
+
+  const messageDiv = document.createElement("div");
+  messageDiv.setAttribute("data-sads-element", "system-message"); // Differentiate system messages
+  messageDiv.setAttribute("data-sads-padding", "xs");
+  messageDiv.setAttribute("data-sads-margin-bottom", "s");
+  messageDiv.setAttribute("data-sads-border-radius", "m");
+  messageDiv.setAttribute("data-sads-align-self", "stretch"); // Full width
+  messageDiv.setAttribute("data-sads-text-align", "center");
+  messageDiv.setAttribute("data-sads-text-style", "italic");
+  messageDiv.setAttribute("data-sads-font-size", "s"); // Smaller font for system messages
+
+  // Base system message colors
+  messageDiv.setAttribute("data-sads-bg-color", "chat-system-message-bg");
+  let textColorToken = "chat-system-message-text"; // Default system text color
+
+  // Vary text color based on type for emphasis
+  switch (type) {
+    case "error":
+      textColorToken = "text-negative"; // Use existing SADS token for error text
+      break;
+    case "warning":
+      textColorToken = "text-warning"; // Use existing SADS token for warning text (if it exists, otherwise fallback)
+      // Check if "text-warning" exists in the theme, if not, use default or a less specific one
+      // For now, assuming it might exist or we can add it. If not, SADS engine might ignore or use a fallback.
+      // A safer approach would be to define "chat-system-warning-text", "chat-system-error-text" if specific styling is needed.
+      // Sticking to existing semantic tokens for now.
+      break;
+    case "info":
+    default:
+      // Use the default chat-system-message-text
+      break;
+  }
+  messageDiv.setAttribute("data-sads-text-color", textColorToken);
+
+  messageDiv.textContent = text;
+
+  chatMessagesEl.appendChild(messageDiv);
+  chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight; // Scroll to bottom
+
   reapplySadsStyles(); // Apply styles globally
 }
 
@@ -161,6 +231,8 @@ export function initChatComponent(): void {
     currentUserName = name.trim();
   }
 
+  console.log("[Chat] Client Agent ID:", clientAgentId); // DEBUG LOG for clientAgentId
+
   mcpClient = new MCPClient(clientAgentId, mcpServerUrl);
 
   const mcpEventHandler: McpEventHandler = {
@@ -168,16 +240,13 @@ export function initChatComponent(): void {
       console.log(
         `MCP Connection Opened for Chat (Client ID: ${clientAgentId}, User: ${currentUserName}).`
       );
-      const statusMsg = document.createElement("div");
-      statusMsg.textContent = "Connected to chat service.";
-      statusMsg.setAttribute("data-sads-text-style", "italic");
-      statusMsg.setAttribute("data-sads-text-color", "text-neutral-subtle");
-      statusMsg.setAttribute("data-sads-padding", "xs");
-      chatMessagesEl?.appendChild(statusMsg);
-      reapplySadsStyles();
+      displaySystemMessage("Connected to chat service.", "info");
     },
     onMessage: (message: Message) => {
-      // console.log("Chat MCP Message Received:", message);
+      console.log(
+        "[Chat] Raw MCP Message Received:",
+        JSON.parse(JSON.stringify(message))
+      ); // DEBUG LOG for raw message
       if (
         message.performative === Performative.INFORM_RESULT &&
         message.ontology === CHAT_BROADCAST_ONTOLOGY &&
@@ -187,6 +256,10 @@ export function initChatComponent(): void {
           .informResultPayload as InformResultPayload;
         if (informPayload.resultDetails) {
           const resultDetailsJson = Struct.toJson(informPayload.resultDetails);
+          console.log(
+            "[Chat] onMessage - resultDetailsJson:",
+            resultDetailsJson
+          ); // DEBUG LOG
 
           // Add null check for resultDetailsJson and type assertion for property access
           if (
@@ -202,6 +275,10 @@ export function initChatComponent(): void {
               // Timestamp handling: Convert from string if needed, or use as is for display.
               // Example: timestamp: chatData.timestamp ? Timestamp.fromDate(new Date(chatData.timestamp as string)) : undefined
             };
+            console.log(
+              "[Chat] onMessage - receivedChatMessage:",
+              JSON.parse(JSON.stringify(receivedChatMessage))
+            ); // DEBUG LOG
 
             // Basic validation
             if (receivedChatMessage.text) {
@@ -223,23 +300,11 @@ export function initChatComponent(): void {
     },
     onError: (event) => {
       console.error("Chat MCP Connection Error:", event);
-      const statusMsg = document.createElement("div");
-      statusMsg.textContent = "Chat connection error.";
-      statusMsg.setAttribute("data-sads-text-style", "italic");
-      statusMsg.setAttribute("data-sads-text-color", "text-negative");
-      statusMsg.setAttribute("data-sads-padding", "xs");
-      chatMessagesEl?.appendChild(statusMsg);
-      reapplySadsStyles();
+      displaySystemMessage("Chat connection error.", "error");
     },
     onClose: () => {
       console.log("Chat MCP Connection Closed.");
-      const statusMsg = document.createElement("div");
-      statusMsg.textContent = "Chat connection closed.";
-      statusMsg.setAttribute("data-sads-text-style", "italic");
-      statusMsg.setAttribute("data-sads-text-color", "text-warning");
-      statusMsg.setAttribute("data-sads-padding", "xs");
-      chatMessagesEl?.appendChild(statusMsg);
-      reapplySadsStyles();
+      displaySystemMessage("Chat connection closed.", "warning");
     },
   };
 
