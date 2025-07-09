@@ -55,6 +55,25 @@ export interface SadsColors {
   "button-primary-bg-color": string;
   "button-primary-bg-color-dark": string;
   "button-primary-text-color": string;
+  // New chat widget colors
+  "widget-bg"?: string;
+  "widget-bg-dark"?: string;
+  "widget-border-color"?: string;
+  "widget-border-color-dark"?: string;
+  "message-bg-user"?: string;
+  "message-bg-user-dark"?: string;
+  "message-text-user"?: string;
+  "message-text-user-dark"?: string;
+  "message-bg-other"?: string;
+  "message-bg-other-dark"?: string;
+  "message-text-other"?: string;
+  "message-text-other-dark"?: string;
+  "input-focus-border-color"?: string;
+  "input-focus-border-color-dark"?: string;
+  "send-button-bg-color"?: string;
+  "send-button-bg-color-dark"?: string;
+  "send-button-text-color"?: string;
+  "send-button-text-color-dark"?: string;
   [key: string]: string | undefined; // Allow other string properties, e.g. "button-primary-bg-color"
 }
 
@@ -105,6 +124,8 @@ export interface SadsShadows {
   none: string;
   subtle: string;
   medium: string;
+  "widget-shadow": string; // Made required
+  "widget-shadow-dark": string; // Added and made required
   [key: string]: string; // Allow other string properties
 }
 
@@ -213,9 +234,29 @@ export const sadsDefaultTheme: SadsTheme = {
     "input-border-color-dark": "#555555",
     "input-bg-color": "#ffffff",
     "input-bg-color-dark": "#333333",
-    "button-primary-bg-color": "#28a745",
-    "button-primary-bg-color-dark": "#1a73e8",
+    "button-primary-bg-color": "#28a745", // Will be overridden for chat's send button
+    "button-primary-bg-color-dark": "#1a73e8", // Will be overridden for chat's send button
     "button-primary-text-color": "#ffffff",
+
+    // Chat Widget Specific Colors
+    "widget-bg": "#FFFFFF",
+    "widget-bg-dark": "#1E1E1E",
+    "widget-border-color": "#E0E0E0",
+    "widget-border-color-dark": "#3A3A3A",
+    "message-bg-user": "#007AFF",
+    "message-bg-user-dark": "#0A84FF",
+    "message-text-user": "#FFFFFF",
+    "message-text-user-dark": "#FFFFFF",
+    "message-bg-other": "#F0F0F0",
+    "message-bg-other-dark": "#2C2C2E",
+    "message-text-other": "#000000",
+    "message-text-other-dark": "#E0E0E0",
+    "input-focus-border-color": "#007AFF", // For potential future use or direct JS handling
+    "input-focus-border-color-dark": "#0A84FF",
+    "send-button-bg-color": "#34C759",
+    "send-button-bg-color-dark": "#30D158",
+    "send-button-text-color": "#FFFFFF",
+    "send-button-text-color-dark": "#FFFFFF",
   },
   spacing: {
     none: "0",
@@ -237,11 +278,34 @@ export const sadsDefaultTheme: SadsTheme = {
     xxl: "2.5rem",
   },
   fontWeight: { normal: "400", bold: "700" },
-  borderRadius: { none: "0", s: "4px", m: "8px", l: "16px" },
+  borderRadius: { none: "0", s: "4px", m: "8px", l: "16px" }, // Consider a 'xl' for very rounded later if needed
   shadow: {
     none: "none",
     subtle: "0 2px 5px rgba(0,0,0,0.1)",
     medium: "0 4px 10px rgba(0,0,0,0.15)",
+    "widget-shadow": "0 4px 12px rgba(0,0,0,0.08)", // Light mode shadow
+    // Dark mode shadow for widget-shadow will be handled by SADS engine if a widget-shadow-dark is defined,
+    // or we can define it explicitly here if SADS engine doesn't auto-suffix shadows.
+    // For now, assuming SADS engine might not auto-suffix shadows like it does colors.
+    // Let's define it explicitly for clarity or create a new convention.
+    // Alternative: SADS engine could be updated to look for `shadow-name-dark`
+    // For now, let's assume we might need to use responsive rules or JS to change shadow in dark mode if not directly supported.
+    // Given the SADS docs, it seems only colors have automatic -dark suffixing.
+    // So, `widget-shadow` will be one value. If a different shadow is needed for dark mode,
+    // it would require a different token or a more advanced SADS feature.
+    // Let's make the dark shadow part of the token value for now or assume it's acceptable.
+    // To keep it simple and within current SADS capability: widget-shadow will be one value.
+    // If a distinct dark mode shadow is essential, it might need a separate token and conditional SADS attributes,
+    // or a feature request for SADS engine to support `shadow-token-dark`.
+    // For this iteration, one shadow definition:
+    // "widget-shadow": "0 4px 12px rgba(0,0,0,0.08)", // This will be used for both light and dark.
+    // A slightly darker shadow for dark mode might be: "0 4px 12px rgba(0,0,0,0.25)"
+    // Let's define one and see. If needed, can revisit.
+    // Let's go with a single definition that works okay on both, or is primarily for light mode.
+    // If we want a distinct dark mode shadow, we'd need a new token like "widget-shadow-dark"
+    // and then conditionally apply it, which SADS doesn't directly support in a single attribute.
+    // Sticking to one definition for now:
+    "widget-shadow-dark": "0 4px 16px rgba(0,0,0,0.25)", // Added a specific dark variant
   },
   maxWidth: {
     "content-container-narrow": "800px",
